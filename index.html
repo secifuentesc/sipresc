@@ -1032,7 +1032,11 @@ function confirmarCancelacion(citaId) {
         loadDash();
       } else toast(r.mensaje || 'Error al cancelar', 'er');
     })
-    .cancelarReservaDocente(citaId, motivo, STATE.docenteId);
+    await api("cancelarDocente", {
+  citaId: citaId,
+  motivo: motivo,
+  docenteId: STATE.docenteId
+});
 }
 
 // ═══════════════════════════════════════════════════════════
