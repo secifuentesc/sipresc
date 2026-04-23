@@ -896,7 +896,9 @@ async function loadDash() {
       params.docenteId = STATE.docenteId;
     }
 
-    const citas = await api("obtenerTodasLasCitas", params);
+    const citas = await api("todasCitas", {
+  filtros: params
+});
 
     const hoy = new Date();
     const hoyStr = hoy.getFullYear() + '-' +
