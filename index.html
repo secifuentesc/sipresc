@@ -773,11 +773,11 @@ function estadoBadge(estado) {
 // ═══════════════════════════════════════════════════════════
 // LOGIN / LOGOUT
 // ═══════════════════════════════════════════════════════════
-function doLogin() {
-  var correo = document.getElementById('lu').value.trim();
-  var pass   = document.getElementById('lp').value;
-  var err    = document.getElementById('lerr');
-  var btn    = document.getElementById('btn-login');
+async function doLogin() {
+  const correo = document.getElementById('lu').value.trim();
+  const pass   = document.getElementById('lp').value;
+  const err    = document.getElementById('lerr');
+  const btn    = document.getElementById('btn-login');
 
   if (!correo || !pass) {
     err.textContent = 'Completa todos los campos';
@@ -785,38 +785,37 @@ function doLogin() {
     return;
   }
 
-  var restore = spin(btn);
+  const restore = spin(btn);
 
-  fetch("https://script.google.com/macros/s/AKfycbw1JSmbnW4ELgSngqxL59_9hlGJ4e0MP_Ogl945w2aFFlmglgMJtvXcdrT5f_Wi3aL-/exec", {
-    method: "POST",
-    body: JSON.stringify({
-      action: "login",
+  try {
+    const r = await api("login", {
       correo: correo,
       password: pass
-    })
-  })
-  .then(res => res.json())
-  .then(r => {
+    });
+
     restore('🔐 Ingresar');
 
     if (r.ok) {
-      STATE.rol = r.rol;
-      STATE.correo = r.correo;
-      STATE.nombre = r.nombre;
-      STATE.docenteId = r.docenteId;
+      // Guardamos sesión
+      STATE.rol        = r.rol;
+      STATE.correo     = r.correo;
+      STATE.nombre     = r.nombre;
+      STATE.docenteId  = r.docenteId;
 
       err.classList.remove('show');
+
       iniciarApp();
     } else {
       err.textContent = r.mensaje || 'Credenciales incorrectas';
       err.classList.add('show');
     }
-  })
-  .catch(() => {
+
+  } catch (error) {
+    console.error(error);
     restore('🔐 Ingresar');
     err.textContent = 'Error de conexión';
     err.classList.add('show');
-  });
+  }
 }
 
 function doLogout() {
