@@ -1427,53 +1427,41 @@ function exportarCSV() {
 // ═══════════════════════════════════════════════════════════
 // ADMINISTRACIÓN
 // ═══════════════════════════════════════════════════════════
-function loadAdmin() {
-  google.script.run
-    .withSuccessHandler(function(docentes) {
-      var el = document.getElementById('admin-docentes-lista');
-      el.innerHTML = (docentes || []).map(function(d) {
-        return '<div class="ai">' +
-          '<div class="ai-info">' +
-          '<div class="ai-name">' + (d.nombre || '') + ' ' + (d.apellido || '') + '</div>' +
-          '<div class="ai-meta">' + (d.correo || '') + '</div>' +
-          '</div>' +
-          '<span class="badge ' + (d.activo ? 'badge-green' : 'badge-red') + '">' +
-          (d.activo ? 'Activo' : 'Inactivo') + '</span>' +
-          '</div>';
-      }).join('') || '<div class="empty">Sin docentes registrados</div>';
-    })
-    .obtenerDocentes();
+async function loadAdmin() {
+  try {
+    // ── DOCENTES ─────────────────────
+    const respDoc = await api("obtenerDocentes", {});
+    const docentes = respDoc.data || respDoc.docentes || respDoc || [];
 
-  google.script.run
-    .withSuccessHandler(function(cierres) {
-      var el = document.getElementById('cierres-pendientes-lista');
-      if (!(cierres || []).length) { el.innerHTML = '<div class="empty">Sin solicitudes pendientes</div>'; return; }
-      el.innerHTML = cierres.map(function(c) {
-        return '<div class="cita-card">' +
-          '<div class="cita-nombre">Docente: ' + (c.docenteId || '') + '</div>' +
-          '<div class="cita-meta">' + (c.fechaInicio || '') + ' → ' + (c.fechaFin || '') + '</div>' +
-          '<div class="cita-meta">Motivo: ' + (c.motivo || '') + '</div>' +
-          '<div style="display:flex;gap:8px;margin-top:8px;">' +
-          '<button class="btn btn-gr btn-sm" onclick="revisarCierre(\'' + c.id + '\',true)">Aprobar</button>' +
-          '<button class="btn btn-r  btn-sm" onclick="revisarCierre(\'' + c.id + '\',false)">Rechazar</button>' +
-          '</div></div>';
-      }).join('');
-    })
-    .obtenerCierresPendientes();
+    const el = document.getElementById('admin-docentes-lista');
+    el.innerHTML = docentes.map(d => `
+      <div class="ai">
+        <div class="ai-info">
+          <div class="ai-name">${d.nombre || ''} ${d.apellido || ''}</div>
+          <div class="ai-meta">${d.correo || ''}</div>
+        </div>
+        <span class="badge ${d.activo ? 'badge-green' : 'badge-red'}">
+          ${d.activo ? 'Activo' : 'Inactivo'}
+        </span>
+      </div>
+    `).join('') || '<div class="empty">Sin docentes registrados</div>';
 
-  google.script.run
-    .withSuccessHandler(function(cfg) {
-      if (cfg.DURACION_CITA) document.getElementById('cfg-duracion').value = cfg.DURACION_CITA;
-      document.getElementById('cfg-agenda-cerrada').checked = cfg.AGENDA_GLOBAL_CERRADA === 'true';
-    })
-    .obtenerConfiguracion();
+    // ── CONFIG ─────────────────────
+    const cfg = await api("obtenerConfiguracion", {});
+    if (cfg.DURACION_CITA) {
+      document.getElementById('cfg-duracion').value = cfg.DURACION_CITA;
+    }
+    document.getElementById('cfg-agenda-cerrada').checked = cfg.AGENDA_GLOBAL_CERRADA === 'true';
 
-  google.script.run
-    .withSuccessHandler(function(grados) {
-      STATE.grados = grados || [];
-      renderGrados();
-    })
-    .obtenerGrados();
+    // ── GRADOS ─────────────────────
+    const gradosResp = await api("obtenerGrados", {});
+    STATE.grados = gradosResp.data || gradosResp || [];
+    renderGrados();
+
+  } catch (error) {
+    console.error(error);
+    toast('Error cargando admin', 'er');
+  }
 }
 
 function renderGrados() {
