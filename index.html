@@ -883,7 +883,7 @@ function goTab(id, el) {
 async function loadDash() {
   try {
     // ── ESTADÍSTICAS ─────────────────────
-    const stats = await api("obtenerEstadisticas");
+    const stats = await api("estadisticas");
 
     document.getElementById('s-tot').textContent  = stats.total || 0;
     document.getElementById('s-hoy').textContent  = stats.hoy || 0;
