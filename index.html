@@ -936,13 +936,19 @@ async function loadDash() {
 // ═══════════════════════════════════════════════════════════
 // MIS CITAS (DOCENTE)
 // ═══════════════════════════════════════════════════════════
-function loadMisCitas() {
-  google.script.run
-    .withSuccessHandler(function(citas) {
-      STATE.todasCitas = citas || [];
-      renderCitas(STATE.todasCitas);
-    })
-    .obtenerCitasDocente(STATE.docenteId);
+async function loadMisCitas() {
+  try {
+    const citas = await api("obtenerCitasDocente", {
+      docenteId: STATE.docenteId
+    });
+
+    STATE.todasCitas = citas || [];
+    renderCitas(STATE.todasCitas);
+
+  } catch (error) {
+    console.error(error);
+    toast('Error cargando citas', 'er');
+  }
 }
 
 function filtrarCitas(estado, el) {
