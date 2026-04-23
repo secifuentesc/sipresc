@@ -1146,25 +1146,33 @@ function solicitarCierre() {
 // ═══════════════════════════════════════════════════════════
 // CALENDARIO (ADMIN/COORD)
 // ═══════════════════════════════════════════════════════════
-function loadCalendario() {
-  google.script.run
-    .withSuccessHandler(function(citas) {
-      todasCitasAdmin = citas || [];
-      renderCalendario();
-    })
-    .obtenerTodasLasCitas({});
+async function loadCalendario() {
+  try {
+    // ── TRAER CITAS ─────────────────────
+    const citas = await api("todasCitas", {});
+    todasCitasAdmin = citas || [];
 
-  google.script.run
-    .withSuccessHandler(function(docentes) {
-      var row = document.getElementById('filtro-docentes-row');
-      row.innerHTML =
-        '<button class="fbtn on" onclick="filtroDocenteCal=null;renderCalendario();highlightFiltro(this)">Todos</button>' +
-        (docentes || []).map(function(d) {
-          return '<button class="fbtn" onclick="filtroDocenteCal=\'' + d.id + '\';renderCalendario();highlightFiltro(this)">' +
-            (d.nombre || d.id) + '</button>';
-        }).join('');
-    })
-    .obtenerDocentes();
+    // ── TRAER DOCENTES ──────────────────
+    const docentes = await api("obtenerDocentes", {});
+
+    // ── RENDER FILTRO DOCENTES ──────────
+    const row = document.getElementById('filtro-docentes-row');
+
+    row.innerHTML =
+      '<button class="fbtn on" onclick="filtroDocenteCal=null;renderCalendario();highlightFiltro(this)">Todos</button>' +
+      (docentes || []).map(function(d) {
+        return '<button class="fbtn" onclick="filtroDocenteCal=\'' + d.id + '\';renderCalendario();highlightFiltro(this)">' +
+          (d.nombre || d.id) +
+        '</button>';
+      }).join('');
+
+    // ── RENDER CALENDARIO ───────────────
+    renderCalendario();
+
+  } catch (error) {
+    console.error(error);
+    toast('Error cargando calendario', 'er');
+  }
 }
 
 function highlightFiltro(el) {
