@@ -682,6 +682,20 @@ body {
 <div class="toast" id="toast"></div>
 
 <script>
+
+const API_URL = "https://script.google.com/macros/s/AKfycbw1JSmbnW4ELgSngqxL59_9hlGJ4e0MP_Ogl945w2aFFlmglgMJtvXcdrT5f_Wi3aL-/exec";
+
+async function api(action, data = {}) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action,
+      ...data
+    })
+  });
+
+  return await res.json();
+}
 // ═══════════════════════════════════════════════════════════
 // HELPERS FECHA — evita desfase de zona horaria
 // ═══════════════════════════════════════════════════════════
