@@ -938,9 +938,9 @@ async function loadDash() {
 // ═══════════════════════════════════════════════════════════
 async function loadMisCitas() {
   try {
-    const citas = await api("obtenerCitasDocente", {
-      docenteId: STATE.docenteId
-    });
+    const citas = await api("citasDocente", {
+  docenteId: STATE.docenteId
+});
 
     STATE.todasCitas = citas || [];
     renderCitas(STATE.todasCitas);
