@@ -881,39 +881,57 @@ function goTab(id, el) {
 // ═══════════════════════════════════════════════════════════
 // DASHBOARD
 // ═══════════════════════════════════════════════════════════
-function loadDash() {
-  google.script.run
-    .withSuccessHandler(function(stats) {
-      document.getElementById('s-tot').textContent  = stats.total;
-      document.getElementById('s-hoy').textContent  = stats.hoy;
-      document.getElementById('s-can').textContent  = stats.canceladas;
-      document.getElementById('s-conf').textContent = stats.confirmadas;
-    })
-    .obtenerEstadisticas();
+async function loadDash() {
+  try {
+    // ── ESTADÍSTICAS ─────────────────────
+    const stats = await api("obtenerEstadisticas");
 
-  var params = {};
-  if (STATE.rol === 'docente') params.docenteId = STATE.docenteId;
+    document.getElementById('s-tot').textContent  = stats.total || 0;
+    document.getElementById('s-hoy').textContent  = stats.hoy || 0;
+    document.getElementById('s-can').textContent  = stats.canceladas || 0;
+    document.getElementById('s-conf').textContent = stats.confirmadas || 0;
 
-  google.script.run
-    .withSuccessHandler(function(citas) {
-      var hoy    = new Date();
-      var hoyStr = hoy.getFullYear() + '-' + pad(hoy.getMonth() + 1) + '-' + pad(hoy.getDate());
-      var proximas = (citas || []).filter(function(c) {
-        return c.fecha >= hoyStr && c.estado === 'confirmada';
-      }).slice(0, 5);
-      var el = document.getElementById('dash-proximas');
-      if (!proximas.length) { el.innerHTML = '<div class="empty">No hay citas próximas</div>'; return; }
-      el.innerHTML = proximas.map(function(c) {
-        return '<div class="cita-card estado-confirmada" onclick="verDetalleCita(\'' + c.id + '\')">' +
-          '<div class="cita-top"><span class="cita-hora">' + c.horaInicio + ' – ' + c.horaFin + '</span>' +
-          estadoBadge(c.estado) + '</div>' +
-          '<div class="cita-nombre">' + (c.padreNombre || '') + ' ' + (c.padreApellido || '') + '</div>' +
-          '<div class="cita-meta">👤 ' + (c.estudianteNombre || '') + ' · ' + c.grado + ' · 📅 ' + formatFechaDisplay(c.fecha) + '</div>' +
-          (STATE.rol !== 'coordinador' ? '<button class="btn btn-sm btn-r" style="margin-top:8px;" onclick="event.stopPropagation();pedirCancelacion(\'' + c.id + '\')">Cancelar</button>' : '') +
-          '</div>';
-      }).join('');
-    })
-    .obtenerTodasLasCitas(params);
+    // ── CITAS ────────────────────────────
+    let params = {};
+    if (STATE.rol === 'docente') {
+      params.docenteId = STATE.docenteId;
+    }
+
+    const citas = await api("obtenerTodasLasCitas", params);
+
+    const hoy = new Date();
+    const hoyStr = hoy.getFullYear() + '-' +
+      String(hoy.getMonth() + 1).padStart(2, '0') + '-' +
+      String(hoy.getDate()).padStart(2, '0');
+
+    const proximas = (citas || [])
+      .filter(c => c.fecha >= hoyStr && c.estado === 'confirmada')
+      .slice(0, 5);
+
+    const el = document.getElementById('dash-proximas');
+
+    if (!proximas.length) {
+      el.innerHTML = '<div class="empty">No hay citas próximas</div>';
+      return;
+    }
+
+    el.innerHTML = proximas.map(c => `
+      <div class="cita-card estado-confirmada" onclick="verDetalleCita('${c.id}')">
+        <div class="cita-top">
+          <span class="cita-hora">${c.horaInicio} – ${c.horaFin}</span>
+          ${estadoBadge(c.estado)}
+        </div>
+        <div class="cita-nombre">${c.padreNombre || ''} ${c.padreApellido || ''}</div>
+        <div class="cita-meta">
+          👤 ${c.estudianteNombre || ''} · ${c.grado} · 📅 ${formatFechaDisplay(c.fecha)}
+        </div>
+      </div>
+    `).join('');
+
+  } catch (error) {
+    console.error(error);
+    toast('Error cargando datos', 'er');
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
