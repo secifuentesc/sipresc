@@ -1334,40 +1334,80 @@ function cambiarVista(vista, btn) {
 // ═══════════════════════════════════════════════════════════
 // ESTADÍSTICAS
 // ═══════════════════════════════════════════════════════════
-function loadStats() {
-  google.script.run
-    .withSuccessHandler(function(s) {
-      document.getElementById('st-tot').textContent  = s.total;
-      document.getElementById('st-conf').textContent = s.confirmadas;
-      document.getElementById('st-can').textContent  = s.canceladas;
-      document.getElementById('st-hoy').textContent  = s.hoy;
+async function loadStats() {
+  try {
+    const s = await api("estadisticas", {});
 
-      var maxDoc  = Math.max.apply(null, (s.porDocente || []).map(function(x){ return x[1]; }).concat([1]));
-      document.getElementById('stats-docentes').innerHTML = (s.porDocente || []).map(function(x) {
-        return '<div style="margin-bottom:10px;">' +
-          '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">' +
-          '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;margin-right:8px;">' + x[0] + '</span>' +
-          '<span style="font-family:var(--mono);color:var(--gold);flex-shrink:0;">' + x[1] + '</span></div>' +
-          '<div class="stat-bar"><div class="stat-fill" style="width:' + Math.round(x[1] / maxDoc * 100) + '%"></div></div></div>';
-      }).join('') || '<div class="empty">Sin datos</div>';
+    document.getElementById('st-tot').textContent  = s.total || 0;
+    document.getElementById('st-conf').textContent = s.confirmadas || 0;
+    document.getElementById('st-can').textContent  = s.canceladas || 0;
+    document.getElementById('st-hoy').textContent  = s.hoy || 0;
 
-      var maxHora = Math.max.apply(null, (s.porHora || []).map(function(x){ return x[1]; }).concat([1]));
-      document.getElementById('stats-horas').innerHTML = (s.porHora || []).map(function(x) {
-        return '<div style="margin-bottom:10px;">' +
-          '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">' +
-          '<span>' + x[0] + '</span><span style="font-family:var(--mono);color:var(--purple);">' + x[1] + '</span></div>' +
-          '<div class="stat-bar"><div class="stat-fill" style="width:' + Math.round(x[1] / maxHora * 100) + '%;background:linear-gradient(90deg,var(--royal),var(--purple));"></div></div></div>';
-      }).join('') || '<div class="empty">Sin datos</div>';
+    // ── POR DOCENTE ─────────────────────
+    const porDocente = s.porDocente || [];
+    const maxDoc = Math.max(...porDocente.map(x => x[1]), 1);
 
-      var maxDia = Math.max.apply(null, (s.porDia || []).map(function(x){ return x[1]; }).concat([1]));
-      document.getElementById('stats-dias').innerHTML = (s.porDia || []).map(function(x) {
-        return '<div style="margin-bottom:10px;">' +
-          '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">' +
-          '<span>' + x[0] + '</span><span style="font-family:var(--mono);color:var(--green);">' + x[1] + '</span></div>' +
-          '<div class="stat-bar"><div class="stat-fill" style="width:' + Math.round(x[1] / maxDia * 100) + '%;background:linear-gradient(90deg,var(--blue),var(--green));"></div></div></div>';
-      }).join('') || '<div class="empty">Sin datos</div>';
-    })
-    .obtenerEstadisticas();
+    document.getElementById('stats-docentes').innerHTML =
+      porDocente.map(x => `
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;margin-right:8px;">
+              ${x[0]}
+            </span>
+            <span style="font-family:var(--mono);color:var(--gold);flex-shrink:0;">
+              ${x[1]}
+            </span>
+          </div>
+          <div class="stat-bar">
+            <div class="stat-fill" style="width:${Math.round((x[1]/maxDoc)*100)}%"></div>
+          </div>
+        </div>
+      `).join('') || '<div class="empty">Sin datos</div>';
+
+    // ── POR HORA ────────────────────────
+    const porHora = s.porHora || [];
+    const maxHora = Math.max(...porHora.map(x => x[1]), 1);
+
+    document.getElementById('stats-horas').innerHTML =
+      porHora.map(x => `
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+            <span>${x[0]}</span>
+            <span style="font-family:var(--mono);color:var(--purple);">${x[1]}</span>
+          </div>
+          <div class="stat-bar">
+            <div class="stat-fill"
+              style="width:${Math.round((x[1]/maxHora)*100)}%;
+              background:linear-gradient(90deg,var(--royal),var(--purple));">
+            </div>
+          </div>
+        </div>
+      `).join('') || '<div class="empty">Sin datos</div>';
+
+    // ── POR DÍA ─────────────────────────
+    const porDia = s.porDia || [];
+    const maxDia = Math.max(...porDia.map(x => x[1]), 1);
+
+    document.getElementById('stats-dias').innerHTML =
+      porDia.map(x => `
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+            <span>${x[0]}</span>
+            <span style="font-family:var(--mono);color:var(--green);">${x[1]}</span>
+          </div>
+          <div class="stat-bar">
+            <div class="stat-fill"
+              style="width:${Math.round((x[1]/maxDia)*100)}%;
+              background:linear-gradient(90deg,var(--blue),var(--green));">
+            </div>
+          </div>
+        </div>
+      `).join('') || '<div class="empty">Sin datos</div>';
+
+  } catch (error) {
+    console.error(error);
+    toast('Error cargando estadísticas', 'er');
+  }
 }
 
 function exportarCSV() {
