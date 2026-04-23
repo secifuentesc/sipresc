@@ -1013,27 +1013,36 @@ function pedirCancelacion(citaId) {
   openSheet('sh2', 'ov2');
 }
 
-function confirmarCancelacion(citaId) {
+async function confirmarCancelacion(citaId) {
   var motivo = document.getElementById('motivo-cancelacion').value.trim();
   if (!motivo) { toast('El motivo es obligatorio', 'er'); return; }
+
   var btn = document.querySelector('#sh2 .btn-r');
   var restore = spin(btn);
-  google.script.run
-    .withSuccessHandler(function(r) {
-      restore();
-      if (r.ok) {
-        toast('Cita cancelada', 'ok');
-        closeSheet('sh2', 'ov2');
-        closeSheet('sh1', 'ov1');
-        if (STATE.rol === 'docente') loadMisCitas();
-        loadDash();
-      } else toast(r.mensaje || 'Error al cancelar', 'er');
-    })
-    await api("cancelarDocente", {
-  citaId: citaId,
-  motivo: motivo,
-  docenteId: STATE.docenteId
-});
+
+  try {
+    const r = await api("cancelarDocente", {
+      citaId: citaId,
+      motivo: motivo,
+      docenteId: STATE.docenteId
+    });
+
+    restore();
+
+    if (r.ok) {
+      toast('Cita cancelada', 'ok');
+      closeSheet('sh2', 'ov2');
+      closeSheet('sh1', 'ov1');
+      if (STATE.rol === 'docente') loadMisCitas();
+      loadDash();
+    } else {
+      toast(r.mensaje || 'Error al cancelar', 'er');
+    }
+
+  } catch (e) {
+    restore();
+    toast('Error de conexión', 'er');
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
