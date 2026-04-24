@@ -770,35 +770,6 @@ function estadoBadge(estado) {
 // ═══════════════════════════════════════════════════════════
 // LOGIN / LOGOUT
 // ═══════════════════════════════════════════════════════════
-function loginGoogle() {
-  const btn = document.getElementById('btn-login');
-  const err = document.getElementById('lerr');
-  const restore = spin(btn);
-
-  google.script.run
-    .withSuccessHandler(function(r) {
-      restore('🔐 Ingresar con Google');
-
-      if (r.ok) {
-        STATE.rol       = r.rol;
-        STATE.correo    = r.correo;
-        STATE.nombre    = r.nombre;
-        STATE.docenteId = r.docenteId;
-
-        err.classList.remove('show');
-        iniciarApp();
-      } else {
-        err.textContent = r.mensaje || 'No tienes acceso al sistema.';
-        err.classList.add('show');
-      }
-    })
-    .withFailureHandler(function(error) {
-      restore('🔐 Ingresar con Google');
-      err.textContent = 'Error al iniciar sesión: ' + error.message;
-      err.classList.add('show');
-    })
-    .loginConGoogle();
-}
 
 function doLogout() {
   STATE = {
