@@ -1548,5 +1548,52 @@ window.addEventListener('resize', function() {
   document.body.style.width = vw + 'px';
 })();
 </script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDJ_9HlZGOG6JSaeD35uzPvvkkWQ0Cbj9k",
+    authDomain: "sipresc-d3605.firebaseapp.com",
+    projectId: "sipresc-d3605",
+    storageBucket: "sipresc-d3605.firebasestorage.app",
+    messagingSenderId: "784448633812",
+    appId: "1:784448633812:web:6e116531fbf101c578f441"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  window.loginGoogle = async function () {
+    const provider = new GoogleAuthProvider();
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      if (!user.email.endsWith("@lapresentaciongirardota.edu.co")) {
+        alert("Debes usar tu correo institucional");
+        return;
+      }
+
+      const r = await api("loginGoogle", {
+        correo: user.email
+      });
+
+      if (r.ok) {
+        STATE.rol = r.rol;
+        STATE.docenteId = r.docenteId;
+        iniciarApp();
+      } else {
+        alert("No tienes acceso");
+      }
+
+    } catch (error) {
+      console.error(error);
+      alert("Error al iniciar sesión");
+    }
+  };
+</script>
 </body>
 </html>
