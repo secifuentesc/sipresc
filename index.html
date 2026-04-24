@@ -15,11 +15,6 @@
 // del padre (escritorio). Este script detecta si estamos en móvil
 // y fuerza el ancho correcto antes de que se pinte nada.
 
-
-if (window.location.search.includes("login=google")) {
-  loginGoogle();
-}
-  
 </script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -541,7 +536,7 @@ body {
 
 <div class="err-msg" id="lerr">No se pudo iniciar sesión</div>
 
-<button onclick="abrirLoginGoogle()">Ingresar con Google</button>
+<button class="btn btn-p" onclick="abrirLoginGoogle()" id="btn-login">
   Ingresar con Google
 </button>
   </div>
@@ -1577,6 +1572,10 @@ window.addEventListener('resize', function() {
       alert("Error al iniciar sesión");
     }
   };
+
+if (window.location.search.includes("login=google")) {
+  window.loginGoogle();
+}
 </script>
 </body>
 </html>
