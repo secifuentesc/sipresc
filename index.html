@@ -693,6 +693,13 @@ async function api(action, data = {}) {
 
   return await res.json();
 }
+
+function abrirLoginGoogle() {
+  window.open(
+    window.location.href + "?login=google",
+    "_blank"
+  );
+}
 // ═══════════════════════════════════════════════════════════
 // HELPERS FECHA — evita desfase de zona horaria
 // ═══════════════════════════════════════════════════════════
