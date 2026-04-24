@@ -3,13 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0d1b3e">
-<title>Panel Institucional — La Presentación</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script>
 <script>
 (function () {
   function fixViewport() {
@@ -25,13 +18,34 @@
     );
   }
 
-  // Ejecutar antes de pintar
   fixViewport();
-
-  // Recalcular al rotar
   window.addEventListener("resize", fixViewport);
 })();
 </script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d1b3e">
+<title>Panel Institucional — La Presentación</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+(function () {
+  function fixViewport() {
+    var viewport = document.querySelector("meta[name=viewport]");
+    if (!viewport) return;
+
+    var width = window.innerWidth || document.documentElement.clientWidth;
+
+    viewport.setAttribute(
+      "content",
+      "width=" + width +
+      ", initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    );
+  }
+
+  fixViewport();
+  window.addEventListener("resize", fixViewport);
+})();
 </script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
