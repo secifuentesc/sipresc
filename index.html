@@ -529,17 +529,16 @@ body {
   <div class="login-sub">La Presentación — Girardota</div>
   <div class="login-card">
     <div class="field">
-      <label>Correo institucional</label>
-      <input type="email" id="lu" placeholder="correo@lapresentacion..." autocomplete="username" autocapitalize="none">
-    </div>
-    <div class="field">
-      <label>Contraseña</label>
-      <input type="password" id="lp" placeholder="••••••••" autocomplete="current-password">
-      <div class="err-msg" id="lerr">Correo o contraseña incorrectos</div>
-    </div>
-    <button class="btn btn-p" onclick="doLogin()" id="btn-login">
-      🔐 Ingresar
-    </button>
+  <div class="login-sub" style="margin-bottom:18px;">
+    Ingresa con tu correo institucional de La Presentación.
+  </div>
+</div>
+
+<div class="err-msg" id="lerr">No se pudo iniciar sesión</div>
+
+<button class="btn btn-p" onclick="loginGoogle()" id="btn-login">
+  Ingresar con Google
+</button>
   </div>
   <div class="login-link">¿Eres padre de familia? <a href="?page=padres" target="_blank">Reservar cita aquí →</a></div>
 </div>
