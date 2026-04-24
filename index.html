@@ -10,11 +10,28 @@
 <title>Panel Institucional — La Presentación</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>
-// ── FIX IFRAME APPS SCRIPT ────────────────────────────────
-// Apps Script envuelve el HTML en un iframe que hereda el viewport
-// del padre (escritorio). Este script detecta si estamos en móvil
-// y fuerza el ancho correcto antes de que se pinte nada.
+<script>
+(function () {
+  function fixViewport() {
+    var viewport = document.querySelector("meta[name=viewport]");
+    if (!viewport) return;
 
+    var width = window.innerWidth || document.documentElement.clientWidth;
+
+    viewport.setAttribute(
+      "content",
+      "width=" + width +
+      ", initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    );
+  }
+
+  // Ejecutar antes de pintar
+  fixViewport();
+
+  // Recalcular al rotar
+  window.addEventListener("resize", fixViewport);
+})();
+</script>
 </script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
