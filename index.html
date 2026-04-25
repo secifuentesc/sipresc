@@ -564,21 +564,10 @@ function loginGoogle() {
 }
 
 // ── PROCESAR REDIRECT (OBLIGATORIO) ──
-firebase.auth().getRedirectResult()
-  .then((result) => {
-    if (result.user) {
-      console.log("Login exitoso:", result.user.email);
-    }
-  })
-  .catch((error) => {
-    console.error("Error en redirect:", error);
-  });
-
 firebase.auth().onAuthStateChanged(user => {
 
   // 🔴 Si NO hay usuario → mostrar login
   if (!user) {
-    firebase.auth().signOut();
     localStorage.removeItem('lp_user');
 
     $('s-login').classList.add('on');
@@ -586,9 +575,7 @@ firebase.auth().onAuthStateChanged(user => {
     return;
   }
 
-  // 🟢 Usuario autenticado (NO validar localStorage aquí)
-  $('s-login').classList.remove('on');
-
+  // 🚫 Evitar doble ejecución
   if (FB_DONE) return;
   FB_DONE = true;
 
@@ -607,7 +594,6 @@ firebase.auth().onAuthStateChanged(user => {
         ST.nombre = r.nombre;
         ST.docenteId = r.docenteId;
 
-        // ✅ Guardar sesión DESPUÉS del login correcto
         localStorage.setItem('lp_user', JSON.stringify({
           correo: user.email,
           loginTime: Date.now()
@@ -616,8 +602,8 @@ firebase.auth().onAuthStateChanged(user => {
         iniciarApp();
 
       } else {
+
         firebase.auth().signOut();
-        localStorage.removeItem('lp_user');
 
         btn.innerHTML = 'Ingresar con Google';
         btn.disabled = false;
@@ -629,8 +615,8 @@ firebase.auth().onAuthStateChanged(user => {
       }
     })
     .catch(() => {
+
       firebase.auth().signOut();
-      localStorage.removeItem('lp_user');
 
       btn.innerHTML = 'Ingresar con Google';
       btn.disabled = false;
