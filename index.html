@@ -531,7 +531,7 @@ function loginGoogle() {
   btn.disabled = true;
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt:'select_account' });
-  firebase.auth().signInWithRedirect(provider).catch(e => {
+  firebase.auth().signInWithPopup(provider).catch(e => {
     btn.innerHTML = 'Ingresar con Google'; btn.disabled = false;
     err.textContent = 'Error al redirigir. Intenta de nuevo.'; err.classList.add('on');
   });
