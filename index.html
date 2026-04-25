@@ -4,29 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0d1b3e">
 <title>Panel Institucional — La Presentación</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script>
-// ── FIX IFRAME APPS SCRIPT ────────────────────────────────
-// Apps Script envuelve el HTML en un iframe que hereda el viewport
-// del padre (escritorio). Este script detecta si estamos en móvil
-// y fuerza el ancho correcto antes de que se pinte nada.
-(function() {
-  var vw = window.innerWidth || document.documentElement.clientWidth;
-  // Si el viewport es mayor al ancho real del dispositivo,
-  // significa que el iframe no está escalando bien.
-  // Forzamos que el html ocupe exactamente el ancho visible.
-  if (vw > 0) {
-    (function() {
-  var vw = window.innerWidth || document.documentElement.clientWidth;
-  document.documentElement.style.width = vw + 'px';
-  document.body.style.width = vw + 'px';
-})();
-  }
-})();
-</script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 :root {
@@ -1443,12 +1425,38 @@ function esperarAppsScript(callback) {
     }
 
     intentos++;
-    if (intentos > 20) {
+
+    if (intentos > 50) {
       clearInterval(intervalo);
-      console.error("Apps Script no cargó");
+      console.warn("Apps Script tardó demasiado, reintentando...");
+      setTimeout(function() {
+        esperarAppsScript(callback);
+      }, 1000);
     }
   }, 200);
 }
+
+function ajustarViewportSeguro() {
+
+  var vw = window.innerWidth || document.documentElement.clientWidth;
+
+  document.documentElement.style.width = vw + 'px';
+
+  if (document.body) {
+
+    document.body.style.width = vw + 'px';
+
+  }
+
+}
+
+// Cuando cargue todo el HTML
+
+document.addEventListener('DOMContentLoaded', ajustarViewportSeguro);
+
+// Cuando rote o cambie tamaño
+
+window.addEventListener('resize', ajustarViewportSeguro);
 </script>
 
 <!-- ── FIREBASE: carga clásica (no module) para que loginGoogle() sea global ── -->
