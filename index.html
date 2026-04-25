@@ -461,7 +461,11 @@ function api(action, payload) {
   headers: {
     'Content-Type': 'application/json'
   },
-  body: JSON.stringify({ action, ...payload }),
+  body: JSON.stringify({
+  action,
+  correo: ST.correo,
+  ...payload
+}),
 }).then(r => r.json()).then(resolve).catch(reject);
     }
   });
