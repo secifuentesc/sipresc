@@ -3,5 +3,9 @@
     "api/*.js": {
       "runtime": "nodejs18.x"
     }
-  }
+  },
+  "routes": [
+    { "src": "/", "dest": "/public/index.html" },
+    { "src": "/padres", "dest": "/public/padres.html" }
+  ]
 }
