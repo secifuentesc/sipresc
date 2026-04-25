@@ -23,13 +23,9 @@ export default async function handler(req, res) {
       : JSON.stringify(req.body);
 
     const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body,
-      redirect: 'follow'
-    });
+  method: 'POST',
+  body: JSON.stringify(req.body)
+});
 
     const text = await response.text();
 
