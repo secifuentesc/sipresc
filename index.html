@@ -1145,10 +1145,18 @@ window.enviarCodigoLogin = async function(btn) {
     const r = await api('enviarCodigo', { correo });
 
     if (r.ok) {
-      toast('Código enviado al correo','ok');
-    } else {
-      toast(r.mensaje,'er');
-    }
+  toast('Código enviado al correo','ok');
+} else {
+  toast(r.mensaje,'er');
+
+  // 🔴 RESET COMPLETO DEL LOGIN
+  document.getElementById('bloqueCodigo').style.display = 'none';
+  document.getElementById('inputCodigo').value = '';
+  document.getElementById('correoCodigo').value = '';
+
+  // Opcional: volver a enfocar correo
+  document.getElementById('correoCodigo').focus();
+}
 
   } catch (e) {
     toast('Error de conexión','er');
