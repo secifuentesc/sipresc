@@ -1,6 +1,5 @@
 export default async function handler(req, res) {
 
-  // 🔥 CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -17,50 +16,42 @@ export default async function handler(req, res) {
   }
 
   try {
-
     const GAS_URL = "https://script.google.com/macros/s/AKfycbw1JSmbnW4ELgSngqxL59_9hlGJ4e0MP_Ogl945w2aFFlmglgMJtvXcdrT5f_Wi3aL-/exec";
 
+    const body = typeof req.body === 'string'
+      ? req.body
+      : JSON.stringify(req.body);
+
     const response = await fetch(GAS_URL, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(req.body),
-  redirect: 'follow' // 🔥 clave con Google
-});
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(req.body)
+      body,
+      redirect: 'follow'
     });
 
     const text = await response.text();
 
-    // 🔥 LIMPIEZA ROBUSTA (NO solo replace simple)
     let clean = text.trim();
 
-// 🔥 eliminar prefijo raro de Google si aparece
-if (clean.startsWith(")]}'")) {
-  clean = clean.substring(4);
-}
+    if (clean.startsWith(")]}'")) {
+      clean = clean.substring(4).trim();
+    }
 
-// 🔥 eliminar HTML si Google lo manda (clave real del error)
-if (clean.startsWith("<")) {
-  return res.status(500).json({
-    ok:false,
-    mensaje:'Google devolvió HTML, no JSON',
-    raw:text
-  });
-}
+    if (clean.startsWith("<")) {
+      return res.status(500).json({
+        ok: false,
+        mensaje: 'Google devolvió HTML y no JSON',
+        raw: text
+      });
+    }
 
     let data;
 
     try {
       data = JSON.parse(clean);
     } catch (e) {
-      console.error("RAW RESPONSE:", text);
-
       return res.status(500).json({
         ok: false,
         mensaje: 'Respuesta inválida del backend',
@@ -71,9 +62,6 @@ if (clean.startsWith("<")) {
     return res.status(200).json(data);
 
   } catch (error) {
-
-    console.error("ERROR PROXY:", error);
-
     return res.status(500).json({
       ok: false,
       mensaje: 'Error interno del proxy',
