@@ -356,6 +356,24 @@ letter-spacing:1px;
 
 <!-- APP -->
 <div id="s-app" class="screen">
+<div id="home-docente" class="tab on" style="padding:24px 16px; display:none;">
+  <div class="card" style="text-align:center; padding:26px 18px;">
+    <div style="font-size:22px; font-weight:600; margin-bottom:6px;">
+      Hola, <span id="nombre-docente">Docente</span> 👋
+    </div>
+    <div style="font-size:14px; color:var(--mt); margin-bottom:22px;">
+      ¿Qué deseas hacer hoy?
+    </div>
+
+    <button class="btn btn-g" onclick="abrirModulo('planeaciones')">
+      Planeaciones
+    </button>
+
+    <button class="btn btn-p" onclick="abrirModulo('citas')">
+      Citas
+    </button>
+  </div>
+</div>
   <div class="topbar">
     <div class="topbar-ico">🏫</div>
     <h1>La Presentación</h1>
@@ -364,7 +382,7 @@ letter-spacing:1px;
   </div>
 
   <!-- DASHBOARD -->
-  <div class="tab on" id="t-dash">
+  <div class="tab" id="t-dash">
     <div class="slabel">Resumen</div>
     <div class="sg">
       <div class="sc ct"><div class="sn" id="s-tot">—</div><div class="sl">Total citas</div></div>
@@ -683,9 +701,24 @@ function doLogout() {
 // ── INICIAR APP ───────────────────────────────────────────────
 function iniciarApp() {
   $('s-login').classList.remove('on');
-  $('s-app').classList.add('on');
-  $('bnav').style.display = 'flex';
-  $('tp-rol').textContent = ST.rol.toUpperCase();
+$('s-app').classList.add('on');
+$('bnav').style.display = 'flex';
+$('tp-rol').textContent = ST.rol.toUpperCase();
+
+// 🔥 Ocultar TODOS los tabs al iniciar
+document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+
+  const nombre = (ST.nombre || '').split(' ')[0];
+const nombreDocente = document.getElementById('nombre-docente');
+if (nombreDocente) nombreDocente.textContent = nombre || 'Docente';
+
+if (ST.rol === 'docente') {
+  document.getElementById('home-docente').style.display = 'block';
+} else {
+  // Admin o coordinador sí usan dashboard
+  const dash = document.getElementById('t-dash');
+  if (dash) dash.classList.add('on');
+}
 
   // 🔐 Renovar sesión automáticamente
 const data = JSON.parse(localStorage.getItem('lp_user') || '{}');
@@ -1288,6 +1321,18 @@ function mostrarPantallaInicial() {
     localStorage.removeItem('lp_user');
     splash.style.display = 'none';
     $('s-login').classList.add('on');
+  }
+}
+
+function abrirModulo(modulo) {
+  document.getElementById('home-docente').style.display = 'none';
+
+  if (modulo === 'citas') {
+    goTab('citas', document.getElementById('ni-citas'));
+  }
+
+  if (modulo === 'planeaciones') {
+    toast('Módulo de planeaciones en construcción', 'ok');
   }
 }
 
