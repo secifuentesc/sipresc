@@ -30,13 +30,22 @@ export default async function handler(req, res) {
 
     const text = await response.text();
 
-    // 🔥 A VECES GAS responde texto, no JSON limpio
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = { ok: false, mensaje: 'Respuesta inválida del backend', raw: text };
-    }
+// 🔥 LIMPIAR RESPUESTA DE GOOGLE
+const clean = text
+  .replace(")]}'", '') // ← clave
+  .trim();
+
+let data;
+
+try {
+  data = JSON.parse(clean);
+} catch (e) {
+  return res.status(500).json({
+    ok: false,
+    mensaje: 'Respuesta inválida del backend',
+    raw: text
+  });
+}
 
     return res.status(200).json(data);
 
