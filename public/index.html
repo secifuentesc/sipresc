@@ -1409,15 +1409,30 @@ function mostrarPantallaInicial() {
 }
 
 function abrirModulo(modulo) {
-  document.getElementById('home-docente').style.display = 'none';
 
+  // Oculta pantalla principal
+  const home = document.getElementById('home-docente');
+  if (home) home.style.display = 'none';
+
+  // Mapa de rutas del sistema
+  const rutas = {
+    planeaciones: '/planeaciones/',
+  };
+
+  // 👉 Módulo citas (se mantiene interno)
   if (modulo === 'citas') {
     goTab('citas', document.getElementById('ni-citas'));
+    return;
   }
 
-  if (modulo === 'planeaciones') {
-    toast('Módulo de planeaciones en construcción', 'ok');
+  // 👉 Módulos externos (redirección)
+  if (rutas[modulo]) {
+    window.location.href = rutas[modulo];
+    return;
   }
+
+  // 👉 Fallback (por si algo no existe)
+  toast('Módulo no disponible', 'error');
 }
 
 document.addEventListener('DOMContentLoaded', mostrarPantallaInicial);
