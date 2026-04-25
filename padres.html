@@ -7,7 +7,7 @@
 <title>Reservar Cita — La Presentación</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-const url = window.BACKEND_URL || '';color:transparent}
 :root{
   --pr:#1a3a6b;--royal:#0f2657;--cobalt:#1e4db7;
   --gold:#c9962a;--gold2:#e8b84b;
@@ -378,7 +378,7 @@ function api(action, payload) {
       if(!fn){reject(new Error('No fn:'+action));return;}
       fn(payload, resolve, reject);
     } else {
-      const url = window.BACKEND_URL || '';
+      const url = "https://script.google.com/macros/s/AKfycbw1JSmbnW4ELgSngqxL59_9hlGJ4e0MP_Ogl945w2aFFlmglgMJtvXcdrT5f_Wi3aL-/exec";
       fetch(url,{method:'POST',body:JSON.stringify({action,...payload})})
         .then(r=>r.json()).then(resolve).catch(reject);
     }
