@@ -563,11 +563,21 @@ function loginGoogle() {
   });
 }
 
-firebase.auth().onAuthStateChanged(user => {
-  const sesionValida = validarSesionLocal();
+// ── PROCESAR REDIRECT (OBLIGATORIO) ──
+firebase.auth().getRedirectResult()
+  .then((result) => {
+    if (result.user) {
+      console.log("Login exitoso:", result.user.email);
+    }
+  })
+  .catch((error) => {
+    console.error("Error en redirect:", error);
+  });
 
-  // 🔴 Si no hay usuario o la sesión expiró
-  if (!user || !sesionValida) {
+firebase.auth().onAuthStateChanged(user => {
+
+  // 🔴 Si NO hay usuario → mostrar login
+  if (!user) {
     firebase.auth().signOut();
     localStorage.removeItem('lp_user');
 
@@ -576,7 +586,7 @@ firebase.auth().onAuthStateChanged(user => {
     return;
   }
 
-  // 🟢 Si ya hay sesión válida
+  // 🟢 Usuario autenticado (NO validar localStorage aquí)
   $('s-login').classList.remove('on');
 
   if (FB_DONE) return;
@@ -591,11 +601,13 @@ firebase.auth().onAuthStateChanged(user => {
   api('loginGoogle', { correo: user.email })
     .then(r => {
       if (r.ok) {
+
         ST.rol = r.rol;
         ST.correo = r.correo;
         ST.nombre = r.nombre;
         ST.docenteId = r.docenteId;
 
+        // ✅ Guardar sesión DESPUÉS del login correcto
         localStorage.setItem('lp_user', JSON.stringify({
           correo: user.email,
           loginTime: Date.now()
@@ -629,7 +641,7 @@ firebase.auth().onAuthStateChanged(user => {
       FB_DONE = false;
     });
 });
-
+  
 function doLogout() {
   firebase.auth().signOut();
   ST = { rol:null,correo:null,nombre:null,docenteId:null,citas:[],filtroEstado:'todas',
