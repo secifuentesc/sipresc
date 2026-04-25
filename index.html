@@ -486,7 +486,7 @@ function api(action, payload) {
  body: JSON.stringify({
   action,
   correo: ST.correo,
-  ...payload
+  ...(payload || {})
 }),
 }).then(r => r.json()).then(resolve).catch(reject);
     }
