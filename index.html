@@ -274,8 +274,27 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 </head>
 <body>
 
+<div id="splash" style="
+position:fixed;
+inset:0;
+background:#0a1628;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:999;
+font-family:var(--mono);
+color:#e8edf8;
+font-size:14px;
+letter-spacing:1px;
+">
+  <div style="text-align:center">
+  <div class="spin" style="margin:auto"></div>
+  <div style="margin-top:10px">Cargando...</div>
+</div>
+</div>
+  
 <!-- LOGIN -->
-<div id="s-login" class="screen on">
+<div id="s-login" class="screen">
   <div class="lp-logo">🏫</div>
   <div class="lp-title">Sistema de Citas</div>
   <div class="lp-sub">La Presentación — Girardota</div>
@@ -1201,32 +1220,31 @@ async function verificarCodigoLogin() {
   }
 }
 
-window.addEventListener('load', () => {
-
+function mostrarPantallaInicial() {
+  const splash = document.getElementById('splash');
   const data = localStorage.getItem('lp_user');
 
-  // 🔴 NO hay sesión → mostrar login
+  // 🔴 NO hay sesión → login directo
   if (!data) {
+    splash.style.display = 'none';
     $('s-login').classList.add('on');
-     
     return;
   }
 
   try {
     const obj = JSON.parse(data);
-
     const ahora = Date.now();
     const DIAS_14 = 14 * 24 * 60 * 60 * 1000;
 
-    // 🔴 Expirada
+    // 🔴 Sesión expirada
     if (ahora - obj.loginTime > DIAS_14) {
       localStorage.removeItem('lp_user');
+      splash.style.display = 'none';
       $('s-login').classList.add('on');
-       
       return;
     }
 
-    // 🔥 Restaurar sesión
+    // 🔥 Validar con backend
     ST.correo = obj.correo;
 
     api('loginGoogle', { correo: obj.correo })
@@ -1247,16 +1265,18 @@ window.addEventListener('load', () => {
         $('s-login').classList.add('on');
       })
       .finally(() => {
-          // 👈 SOLO aquí se muestra TODO
+        // 🔥 OCULTAR SPLASH SIEMPRE
+        splash.style.display = 'none';
       });
 
   } catch {
     localStorage.removeItem('lp_user');
+    splash.style.display = 'none';
     $('s-login').classList.add('on');
-     
   }
+}
 
-});
+document.addEventListener('DOMContentLoaded', mostrarPantallaInicial);
   
 </script>
 </body>
