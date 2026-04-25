@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#f4f6fb">
+<title>Reservar Cita — La Presentación</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-const url = window.BACKEND_URL || '';color:transparent}
+:root{
+  --pr:#1a3a6b;--royal:#0f2657;--cobalt:#1e4db7;
+  --gold:#c9962a;--gold2:#e8b84b;
+  --bg:#f2f5fa;--white:#ffffff;--tx:#111827;--mt:#6b7280;
+  --bdr:#e2e6ef;--bdr2:#cbd2e0;
+  --green:#059669;--red:#dc2626;--gbg:#f0fdf4;--rbg:#fef2f2;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --sh2:0 8px 24px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.04);
+}
+html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:var(--sans)}
+
+/* ── HEADER ── */
+.hdr{background:var(--white);border-bottom:1px solid var(--bdr);
+  padding:14px 18px;display:flex;align-items:center;gap:11px;
+  position:sticky;top:0;z-index:20;box-shadow:var(--sh)}
+.hdr-ico{font-size:26px}
+.hdr-tx h1{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--pr)}
+.hdr-tx p{font-size:11px;color:var(--mt)}
+
+/* ── STEPS NAV ── */
+.snav{display:flex;background:var(--white);border-bottom:1px solid var(--bdr);overflow-x:auto;position:sticky;top:57px;z-index:19}
+.snav::-webkit-scrollbar{display:none}
+.sdot{flex-shrink:0;display:flex;align-items:center;gap:5px;
+  padding:10px 14px;font-size:11px;font-family:var(--mono);
+  color:var(--mt);border-bottom:2px solid transparent;white-space:nowrap;cursor:default}
+.sdot.done{color:var(--green)}
+.sdot.act{color:var(--pr);border-color:var(--pr);font-weight:500}
+.snum{width:19px;height:19px;border-radius:50%;background:var(--bdr);
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.sdot.done .snum{background:var(--green);color:white}
+.sdot.act .snum{background:var(--pr);color:white}
+
+/* ── CONTAINER ── */
+.ct{max-width:540px;margin:0 auto;padding:18px 15px 80px}
+
+/* ── STEPS ── */
+.step{display:none;animation:fi .2s ease}
+.step.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.step-title{font-size:19px;font-weight:600;margin-bottom:3px}
+.step-sub{font-size:13px;color:var(--mt);margin-bottom:18px}
+
+/* ── BÚSQUEDA ── */
+.sw{position:relative;margin-bottom:14px}
+.si{width:100%;padding:13px 14px 13px 40px;border:1.5px solid var(--bdr2);
+  border-radius:11px;font-size:15px;font-family:var(--sans);
+  outline:none;background:var(--white);color:var(--tx);-webkit-appearance:none;
+  transition:border-color .2s}
+.si:focus{border-color:var(--pr)}
+.sw-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px}
+
+/* ── DOCENTE CARD ── */
+.dc{background:var(--white);border:1.5px solid var(--bdr);border-radius:13px;
+  padding:15px;margin-bottom:9px;cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;gap:11px;box-shadow:var(--sh)}
+.dc:hover{border-color:var(--pr);transform:translateY(-1px);box-shadow:var(--sh2)}
+.dc:active{transform:scale(.98)}
+.dc-av{width:42px;height:42px;background:linear-gradient(135deg,var(--royal),var(--cobalt));
+  border-radius:11px;display:flex;align-items:center;justify-content:center;
+  font-size:17px;flex-shrink:0;font-weight:600;color:white;font-family:var(--mono)}
+.dc-info{flex:1}
+.dc-nombre{font-size:14px;font-weight:600;margin-bottom:2px}
+.dc-hs{font-size:12px;color:var(--mt)}
+.dc-arr{font-size:18px;color:var(--mt)}
+
+/* ── CALENDARIO PÚBLICO ── */
+.mnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mbtn{background:var(--white);border:1.5px solid var(--bdr2);border-radius:9px;
+  padding:7px 13px;font-family:var(--mono);font-size:12px;cursor:pointer;
+  color:var(--tx);transition:all .15s}
+.mbtn:hover{border-color:var(--pr);color:var(--pr)}
+.mtit{font-family:var(--mono);font-size:13px;font-weight:500}
+
+.cpg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:18px}
+.cph{text-align:center;font-size:10px;font-family:var(--mono);color:var(--mt);padding:3px 0}
+.cpd{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;border-radius:9px;font-size:13px;
+  border:1.5px solid transparent;transition:all .15s;position:relative}
+.cpd.disp{background:var(--white);border-color:var(--bdr2);cursor:pointer;
+  font-weight:500;box-shadow:var(--sh)}
+.cpd.disp::after{content:'';position:absolute;bottom:3px;width:5px;height:5px;
+  background:var(--gold);border-radius:50%}
+.cpd.disp:hover{border-color:var(--pr);background:#eef3ff}
+.cpd.sel{background:var(--pr)!important;color:white!important;border-color:var(--pr)!important}
+.cpd.sel::after{background:white}
+.cpd.hoy-d{font-weight:700;color:var(--pr)}
+.cpd.lleno{background:#f9fafb;color:var(--mt);opacity:.55}
+.cpd.pasado{opacity:.3}
+.cpd.nhor{opacity:.3;color:var(--mt)}
+.cpd:empty{visibility:hidden}
+
+/* ── SLOTS ── */
+.slots-tit{font-family:var(--mono);font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--mt);margin-bottom:11px}
+.slots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:18px}
+.slot-btn{background:var(--white);border:1.5px solid var(--bdr2);border-radius:9px;
+  padding:11px 5px;text-align:center;font-family:var(--mono);font-size:13px;
+  cursor:pointer;color:var(--tx);transition:all .15s;font-weight:500;box-shadow:var(--sh)}
+.slot-btn:hover{border-color:var(--pr);background:#eef3ff}
+.slot-btn.sel{background:var(--pr);color:white;border-color:var(--pr)}
+.slot-btn.nd{background:#f9fafb;color:var(--mt);cursor:not-allowed;opacity:.5;font-size:11px}
+
+/* ── FORM ── */
+.fg{margin-bottom:16px}
+.fl{display:block;font-family:var(--mono);font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--mt);margin-bottom:7px;font-weight:500}
+.fi,.fsel,.fta{width:100%;padding:13px 14px;border:1.5px solid var(--bdr2);
+  border-radius:11px;font-family:var(--sans);font-size:15px;color:var(--tx);
+  background:var(--white);outline:none;transition:border-color .2s;-webkit-appearance:none}
+.fi:focus,.fsel:focus,.fta:focus{border-color:var(--pr);box-shadow:0 0 0 3px rgba(26,58,107,.07)}
+.fta{resize:none;height:78px}
+.fsel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%236b7280' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;background-size:16px;padding-right:34px}
+
+/* ── MOTIVOS ── */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:11px}
+.mbut{padding:11px 12px;border:1.5px solid var(--bdr2);border-radius:9px;
+  background:var(--white);font-size:13px;cursor:pointer;
+  transition:all .15s;text-align:left;display:flex;align-items:center;gap:7px}
+.mbut.sel{border-color:var(--pr);background:#eef3ff;color:var(--pr);font-weight:500}
+.mico{font-size:15px}
+
+/* ── CONFIRM CARD ── */
+.cconf{background:var(--white);border:1.5px solid var(--bdr);border-radius:14px;
+  padding:18px;margin-bottom:18px;box-shadow:var(--sh2)}
+.cconf-tit{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--pr);
+  margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.crow{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--bdr);font-size:13px}
+.crow:last-child{border-bottom:none}
+.clb{color:var(--mt);font-size:12px;width:100px;flex-shrink:0}
+.cvl{font-weight:500}
+
+/* ── ÉXITO ── */
+.suc-ico{font-size:60px;text-align:center;margin-bottom:14px;animation:bou .5s ease}
+@keyframes bou{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.suc-title{font-size:21px;font-weight:700;text-align:center;margin-bottom:7px;color:var(--green)}
+.suc-sub{font-size:13px;color:var(--mt);text-align:center;margin-bottom:22px}
+.suc-card{background:var(--gbg);border:1.5px solid #a7f3d0;border-radius:14px;padding:18px;margin-bottom:20px}
+
+/* ── BOTONES ── */
+.btn{width:100%;padding:15px;border-radius:13px;border:none;
+  background:linear-gradient(135deg,var(--royal),var(--cobalt));color:white;
+  font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  margin-bottom:9px;box-shadow:0 4px 14px rgba(26,58,107,.25)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-sec{width:100%;padding:13px;border-radius:13px;border:1.5px solid var(--bdr2);
+  background:var(--white);color:var(--mt);font-family:var(--mono);
+  font-size:12px;cursor:pointer;transition:all .15s;margin-bottom:9px}
+.btn-sec:hover{border-color:var(--pr);color:var(--pr)}
+
+/* ── ALERTA ── */
+.alt{border-radius:11px;padding:12px 14px;font-size:13px;margin-bottom:14px;
+  display:flex;align-items:flex-start;gap:9px;line-height:1.5}
+.alt-ico{font-size:15px;flex-shrink:0;margin-top:1px}
+.altw{background:#fffbeb;border:1.5px solid #fcd34d;color:#92400e}
+.alte{background:var(--rbg);border:1.5px solid #fca5a5;color:var(--red)}
+
+/* ── CITA FLOTANTE ── */
+.cfloat{position:sticky;top:95px;z-index:18;background:var(--white);
+  border-bottom:1px solid var(--bdr);padding:10px 15px;display:none}
+.cfloat.on{display:block}
+.cfloat-in{max-width:540px;margin:0 auto;display:flex;align-items:center;gap:9px}
+.cfloat-doc{font-weight:600;font-size:13px;color:var(--pr);flex:1}
+.cfloat-sl{font-family:var(--mono);font-size:12px;color:var(--mt)}
+
+/* ── LOADING / SPINNER / TOAST ── */
+.loading{display:flex;align-items:center;justify-content:center;
+  padding:36px 0;gap:9px;color:var(--mt);font-size:13px}
+.spin{width:18px;height:18px;border:2px solid var(--bdr2);
+  border-top-color:var(--pr);border-radius:50%;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:28px 0;font-size:13px;color:var(--mt)}
+.toast{position:fixed;bottom:18px;left:50%;
+  transform:translateX(-50%) translateY(110px);background:#1a1f36;color:white;
+  border-radius:11px;padding:12px 18px;font-size:13px;max-width:290px;
+  width:calc(100% - 32px);text-align:center;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1);z-index:200}
+.toast.on{transform:translateX(-50%) translateY(0)}
+
+/* ── MODAL ── */
+.moven{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;
+  display:none;align-items:center;justify-content:center;padding:18px;
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.moven.on{display:flex}
+.moda{background:var(--white);border-radius:18px;padding:26px;
+  max-width:380px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.15)}
+.moda-tit{font-size:17px;font-weight:700;margin-bottom:7px}
+.moda-sub{font-size:13px;color:var(--mt);margin-bottom:18px}
+
+@media(max-width:340px){.slots-grid{grid-template-columns:repeat(2,1fr)}.mgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-ico">🏫</div>
+  <div class="hdr-tx">
+    <h1>Reserva de Citas</h1>
+    <p>La Presentación — Girardota</p>
+  </div>
+</div>
+
+<!-- STEPS NAV -->
+<div class="snav" id="snav">
+  <div class="sdot act" id="sd1"><span class="snum">1</span>Docente</div>
+  <div class="sdot" id="sd2"><span class="snum">2</span>Horario</div>
+  <div class="sdot" id="sd3"><span class="snum">3</span>Datos</div>
+  <div class="sdot" id="sd4"><span class="snum">4</span>Confirmar</div>
+</div>
+
+<!-- CITA FLOTANTE -->
+<div class="cfloat" id="cfloat">
+  <div class="cfloat-in">
+    <div class="cfloat-doc" id="cf-doc">—</div>
+    <div class="cfloat-sl" id="cf-sl">—</div>
+  </div>
+</div>
+
+<div class="ct">
+
+  <!-- STEP 1: DOCENTE -->
+  <div class="step on" id="step1">
+    <div class="step-title">Elige un docente</div>
+    <div class="step-sub">¿Con quién deseas hablar?</div>
+    <div class="sw"><span class="sw-ico">🔍</span>
+      <input type="search" class="si" id="buscar" placeholder="Buscar docente..." oninput="filtrarDocs(this.value)">
+    </div>
+    <div id="docs-lista"><div class="loading"><div class="spin"></div> Cargando docentes...</div></div>
+  </div>
+
+  <!-- STEP 2: HORARIO -->
+  <div class="step" id="step2">
+    <div class="step-title">Elige fecha y hora</div>
+    <div class="step-sub">Selecciona una fecha disponible</div>
+    <div id="s2-load" class="loading"><div class="spin"></div> Cargando disponibilidad...</div>
+    <div id="s2-cont" style="display:none">
+      <div class="mnav">
+        <button class="mbtn" onclick="navMes(-1)">◀</button>
+        <span class="mtit" id="mes-tit">—</span>
+        <button class="mbtn" onclick="navMes(1)">▶</button>
+      </div>
+      <div class="cpg" id="cpg"></div>
+      <div id="slots-sec" style="display:none">
+        <div class="slots-tit" id="slots-tit-txt">Horarios disponibles</div>
+        <div class="slots-grid" id="slots-grid"></div>
+      </div>
+    </div>
+    <div id="s2-unavail" class="alt altw" style="display:none">
+      <span class="alt-ico">⚠️</span><span id="s2-msg">Sin disponibilidad.</span>
+    </div>
+    <button class="btn-sec" onclick="goStep(1)">← Volver</button>
+  </div>
+
+  <!-- STEP 3: DATOS -->
+  <div class="step" id="step3">
+    <div class="step-title">Tus datos</div>
+    <div class="step-sub">Completa el formulario</div>
+    <div class="fg"><label class="fl">Nombre</label>
+      <input type="text" class="fi" id="f-nom" placeholder="Tu nombre" autocapitalize="characters" oninput="this.value=this.value.toUpperCase()">
+    </div>
+    <div class="fg"><label class="fl">Apellidos</label>
+      <input type="text" class="fi" id="f-ape" placeholder="Tus apellidos" autocapitalize="characters" oninput="this.value=this.value.toUpperCase()">
+    </div>
+    <div class="fg"><label class="fl">Correo electrónico</label>
+      <input type="email" class="fi" id="f-cor" placeholder="tu@correo.com" autocapitalize="none">
+    </div>
+    <div class="fg"><label class="fl">Nombre del estudiante</label>
+      <input type="text" class="fi" id="f-est" placeholder="Nombre completo" autocapitalize="characters" oninput="this.value=this.value.toUpperCase()">
+    </div>
+    <div class="fg"><label class="fl">Grado</label>
+      <select class="fsel" id="f-grado"><option value="">Selecciona el grado...</option></select>
+    </div>
+    <div class="fg">
+      <label class="fl">Motivo de la cita</label>
+      <div class="mgrid">
+        <button type="button" class="mbut" onclick="togMot('Académico',this)"><span class="mico">📚</span> Académico</button>
+        <button type="button" class="mbut" onclick="togMot('Comportamiento',this)"><span class="mico">💬</span> Comportamiento</button>
+        <button type="button" class="mbut" onclick="togMot('Seguimiento',this)"><span class="mico">📋</span> Seguimiento</button>
+        <button type="button" class="mbut" onclick="togMot('Otro',this)"><span class="mico">➕</span> Otro</button>
+      </div>
+      <textarea class="fta" id="f-motx" placeholder="Detalles adicionales (opcional)..."></textarea>
+    </div>
+    <button class="btn" onclick="validarForm()">Revisar cita →</button>
+    <button class="btn-sec" onclick="goStep(2)">← Volver</button>
+  </div>
+
+  <!-- STEP 4: CONFIRMAR -->
+  <div class="step" id="step4">
+    <div class="step-title">Confirmar cita</div>
+    <div class="step-sub">Revisa los datos antes de confirmar</div>
+    <div class="cconf">
+      <div class="cconf-tit">📅 Detalle de tu cita</div>
+      <div class="crow"><span class="clb">Docente</span><span class="cvl" id="cv-doc">—</span></div>
+      <div class="crow"><span class="clb">Fecha</span><span class="cvl" id="cv-fec">—</span></div>
+      <div class="crow"><span class="clb">Hora</span><span class="cvl" id="cv-hora">—</span></div>
+      <div class="crow"><span class="clb">Padre/Madre</span><span class="cvl" id="cv-pad">—</span></div>
+      <div class="crow"><span class="clb">Estudiante</span><span class="cvl" id="cv-est">—</span></div>
+      <div class="crow"><span class="clb">Grado</span><span class="cvl" id="cv-gra">—</span></div>
+      <div class="crow"><span class="clb">Motivo</span><span class="cvl" id="cv-mot">—</span></div>
+    </div>
+    <div class="alt altw">
+      <span class="alt-ico">📧</span>
+      <span>Recibirás confirmación en tu correo con un enlace para cancelar si es necesario.</span>
+    </div>
+    <button class="btn" id="btn-conf" onclick="confirmarReserva()">✅ Confirmar cita</button>
+    <button class="btn-sec" onclick="goStep(3)">← Volver y editar</button>
+  </div>
+
+  <!-- STEP 5: ÉXITO -->
+  <div class="step" id="step5">
+    <div class="suc-ico">✅</div>
+    <div class="suc-title">¡Cita confirmada!</div>
+    <div class="suc-sub">Hemos enviado los detalles a tu correo</div>
+    <div class="suc-card">
+      <div class="crow"><span class="clb">Docente</span><span class="cvl" id="su-doc">—</span></div>
+      <div class="crow"><span class="clb">Fecha</span><span class="cvl" id="su-fec">—</span></div>
+      <div class="crow"><span class="clb">Hora</span><span class="cvl" id="su-hora">—</span></div>
+      <div class="crow"><span class="clb">Estudiante</span><span class="cvl" id="su-est">—</span></div>
+    </div>
+    <p style="font-size:13px;color:var(--mt);text-align:center;margin-bottom:18px">Para cancelar, usa el enlace en tu correo.</p>
+    <button class="btn" onclick="reiniciar()">📅 Hacer otra reserva</button>
+  </div>
+
+</div><!-- /ct -->
+
+<!-- MODAL CANCELAR -->
+<div class="moven" id="modal-can">
+  <div class="moda">
+    <div class="moda-tit">❌ Cancelar cita</div>
+    <div class="moda-sub">¿Confirmas que deseas cancelar esta cita?</div>
+    <div class="fg"><label class="fl">Motivo de cancelación</label>
+      <textarea class="fta" id="mm-mot" placeholder="Escribe el motivo..."></textarea>
+    </div>
+    <button class="btn" id="btn-can-ok" onclick="confirmarCancelToken()">Confirmar cancelación</button>
+    <button class="btn-sec" onclick="document.getElementById('modal-can').classList.remove('on')">No, mantener cita</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── ESTADO ────────────────────────────────────────────────────
+let ST = {
+  step:1, docs:[], docSel:null, slots:null,
+  fechaSel:null, slotSel:null, motivos:[], mes:new Date(),
+  cancelToken:null,
+};
+
+const IS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
+
+// API wrapper — GAS o fetch según entorno
+function api(action, payload) {
+  return new Promise((resolve, reject) => {
+    if (IS_GAS) {
+      const map = {
+        disponibilidadCompleta:(_,ok,er)=>google.script.run.withSuccessHandler(ok).withFailureHandler(er).obtenerDisponibilidadCompleta(),
+        grados:(_,ok,er)=>google.script.run.withSuccessHandler(ok).withFailureHandler(er).obtenerGrados(),
+        estadoAgenda:(_,ok,er)=>google.script.run.withSuccessHandler(ok).withFailureHandler(er).obtenerEstadoAgendaPublico(),
+        crearReserva:(p,ok,er)=>google.script.run.withSuccessHandler(ok).withFailureHandler(er).crearReserva(p.datos),
+        cancelarToken:(p,ok,er)=>google.script.run.withSuccessHandler(ok).withFailureHandler(er).cancelarReservaToken(p.token,p.motivo),
+      };
+      const fn = map[action];
+      if(!fn){reject(new Error('No fn:'+action));return;}
+      fn(payload, resolve, reject);
+    } else {
+      const url = "https://script.google.com/macros/s/AKfycbw1JSmbnW4ELgSngqxL59_9hlGJ4e0MP_Ogl945w2aFFlmglgMJtvXcdrT5f_Wi3aL-/exec";
+      fetch(url,{method:'POST',body:JSON.stringify({action,...payload})})
+        .then(r=>r.json()).then(resolve).catch(reject);
+    }
+  });
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+const $=id=>document.getElementById(id);
+function toast(msg){
+  const t=$('toast'); t.textContent=msg; t.classList.add('on');
+  clearTimeout(t._to); t._to=setTimeout(()=>t.classList.remove('on'),3500);
+}
+function pad(n){return String(n).padStart(2,'0')}
+function fmtFecha(f){
+  if(!f)return''; const p=f.split('-');
+  const ms=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return p[2]+' de '+ms[parseInt(p[1])-1]+' de '+p[0];
+}
+
+// ── NAVEGACIÓN ────────────────────────────────────────────────
+function goStep(n) {
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('on'));
+  ['sd1','sd2','sd3','sd4'].forEach((id,i)=>{
+    const el=$(id); el.classList.remove('act','done');
+    if(i+1<n) el.classList.add('done');
+    else if(i+1===n) el.classList.add('act');
+  });
+  $('step'+n).classList.add('on');
+  ST.step=n; window.scrollTo(0,0);
+  $('cfloat').classList.toggle('on', !!ST.docSel && n>1 && n<5);
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+window.onload = function(){
+  // Comprobar agenda cerrada
+  api('estadoAgenda',{}).then(r=>{
+    if(r.cerrada) mostrarAgendaCerrada(r.motivo);
+  }).catch(()=>{});
+
+  // Cargar docentes + disponibilidad
+  api('disponibilidadCompleta',{}).then(data=>{
+    ST.docs = data||[];
+    renderDocs(ST.docs);
+  }).catch(()=>{
+    $('docs-lista').innerHTML='<div class="alt alte"><span class="alt-ico">❌</span><span>Error al cargar. Recarga la página.</span></div>';
+  });
+
+  // Cargar grados
+  api('grados',{}).then(gs=>{
+    const sel=$('f-grado');
+    sel.innerHTML='<option value="">Selecciona el grado...</option>';
+    (gs||[]).forEach(g=>{ const o=document.createElement('option'); o.value=g; o.textContent=g; sel.appendChild(o); });
+  }).catch(()=>{});
+
+  // Verificar token de cancelación
+  setTimeout(verificarTokenCancelacion, 600);
+};
+
+function mostrarAgendaCerrada(motivo) {
+  document.body.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#f2f5fa;font-family:IBM Plex Sans,sans-serif">
+      <div style="background:white;padding:36px;border-radius:16px;text-align:center;max-width:340px;box-shadow:0 10px 30px rgba(0,0,0,.1)">
+        <div style="font-size:48px;margin-bottom:10px">🚫</div>
+        <h2 style="color:#dc2626;margin-bottom:9px">Agenda cerrada</h2>
+        <p style="color:#6b7280;font-size:14px;margin-bottom:8px">No es posible agendar citas en este momento.</p>
+        <p style="font-size:13px;color:#374151"><strong>Motivo:</strong><br>${motivo||'No especificado'}</p>
+      </div></div>`;
+}
+
+// ── STEP 1: DOCENTES ──────────────────────────────────────────
+function renderDocs(lista) {
+  const el=$('docs-lista');
+  if(!lista.length){el.innerHTML='<div class="empty">No hay docentes disponibles</div>';return;}
+  el.innerHTML = lista.map(d=>{
+    const nombre=(d.nombre||'').replace(/'/g,'');
+    const ini = nombre.charAt(0).toUpperCase() || '?';
+    const dias=[...new Set((d.disponibilidad&&d.disponibilidad.slots||[])
+      .filter(s=>s.disponible).map(s=>s.fecha?new Date(s.fecha+'T12:00:00').toLocaleDateString('es-CO',{weekday:'short'}):'')
+      .filter(Boolean))].join(', ');
+    return `<div class="dc" onclick="seleccionarDoc('${d.id}')">
+      <div class="dc-av">${ini}</div>
+      <div class="dc-info">
+        <div class="dc-nombre">${nombre}</div>
+        <div class="dc-hs">${dias?'Disponible: '+dias:'Ver disponibilidad'}</div>
+      </div>
+      <div class="dc-arr">›</div></div>`;
+  }).join('');
+}
+
+function filtrarDocs(q) {
+  const q2=q.toLowerCase().trim();
+  renderDocs(q2 ? ST.docs.filter(d=>(d.nombre||'').toLowerCase().includes(q2)) : ST.docs);
+}
+
+function seleccionarDoc(id) {
+  const d = ST.docs.find(x=>x.id===id);
+  if(!d){toast('Docente no encontrado');return;}
+  ST.docSel = d;
+  $('cf-doc').textContent = d.nombre;
+  goStep(2);
+
+  if(!d.disponibilidad||!d.disponibilidad.ok){
+    $('s2-load').style.display='none';
+    $('s2-unavail').style.display='flex';
+    $('s2-msg').textContent='Este docente no tiene horarios configurados.';
+    return;
+  }
+  ST.slots = d.disponibilidad.slots;
+  ST.mes = new Date();
+  $('s2-load').style.display='none';
+  $('s2-cont').style.display='block';
+  $('s2-unavail').style.display='none';
+  renderCal();
+}
+
+// ── STEP 2: CALENDARIO ────────────────────────────────────────
+function renderCal() {
+  const d=ST.mes, y=d.getFullYear(), m=d.getMonth();
+  const ms=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  $('mes-tit').textContent = ms[m]+' '+y;
+
+  const hoy=new Date(); hoy.setHours(0,0,0,0);
+  let pd=new Date(y,m,1).getDay(); pd=pd===0?6:pd-1;
+  const dim=new Date(y,m+1,0).getDate();
+
+  // Index slots
+  const si={};
+  (ST.slots||[]).forEach(s=>{ si[s.fecha]=s; });
+
+  const dias=['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+  let html=dias.map(dn=>`<div class="cph">${dn}</div>`).join('');
+  for(let i=0;i<pd;i++) html+='<div class="cpd"></div>';
+
+  for(let dd=1;dd<=dim;dd++){
+    const f=new Date(y,m,dd); f.setHours(0,0,0,0);
+    const fs=y+'-'+pad(m+1)+'-'+pad(dd);
+    const ds=si[fs];
+    let cls='cpd';
+    let click='';
+    if(f<hoy) cls+=' pasado';
+    else if(!ds||!ds.disponible) cls+=ds?' lleno':' nhor';
+    else {
+      cls+=' disp';
+      if(f.getTime()===hoy.getTime()) cls+=' hoy-d';
+      if(ST.fechaSel===fs) cls+=' sel';
+      click=`onclick="selFecha('${fs}')"`;
+    }
+    html+=`<div class="${cls}" ${click}>${dd}</div>`;
+  }
+
+  $('cpg').innerHTML=html;
+}
+
+function navMes(delta) {
+  ST.mes.setMonth(ST.mes.getMonth()+delta);
+  ST.fechaSel=null; ST.slotSel=null;
+  $('slots-sec').style.display='none';
+  renderCal();
+}
+
+function selFecha(fecha) {
+  ST.fechaSel=fecha; ST.slotSel=null; renderCal();
+  const ds=(ST.slots||[]).find(s=>s.fecha===fecha);
+  const slots=ds?ds.slots:[];
+
+  $('slots-tit-txt').textContent='Horarios — '+fmtFecha(fecha);
+  $('slots-grid').innerHTML=slots.length ? slots.map(s=>{
+    if(s.ocupado) return `<button class="slot-btn nd" disabled>${s.horaInicio}<br><small>Ocupado</small></button>`;
+    if(!s.disponible) return `<button class="slot-btn nd" disabled>${s.horaInicio}<br><small style="color:#dc2626">No disp.</small></button>`;
+    return `<button class="slot-btn" onclick="selSlot('${s.horaInicio}','${s.horaFin}',this)">${s.horaInicio}</button>`;
+  }).join('') : `<div style="grid-column:1/-1;font-size:13px;color:var(--mt);padding:7px 0">Sin horarios para esta fecha.</div>`;
+
+  $('slots-sec').style.display='block';
+  $('slots-sec').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function selSlot(ini, fin, el) {
+  ST.slotSel={horaInicio:ini, horaFin:fin};
+  document.querySelectorAll('.slot-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  $('cf-sl').textContent=fmtFecha(ST.fechaSel)+' · '+ini;
+  setTimeout(()=>goStep(3), 450);
+}
+
+// ── STEP 3: FORM ──────────────────────────────────────────────
+function togMot(mot, btn) {
+  btn.classList.toggle('sel');
+  const idx=ST.motivos.indexOf(mot);
+  if(idx>=0) ST.motivos.splice(idx,1); else ST.motivos.push(mot);
+}
+
+function validarForm() {
+  const nom=$('f-nom').value.trim(), ape=$('f-ape').value.trim();
+  const cor=$('f-cor').value.trim(), est=$('f-est').value.trim();
+  const gra=$('f-grado').value;
+  if(!nom||!ape){toast('Ingresa tu nombre y apellidos');return;}
+  if(!cor||!cor.includes('@')){toast('Correo inválido');return;}
+  if(!est){toast('Ingresa el nombre del estudiante');return;}
+  if(!gra){toast('Selecciona el grado');return;}
+  if(!ST.motivos.length){toast('Selecciona al menos un motivo');return;}
+  if(!ST.fechaSel||!ST.slotSel){toast('Selecciona fecha y hora');return;}
+
+  $('cv-doc').textContent  = ST.docSel.nombre;
+  $('cv-fec').textContent  = fmtFecha(ST.fechaSel);
+  $('cv-hora').textContent = ST.slotSel.horaInicio+' – '+ST.slotSel.horaFin;
+  $('cv-pad').textContent  = nom+' '+ape;
+  $('cv-est').textContent  = est;
+  $('cv-gra').textContent  = gra;
+  $('cv-mot').textContent  = ST.motivos.join(', ')+(($('f-motx').value)?' — '+$('f-motx').value:'');
+  goStep(4);
+}
+
+// ── STEP 4: CONFIRMAR ─────────────────────────────────────────
+function confirmarReserva() {
+  const btn=$('btn-conf');
+  btn.innerHTML='<span class="spin" style="border-top-color:white;border-color:rgba(255,255,255,.3)"></span> Confirmando...';
+  btn.disabled=true;
+
+  const datos={
+    docenteId: ST.docSel.id,
+    fecha: ST.fechaSel,
+    horaInicio: ST.slotSel.horaInicio,
+    horaFin: ST.slotSel.horaFin,
+    padreNombre: $('f-nom').value.trim().toUpperCase(),
+    padreApellido: $('f-ape').value.trim().toUpperCase(),
+    padreCorreo: $('f-cor').value.trim().toLowerCase(),
+    estudianteNombre: $('f-est').value.trim().toUpperCase(),
+    grado: $('f-grado').value,
+    motivos: ST.motivos,
+    motivoExtra: $('f-motx').value.trim(),
+  };
+
+  api('crearReserva',{datos}).then(r=>{
+    btn.innerHTML='✅ Confirmar cita'; btn.disabled=false;
+    if(r.ok){
+      $('su-doc').textContent  = ST.docSel.nombre;
+      $('su-fec').textContent  = fmtFecha(ST.fechaSel);
+      $('su-hora').textContent = ST.slotSel.horaInicio+' – '+ST.slotSel.horaFin;
+      $('su-est').textContent  = datos.estudianteNombre;
+      goStep(5);
+    } else toast(r.mensaje||'Error al reservar');
+  }).catch(()=>{
+    btn.innerHTML='✅ Confirmar cita'; btn.disabled=false;
+    toast('Error de conexión. Intenta de nuevo.');
+  });
+}
+
+// ── CANCELAR DESDE LINK ───────────────────────────────────────
+function verificarTokenCancelacion() {
+  if(window.TOKEN_CANCEL){
+    ST.cancelToken=window.TOKEN_CANCEL;
+    $('modal-can').classList.add('on');
+  }
+}
+
+function confirmarCancelToken() {
+  const mot=$('mm-mot').value.trim();
+  if(!mot){toast('El motivo es obligatorio');return;}
+  const btn=$('btn-can-ok');
+  btn.innerHTML='Cancelando...'; btn.disabled=true;
+  api('cancelarToken',{token:ST.cancelToken,motivo:mot}).then(r=>{
+    if(r.ok||((r.mensaje||'').includes('ya fue cancelada'))){
+      document.body.innerHTML=`
+        <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#f2f5fa;font-family:IBM Plex Sans,sans-serif">
+          <div style="background:white;padding:36px;border-radius:16px;text-align:center;max-width:320px">
+            <div style="font-size:48px;margin-bottom:10px">✅</div>
+            <h2 style="color:#059669;margin-bottom:9px">Cita cancelada</h2>
+            <p style="color:#6b7280;font-size:14px">La cita fue cancelada correctamente.</p>
+          </div></div>`;
+    } else {
+      toast(r.mensaje||'Error al cancelar');
+      btn.innerHTML='Confirmar cancelación'; btn.disabled=false;
+    }
+  }).catch(()=>{
+    toast('Error de conexión'); btn.innerHTML='Confirmar cancelación'; btn.disabled=false;
+  });
+}
+
+// ── REINICIAR ─────────────────────────────────────────────────
+function reiniciar() {
+  ST={step:1,docs:ST.docs,docSel:null,slots:null,
+    fechaSel:null,slotSel:null,motivos:[],mes:new Date(),cancelToken:null};
+  document.querySelectorAll('.mbut').forEach(b=>b.classList.remove('sel'));
+  ['f-nom','f-ape','f-cor','f-est','f-motx'].forEach(id=>$(id).value='');
+  $('f-grado').value=''; $('buscar').value='';
+  $('s2-load').style.display='none';
+  $('s2-cont').style.display='none';
+  $('s2-unavail').style.display='none';
+  renderDocs(ST.docs);
+  goStep(1);
+}
+</script>
+</body>
+</html>
