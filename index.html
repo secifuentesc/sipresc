@@ -18,6 +18,11 @@
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
   --r:12px;
 }
+
+body {
+  visibility: hidden;
+}
+  
 html{width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
 html,body{height:100%;height:100svh;overflow:hidden;font-size:15px}
 body{background:var(--s0);color:var(--tx);font-family:var(--sans);
@@ -1095,10 +1100,10 @@ window.addEventListener('load', () => {
 
   const data = localStorage.getItem('lp_user');
 
-  // 👉 Si NO hay sesión → mostrar login
+  // 🔴 NO hay sesión → mostrar login
   if (!data) {
-    $('s-login').style.display = 'flex';
     $('s-login').classList.add('on');
+    mostrarUI();
     return;
   }
 
@@ -1108,15 +1113,15 @@ window.addEventListener('load', () => {
     const ahora = Date.now();
     const DIAS_14 = 14 * 24 * 60 * 60 * 1000;
 
-    // 🔴 Sesión vencida
+    // 🔴 Expirada
     if (ahora - obj.loginTime > DIAS_14) {
       localStorage.removeItem('lp_user');
-      $('s-login').style.display = 'flex';
       $('s-login').classList.add('on');
+      mostrarUI();
       return;
     }
 
-    // 🔥 Restaurar sesión SIN mostrar login
+    // 🔥 Restaurar sesión
     ST.correo = obj.correo;
 
     api('loginGoogle', { correo: obj.correo })
@@ -1126,28 +1131,31 @@ window.addEventListener('load', () => {
           ST.nombre = r.nombre;
           ST.docenteId = r.docenteId;
 
-          iniciarApp(); // 👉 entra directo
+          iniciarApp(); // entra directo
         } else {
           localStorage.removeItem('lp_user');
-          $('s-login').style.display = 'flex';
           $('s-login').classList.add('on');
         }
       })
       .catch(() => {
         localStorage.removeItem('lp_user');
-        $('s-login').style.display = 'flex';
         $('s-login').classList.add('on');
+      })
+      .finally(() => {
+        mostrarUI(); // 👈 SOLO aquí se muestra TODO
       });
 
   } catch {
     localStorage.removeItem('lp_user');
-    $('s-login').style.display = 'flex';
     $('s-login').classList.add('on');
+    mostrarUI();
   }
 
 });
-
-
+  
+function mostrarUI() {
+  document.body.style.visibility = 'visible';
+}
 </script>
 </body>
 </html>
