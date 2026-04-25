@@ -565,8 +565,6 @@ function loginGoogle() {
 
 firebase.auth().onAuthStateChanged(user => {
   const sesionValida = validarSesionLocal();
-  
-  if (!user || !sesionValida) {
 
   // 🔴 Si no hay usuario o la sesión expiró
   if (!user || !sesionValida) {
@@ -598,7 +596,6 @@ firebase.auth().onAuthStateChanged(user => {
         ST.nombre = r.nombre;
         ST.docenteId = r.docenteId;
 
-        // 🔐 Guardar sesión
         localStorage.setItem('lp_user', JSON.stringify({
           correo: user.email,
           loginTime: Date.now()
