@@ -1121,23 +1121,43 @@ const icoClock=()=>'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><pa
 const icoStats=()=>'<svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>';
 const icoAdmin=()=>'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>';
 
-async function enviarCodigoLogin() {
+aasync function enviarCodigoLogin() {
   const input = document.getElementById('correoCodigo').value;
   const correo = input.includes('@') ? input : input + '@lapresentaciongirardota.edu.co';
 
-  if (!correo) {
-    toast('Ingresa tu correo','er');
+  if (!input) {
+    toast('Ingresa tu usuario','er');
     return;
   }
 
-  const r = await api('enviarCodigo', { correo });
+  const btn = event.target;
+  const original = btn.innerHTML;
 
-  if (r.ok) {
-    toast('Código enviado al correo','ok');
-    document.getElementById('bloqueCodigo').style.display = 'block';
-  } else {
-    toast(r.mensaje,'er');
+  // 🔥 Mostrar inmediatamente el campo del código
+  document.getElementById('bloqueCodigo').style.display = 'block';
+
+  // 🔥 Desactivar botón para evitar múltiples clics
+  btn.innerHTML = '<span class="spin"></span> Enviando...';
+  btn.disabled = true;
+
+  try {
+    const r = await api('enviarCodigo', { correo });
+
+    if (r.ok) {
+      toast('Código enviado al correo','ok');
+    } else {
+      toast(r.mensaje,'er');
+    }
+
+  } catch (e) {
+    toast('Error de conexión','er');
   }
+
+  // 🔥 Reactivar botón después de unos segundos
+  setTimeout(() => {
+    btn.innerHTML = original;
+    btn.disabled = false;
+  }, 4000);
 }
 
 async function verificarCodigoLogin() {
