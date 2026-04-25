@@ -356,23 +356,47 @@ letter-spacing:1px;
 
 <!-- APP -->
 <div id="s-app" class="screen">
-<div id="home-docente" class="tab on" style="padding:24px 16px; display:none;">
-  <div class="card" style="text-align:center; padding:26px 18px;">
-    <div style="font-size:22px; font-weight:600; margin-bottom:6px;">
+<div id="home-docente" class="screen" style="display:none;">
+<div style="
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+">
+
+  <div style="
+  width:100%;
+  max-width:420px;
+  text-align:center;
+  ">
+
+    <div style="
+    font-size:26px;
+    font-weight:600;
+    margin-bottom:6px;
+    ">
       Hola, <span id="nombre-docente">Docente</span> 👋
     </div>
-    <div style="font-size:14px; color:var(--mt); margin-bottom:22px;">
+
+    <div style="
+    font-size:14px;
+    color:var(--mt);
+    margin-bottom:30px;
+    ">
       ¿Qué deseas hacer hoy?
     </div>
 
-    <button class="btn btn-g" onclick="abrirModulo('planeaciones')">
+    <button class="btn btn-g" style="margin-bottom:12px; font-size:13px;" onclick="abrirModulo('planeaciones')">
       Planeaciones
     </button>
 
-    <button class="btn btn-p" onclick="abrirModulo('citas')">
+    <button class="btn btn-p" style="font-size:13px;" onclick="abrirModulo('citas')">
       Citas
     </button>
+
   </div>
+
 </div>
   <div class="topbar">
     <div class="topbar-ico">🏫</div>
