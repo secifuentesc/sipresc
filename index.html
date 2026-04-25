@@ -1175,7 +1175,7 @@ window.addEventListener('load', () => {
   // 🔴 NO hay sesión → mostrar login
   if (!data) {
     $('s-login').classList.add('on');
-    mostrarUI();
+     
     return;
   }
 
@@ -1189,7 +1189,7 @@ window.addEventListener('load', () => {
     if (ahora - obj.loginTime > DIAS_14) {
       localStorage.removeItem('lp_user');
       $('s-login').classList.add('on');
-      mostrarUI();
+       
       return;
     }
 
@@ -1214,13 +1214,13 @@ window.addEventListener('load', () => {
         $('s-login').classList.add('on');
       })
       .finally(() => {
-        mostrarUI(); // 👈 SOLO aquí se muestra TODO
+          // 👈 SOLO aquí se muestra TODO
       });
 
   } catch {
     localStorage.removeItem('lp_user');
     $('s-login').classList.add('on');
-    mostrarUI();
+     
   }
 
 });
