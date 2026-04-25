@@ -440,6 +440,71 @@ const FB_CFG = {
 firebase.initializeApp(FB_CFG);
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
+// 🔥 SOLUCIÓN LOGIN REDIRECT
+firebase.auth().getRedirectResult().then(result => {
+  if (result.user) {
+    const user = result.user;
+
+    api('loginGoogle', { correo: user.email })
+      .then(r => {
+        if (r.ok) {
+          ST.rol = r.rol;
+          ST.correo = r.correo;
+          ST.nombre = r.nombre;
+          ST.docenteId = r.docenteId;
+
+          iniciarApp();
+        } else {
+          firebase.auth().signOut();
+          const err = document.getElementById('lerr');
+          err.textContent = r.mensaje || 'Sin acceso al sistema';
+          err.classList.add('on');
+        }
+      })
+      .catch(() => {
+        firebase.auth().signOut();
+      });
+  }
+});
+
+// 👇 ESTO YA LO TENÍAS (NO LO BORRES)
+firebase.auth().onAuthStateChanged(user => {
+  if (!user || FB_DONE) return;
+  FB_DONE = true;
+
+  const btn = $('btn-login'), err = $('lerr');
+  btn.innerHTML = '<span class="spin"></span> Verificando…'; 
+  btn.disabled = true;
+
+  api('loginGoogle', { correo: user.email })
+    .then(r => {
+      if (r.ok) {
+        ST.rol = r.rol;
+        ST.correo = r.correo;
+        ST.nombre = r.nombre;
+        ST.docenteId = r.docenteId;
+
+        err.classList.remove('on');
+        iniciarApp();
+      } else {
+        firebase.auth().signOut();
+        btn.innerHTML = 'Ingresar con Google';
+        btn.disabled = false;
+        err.textContent = r.mensaje || 'Sin acceso al sistema';
+        err.classList.add('on');
+        FB_DONE = false;
+      }
+    })
+    .catch(() => {
+      firebase.auth().signOut();
+      btn.innerHTML = 'Ingresar con Google';
+      btn.disabled = false;
+      err.textContent = 'Error de conexión.';
+      err.classList.add('on');
+      FB_DONE = false;
+    });
+});
+
 // ── URL BACKEND (Apps Script doPost) ─────────────────────────
 // Se obtiene dinámicamente desde google.script.run en GAS,
 // pero para Vercel/externo se pasa via window.BACKEND_URL
@@ -560,6 +625,8 @@ firebase.auth().onAuthStateChanged(user => {
       FB_DONE = false;
     });
 });
+
+
 
 function doLogout() {
   firebase.auth().signOut();
