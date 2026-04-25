@@ -273,7 +273,7 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 <body>
 
 <!-- LOGIN -->
-<div id="s-login" class="screen">
+<div id="s-login" class="screen" style="display:none">
   <div class="lp-logo">🏫</div>
   <div class="lp-title">Sistema de Citas</div>
   <div class="lp-sub">La Presentación — Girardota</div>
@@ -1094,7 +1094,13 @@ const icoAdmin=()=>'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path
 window.addEventListener('load', () => {
 
   const data = localStorage.getItem('lp_user');
-  if (!data) return;
+
+  // 👉 Si NO hay sesión → mostrar login
+  if (!data) {
+    $('s-login').style.display = 'flex';
+    $('s-login').classList.add('on');
+    return;
+  }
 
   try {
     const obj = JSON.parse(data);
@@ -1102,16 +1108,17 @@ window.addEventListener('load', () => {
     const ahora = Date.now();
     const DIAS_14 = 14 * 24 * 60 * 60 * 1000;
 
-    // 🔴 Si ya expiró
+    // 🔴 Sesión vencida
     if (ahora - obj.loginTime > DIAS_14) {
       localStorage.removeItem('lp_user');
+      $('s-login').style.display = 'flex';
+      $('s-login').classList.add('on');
       return;
     }
 
-    // 🔥 Restaurar sesión
+    // 🔥 Restaurar sesión SIN mostrar login
     ST.correo = obj.correo;
 
-    // Validar con backend
     api('loginGoogle', { correo: obj.correo })
       .then(r => {
         if (r.ok) {
@@ -1119,26 +1126,28 @@ window.addEventListener('load', () => {
           ST.nombre = r.nombre;
           ST.docenteId = r.docenteId;
 
-          iniciarApp(); // entra directo sin login
+          iniciarApp(); // 👉 entra directo
         } else {
           localStorage.removeItem('lp_user');
+          $('s-login').style.display = 'flex';
+          $('s-login').classList.add('on');
         }
       })
       .catch(() => {
         localStorage.removeItem('lp_user');
+        $('s-login').style.display = 'flex';
+        $('s-login').classList.add('on');
       });
 
   } catch {
     localStorage.removeItem('lp_user');
+    $('s-login').style.display = 'flex';
+    $('s-login').classList.add('on');
   }
 
 });
 
-setTimeout(() => {
-  if (!$('s-app').classList.contains('on')) {
-    $('s-login').classList.add('on');
-  }
-}, 300);
+
 </script>
 </body>
 </html>
