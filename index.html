@@ -1121,7 +1121,7 @@ const icoClock=()=>'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><pa
 const icoStats=()=>'<svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>';
 const icoAdmin=()=>'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>';
 
-aasync function enviarCodigoLogin() {
+async function enviarCodigoLogin() {
   const input = document.getElementById('correoCodigo').value;
   const correo = input.includes('@') ? input : input + '@lapresentaciongirardota.edu.co';
 
@@ -1130,11 +1130,12 @@ aasync function enviarCodigoLogin() {
     return;
   }
 
-  const btn = event.target;
+  <button class="btn btn-p" onclick="enviarCodigoLogin(this)">
   const original = btn.innerHTML;
 
   // 🔥 Mostrar inmediatamente el campo del código
   document.getElementById('bloqueCodigo').style.display = 'block';
+  document.getElementById('inputCodigo').focus();
 
   // 🔥 Desactivar botón para evitar múltiples clics
   btn.innerHTML = '<span class="spin"></span> Enviando...';
