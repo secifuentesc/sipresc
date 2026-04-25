@@ -428,6 +428,28 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
+function validarSesionLocal() {
+  const data = localStorage.getItem('lp_user');
+  if (!data) return false;
+
+  try {
+    const obj = JSON.parse(data);
+
+    const ahora = Date.now();
+    const DIAS_15 = 15 * 24 * 60 * 60 * 1000;
+
+    if (ahora - obj.loginTime > DIAS_15) {
+      // 🔴 Sesión expirada
+      localStorage.removeItem('lp_user');
+      return false;
+    }
+
+    return true;
+
+  } catch {
+    return false;
+  }
+}
 // ── CONFIG FIREBASE ──────────────────────────────────────────
 const FB_CFG = {
   apiKey:"AIzaSyDJ_9HlZGOG6JSaeD35uzPvvkkWQ0Cbj9k",
@@ -542,33 +564,74 @@ function loginGoogle() {
 }
 
 firebase.auth().onAuthStateChanged(user => {
-  if (!user || FB_DONE) return;
+  if (!validarSesionLocal()) return;
+
+  const sesionValida = validarSesionLocal();
+
+  // 🔴 Si no hay usuario o la sesión expiró
+  if (!user || !sesionValida) {
+    firebase.auth().signOut();
+    localStorage.removeItem('lp_user');
+
+    $('s-login').classList.add('on');
+    $('s-app').classList.remove('on');
+    return;
+  }
+
+  // 🟢 Si ya hay sesión válida
+  $('s-login').classList.remove('on');
+
+  if (FB_DONE) return;
   FB_DONE = true;
-  const btn = $('btn-login'), err = $('lerr');
-  btn.innerHTML = '<span class="spin"></span> Verificando…'; btn.disabled = true;
+
+  const btn = $('btn-login');
+  const err = $('lerr');
+
+  btn.innerHTML = '<span class="spin"></span> Verificando…';
+  btn.disabled = true;
+
   api('loginGoogle', { correo: user.email })
     .then(r => {
       if (r.ok) {
-        ST.rol = r.rol; ST.correo = r.correo;
-        ST.nombre = r.nombre; ST.docenteId = r.docenteId;
-        err.classList.remove('on');
+        ST.rol = r.rol;
+        ST.correo = r.correo;
+        ST.nombre = r.nombre;
+        ST.docenteId = r.docenteId;
+
+        // 🔐 Guardar sesión
+        localStorage.setItem('lp_user', JSON.stringify({
+          correo: user.email,
+          loginTime: Date.now()
+        }));
+
         iniciarApp();
+
       } else {
         firebase.auth().signOut();
-        btn.innerHTML = 'Ingresar con Google'; btn.disabled = false;
-        err.textContent = r.mensaje || 'Sin acceso al sistema'; err.classList.add('on');
+        localStorage.removeItem('lp_user');
+
+        btn.innerHTML = 'Ingresar con Google';
+        btn.disabled = false;
+
+        err.textContent = r.mensaje || 'Sin acceso al sistema';
+        err.classList.add('on');
+
         FB_DONE = false;
       }
     })
     .catch(() => {
       firebase.auth().signOut();
-      btn.innerHTML = 'Ingresar con Google'; btn.disabled = false;
-      err.textContent = 'Error de conexión.'; err.classList.add('on');
+      localStorage.removeItem('lp_user');
+
+      btn.innerHTML = 'Ingresar con Google';
+      btn.disabled = false;
+
+      err.textContent = 'Error de conexión.';
+      err.classList.add('on');
+
       FB_DONE = false;
     });
 });
-
-
 
 function doLogout() {
   firebase.auth().signOut();
@@ -586,6 +649,11 @@ function iniciarApp() {
   $('s-app').classList.add('on');
   $('bnav').style.display = 'flex';
   $('tp-rol').textContent = ST.rol.toUpperCase();
+
+  // 🔐 Renovar sesión automáticamente
+const data = JSON.parse(localStorage.getItem('lp_user') || '{}');
+data.loginTime = Date.now();
+localStorage.setItem('lp_user', JSON.stringify(data));
 
   const navs = [{ id:'dash', label:'Inicio', svg:icoHome() }];
   if (ST.rol === 'docente') {
