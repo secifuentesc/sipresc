@@ -300,9 +300,9 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
   <input type="email" id="correoCodigo" placeholder="Usuario institucional (ej: secifuentes)"
     class="fi" style="margin-bottom:8px;">
 
-  <button class="btn btn-p" onclick="enviarCodigoLogin()">
-    Enviar código
-  </button>
+  <button class="btn btn-p" onclick="enviarCodigoLogin(this)">
+  Enviar código
+</button>
 
   <div id="bloqueCodigo" style="display:none; margin-top:10px;">
     
@@ -1121,7 +1121,8 @@ const icoClock=()=>'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><pa
 const icoStats=()=>'<svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>';
 const icoAdmin=()=>'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>';
 
-async function enviarCodigoLogin() {
+window.enviarCodigoLogin = async function(btn) {
+
   const input = document.getElementById('correoCodigo').value;
   const correo = input.includes('@') ? input : input + '@lapresentaciongirardota.edu.co';
 
@@ -1130,14 +1131,13 @@ async function enviarCodigoLogin() {
     return;
   }
 
-  <button class="btn btn-p" onclick="enviarCodigoLogin(this)">
   const original = btn.innerHTML;
 
-  // 🔥 Mostrar inmediatamente el campo del código
+  // Mostrar campo código
   document.getElementById('bloqueCodigo').style.display = 'block';
   document.getElementById('inputCodigo').focus();
 
-  // 🔥 Desactivar botón para evitar múltiples clics
+  // Desactivar botón
   btn.innerHTML = '<span class="spin"></span> Enviando...';
   btn.disabled = true;
 
@@ -1154,13 +1154,12 @@ async function enviarCodigoLogin() {
     toast('Error de conexión','er');
   }
 
-  // 🔥 Reactivar botón después de unos segundos
   setTimeout(() => {
     btn.innerHTML = original;
     btn.disabled = false;
   }, 4000);
 }
-
+  
 async function verificarCodigoLogin() {
   const input = document.getElementById('correoCodigo').value;
   const correo = input.includes('@') ? input : input + '@lapresentaciongirardota.edu.co';
