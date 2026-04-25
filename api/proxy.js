@@ -9,18 +9,11 @@ export default async function handler(req, res) {
 
     const GAS_URL = "https://script.google.com/macros/s/AKfycbw1JSmbnW4ELgSngqxL59_9hlGJ4e0MP_Ogl945w2aFFlmglgMJtvXcdrT5f_Wi3aL-/exec";
 
-    // 🔥 LEER BODY REAL (CLAVE)
-    let body = '';
+    // 🔥 IMPORTANTE: en Vercel req.body puede ser string o objeto
+    const body = typeof req.body === 'string'
+      ? req.body
+      : JSON.stringify(req.body);
 
-    await new Promise((resolve, reject) => {
-      req.on('data', chunk => {
-        body += chunk;
-      });
-      req.on('end', resolve);
-      req.on('error', reject);
-    });
-
-    // 🔥 ENVIAR TAL CUAL A GAS
     const response = await fetch(GAS_URL, {
       method: 'POST',
       headers: {
@@ -31,22 +24,23 @@ export default async function handler(req, res) {
 
     const text = await response.text();
 
-    // 🔥 DEBUG (por si vuelve a fallar)
     console.log("RESPUESTA GAS:", text);
 
-    // 🔥 INTENTAR PARSEAR
-    try {
-      const data = JSON.parse(text);
-      return res.status(200).json(data);
-    } catch (e) {
+    // 🔥 Si GAS devuelve HTML → lo mostramos
+    if (text.startsWith("<!DOCTYPE")) {
       return res.status(500).json({
         ok: false,
-        mensaje: 'Apps Script no devolvió JSON',
+        mensaje: "Apps Script devolvió HTML (error)",
         raw: text
       });
     }
 
+    const data = JSON.parse(text);
+    return res.status(200).json(data);
+
   } catch (error) {
+    console.error("ERROR PROXY:", error);
+
     return res.status(500).json({
       ok: false,
       mensaje: error.message
