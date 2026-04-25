@@ -356,55 +356,64 @@ letter-spacing:1px;
 
 <!-- APP -->
 <div id="s-app" class="screen">
-<div class="tab" id="t-home">
-<div style="
-min-height:calc(100vh - 60px);
-padding-top:20px;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:20px;
-">
 
-  <div style="
-  width:100%;
-  max-width:420px;
-  text-align:center;
-  ">
-
-    <div style="
-    font-size:26px;
-    font-weight:600;
-    margin-bottom:6px;
-    ">
-      Hola, <span id="nombre-docente">Docente</span> 👋
-    </div>
-
-    <div style="
-    font-size:14px;
-    color:var(--mt);
-    margin-bottom:30px;
-    ">
-      ¿Qué deseas hacer hoy?
-    </div>
-
-    <button class="btn btn-g" style="margin-bottom:12px; font-size:13px;" onclick="abrirModulo('planeaciones')">
-      Planeaciones
-    </button>
-
-    <button class="btn btn-p" style="font-size:13px;" onclick="abrirModulo('citas')">
-      Citas
-    </button>
-
-  </div>
-
-</div>
+  <!-- TOPBAR (SIEMPRE ARRIBA, FUERA DE LOS TABS) -->
   <div class="topbar">
     <div class="topbar-ico">🏫</div>
     <h1>La Presentación</h1>
     <span class="topbar-rol" id="tp-rol">—</span>
     <button class="logout-btn" onclick="doLogout()">Salir</button>
   </div>
+
+  <!-- HOME -->
+  <div class="tab" id="t-home">
+
+    <div style="
+      min-height:calc(100vh - 60px);
+      padding-top:20px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    ">
+
+      <div style="
+        width:100%;
+        max-width:420px;
+        text-align:center;
+      ">
+
+        <div style="
+          font-size:26px;
+          font-weight:600;
+          margin-bottom:6px;
+        ">
+          Hola, <span id="nombre-docente">Docente</span> 👋
+        </div>
+
+        <div style="
+          font-size:14px;
+          color:var(--mt);
+          margin-bottom:30px;
+        ">
+          ¿Qué deseas hacer hoy?
+        </div>
+
+        <button class="btn btn-g" style="margin-bottom:12px; font-size:13px;" onclick="abrirModulo('planeaciones')">
+          Planeaciones
+        </button>
+
+        <button class="btn btn-p" style="font-size:13px;" onclick="abrirModulo('citas')">
+          Citas
+        </button>
+
+      </div>
+
+    </div>
+
+  </div> <!-- 🔥 CIERRE CORRECTO DEL HOME -->
+
+</div>
 
   <!-- DASHBOARD -->
   <div class="tab" id="t-dash">
