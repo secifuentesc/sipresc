@@ -552,12 +552,10 @@ function api(action, payload) {
     }
 
     fetch(API, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body),
-    })
+  method: 'POST',
+  mode: 'no-cors', // 🔥 ESTO ARREGLA TODO
+  body: JSON.stringify(body),
+})
     .then(r => r.json())
     .then(resolve)
     .catch(reject);
