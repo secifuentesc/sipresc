@@ -34,10 +34,24 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 /* ── LOGIN ── */
 #s-login{display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:32px 20px;gap:0;min-height:100%}
-.lp-logo{width:80px;height:80px;border-radius:22px;
+.lp-logo{
+  width:80px;
+  height:80px;
+  border-radius:22px;
   background:linear-gradient(140deg,var(--royal),var(--cobalt));
-  display:flex;align-items:center;justify-content:center;font-size:38px;
-  margin-bottom:18px;box-shadow:0 8px 32px rgba(30,77,183,.4)}
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:18px;
+  box-shadow:0 8px 32px rgba(30,77,183,.4);
+  overflow:hidden; /* 🔥 IMPORTANTE */
+}
+
+.logo-img{
+  width:55px;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.15));
+}
+  
 .lp-title{font-family:var(--mono);font-size:17px;font-weight:600;letter-spacing:.5px;margin-bottom:4px}
 .lp-sub{font-size:12px;color:var(--mt);margin-bottom:36px;letter-spacing:.5px}
 .lp-card{width:100%;max-width:360px;background:var(--s2);border:1px solid var(--br2);
@@ -295,7 +309,9 @@ letter-spacing:1px;
   
 <!-- LOGIN -->
 <div id="s-login" class="screen">
-  <div class="lp-logo">🏫</div>
+  <div class="lp-logo">
+  <img src="/logo.png" class="logo-img">
+</div>
   <div class="lp-title">Sistema de Citas</div>
   <div class="lp-sub">La Presentación — Girardota</div>
   <div class="lp-card">
