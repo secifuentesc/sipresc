@@ -273,7 +273,7 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 <body>
 
 <!-- LOGIN -->
-<div id="s-login" class="screen on">
+<div id="s-login" class="screen">
   <div class="lp-logo">🏫</div>
   <div class="lp-title">Sistema de Citas</div>
   <div class="lp-sub">La Presentación — Girardota</div>
@@ -1133,6 +1133,12 @@ window.addEventListener('load', () => {
   }
 
 });
+
+setTimeout(() => {
+  if (!$('s-app').classList.contains('on')) {
+    $('s-login').classList.add('on');
+  }
+}, 300);
 </script>
 </body>
 </html>
