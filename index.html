@@ -292,6 +292,31 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
       </svg>
       Ingresar con Google
     </button>
+    <div style="margin-top:18px;">
+
+  <div style="text-align:center; font-size:11px; color:var(--mt); margin-bottom:10px;">
+    o ingresa con código
+  </div>
+
+  <input type="email" id="correoCodigo" placeholder="Correo institucional"
+    class="fi" style="margin-bottom:8px;">
+
+  <button class="btn btn-p" onclick="enviarCodigoLogin()">
+    Enviar código
+  </button>
+
+  <div id="bloqueCodigo" style="display:none; margin-top:10px;">
+    
+    <input type="text" id="inputCodigo" placeholder="Código de verificación"
+      class="fi" style="margin-bottom:8px;">
+
+    <button class="btn btn-g" onclick="verificarCodigoLogin()">
+      Verificar código
+    </button>
+
+  </div>
+
+</div>
   </div>
   <div class="lp-link">¿Eres padre de familia? <a href="?page=padres" target="_blank">Reservar cita →</a></div>
 </div>
@@ -1094,6 +1119,55 @@ const icoClock=()=>'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><pa
 const icoStats=()=>'<svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>';
 const icoAdmin=()=>'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>';
 
+async function enviarCodigoLogin() {
+  const correo = document.getElementById('correoCodigo').value;
+
+  if (!correo) {
+    toast('Ingresa tu correo','er');
+    return;
+  }
+
+  const r = await api('enviarCodigo', { correo });
+
+  if (r.ok) {
+    toast('Código enviado al correo','ok');
+    document.getElementById('bloqueCodigo').style.display = 'block';
+  } else {
+    toast(r.mensaje,'er');
+  }
+}
+
+async function verificarCodigoLogin() {
+  const correo = document.getElementById('correoCodigo').value;
+  const codigo = document.getElementById('inputCodigo').value;
+
+  if (!codigo) {
+    toast('Ingresa el código','er');
+    return;
+  }
+
+  const r = await api('verificarCodigo', { correo, codigo });
+
+  if (r.ok) {
+    toast('Ingreso exitoso','ok');
+
+    ST.rol = r.rol;
+    ST.correo = r.correo;
+    ST.nombre = r.nombre;
+    ST.docenteId = r.docenteId;
+
+    localStorage.setItem('lp_user', JSON.stringify({
+      correo: r.correo,
+      loginTime: Date.now()
+    }));
+
+    iniciarApp();
+
+  } else {
+    toast(r.mensaje,'er');
+  }
+}
+
 window.addEventListener('load', () => {
 
   const data = localStorage.getItem('lp_user');
@@ -1151,9 +1225,6 @@ window.addEventListener('load', () => {
 
 });
   
-function mostrarUI() {
-  document.body.style.visibility = 'visible';
-}
 </script>
 </body>
 </html>
