@@ -605,6 +605,9 @@ function loginGoogle() {
   
 function doLogout() {
   firebase.auth().signOut();
+
+  localStorage.removeItem('lp_user'); // 🔥 SOLO ESTA LÍNEA NUEVA
+
   ST = { rol:null,correo:null,nombre:null,docenteId:null,citas:[],filtroEstado:'todas',
     calFecha:new Date(),calSel:null,horarios:{},grados:[],todasCitas:[] };
   FB_DONE = false;
@@ -1087,6 +1090,49 @@ const icoCalendar=()=>'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" hei
 const icoClock=()=>'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
 const icoStats=()=>'<svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>';
 const icoAdmin=()=>'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>';
+
+window.addEventListener('load', () => {
+
+  const data = localStorage.getItem('lp_user');
+  if (!data) return;
+
+  try {
+    const obj = JSON.parse(data);
+
+    const ahora = Date.now();
+    const DIAS_14 = 14 * 24 * 60 * 60 * 1000;
+
+    // 🔴 Si ya expiró
+    if (ahora - obj.loginTime > DIAS_14) {
+      localStorage.removeItem('lp_user');
+      return;
+    }
+
+    // 🔥 Restaurar sesión
+    ST.correo = obj.correo;
+
+    // Validar con backend
+    api('loginGoogle', { correo: obj.correo })
+      .then(r => {
+        if (r.ok) {
+          ST.rol = r.rol;
+          ST.nombre = r.nombre;
+          ST.docenteId = r.docenteId;
+
+          iniciarApp(); // entra directo sin login
+        } else {
+          localStorage.removeItem('lp_user');
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem('lp_user');
+      });
+
+  } catch {
+    localStorage.removeItem('lp_user');
+  }
+
+});
 </script>
 </body>
 </html>
