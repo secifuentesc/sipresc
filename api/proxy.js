@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
 
-  // 🔥 PERMITIR CORS
+  // 🔥 CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -30,22 +30,24 @@ export default async function handler(req, res) {
 
     const text = await response.text();
 
-// 🔥 LIMPIAR RESPUESTA DE GOOGLE
-const clean = text
-  .replace(")]}'", '') // ← clave
-  .trim();
+    // 🔥 LIMPIEZA ROBUSTA (NO solo replace simple)
+    const clean = text
+      .replace(/^\)\]\}'/, '') // ← más seguro (regex)
+      .trim();
 
-let data;
+    let data;
 
-try {
-  data = JSON.parse(clean);
-} catch (e) {
-  return res.status(500).json({
-    ok: false,
-    mensaje: 'Respuesta inválida del backend',
-    raw: text
-  });
-}
+    try {
+      data = JSON.parse(clean);
+    } catch (e) {
+      console.error("RAW RESPONSE:", text);
+
+      return res.status(500).json({
+        ok: false,
+        mensaje: 'Respuesta inválida del backend',
+        raw: text
+      });
+    }
 
     return res.status(200).json(data);
 
