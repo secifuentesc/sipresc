@@ -1489,6 +1489,15 @@ function procesarCorreoGoogle(correo) {
   var btn = document.getElementById('btn-login');
   var err = document.getElementById('lerr');
 
+  if (typeof google === 'undefined' || !google.script || !google.script.run) {
+  console.error("No estás dentro de Apps Script");
+
+  // 🔁 Recargar dentro del entorno correcto
+  window.top.location.href = window.location.href;
+
+  return;
+}
+
   if (!correo.endsWith('@lapresentaciongirardota.edu.co')) {
     firebase.auth().signOut();
     btn.innerHTML = ICO_GOOGLE;
