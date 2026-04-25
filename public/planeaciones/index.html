@@ -1,1 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Planeaciones — SIPRESC</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --ink:#0a1628;--blue:#1a3a6b;--royal:#0f2657;--cobalt:#1e4db7;
+  --gold:#c9962a;--gold2:#e8b84b;--gold3:rgba(201,150,42,.12);
+  --s0:#050e1d;--s1:#0d1f3c;--s2:#122449;--s3:#182e58;
+  --br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.13);
+  --tx:#e8edf8;--mt:#7a8fb0;
+  --green:#2dd4a0;--red:#f06b6b;--purple:#8b84f8;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
+html,body{min-height:100%;background:var(--s0);color:var(--tx);font-family:var(--sans);font-size:15px}
+body{
+  background-image:
+  radial-gradient(ellipse 60% 50% at 15% 0%,rgba(26,58,107,.5) 0%,transparent 70%),
+  radial-gradient(ellipse 50% 40% at 85% 100%,rgba(30,77,183,.25) 0%,transparent 70%);
+  padding-bottom:30px;
+}
+.topbar{
+  position:sticky;top:0;z-index:20;
+  background:rgba(5,14,29,.96);border-bottom:1px solid var(--br);
+  padding:10px 14px;display:flex;align-items:center;gap:10px;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)
+}
+.top-logo{
+  width:38px;height:38px;border-radius:12px;
+  background:linear-gradient(140deg,var(--royal),var(--cobalt));
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;box-shadow:0 4px 18px rgba(30,77,183,.3);
+  flex-shrink:0;
+}
+.top-logo img{width:26px;filter:drop-shadow(0 0 8px rgba(255,255,255,.15))}
+.topbar h1{font-family:var(--mono);font-size:12px;font-weight:500;line-height:1.2;flex:1}
+.back-btn{
+  background:none;border:none;color:var(--mt);font-family:var(--mono);
+  font-size:11px;cursor:pointer;padding:6px;
+}
+.wrap{width:100%;max-width:760px;margin:0 auto;padding:18px 13px}
+.hero{
+  background:linear-gradient(150deg,rgba(18,36,73,.95),rgba(13,31,60,.96));
+  border:1px solid var(--br2);border-radius:18px;padding:20px;
+  margin-bottom:14px;box-shadow:0 18px 50px rgba(0,0,0,.28)
+}
+.kicker{font-family:var(--mono);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold2);margin-bottom:8px}
+.hero h2{font-size:24px;line-height:1.1;margin-bottom:8px}
+.hero p{font-size:13px;color:var(--mt);line-height:1.55}
+.card{
+  background:var(--s2);border:1px solid var(--br);border-radius:14px;
+  padding:16px;margin-bottom:12px;width:100%
+}
+.slabel{
+  font-family:var(--mono);font-size:9px;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--mt);margin-bottom:11px
+}
+.fg{margin-bottom:14px}
+.fg:last-child{margin-bottom:0}
+.fl{
+  display:block;font-family:var(--mono);font-size:9px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--mt);margin-bottom:7px
+}
+.fi,.fs,.fta{
+  width:100%;background:var(--s1);border:1px solid var(--br);
+  border-radius:9px;color:var(--tx);padding:12px 13px;
+  font-family:var(--sans);font-size:16px;outline:none;
+  transition:border-color .2s;-webkit-appearance:none
+}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--gold)}
+.fta{resize:vertical;min-height:96px;line-height:1.45}
+.fs{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%237a8fb0' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;background-size:16px;padding-right:36px
+}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{
+  width:100%;padding:14px;border-radius:11px;border:none;
+  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-g{background:linear-gradient(135deg,#7a5a14,var(--gold));color:var(--s0);font-weight:700}
+.btn-o{background:transparent;border:1px solid var(--br2);color:var(--mt)}
+.btn-p{background:linear-gradient(135deg,var(--royal),var(--cobalt));color:white;border:1px solid rgba(255,255,255,.08)}
+.help{font-size:12px;color:var(--mt);line-height:1.45;margin-top:6px}
+.alert{
+  border-radius:10px;padding:11px 13px;font-size:13px;margin-bottom:12px;line-height:1.5;
+  background:rgba(201,150,42,.08);border:1px solid rgba(201,150,42,.22);color:var(--gold2)
+}
+.checks{display:flex;gap:9px;flex-wrap:wrap}
+.check{
+  flex:1;min-width:90px;background:var(--s1);border:1px solid var(--br);
+  border-radius:10px;padding:12px;display:flex;align-items:center;gap:8px;
+  color:var(--tx);font-size:14px;cursor:pointer
+}
+.check input{accent-color:#c9962a}
+.clase{display:none}
+.clase.on{display:block}
+.spin{
+  width:13px;height:13px;border:2px solid rgba(255,255,255,.25);
+  border-top-color:white;border-radius:50%;animation:rot .7s linear infinite
+}
+@keyframes rot{to{transform:rotate(360deg)}}
+.toast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(110px);
+  background:var(--s3);border:1px solid var(--br2);border-radius:11px;
+  padding:12px 18px;font-size:13px;max-width:320px;width:calc(100% - 36px);
+  text-align:center;transition:transform .28s cubic-bezier(.34,1.56,.64,1);z-index:100
+}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(45,212,160,.4);color:var(--green)}
+.toast.er{border-color:rgba(240,107,107,.4);color:var(--red)}
+@media(max-width:620px){.row2{grid-template-columns:1fr}.hero h2{font-size:21px}}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <div class="top-logo"><img src="/logo.png" alt="Logo"></div>
+  <h1>SIPRESC - La Presentación<br><span style="color:var(--mt);font-weight:400">Formulario de planeación semanal</span></h1>
+  <button class="back-btn" onclick="window.location.href='/'">Volver</button>
+</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div class="kicker">Planeación semanal</div>
+    <h2>Registra tu planeación de forma clara y organizada</h2>
+    <p>
+      Completa únicamente las clases que correspondan según la intensidad horaria semanal.
+      Antes de enviar, revisa cuidadosamente la información registrada.
+    </p>
+  </section>
+
+  <form id="formPlaneacion">
+
+    <div class="card">
+      <div class="slabel">Datos generales</div>
+
+      <div class="fg">
+        <label class="fl">Correo institucional</label>
+        <input class="fi" id="correo" type="email" placeholder="usuario@lapresentaciongirardota.edu.co" required>
+        <div class="help">Se toma automáticamente de tu sesión si ya ingresaste a SIPRESC.</div>
+      </div>
+
+      <div class="row2">
+        <div class="fg">
+          <label class="fl">Grado</label>
+          <select class="fs" id="grado" required>
+            <option value="">Seleccionar</option>
+            <option>PRE-JARDÍN</option>
+            <option>JARDÍN</option>
+            <option>TRANSICIÓN</option>
+            <option>PRIMERO</option>
+            <option>SEGUNDO</option>
+            <option>TERCERO</option>
+            <option>CUARTO</option>
+            <option>QUINTO</option>
+            <option>SEXTO</option>
+            <option>SÉPTIMO</option>
+            <option>OCTAVO</option>
+            <option>NOVENO</option>
+            <option>DÉCIMO</option>
+            <option>UNDÉCIMO</option>
+          </select>
+        </div>
+
+        <div class="fg">
+          <label class="fl">Asignatura</label>
+          <select class="fs" id="asignatura" required>
+            <option value="">Seleccionar</option>
+            <option>ARTÍSTICA</option>
+            <option>BIOLOGÍA</option>
+            <option>CIENCIAS NATURALES</option>
+            <option>CIENCIAS SOCIALES</option>
+            <option>EDUCACIÓN FÍSICA</option>
+            <option>ÉTICA</option>
+            <option>ESTADÍSTICA</option>
+            <option>ECONOMÍA</option>
+            <option>FILOSOFÍA</option>
+            <option>FÍSICA</option>
+            <option>CIENCIAS FÍSICO – QUÍMICAS</option>
+            <option>GEOGRAFÍA</option>
+            <option>GEOMETRÍA</option>
+            <option>HISTORIA</option>
+            <option>INGLÉS</option>
+            <option>LENGUA CASTELLANA</option>
+            <option>MATEMÁTICAS</option>
+            <option>ORIENTACIÓN ESCOLAR</option>
+            <option>POLÍTICA</option>
+            <option>QUÍMICA</option>
+            <option>READING</option>
+            <option>RELIGIÓN</option>
+            <option>ROBÓTICA</option>
+            <option>TECNOLOGÍA E INFORMÁTICA</option>
+            <option>TALLER DE LECTURA</option>
+            <option>TALLER DE MATEMÁTICAS</option>
+            <option>ORIENTACIÓN VOCACIONAL</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="fg">
+          <label class="fl">Semana</label>
+          <select class="fs" id="semana" required>
+            <option value="">Seleccionar</option>
+            <option>SEMANA 1</option>
+            <option>SEMANA 2</option>
+            <option>SEMANA 3</option>
+            <option>SEMANA 4</option>
+            <option>SEMANA 5</option>
+            <option>SEMANA 6</option>
+            <option>SEMANA 7</option>
+            <option>SEMANA 8</option>
+            <option>SEMANA 9</option>
+            <option>SEMANA 10</option>
+          </select>
+        </div>
+
+        <div class="fg">
+          <label class="fl">Horas de clase en la semana</label>
+          <select class="fs" id="intensidad" required onchange="pintarClases()">
+            <option value="">Seleccionar</option>
+            <option value="1">1 clase</option>
+            <option value="2">2 clases</option>
+            <option value="3">3 clases</option>
+            <option value="4">4 clases</option>
+            <option value="5">5 clases</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="fl">Grupo(s) destino</label>
+        <div class="checks">
+          <label class="check"><input type="checkbox" name="grupo" value="A"> Grupo A</label>
+          <label class="check"><input type="checkbox" name="grupo" value="B"> Grupo B</label>
+        </div>
+        <div class="help">Si aplica para A y B, selecciona ambos.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="slabel">Contexto pedagógico</div>
+
+      <div class="fg">
+        <label class="fl">Observaciones de la semana anterior</label>
+        <textarea class="fta" id="obs" placeholder="Opcional. Escribe novedades, clases canceladas, ajustes o situaciones institucionales."></textarea>
+      </div>
+
+      <div class="fg">
+        <label class="fl">Indicador de desempeño</label>
+        <textarea class="fta" id="indicador" placeholder="Ejemplo: Identificar los elementos principales del tema trabajado mediante actividades prácticas." required></textarea>
+      </div>
+
+      <div class="fg">
+        <label class="fl">¿Enviarás actividad complementaria?</label>
+        <select class="fs" id="act_comp" onchange="toggleActividadComplementaria()" required>
+          <option value="">Seleccionar</option>
+          <option value="no">No</option>
+          <option value="si">Sí</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="alert">
+      Diligencia solo las clases que correspondan a la intensidad semanal seleccionada.
+    </div>
+
+    <div id="clasesWrap"></div>
+
+    <div class="card" id="bloqueActComp" style="display:none">
+      <div class="slabel">Actividad complementaria</div>
+
+      <div class="fg">
+        <label class="fl">¿Cuál será la actividad?</label>
+        <textarea class="fta" id="act_comp_desc" placeholder="Describe la guía, taller, trabajo práctico o actividad de refuerzo."></textarea>
+      </div>
+
+      <div class="fg">
+        <label class="fl">Anexo actividad complementaria</label>
+        <input class="fi" id="act_comp_url" type="url" placeholder="Pega aquí el enlace del archivo, si aplica">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="slabel">Comunicación a las familias</div>
+
+      <div class="fg">
+        <label class="fl">Observaciones para las familias</label>
+        <textarea class="fta" id="obs_fam" placeholder="Opcional. Materiales, recordatorios, lecturas, indicaciones especiales."></textarea>
+      </div>
+
+      <div class="fg">
+        <label class="fl">Anexo comunicación a las familias</label>
+        <input class="fi" id="anexo_fam" type="url" placeholder="Pega aquí el enlace del archivo, si aplica">
+      </div>
+    </div>
+
+    <div class="card">
+      <button class="btn btn-g" id="btnEnviar" type="submit">Enviar planeación</button>
+      <button class="btn btn-o" type="button" style="margin-top:9px" onclick="window.location.href='/'">Cancelar</button>
+    </div>
+
+  </form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_PLANEACIONES = '/api/planeaciones';
+
+function toast(msg, tipo) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast on ' + (tipo || '');
+  clearTimeout(t._to);
+  t._to = setTimeout(() => t.className = 'toast', 3500);
+}
+
+function cargarSesion() {
+  try {
+    const data = JSON.parse(localStorage.getItem('lp_user') || '{}');
+    if (data.correo) {
+      document.getElementById('correo').value = data.correo;
+    }
+  } catch(e) {}
+}
+
+function pintarClases() {
+  const n = Number(document.getElementById('intensidad').value || 0);
+  const wrap = document.getElementById('clasesWrap');
+
+  let html = '';
+
+  for (let i = 1; i <= 5; i++) {
+    html += `
+      <div class="card clase ${i <= n ? 'on' : ''}" id="clase-${i}">
+        <div class="slabel">Clase ${i}</div>
+
+        <div class="fg">
+          <label class="fl">Tema(s) de la clase ${i}${i === 1 ? ' *' : ''}</label>
+          <textarea class="fta" id="d${i}_tema" placeholder="Escribe uno o varios temas. Si son varios, sepáralos por viñetas." ${i === 1 ? 'required' : ''}></textarea>
+        </div>
+
+        <div class="fg">
+          <label class="fl">Actividades principales de la clase ${i}${i === 1 ? ' *' : ''}</label>
+          <textarea class="fta" id="d${i}_act" placeholder="Describe las actividades principales de la clase." ${i === 1 ? 'required' : ''}></textarea>
+        </div>
+      </div>
+    `;
+  }
+
+  wrap.innerHTML = html;
+}
+
+function toggleActividadComplementaria() {
+  const val = document.getElementById('act_comp').value;
+  document.getElementById('bloqueActComp').style.display = val === 'si' ? 'block' : 'none';
+}
+
+function gruposSeleccionados() {
+  return Array.from(document.querySelectorAll('input[name="grupo"]:checked'))
+    .map(x => x.value)
+    .join(',');
+}
+
+function validar() {
+  const grupos = gruposSeleccionados();
+
+  if (!grupos) {
+    toast('Selecciona al menos un grupo destino', 'er');
+    return false;
+  }
+
+  const intensidad = Number(document.getElementById('intensidad').value || 0);
+
+  for (let i = 1; i <= intensidad; i++) {
+    const tema = document.getElementById(`d${i}_tema`)?.value.trim();
+    const act = document.getElementById(`d${i}_act`)?.value.trim();
+
+    if (i === 1 && (!tema || !act)) {
+      toast('Completa tema y actividades de la clase 1', 'er');
+      return false;
+    }
+  }
+
+  return true;
+}
+
+document.getElementById('formPlaneacion').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  if (!validar()) return;
+
+  const btn = document.getElementById('btnEnviar');
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Enviando...';
+
+  const data = {
+    correo: document.getElementById('correo').value.trim(),
+    grado: document.getElementById('grado').value,
+    asignatura: document.getElementById('asignatura').value,
+    semana: document.getElementById('semana').value,
+    intensidad: document.getElementById('intensidad').value,
+    gruposDestino: gruposSeleccionados(),
+
+    obs: document.getElementById('obs').value.trim(),
+    indicador: document.getElementById('indicador').value.trim(),
+
+    d1_tema: document.getElementById('d1_tema')?.value.trim() || '',
+    d1_act: document.getElementById('d1_act')?.value.trim() || '',
+    d2_tema: document.getElementById('d2_tema')?.value.trim() || '',
+    d2_act: document.getElementById('d2_act')?.value.trim() || '',
+    d3_tema: document.getElementById('d3_tema')?.value.trim() || '',
+    d3_act: document.getElementById('d3_act')?.value.trim() || '',
+    d4_tema: document.getElementById('d4_tema')?.value.trim() || '',
+    d4_act: document.getElementById('d4_act')?.value.trim() || '',
+    d5_tema: document.getElementById('d5_tema')?.value.trim() || '',
+    d5_act: document.getElementById('d5_act')?.value.trim() || '',
+
+    act_comp: document.getElementById('act_comp').value === 'si',
+    act_comp_desc: document.getElementById('act_comp_desc').value.trim(),
+    act_comp_url: document.getElementById('act_comp_url').value.trim(),
+
+    obs_fam: document.getElementById('obs_fam').value.trim(),
+    anexo_fam: document.getElementById('anexo_fam').value.trim()
+  };
+
+  try {
+    const r = await fetch(API_PLANEACIONES, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const res = await r.json();
+
+    if (res.ok) {
+      toast('Planeación enviada correctamente', 'ok');
+      setTimeout(() => window.location.href = '/', 1400);
+    } else {
+      toast(res.mensaje || res.error || 'No se pudo guardar la planeación', 'er');
+    }
+
+  } catch (err) {
+    toast('Error de conexión con el sistema', 'er');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = original;
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  cargarSesion();
+  pintarClases();
+});
+</script>
+
+</body>
+</html>
