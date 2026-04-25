@@ -734,53 +734,82 @@ function doLogout() {
 
 // ── INICIAR APP ───────────────────────────────────────────────
 function iniciarApp() {
+
+  // 🔹 Mostrar app / ocultar login
   $('s-login').classList.remove('on');
-$('s-app').classList.add('on');
-$('bnav').style.display = 'flex';
-$('tp-rol').textContent = ST.rol.toUpperCase();
+  $('s-app').classList.add('on');
+  $('bnav').style.display = 'flex';
+  $('tp-rol').textContent = (ST.rol || '').toUpperCase();
 
-// 🔥 Ocultar TODOS los tabs al iniciar
-document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  // 🔹 Reset de tabs
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
 
+  // 🔹 Nombre docente
   const nombre = (ST.nombre || '').split(' ')[0];
-const nombreDocente = document.getElementById('nombre-docente');
-if (nombreDocente) nombreDocente.textContent = nombre || 'Docente';
+  const nombreDocente = document.getElementById('nombre-docente');
+  if (nombreDocente) {
+    nombreDocente.textContent = nombre || 'Docente';
+  }
 
-if (ST.rol === 'docente') {
-  document.getElementById('home-docente').style.display = 'block';
-} else {
-  // Admin o coordinador sí usan dashboard
-  const dash = document.getElementById('t-dash');
-  if (dash) dash.classList.add('on');
-}
+  // 🔹 NAVBAR (SIN DUPLICADOS)
+  let navs = [];
 
-  // 🔐 Renovar sesión automáticamente
-const data = JSON.parse(localStorage.getItem('lp_user') || '{}');
-data.loginTime = Date.now();
-localStorage.setItem('lp_user', JSON.stringify(data));
-
-  const navs = [{ id:'dash', label:'Inicio', svg:icoHome() }];
   if (ST.rol === 'docente') {
-    navs.push({ id:'citas',   label:'Mis Citas', svg:icoCalendar() });
-    navs.push({ id:'horarios',label:'Horarios',  svg:icoClock() });
-  }
-  if (ST.rol === 'admin' || ST.rol === 'coordinador') {
-    navs.push({ id:'cal',   label:'Calendario', svg:icoCalendar() });
-    navs.push({ id:'stats', label:'Estadísticas', svg:icoStats() });
-  }
-  if (ST.rol === 'admin') {
-    navs.push({ id:'admin', label:'Admin', svg:icoAdmin() });
+    navs = [
+      { id:'home', label:'Inicio', svg:icoHome() },
+      { id:'citas', label:'Mis Citas', svg:icoCalendar() },
+      { id:'horarios', label:'Horarios', svg:icoClock() }
+    ];
+  } else {
+    navs = [
+      { id:'dash', label:'Inicio', svg:icoHome() }
+    ];
+
+    if (ST.rol === 'admin' || ST.rol === 'coordinador') {
+      navs.push({ id:'cal', label:'Calendario', svg:icoCalendar() });
+      navs.push({ id:'stats', label:'Estadísticas', svg:icoStats() });
+    }
+
+    if (ST.rol === 'admin') {
+      navs.push({ id:'admin', label:'Admin', svg:icoAdmin() });
+    }
   }
 
+  // 🔹 Render NAV
   $('bnav').innerHTML = navs.map((n,i) =>
     `<button class="ni${i===0?' on':''}" id="ni-${n.id}" onclick="goTab('${n.id}',this)">
-      ${n.svg}<span>${n.label}</span></button>`
+      ${n.svg}<span>${n.label}</span>
+    </button>`
   ).join('');
 
+  // 🔥 ACTIVAR TAB INICIAL (DESPUÉS de crear el NAV)
+  if (ST.rol === 'docente') {
+    goTab('home', document.getElementById('ni-home'));
+  } else {
+    goTab('dash', document.getElementById('ni-dash'));
+  }
+
+  // 🔄 Cargas iniciales
   loadDash();
-  if (ST.rol==='docente') { loadMisCitas(); loadHorarios(); }
-  if (ST.rol==='admin'||ST.rol==='coordinador') { loadCal(); loadStats(); }
-  if (ST.rol==='admin') { loadAdmin(); }
+
+  if (ST.rol === 'docente') {
+    loadMisCitas();
+    loadHorarios();
+  }
+
+  if (ST.rol === 'admin' || ST.rol === 'coordinador') {
+    loadCal();
+    loadStats();
+  }
+
+  if (ST.rol === 'admin') {
+    loadAdmin();
+  }
+
+  // 🔐 Renovar sesión
+  const data = JSON.parse(localStorage.getItem('lp_user') || '{}');
+  data.loginTime = Date.now();
+  localStorage.setItem('lp_user', JSON.stringify(data));
 }
 
 function goTab(id, el) {
