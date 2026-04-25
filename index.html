@@ -19,9 +19,11 @@
   // significa que el iframe no está escalando bien.
   // Forzamos que el html ocupe exactamente el ancho visible.
   if (vw > 0) {
-    document.write(
-      '<style>html,body{width:' + vw + 'px !important;min-width:0 !important;}</style>'
-    );
+    (function() {
+  var vw = window.innerWidth || document.documentElement.clientWidth;
+  document.documentElement.style.width = vw + 'px';
+  document.body.style.width = vw + 'px';
+})();
   }
 })();
 </script>
@@ -757,38 +759,6 @@ function estadoBadge(estado) {
   return '<span class="badge badge-blue">' + estado + '</span>';
 }
 
-// ═══════════════════════════════════════════════════════════
-// LOGIN / LOGOUT
-// ═══════════════════════════════════════════════════════════
-function doLogin() {
-  var correo = document.getElementById('lu').value.trim();
-  var pass   = document.getElementById('lp').value;
-  var err    = document.getElementById('lerr');
-  var btn    = document.getElementById('btn-login');
-  if (!correo || !pass) { err.textContent = 'Completa todos los campos'; err.classList.add('show'); return; }
-  var restore = spin(btn);
-
-  google.script.run
-    .withSuccessHandler(function(r) {
-      restore('🔐 Ingresar');
-      if (r.ok) {
-        STATE.rol = r.rol; STATE.correo = r.correo;
-        STATE.nombre = r.nombre; STATE.docenteId = r.docenteId;
-        err.classList.remove('show');
-        iniciarApp();
-      } else {
-        err.textContent = r.mensaje || 'Credenciales incorrectas';
-        err.classList.add('show');
-      }
-    })
-    .withFailureHandler(function() {
-      restore('🔐 Ingresar');
-      err.textContent = 'Error de conexión'; err.classList.add('show');
-    })
-    .verificarLogin(correo, pass);
-}
-
-// campo de contraseña eliminado — login es solo con Google
 
 function doLogout() {
   STATE = {
@@ -1462,6 +1432,23 @@ window.addEventListener('resize', function() {
   document.documentElement.style.width = vw + 'px';
   document.body.style.width = vw + 'px';
 })();
+
+function esperarAppsScript(callback) {
+  var intentos = 0;
+
+  var intervalo = setInterval(function() {
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+      clearInterval(intervalo);
+      callback();
+    }
+
+    intentos++;
+    if (intentos > 20) {
+      clearInterval(intervalo);
+      console.error("Apps Script no cargó");
+    }
+  }, 200);
+}
 </script>
 
 <!-- ── FIREBASE: carga clásica (no module) para que loginGoogle() sea global ── -->
@@ -1488,15 +1475,6 @@ var ICO_GOOGLE = '<svg width="18" height="18" viewBox="0 0 24 24" style="flex-sh
 function procesarCorreoGoogle(correo) {
   var btn = document.getElementById('btn-login');
   var err = document.getElementById('lerr');
-
-  if (typeof google === 'undefined' || !google.script || !google.script.run) {
-  console.error("No estás dentro de Apps Script");
-
-  // 🔁 Recargar dentro del entorno correcto
-  window.top.location.href = window.location.href;
-
-  return;
-}
 
   if (!correo.endsWith('@lapresentaciongirardota.edu.co')) {
     firebase.auth().signOut();
@@ -1533,45 +1511,25 @@ function procesarCorreoGoogle(correo) {
     .verificarLoginGoogle(correo);
 }
 
-// ── AL CARGAR: revisar si venimos de un redirect ──────────────
-firebase.auth().getRedirectResult()
-  .then(function(result) {
-    if (result && result.user) {
-      var btn = document.getElementById('btn-login');
-      var err = document.getElementById('lerr');
-      btn.innerHTML = '<span class="spinner"></span> Verificando...';
-      btn.disabled = true;
-      err.classList.remove('show');
-      procesarCorreoGoogle(result.user.email);
-    }
-  })
-  .catch(function(error) {
-    // Solo mostrar error si no es cancelación
-    if (error.code !== 'auth/popup-closed-by-user') {
-      var err = document.getElementById('lerr');
-      if (err) {
-        err.textContent = 'Error al iniciar sesión. Intenta de nuevo.';
-        err.classList.add('show');
-      }
-    }
-  });
+
+var YA_PROCESO = false;
 
 firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-    var btn = document.getElementById('btn-login');
-    var err = document.getElementById('lerr');
+  if (!user || YA_PROCESO) return;
 
-    if (btn) {
-      btn.innerHTML = '<span class="spinner"></span> Verificando...';
-      btn.disabled = true;
-    }
+  YA_PROCESO = true;
 
-    if (err) {
-      err.classList.remove('show');
-    }
+  var btn = document.getElementById('btn-login');
+  var err = document.getElementById('lerr');
 
+  btn.innerHTML = '<span class="spinner"></span> Verificando...';
+  btn.disabled = true;
+  err.classList.remove('show');
+
+  // ⏳ Espera a que Apps Script esté listo
+  esperarAppsScript(function() {
     procesarCorreoGoogle(user.email);
-  }
+  });
 });
 
 // ── BOTÓN: lanza el redirect de Google ───────────────────────
