@@ -1,6 +1,5 @@
 export default async function handler(req, res) {
   try {
-    // 🔴 SOLO permitir POST
     if (req.method !== 'POST') {
       return res.status(405).json({
         ok: false,
@@ -10,30 +9,42 @@ export default async function handler(req, res) {
 
     const GAS_URL = "https://script.google.com/macros/s/AKfycbw1JSmbnW4ELgSngqxL59_9hlGJ4e0MP_Ogl945w2aFFlmglgMJtvXcdrT5f_Wi3aL-/exec";
 
-    // 🔥 IMPORTANTE: req.body ya viene parseado en Vercel
+    // 🔥 LEER BODY REAL (CLAVE)
+    let body = '';
+
+    await new Promise((resolve, reject) => {
+      req.on('data', chunk => {
+        body += chunk;
+      });
+      req.on('end', resolve);
+      req.on('error', reject);
+    });
+
+    // 🔥 ENVIAR TAL CUAL A GAS
     const response = await fetch(GAS_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'text/plain;charset=utf-8'
       },
-      body: JSON.stringify(req.body)
+      body: body
     });
 
     const text = await response.text();
 
-    // 🔥 INTENTAR convertir a JSON seguro
-    let data;
+    // 🔥 DEBUG (por si vuelve a fallar)
+    console.log("RESPUESTA GAS:", text);
+
+    // 🔥 INTENTAR PARSEAR
     try {
-      data = JSON.parse(text);
+      const data = JSON.parse(text);
+      return res.status(200).json(data);
     } catch (e) {
       return res.status(500).json({
         ok: false,
-        mensaje: "Respuesta inválida de Apps Script",
+        mensaje: 'Apps Script no devolvió JSON',
         raw: text
       });
     }
-
-    return res.status(200).json(data);
 
   } catch (error) {
     return res.status(500).json({
