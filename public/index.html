@@ -553,7 +553,9 @@ function api(action, payload) {
 
     fetch(API, {
   method: 'POST',
-  mode: 'no-cors', // 🔥 ESTO ARREGLA TODO
+  headers: {
+    'Content-Type': 'application/json'
+  },
   body: JSON.stringify(body),
 })
     .then(r => r.json())
