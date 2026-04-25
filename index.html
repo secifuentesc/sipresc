@@ -564,9 +564,9 @@ function loginGoogle() {
 }
 
 firebase.auth().onAuthStateChanged(user => {
-  if (!validarSesionLocal()) return;
-
   const sesionValida = validarSesionLocal();
+  
+  if (!user || !sesionValida) {
 
   // 🔴 Si no hay usuario o la sesión expiró
   if (!user || !sesionValida) {
