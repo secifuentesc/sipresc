@@ -1403,60 +1403,7 @@ function icoCalendar() { return '<svg viewBox="0 0 24 24" fill="none" stroke-wid
 function icoClock()    { return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'; }
 function icoStats()    { return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>'; }
 function icoAdmin()    { return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>'; }
-// ── FIX DINÁMICO PARA ROTACIÓN ───────────────────────────
-window.addEventListener('resize', function() {
-  var vw = window.innerWidth || document.documentElement.clientWidth;
-  document.documentElement.style.width = vw + 'px';
-  document.body.style.width = vw + 'px';
-});
-(function() {
-  var vw = window.innerWidth || document.documentElement.clientWidth;
-  document.documentElement.style.width = vw + 'px';
-  document.body.style.width = vw + 'px';
-})();
 
-function esperarAppsScript(callback) {
-  var intentos = 0;
-
-  var intervalo = setInterval(function() {
-    if (typeof google !== 'undefined' && google.script && google.script.run) {
-      clearInterval(intervalo);
-      callback();
-    }
-
-    intentos++;
-
-    if (intentos > 50) {
-      clearInterval(intervalo);
-      console.warn("Apps Script tardó demasiado, reintentando...");
-      setTimeout(function() {
-        esperarAppsScript(callback);
-      }, 1000);
-    }
-  }, 200);
-}
-
-function ajustarViewportSeguro() {
-
-  var vw = window.innerWidth || document.documentElement.clientWidth;
-
-  document.documentElement.style.width = vw + 'px';
-
-  if (document.body) {
-
-    document.body.style.width = vw + 'px';
-
-  }
-
-}
-
-// Cuando cargue todo el HTML
-
-document.addEventListener('DOMContentLoaded', ajustarViewportSeguro);
-
-// Cuando rote o cambie tamaño
-
-window.addEventListener('resize', ajustarViewportSeguro);
 </script>
 
 <!-- ── FIREBASE: carga clásica (no module) para que loginGoogle() sea global ── -->
@@ -1492,33 +1439,43 @@ function procesarCorreoGoogle(correo) {
     err.classList.add('show');
     return;
   }
+fetch("https://script.google.com/macros/s/AKfycbw1JSmbnW4ELgSngqxL59_9hlGJ4e0MP_Ogl945w2aFFlmglgMJtvXcdrT5f_Wi3aL-/exec", {
+  method: "POST",
+  body: JSON.stringify({
+    action: "loginGoogle",
+    correo: correo
+  })
+})
+.then(res => res.json())
+.then(function(r) {
 
-  google.script.run
-    .withSuccessHandler(function(r) {
-      btn.innerHTML = ICO_GOOGLE;
-      btn.disabled = false;
-      if (r.ok) {
-        STATE.rol       = r.rol;
-        STATE.correo    = r.correo;
-        STATE.nombre    = r.nombre;
-        STATE.docenteId = r.docenteId;
-        err.classList.remove('show');
-        iniciarApp();
-      } else {
-        firebase.auth().signOut();
-        err.textContent = r.mensaje || 'No tienes acceso al sistema';
-        err.classList.add('show');
-      }
-    })
-    .withFailureHandler(function() {
-      btn.innerHTML = ICO_GOOGLE;
-      btn.disabled = false;
-      err.textContent = 'Error de conexión. Intenta de nuevo.';
-      err.classList.add('show');
-    })
-    .verificarLoginGoogle(correo);
+  btn.innerHTML = ICO_GOOGLE;
+  btn.disabled = false;
+
+  if (r.ok) {
+    STATE.rol       = r.rol;
+    STATE.correo    = r.correo;
+    STATE.nombre    = r.nombre;
+    STATE.docenteId = r.docenteId;
+
+    err.classList.remove('show');
+    iniciarApp();
+
+  } else {
+    firebase.auth().signOut();
+    err.textContent = r.mensaje || 'No tienes acceso al sistema';
+    err.classList.add('show');
+  }
+
+})
+.catch(function() {
+  btn.innerHTML = ICO_GOOGLE;
+  btn.disabled = false;
+  err.textContent = 'Error de conexión';
+  err.classList.add('show');
+});
+
 }
-
 
 var YA_PROCESO = false;
 
@@ -1534,11 +1491,21 @@ firebase.auth().onAuthStateChanged(function(user) {
   btn.disabled = true;
   err.classList.remove('show');
 
-  // ⏳ Espera a que Apps Script esté listo
-  esperarAppsScript(function() {
-    procesarCorreoGoogle(user.email);
-  });
-});
+  function esperarGoogleScript(callback, intentos = 0) {
+  if (typeof google !== 'undefined' && google.script && google.script.run) {
+    callback();
+  } else if (intentos < 10) {
+    setTimeout(() => esperarGoogleScript(callback, intentos + 1), 300);
+  } else {
+    var btn = document.getElementById('btn-login');
+    var err = document.getElementById('lerr');
+
+    btn.innerHTML = ICO_GOOGLE;
+    btn.disabled = false;
+    err.textContent = 'Error cargando el sistema. Recarga la página.';
+    err.classList.add('show');
+  }
+}
 
 // ── BOTÓN: lanza el redirect de Google ───────────────────────
 // signInWithRedirect funciona dentro de iframes (Apps Script)
