@@ -21,6 +21,13 @@ export default async function handler(req, res) {
     const GAS_URL = "https://script.google.com/macros/s/AKfycbw1JSmbnW4ELgSngqxL59_9hlGJ4e0MP_Ogl945w2aFFlmglgMJtvXcdrT5f_Wi3aL-/exec";
 
     const response = await fetch(GAS_URL, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(req.body),
+  redirect: 'follow' // 🔥 clave con Google
+});
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -31,9 +38,21 @@ export default async function handler(req, res) {
     const text = await response.text();
 
     // 🔥 LIMPIEZA ROBUSTA (NO solo replace simple)
-    const clean = text
-      .replace(/^\)\]\}'/, '') // ← más seguro (regex)
-      .trim();
+    let clean = text.trim();
+
+// 🔥 eliminar prefijo raro de Google si aparece
+if (clean.startsWith(")]}'")) {
+  clean = clean.substring(4);
+}
+
+// 🔥 eliminar HTML si Google lo manda (clave real del error)
+if (clean.startsWith("<")) {
+  return res.status(500).json({
+    ok:false,
+    mensaje:'Google devolvió HTML, no JSON',
+    raw:text
+  });
+}
 
     let data;
 
