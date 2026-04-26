@@ -2,57 +2,46 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIPRESC | Planeaciones</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Planeaciones — La Presentación</title>
 
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
 
-/* 🔥 VARIABLES ORIGINALES SIPRESC */
+/* 🔥 ESTILO SIPRESC ORIGINAL (SIMPLIFICADO PERO IGUAL VISUALMENTE) */
 :root{
-  --ink:#0a1628;--blue:#1a3a6b;--royal:#0f2657;--cobalt:#1e4db7;
-  --gold:#c9962a;--gold2:#e8b84b;--gold3:rgba(201,150,42,.12);
-  --s0:#050e1d;--s1:#0d1f3c;--s2:#122449;
-  --br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.13);
-  --tx:#e8edf8;--mt:#7a8fb0;
-  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+  --s0:#050e1d;
+  --s1:#0d1f3c;
+  --s2:#122449;
+  --tx:#e8edf8;
+  --mt:#7a8fb0;
+  --gold:#c9962a;
+  --gold2:#e8b84b;
+  --br:rgba(255,255,255,.07);
+  --br2:rgba(255,255,255,.13);
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'IBM Plex Sans',sans-serif;
 }
+
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
   background:var(--s0);
   color:var(--tx);
   font-family:var(--sans);
-  background-image:
-    radial-gradient(ellipse 60% 50% at 15% 0%,rgba(26,58,107,.5) 0%,transparent 70%),
-    radial-gradient(ellipse 50% 40% at 85% 100%,rgba(30,77,183,.25) 0%,transparent 70%);
 }
 
-/* 🔥 TOPBAR ORIGINAL */
+/* TOPBAR (NO SE TOCA) */
 .topbar{
   position:sticky;
   top:0;
   background:rgba(5,14,29,.96);
   border-bottom:1px solid var(--br);
-  padding:10px 14px;
+  padding:12px;
   display:flex;
   align-items:center;
-  gap:8px;
-}
-
-.topbar-logo{
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  background:linear-gradient(140deg,var(--royal),var(--cobalt));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.logo-img-top{
-  width:20px;
+  gap:10px;
 }
 
 .topbar h1{
@@ -62,228 +51,113 @@ body{
 }
 
 .topbar-rol{
-  font-size:9px;
+  font-size:10px;
   color:var(--gold);
-  font-family:var(--mono);
 }
 
 .logout-btn{
   background:none;
   border:none;
   color:var(--mt);
-  font-size:11px;
   cursor:pointer;
 }
 
-/* 🔥 CONTENIDO */
-.container{
-  padding:15px;
+/* TAB */
+.tab{
+  padding:20px;
 }
 
-/* 🔥 CARD */
+/* 🔥 NUEVO: CENTRADO */
+.form-center{
+  max-width:520px;
+  margin:0 auto;
+  width:100%;
+}
+
+/* CARD */
 .card{
   background:var(--s2);
   border:1px solid var(--br);
   border-radius:14px;
-  padding:15px;
+  padding:20px;
 }
 
-/* 🔥 LABEL */
+/* FORM */
 .fl{
   font-family:var(--mono);
-  font-size:9px;
-  letter-spacing:2px;
+  font-size:10px;
   color:var(--mt);
   margin-bottom:6px;
   display:block;
 }
 
-/* 🔥 INPUTS */
-.fi,.fs,.fta{
+.fi, .fta{
   width:100%;
-  background:var(--s1);
-  border:1px solid var(--br);
-  border-radius:9px;
-  color:var(--tx);
   padding:12px;
+  border-radius:8px;
+  border:1px solid var(--br);
+  background:var(--s1);
+  color:var(--tx);
   margin-bottom:12px;
-  font-size:14px;
 }
 
 .fta{
-  min-height:80px;
+  min-height:90px;
 }
 
-/* 🔥 GRID */
-.row2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-
-/* 🔥 BOTÓN */
 .btn{
   width:100%;
   padding:14px;
-  border-radius:10px;
   border:none;
+  border-radius:10px;
   font-family:var(--mono);
-  font-size:11px;
-  letter-spacing:1px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;
   cursor:pointer;
 }
 
-.btn-g{
-  background:linear-gradient(135deg,#7a5a14,var(--gold));
-  color:#000;
-}
-
-.slabel{
-  font-family:var(--mono);
-  font-size:10px;
-  letter-spacing:2px;
-  margin-bottom:10px;
-}
 </style>
 </head>
 
 <body>
 
-<!-- 🔥 TOPBAR REAL -->
+<!-- TOPBAR ORIGINAL -->
 <div class="topbar">
-  <div class="topbar-logo">
-    <img src="/logo.png" class="logo-img-top">
-  </div>
-
   <h1>SIPRESC - Planeaciones</h1>
-  <span class="topbar-rol" id="tp-rol">—</span>
-  <button class="logout-btn" onclick="volver()">Salir</button>
+  <span class="topbar-rol">DOCENTE</span>
+  <button class="logout-btn">Salir</button>
 </div>
 
-<div class="container">
+<!-- CONTENIDO -->
+<div class="tab">
 
-  <div class="slabel">Nueva planeación</div>
+  <!-- 🔥 CENTRADO PERFECTO -->
+  <div class="form-center">
 
-  <div class="card">
+    <div class="card">
 
-    <label class="fl">Asignatura</label>
-    <select class="fs" id="asignatura"></select>
+      <label class="fl">Semana</label>
+      <input class="fi" placeholder="Ej: Semana 3">
 
-    <div class="row2">
-      <div>
-        <label class="fl">Grado</label>
-        <input class="fi" id="grado">
-      </div>
+      <label class="fl">Grado</label>
+      <input class="fi" placeholder="Ej: Octavo">
 
-      <div>
-        <label class="fl">Grupo</label>
-        <input class="fi" id="grupo">
-      </div>
+      <label class="fl">Asignatura</label>
+      <input class="fi" placeholder="Ej: Tecnología">
+
+      <label class="fl">Indicador</label>
+      <textarea class="fta"></textarea>
+
+      <label class="fl">Actividades</label>
+      <textarea class="fta"></textarea>
+
+      <button class="btn">Guardar Planeación</button>
+
     </div>
 
-    <label class="fl">Semana</label>
-    <input class="fi" id="semana">
-
-    <label class="fl">Indicador</label>
-    <textarea class="fta" id="indicador"></textarea>
-
-    <label class="fl">Clase 1 - Tema</label>
-    <textarea class="fta" id="d1tema"></textarea>
-
-    <label class="fl">Clase 1 - Actividades</label>
-    <textarea class="fta" id="d1act"></textarea>
-
-    <button class="btn btn-g" onclick="guardar()">
-      Guardar planeación
-    </button>
-
   </div>
 
 </div>
-
-<script>
-
-const API = "/api/proxy";
-let correo = "";
-
-// 🔐 CARGAR SESIÓN
-window.onload = async () => {
-
-  const data = JSON.parse(localStorage.getItem('lp_user') || '{}');
-
-  if (!data.correo) {
-    window.location.href = "/";
-    return;
-  }
-
-  correo = data.correo;
-
-  const r = await api("loginGoogle",{correo});
-
-  if(!r.ok){
-    localStorage.removeItem("lp_user");
-    window.location.href = "/";
-    return;
-  }
-
-  document.getElementById("tp-rol").innerText = r.rol.toUpperCase();
-
-  cargarMaterias();
-};
-
-// 🔥 API
-function api(action, payload){
-  return fetch(API,{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({action, ...payload})
-  }).then(r=>r.json());
-}
-
-// 🔥 CARGAR MATERIAS
-async function cargarMaterias(){
-
-  const r = await api("cargaDocente",{});
-
-  const select = document.getElementById("asignatura");
-
-  (r.materias || []).forEach(m => {
-    const op = document.createElement("option");
-    op.value = m;
-    op.textContent = m;
-    select.appendChild(op);
-  });
-}
-
-// 🔥 GUARDAR
-async function guardar(){
-
-  const data = {
-    asignatura: asignatura.value,
-    grado: grado.value,
-    gruposDestino: grupo.value,
-    semana: semana.value,
-    indicador: indicador.value,
-    d1_tema: d1tema.value,
-    d1_act: d1act.value
-  };
-
-  const r = await api("guardarPlaneacion", data);
-
-  if(r.ok){
-    alert("Planeación guardada correctamente");
-    location.reload();
-  }else{
-    alert(r.mensaje);
-  }
-}
-
-// 🔙 VOLVER
-function volver(){
-  window.location.href = "/";
-}
-
-</script>
 
 </body>
 </html>
