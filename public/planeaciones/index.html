@@ -918,6 +918,77 @@ async function enviarPlaneacion(){
     alert("Planeación enviada correctamente.");
   }, 500);
 }
+
+async function enviarPlaneacion(){
+
+  document.getElementById("estadoGuardado").textContent = "Enviando...";
+
+  try {
+
+    await fetch(API,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({
+        correo: localStorage.getItem("correo"),
+        asignatura: ST.materia,
+        grado: ST.grado,
+        semana: document.getElementById("semanaSelect").value,
+
+        indicador: document.getElementById("indicadorInput")?.value || "",
+
+        d1_tema: document.getElementById("tema_1")?.value || "",
+        d1_act: document.getElementById("act_1")?.value || "",
+
+        d2_tema: document.getElementById("tema_2")?.value || "",
+        d2_act: document.getElementById("act_2")?.value || "",
+
+        d3_tema: document.getElementById("tema_3")?.value || "",
+        d3_act: document.getElementById("act_3")?.value || "",
+
+        d4_tema: document.getElementById("tema_4")?.value || "",
+        d4_act: document.getElementById("act_4")?.value || "",
+
+        d5_tema: document.getElementById("tema_5")?.value || "",
+        d5_act: document.getElementById("act_5")?.value || "",
+
+        intensidad: ST.intensidad || 1,
+
+        observacion: ST.observacionActiva === "si"
+          ? document.getElementById("observacionInput").value
+          : "",
+
+        comp_obligatoria: ST.compActiva === "si"
+          ? document.getElementById("compObligatoria").value
+          : "",
+
+        comp_anexo: ST.compActiva === "si"
+          ? document.getElementById("compAnexo").value
+          : "",
+
+        fam_obs: ST.famActiva === "si"
+          ? document.getElementById("famObs").value
+          : "",
+
+        fam_anexo: ST.famActiva === "si"
+          ? document.getElementById("famAnexo").value
+          : "",
+
+        accion: "guardarFinal" // 🔥 IMPORTANTE PARA TU BACKEND
+      })
+    });
+
+    document.getElementById("estadoGuardado").textContent = "Planeación enviada correctamente";
+
+    setTimeout(() => {
+      alert("Planeación enviada correctamente");
+      location.reload(); // 🔥 reinicia el formulario
+    }, 600);
+
+  } catch (error) {
+    console.error(error);
+    document.getElementById("estadoGuardado").textContent = "Error al enviar";
+  }
+}
   
 </script>
 
