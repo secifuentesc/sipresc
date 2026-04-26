@@ -383,6 +383,28 @@ body{
 
 </div>
 
+  <!-- 🔵 COMUNICACIÓN A FAMILIAS -->
+<div class="bloque oculto" id="b-familias">
+
+  <label class="pregunta">¿Comunicación a las familias?</label>
+
+  <div style="display:flex; gap:10px; margin-top:10px;">
+    <div class="btn-opcion activa" onclick="setFam('no', this)">No</div>
+    <div class="btn-opcion" onclick="setFam('si', this)">Sí</div>
+  </div>
+
+  <div id="famBox" class="oculto" style="margin-top:15px;">
+
+    <label class="pregunta">Observación para las familias</label>
+    <textarea class="input textarea" id="famObs"></textarea>
+
+    <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
+    <input class="input" id="famAnexo" placeholder="Pega aquí el enlace de Drive">
+
+  </div>
+
+</div>
+
     <!-- ESTADO -->
     <div id="estadoGuardado" class="estado">
       Guardado automático
@@ -677,14 +699,16 @@ intensidad: ST.intensidad || 1,
 comp_anexo: ST.compActiva === "si"
   ? document.getElementById("compAnexo").value
   : "",
+
+fam_obs: ST.famActiva === "si"
+  ? document.getElementById("famObs").value
+  : "",
+
+fam_anexo: ST.famActiva === "si"
+  ? document.getElementById("famAnexo").value
+  : ""
+
 })
-    });
-
-    document.getElementById("estadoGuardado").textContent = "Guardado automáticamente";
-
-  }, 1200);
-
-}
 
 function calcularSemanaActual(){
 
@@ -793,6 +817,31 @@ function setComp(valor, el){
     box.classList.add("oculto");
     document.getElementById("compObligatoria").value = "";
     document.getElementById("compAnexo").value = "";
+  }
+
+  // 🔥 AQUÍ está la magia
+  mostrar("b-familias");
+
+  guardarAuto();
+}
+
+function setFam(valor, el){
+
+  ST.famActiva = valor;
+
+  document.querySelectorAll("#b-familias .btn-opcion")
+    .forEach(b => b.classList.remove("activa"));
+
+  el.classList.add("activa");
+
+  const box = document.getElementById("famBox");
+
+  if(valor === "si"){
+    box.classList.remove("oculto");
+  } else {
+    box.classList.add("oculto");
+    document.getElementById("famObs").value = "";
+    document.getElementById("famAnexo").value = "";
   }
 
   guardarAuto();
