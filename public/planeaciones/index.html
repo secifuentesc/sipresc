@@ -414,14 +414,13 @@ async function guardarAuto(){
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({
-        accion:"guardarPlaneacion",
-        correo: localStorage.getItem("correo"),
-        materia: ST.materia,
-        grado: ST.grado,
-        semana: document.getElementById("semanaInput").value,
-        indicador: document.getElementById("indicadorInput").value,
-        actividades: document.getElementById("actividadesInput").value
-      })
+  correo: localStorage.getItem("correo"),
+  asignatura: ST.materia,
+  grado: ST.grado,
+  semana: document.getElementById("semanaInput").value,
+  indicador: document.getElementById("indicadorInput").value,
+  d1_act: document.getElementById("actividadesInput").value
+})
     });
 
     document.getElementById("estadoGuardado").textContent = "Guardado automáticamente";
