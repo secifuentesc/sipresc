@@ -710,6 +710,16 @@ function generarPlaneacion(){
 mostrar("b-complementaria");
 mostrar("b-familias");
 
+setTimeout(() => {
+
+  const inputs = document.querySelectorAll("#planeacionBox textarea");
+
+  inputs.forEach(input => {
+    input.addEventListener("input", validarBotonEnviar);
+  });
+
+}, 200);
+
 }
 
 let timer;
@@ -1046,7 +1056,7 @@ function cargarBorrador(){
 
 } 
 
-document.addEventListener("input", validarBotonEnviar);
+
 
 
 function validarBotonEnviar(){
