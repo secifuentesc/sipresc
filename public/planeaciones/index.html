@@ -152,36 +152,89 @@ body{
 
   <div class="card">
 
+    <!-- 🔥 MATERIA -->
     <div class="fg">
-      <label class="fl">Semana</label>
-      <input class="fi" placeholder="Ej: Semana 3">
+      <label class="fl">Materia</label>
+      <select class="fi" id="materiaSelect" onchange="seleccionarMateria()">
+        <option value="">Seleccionar materia...</option>
+      </select>
     </div>
 
-    <div class="fg">
+    <!-- 🔥 GRADO (APARECE SOLO) -->
+    <div class="fg" id="bloqueGrado" style="display:none;">
       <label class="fl">Grado</label>
-      <input class="fi" placeholder="Ej: Octavo">
+      <select class="fi" id="gradoSelect" onchange="seleccionarGrado()">
+        <option value="">Seleccionar grado...</option>
+      </select>
     </div>
-
-    <div class="fg">
-      <label class="fl">Asignatura</label>
-      <input class="fi" placeholder="Tecnología">
-    </div>
-
-    <div class="fg">
-      <label class="fl">Indicador</label>
-      <textarea class="fta"></textarea>
-    </div>
-
-    <div class="fg">
-      <label class="fl">Actividades</label>
-      <textarea class="fta"></textarea>
-    </div>
-
-    <button class="btn">Guardar planeación</button>
 
   </div>
 
 </div>
+
+<script>
+
+let DATA_DOCENTE = {
+  materias: [
+    {
+      nombre: "Tecnología",
+      grados: ["Sexto", "Séptimo", "Octavo"]
+    },
+    {
+      nombre: "Informática",
+      grados: ["Noveno", "Décimo"]
+    }
+  ]
+};
+
+window.addEventListener("DOMContentLoaded", () => {
+  cargarMaterias();
+});
+
+function cargarMaterias() {
+  const select = document.getElementById("materiaSelect");
+
+  DATA_DOCENTE.materias.forEach(m => {
+    const option = document.createElement("option");
+    option.value = m.nombre;
+    option.textContent = m.nombre;
+    select.appendChild(option);
+  });
+}
+
+function seleccionarMateria() {
+  const materia = document.getElementById("materiaSelect").value;
+  const bloque = document.getElementById("bloqueGrado");
+  const gradoSelect = document.getElementById("gradoSelect");
+
+  gradoSelect.innerHTML = '<option value="">Seleccionar grado...</option>';
+
+  if (!materia) {
+    bloque.style.display = "none";
+    return;
+  }
+
+  const data = DATA_DOCENTE.materias.find(m => m.nombre === materia);
+
+  data.grados.forEach(g => {
+    const option = document.createElement("option");
+    option.value = g;
+    option.textContent = g;
+    gradoSelect.appendChild(option);
+  });
+
+  bloque.style.display = "block";
+}
+
+function seleccionarGrado() {
+  const grado = document.getElementById("gradoSelect").value;
+
+  if (!grado) return;
+
+  console.log("Listo para siguiente paso 🚀");
+}
+
+</script>
 
 </body>
 </html>
