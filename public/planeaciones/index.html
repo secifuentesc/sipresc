@@ -1047,23 +1047,41 @@ function cargarBorrador(){
 
 } 
 
-document.addEventListener("input", () => {
+document.addEventListener("input", validarBotonEnviar);
+
+function validarBotonEnviar(){
+
+  const indicador = document.getElementById("indicadorInput")?.value || "";
+  const tema1 = document.getElementById("tema_1")?.value || "";
+  const act1 = document.getElementById("act_1")?.value || "";
+
+  const llenoIndicador = indicador.trim().length > 5;
+  const llenoClase = tema1.trim().length > 3 || act1.trim().length > 3;
+
+  if(llenoIndicador && llenoClase){
+    document.getElementById("btnEnviar").classList.add("activo");
+  } else {
+    document.getElementById("btnEnviar").classList.remove("activo");
+  }
+
+}
+
+function validarBotonEnviar(){
 
   const indicador = document.getElementById("indicadorInput")?.value || "";
   const tema1 = document.getElementById("tema_1")?.value || "";
   const act1 = document.getElementById("act_1")?.value || "";
 
   if(
-    indicador.trim().length > 10 &&
-    tema1.trim().length > 5 &&
-    act1.trim().length > 5
+    indicador.trim().length > 5 &&
+    (tema1.trim().length > 3 || act1.trim().length > 3)
   ){
     document.getElementById("btnEnviar").classList.add("activo");
   } else {
     document.getElementById("btnEnviar").classList.remove("activo");
   }
 
-});
+}
 </script>
 
 
