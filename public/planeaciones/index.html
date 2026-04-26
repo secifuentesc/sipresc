@@ -700,15 +700,10 @@ mostrar("b-familias");
 
 setTimeout(() => {
 
-  const inputs = document.querySelectorAll("#planeacionBox textarea");
-
-  inputs.forEach(input => {
-    input.addEventListener("input", validarBotonEnviar);
-  });
-
+  activarValidacionInputs();
   validarBotonEnviar();
 
-}, 200);
+}, 100);
 
 }
 
@@ -863,6 +858,12 @@ function irPaso2(){
   document.getElementById("btnBack").classList.add("activo");
 
   window.scrollTo({ top: 0, behavior: "smooth" });
+
+  // 🔥 CLAVE: forzar validación al entrar
+  setTimeout(() => {
+    validarBotonEnviar();
+  }, 100);
+
 }
 
 function volverPaso1(){
@@ -1073,9 +1074,6 @@ function validarBotonEnviar(){
 
 }
 
-// 🔥 LISTENER GLOBAL REAL (LA CLAVE)
-document.addEventListener("input", function(e){
-
   if(
     e.target.id === "indicadorInput" ||
     e.target.id.startsWith("tema_") ||
@@ -1085,6 +1083,24 @@ document.addEventListener("input", function(e){
   }
 
 });
+
+function activarValidacionInputs(){
+
+  const inputs = document.querySelectorAll("#planeacionBox textarea");
+
+  inputs.forEach(input => {
+
+    input.addEventListener("input", () => {
+      validarBotonEnviar();
+    });
+
+    input.addEventListener("keyup", () => {
+      validarBotonEnviar();
+    });
+
+  });
+
+}
 </script>
 
 
