@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
       const { accion, correo } = req.query;
 
-      const url = `${SCRIPT_URL}?accion=${accion}&correo=${correo}`;
+      const url = `${SCRIPT_URL}?accion=${accion}&correo=${encodeURIComponent(correo)}`;
 
       const response = await fetch(url);
 
