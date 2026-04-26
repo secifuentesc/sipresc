@@ -318,17 +318,9 @@ body{
   <div id="intensidadBox" style="display:flex; gap:10px;"></div>
 </div>
 
-    <!-- INDICADOR -->
-    <div class="bloque oculto" id="b-indicador">
-      <label class="pregunta">Indicador</label>
-      <textarea class="input textarea" id="indicadorInput"></textarea>
-    </div>
-
-    <!-- ACTIVIDADES -->
-    <div class="bloque oculto" id="b-actividades">
-      <label class="pregunta">Actividades</label>
-      <textarea class="input textarea" id="actividadesInput"></textarea>
-    </div>
+    <div class="bloque oculto" id="b-planeacion">
+  <div id="planeacionBox"></div>
+</div>
 
     <!-- ESTADO -->
     <div id="estadoGuardado" class="estado">
@@ -439,8 +431,7 @@ function onMateria(){
   gradoSelect.innerHTML = '<option value="">Seleccionar grado...</option>';
 
   ocultar("b-semana");
-  ocultar("b-indicador");
-  ocultar("b-actividades");
+  ocultar("b-planeacion");
 
   if(!materia){
     bloque.classList.add("oculto");
@@ -480,9 +471,6 @@ mostrar("b-intensidad");
 mostrarIntensidad();
 
 mostrar("b-observacion"); // 🔥 AQUÍ
-
-mostrar("b-indicador");
-mostrar("b-actividades");
 
   document.getElementById("estadoGuardado").textContent =
     `${ST.materia} · ${ST.grado}`;
@@ -528,15 +516,55 @@ function mostrarIntensidad(){
 
     // 🔥 CLICK PARA SELECCIONAR
     div.onclick = () => {
-      document.querySelectorAll(".intensidad-item").forEach(el => el.classList.remove("activa"));
-      div.classList.add("activa");
-      ST.intensidad = i;
-      guardarAuto();
-    };
+  document.querySelectorAll(".intensidad-item").forEach(el => el.classList.remove("activa"));
+  div.classList.add("activa");
+
+  ST.intensidad = i;
+
+  generarPlaneacion();
+  guardarAuto();
+};
 
     box.appendChild(div);
   }
 
+}
+
+function generarPlaneacion(){
+
+  const box = document.getElementById("planeacionBox");
+  box.innerHTML = "";
+
+  const indicador = document.createElement("div");
+  indicador.innerHTML = `
+    <label class="pregunta">Indicador de desempeño</label>
+    <textarea class="input textarea" id="indicadorInput"></textarea>
+  `;
+  box.appendChild(indicador);
+
+  const total = ST.intensidad || 1;
+
+  for(let i = 1; i <= total; i++){
+
+    const bloque = document.createElement("div");
+    bloque.style.marginTop = "28px";
+
+    bloque.innerHTML = `
+      <div style="font-family:var(--mono); font-size:11px; color:var(--gold); margin-bottom:12px;">
+        CLASE ${i}
+      </div>
+
+      <label class="pregunta">Tema(s) de la clase ${i}</label>
+      <textarea class="input textarea" id="tema_${i}"></textarea>
+
+      <label class="pregunta" style="margin-top:14px;">Actividades principales de la clase ${i}</label>
+      <textarea class="input textarea" id="act_${i}"></textarea>
+    `;
+
+    box.appendChild(bloque);
+  }
+
+  mostrar("b-planeacion");
 }
 
 let timer;
@@ -557,9 +585,18 @@ async function guardarAuto(){
         asignatura: ST.materia,
         grado: ST.grado,
         semana: document.getElementById("semanaSelect").value,
-        indicador: document.getElementById("indicadorInput").value,
-        d1_act: document.getElementById("actividadesInput").value,
-        intensidad: ST.intensidad || 1,
+        indicador: document.getElementById("indicadorInput")?.value || "",
+d1_tema: document.getElementById("tema_1")?.value || "",
+d1_act: document.getElementById("act_1")?.value || "",
+d2_tema: document.getElementById("tema_2")?.value || "",
+d2_act: document.getElementById("act_2")?.value || "",
+d3_tema: document.getElementById("tema_3")?.value || "",
+d3_act: document.getElementById("act_3")?.value || "",
+d4_tema: document.getElementById("tema_4")?.value || "",
+d4_act: document.getElementById("act_4")?.value || "",
+d5_tema: document.getElementById("tema_5")?.value || "",
+d5_act: document.getElementById("act_5")?.value || "",
+intensidad: ST.intensidad || 1,
         observacion: ST.observacionActiva === "si"
   ? document.getElementById("observacionInput").value
   : "",
