@@ -357,6 +357,32 @@ body{
   <div id="planeacionBox"></div>
 </div>
 
+<!-- 🔵 ACTIVIDADES COMPLEMENTARIAS -->
+<div class="bloque oculto" id="b-complementaria">
+
+  <label class="pregunta">¿Actividades complementarias?</label>
+
+  <div style="display:flex; gap:10px; margin-top:10px;">
+    <div class="btn-opcion activa" onclick="setComp('no', this)">No</div>
+    <div class="btn-opcion" onclick="setComp('si', this)">Sí</div>
+  </div>
+
+  <div id="compBox" class="oculto" style="margin-top:15px;">
+
+    <label class="pregunta">Actividad obligatoria</label>
+    <textarea class="input textarea" id="compObligatoria"></textarea>
+
+    <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
+    <input class="input" id="compAnexo" placeholder="Pega aquí el enlace de Drive">
+
+    <div style="font-size:11px; color:var(--mt); margin-top:6px;">
+      Carpeta institucional de anexos
+    </div>
+
+  </div>
+
+</div>
+
     <!-- ESTADO -->
     <div id="estadoGuardado" class="estado">
       Guardado automático
@@ -608,6 +634,7 @@ function generarPlaneacion(){
   }
 
   mostrar("b-planeacion");
+  mostrar("b-complementaria");
 }
 
 let timer;
@@ -642,6 +669,13 @@ d5_act: document.getElementById("act_5")?.value || "",
 intensidad: ST.intensidad || 1,
         observacion: ST.observacionActiva === "si"
   ? document.getElementById("observacionInput").value
+  : "",
+        comp_obligatoria: ST.compActiva === "si"
+  ? document.getElementById("compObligatoria").value
+  : "",
+
+comp_anexo: ST.compActiva === "si"
+  ? document.getElementById("compAnexo").value
   : "",
 })
     });
@@ -740,6 +774,28 @@ function volverPaso1(){
   document.getElementById("btnBack").classList.remove("activo");
 
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function setComp(valor, el){
+
+  ST.compActiva = valor;
+
+  document.querySelectorAll("#b-complementaria .btn-opcion")
+    .forEach(b => b.classList.remove("activa"));
+
+  el.classList.add("activa");
+
+  const box = document.getElementById("compBox");
+
+  if(valor === "si"){
+    box.classList.remove("oculto");
+  } else {
+    box.classList.add("oculto");
+    document.getElementById("compObligatoria").value = "";
+    document.getElementById("compAnexo").value = "";
+  }
+
+  guardarAuto();
 }
   
 </script>
