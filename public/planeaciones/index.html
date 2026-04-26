@@ -150,22 +150,53 @@ body{
 <!-- 🔥 CONTENIDO -->
 <div class="container">
 
-  <div class="card">
+  <div class="form-app">
 
-    <!-- 🔥 MATERIA -->
-    <div class="fg">
-      <label class="fl">Materia</label>
-      <select class="fi" id="materiaSelect" onchange="seleccionarMateria()">
-        <option value="">Seleccionar materia...</option>
+    <div class="title">
+      Nueva planeación
+    </div>
+
+    <div class="subtitle">
+      Todo se guarda automáticamente
+    </div>
+
+    <!-- MATERIA -->
+    <div class="bloque">
+      <label class="pregunta">Materia</label>
+      <select class="input" id="materiaSelect" onchange="onMateria()">
+        <option value="">Seleccionar...</option>
       </select>
     </div>
 
-    <!-- 🔥 GRADO (APARECE SOLO) -->
-    <div class="fg" id="bloqueGrado" style="display:none;">
-      <label class="fl">Grado</label>
-      <select class="fi" id="gradoSelect" onchange="seleccionarGrado()">
-        <option value="">Seleccionar grado...</option>
+    <!-- GRADO -->
+    <div class="bloque oculto" id="b-grado">
+      <label class="pregunta">Grado</label>
+      <select class="input" id="gradoSelect" onchange="onGrado()">
+        <option value="">Seleccionar...</option>
       </select>
+    </div>
+
+    <!-- SEMANA -->
+    <div class="bloque oculto" id="b-semana">
+      <label class="pregunta">Semana</label>
+      <input class="input" id="semanaInput">
+    </div>
+
+    <!-- INDICADOR -->
+    <div class="bloque oculto" id="b-indicador">
+      <label class="pregunta">Indicador</label>
+      <textarea class="input textarea" id="indicadorInput"></textarea>
+    </div>
+
+    <!-- ACTIVIDADES -->
+    <div class="bloque oculto" id="b-actividades">
+      <label class="pregunta">Actividades</label>
+      <textarea class="input textarea" id="actividadesInput"></textarea>
+    </div>
+
+    <!-- ESTADO -->
+    <div id="estadoGuardado" class="estado">
+      Guardado automático
     </div>
 
   </div>
