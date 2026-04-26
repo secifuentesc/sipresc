@@ -131,6 +131,69 @@ body{
   cursor:pointer;
 }
 
+.form-app{
+  width:100%;
+  max-width:520px;
+}
+
+.title{
+  font-size:24px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.subtitle{
+  font-size:13px;
+  color:var(--mt);
+  margin-bottom:30px;
+}
+
+.bloque{
+  margin-bottom:26px;
+  transition:all .4s ease;
+}
+
+.oculto{
+  opacity:0;
+  transform:translateY(10px);
+  pointer-events:none;
+  height:0;
+  overflow:hidden;
+}
+
+.pregunta{
+  display:block;
+  font-size:14px;
+  margin-bottom:6px;
+  color:var(--mt);
+}
+
+.input{
+  width:100%;
+  background:transparent;
+  border:none;
+  border-bottom:1px solid var(--br2);
+  color:var(--tx);
+  font-size:18px;
+  padding:10px 0;
+  outline:none;
+}
+
+.input:focus{
+  border-bottom:1px solid var(--gold);
+}
+
+.textarea{
+  min-height:70px;
+}
+
+.estado{
+  margin-top:20px;
+  font-size:12px;
+  color:var(--green);
+  opacity:.7;
+}
+
 </style>
 </head>
 
@@ -204,64 +267,123 @@ body{
 </div>
 <script>
 
+// 🔥 DATA TEMPORAL (LUEGO LO CONECTAMOS AL BACKEND)
 let DATA_DOCENTE = {
   materias: [
-    {
-      nombre: "Tecnología",
-      grados: ["Sexto", "Séptimo", "Octavo"]
-    },
-    {
-      nombre: "Informática",
-      grados: ["Noveno", "Décimo"]
-    }
+    { nombre: "Tecnología", grados: ["Sexto","Séptimo","Octavo"] },
+    { nombre: "Informática", grados: ["Noveno","Décimo"] }
   ]
 };
 
+let ST = {
+  materia: null,
+  grado: null
+};
+
+// 🔥 INICIO
 window.addEventListener("DOMContentLoaded", () => {
   cargarMaterias();
 });
 
-function cargarMaterias() {
+// 🔥 CARGAR MATERIAS
+function cargarMaterias(){
   const select = document.getElementById("materiaSelect");
 
   DATA_DOCENTE.materias.forEach(m => {
-    const option = document.createElement("option");
-    option.value = m.nombre;
-    option.textContent = m.nombre;
-    select.appendChild(option);
+    const op = document.createElement("option");
+    op.value = m.nombre;
+    op.textContent = m.nombre;
+    select.appendChild(op);
   });
 }
 
-function seleccionarMateria() {
+// 🔥 CUANDO SELECCIONA MATERIA
+function onMateria(){
+
   const materia = document.getElementById("materiaSelect").value;
-  const bloque = document.getElementById("bloqueGrado");
+  ST.materia = materia;
+
+  const bloque = document.getElementById("b-grado");
   const gradoSelect = document.getElementById("gradoSelect");
 
-  gradoSelect.innerHTML = '<option value="">Seleccionar grado...</option>';
+  gradoSelect.innerHTML = '<option value="">Seleccionar...</option>';
 
-  if (!materia) {
-    bloque.style.display = "none";
+  if(!materia){
+    bloque.classList.add("oculto");
     return;
   }
 
   const data = DATA_DOCENTE.materias.find(m => m.nombre === materia);
 
   data.grados.forEach(g => {
-    const option = document.createElement("option");
-    option.value = g;
-    option.textContent = g;
-    gradoSelect.appendChild(option);
+    const op = document.createElement("option");
+    op.value = g;
+    op.textContent = g;
+    gradoSelect.appendChild(op);
   });
 
-  bloque.style.display = "block";
+  bloque.classList.remove("oculto");
 }
 
-function seleccionarGrado() {
+// 🔥 CUANDO SELECCIONA GRADO
+function onGrado(){
+
   const grado = document.getElementById("gradoSelect").value;
+  ST.grado = grado;
 
-  if (!grado) return;
+  if(!grado) return;
 
-  console.log("Listo para siguiente paso 🚀");
+  // 🔥 AUTOCOMPLETAR
+  document.getElementById("semanaInput").value = calcularSemana();
+
+  document.getElementById("indicadorInput").value =
+    `Desarrollar habilidades en ${ST.materia} para el grado ${ST.grado}.`;
+
+  mostrar("b-semana");
+  mostrar("b-indicador");
+  mostrar("b-actividades");
+}
+
+// 🔥 MOSTRAR BLOQUES
+function mostrar(id){
+  document.getElementById(id).classList.remove("oculto");
+}
+
+// 🔥 SEMANA AUTOMÁTICA
+function calcularSemana(){
+  const hoy = new Date();
+  const inicio = new Date(hoy.getFullYear(), 0, 1);
+  const semana = Math.ceil((((hoy - inicio) / 86400000) + inicio.getDay()+1)/7);
+  return `Semana ${semana}`;
+}
+
+// 🔥 AUTOGUARDADO (SIMULADO)
+["semanaInput","indicadorInput","actividadesInput"].forEach(id => {
+
+  document.addEventListener("input", e => {
+    if(e.target.id === id){
+      guardarAuto();
+    }
+  });
+
+});
+
+let timer;
+
+function guardarAuto(){
+
+  clearTimeout(timer);
+
+  timer = setTimeout(() => {
+
+    document.getElementById("estadoGuardado").textContent = "Guardando...";
+
+    setTimeout(() => {
+      document.getElementById("estadoGuardado").textContent = "Guardado automáticamente";
+    }, 500);
+
+  }, 1000);
+
 }
 
 </script>
