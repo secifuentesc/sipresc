@@ -204,6 +204,12 @@ body{
   font-weight:600;
 }
 
+.intensidad-item.activa{
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color:#000;
+  border: none;
+}
+
 </style>
 </head>
 
@@ -456,17 +462,21 @@ function mostrarIntensidad(){
 
   const box = document.getElementById("intensidadBox");
 
-  let clases = 2;
-
-  if(ST.grado.includes("SEXTO")) clases = 2;
-  if(ST.grado.includes("SÉPTIMO")) clases = 3;
-
   box.innerHTML = "";
 
-  for(let i=1;i<=clases;i++){
+  for(let i = 1; i <= 5; i++){
     const div = document.createElement("div");
     div.className = "intensidad-item";
     div.textContent = i;
+
+    // 🔥 CLICK PARA SELECCIONAR
+    div.onclick = () => {
+      document.querySelectorAll(".intensidad-item").forEach(el => el.classList.remove("activa"));
+      div.classList.add("activa");
+      ST.intensidad = i;
+      guardarAuto();
+    };
+
     box.appendChild(div);
   }
 
@@ -492,7 +502,7 @@ async function guardarAuto(){
         semana: document.getElementById("semanaSelect").value,
         indicador: document.getElementById("indicadorInput").value,
         d1_act: document.getElementById("actividadesInput").value,
-        intensidad: 1
+        intensidad: ST.intensidad || 1
 })
     });
 
@@ -504,19 +514,23 @@ async function guardarAuto(){
 
 function calcularSemanaActual(){
 
-  const inicio = new Date(2026, 0, 26); // 🔥 AJUSTA inicio real (Semana 1)
-  const hoy = new Date();
+  // 🔥 Semana 5 inicia el 25 abril 2026 a las 12:00 (hora Colombia)
+  const inicioBase = new Date("2026-04-25T12:00:00-05:00");
 
-  const diff = hoy - inicio;
-  const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const ahora = new Date();
 
-  let semana = Math.floor(dias / 7) + 1;
+  const unaSemana = 7 * 24 * 60 * 60 * 1000;
 
-  if (semana < 1) semana = 1;
-  if (semana > 10) semana = 10;
+  // 🔢 Diferencia en semanas desde la base
+  const diffSemanas = Math.floor((ahora.getTime() - inicioBase.getTime()) / unaSemana);
+
+  // 🔥 Ciclo de 10 semanas
+  let semana = 5 + diffSemanas;
+
+  // 🔁 Convertir a ciclo 1–10
+  semana = ((semana - 1) % 10 + 10) % 10 + 1;
 
   return semana;
-
 }
 
 function generarSemanas(){
