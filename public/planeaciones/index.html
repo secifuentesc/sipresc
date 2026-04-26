@@ -5,78 +5,120 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIPRESC | Planeaciones</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
 :root{
-  --azul:#21145F;
-  --azul-claro:#1A428A;
-  --amarillo:#FFCC00;
-  --bg:#f4f6fb;
+  --ink:#0a1628;
+  --card:#122449;
+  --border:rgba(255,255,255,.08);
+  --text:#e8edf8;
+  --muted:#7a8fb0;
+  --gold:#FFCC00;
+  --blue:#1A428A;
 }
 
+*{box-sizing:border-box;margin:0;padding:0}
+
 body{
-  margin:0;
-  font-family: 'Poppins', Arial;
-  background: var(--bg);
+  background:var(--ink);
+  font-family:'Montserrat',sans-serif;
+  color:var(--text);
 }
 
 .header{
-  background: var(--azul);
-  color:white;
-  padding:15px 25px;
-  font-weight:600;
+  background:rgba(5,14,29,.95);
+  padding:14px 20px;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  border-bottom:1px solid var(--border);
+}
+
+.header h1{
+  font-size:13px;
+  font-weight:500;
+}
+
+.badge{
+  background:rgba(255,204,0,.15);
+  color:var(--gold);
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:11px;
 }
 
 .container{
-  max-width:900px;
+  max-width:800px;
   margin:30px auto;
-  background:white;
-  padding:25px;
-  border-radius:12px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+  padding:20px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px;
 }
 
 h2{
-  margin-top:0;
-  color:var(--azul);
+  font-size:14px;
+  margin-bottom:15px;
+  color:var(--gold);
+  letter-spacing:1px;
 }
 
 label{
-  font-size:13px;
-  color:#555;
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:5px;
+  display:block;
+  letter-spacing:1px;
 }
 
 input, select, textarea{
   width:100%;
-  padding:10px;
-  margin-top:5px;
-  margin-bottom:15px;
+  background:#0d1f3c;
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:11px;
   border-radius:8px;
-  border:1px solid #ddd;
-  font-family:inherit;
+  margin-bottom:14px;
+  font-size:14px;
+}
+
+textarea{
+  min-height:80px;
+  resize:vertical;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
 
 button{
-  background: var(--azul-claro);
-  color:white;
+  width:100%;
+  background:linear-gradient(135deg,#1A428A,#0f2657);
   border:none;
-  padding:12px;
-  border-radius:8px;
-  cursor:pointer;
+  padding:13px;
+  border-radius:10px;
+  color:white;
+  font-size:12px;
   font-weight:600;
+  letter-spacing:1px;
+  cursor:pointer;
 }
 
 button:hover{
-  opacity:0.9;
+  opacity:.9;
 }
 
-.badge{
-  background:var(--amarillo);
-  padding:5px 10px;
-  border-radius:20px;
+.msg{
+  margin-top:10px;
   font-size:12px;
+  text-align:center;
 }
 </style>
 </head>
@@ -84,72 +126,92 @@ button:hover{
 <body>
 
 <div class="header">
-  <div>SIPRESC | Planeaciones</div>
+  <h1>SIPRESC | PLANEACIONES</h1>
   <div class="badge" id="docenteNombre">Cargando...</div>
 </div>
 
 <div class="container">
 
-<h2>Nueva planeación</h2>
+<div class="card">
 
-<label>Asignatura</label>
+<h2>NUEVA PLANEACIÓN</h2>
+
+<label>ASIGNATURA</label>
 <select id="asignatura"></select>
 
-<label>Grado</label>
-<input type="text" id="grado">
+<div class="row">
+  <div>
+    <label>GRADO</label>
+    <input id="grado">
+  </div>
+  <div>
+    <label>GRUPO</label>
+    <input id="grupo">
+  </div>
+</div>
 
-<label>Grupo</label>
-<input type="text" id="grupo">
+<label>SEMANA</label>
+<input id="semana" placeholder="Ej: SEMANA 1">
 
-<label>Semana</label>
-<input type="text" id="semana">
-
-<label>Indicador</label>
+<label>INDICADOR</label>
 <textarea id="indicador"></textarea>
 
-<label>Clase 1 - Tema</label>
+<label>CLASE 1 - TEMA</label>
 <textarea id="d1tema"></textarea>
 
-<label>Clase 1 - Actividades</label>
+<label>CLASE 1 - ACTIVIDADES</label>
 <textarea id="d1act"></textarea>
 
-<button onclick="guardar()">Guardar planeación</button>
+<button onclick="guardar()">GUARDAR PLANEACIÓN</button>
+
+<div class="msg" id="msg"></div>
+
+</div>
 
 </div>
 
 <script>
 
-// 🔐 ESTE CORREO DEBE VENIR DEL SISTEMA (LOGIN)
-const correoDocente = localStorage.getItem("correo") || "secifuentes@lapresentaciongirardota.edu.co";
+// 🔥 TOMAR SESIÓN REAL DE SIPRESC
+const usuario = JSON.parse(localStorage.getItem("lp_user") || "{}");
 
-// 🔥 CARGA AUTOMÁTICA
-window.onload = () => {
+if(!usuario.correo){
+  alert("Sesión no encontrada");
+}
 
-  document.getElementById("docenteNombre").innerText = correoDocente;
+// Mostrar nombre
+document.getElementById("docenteNombre").innerText = usuario.correo.split("@")[0];
 
-  fetch(`/api/planeaciones?accion=cargaDocente&correo=${correoDocente}`)
-    .then(res => res.json())
-    .then(data => {
+// 🔵 CARGAR MATERIAS
+function cargarMaterias(){
+
+  fetch(`/api/planeaciones?accion=cargaDocente&correo=${usuario.correo}`)
+    .then(res=>res.json())
+    .then(data=>{
 
       const select = document.getElementById("asignatura");
+      select.innerHTML = "";
 
-      data.materias.forEach(m => {
-        const option = document.createElement("option");
-        option.value = m;
-        option.textContent = m;
-        select.appendChild(option);
+      data.materias.forEach(m=>{
+        const op = document.createElement("option");
+        op.value = m;
+        op.textContent = m;
+        select.appendChild(op);
       });
 
     });
 
 }
 
+cargarMaterias();
 
 // 💾 GUARDAR
 function guardar(){
 
+  const msg = document.getElementById("msg");
+
   const data = {
-    correo: correoDocente,
+    correo: usuario.correo,
     asignatura: document.getElementById("asignatura").value,
     grado: document.getElementById("grado").value,
     gruposDestino: document.getElementById("grupo").value,
@@ -160,7 +222,9 @@ function guardar(){
     d1_act: document.getElementById("d1act").value
   };
 
-  fetch(`/api/planeaciones`, {
+  msg.innerText = "Guardando...";
+
+  fetch(`/api/planeaciones`,{
     method:"POST",
     headers:{
       "Content-Type":"application/json"
@@ -169,11 +233,20 @@ function guardar(){
   })
   .then(res=>res.json())
   .then(res=>{
+
     if(res.ok){
-      alert("Planeación guardada correctamente");
+      msg.style.color = "#2dd4a0";
+      msg.innerText = "Planeación guardada correctamente";
+
     }else{
-      alert(res.mensaje);
+      msg.style.color = "#f06b6b";
+      msg.innerText = res.mensaje;
     }
+
+  })
+  .catch(()=>{
+    msg.style.color = "#f06b6b";
+    msg.innerText = "Error de conexión";
   });
 
 }
