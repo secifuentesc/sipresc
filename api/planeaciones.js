@@ -11,9 +11,17 @@ export default async function handler(req, res) {
 
       const url = `${SCRIPT_URL}?accion=${accion}&correo=${encodeURIComponent(correo)}`;
 
-      const response = await fetch(url);
+      const response = await fetch(url, {
+  method: "GET",
+  redirect: "follow",
+  headers: {
+    "Accept": "application/json"
+  }
+});
 
       const text = await response.text();
+
+      console.log("RESPUESTA BACKEND:", text);
 
       // 🔥 FORZAR JSON (clave)
       try {
