@@ -450,6 +450,53 @@ body{
 <div id="btnBack" onclick="volverPaso1()">←</div>
 
 <div id="btnEnviar" onclick="enviarPlaneacion()">✓</div>
+
+<div id="modalExito" style="
+position:fixed;
+inset:0;
+background:rgba(5,14,29,.85);
+backdrop-filter:blur(8px);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:999;
+opacity:0;
+pointer-events:none;
+transition:all .3s ease;
+">
+
+  <div style="
+  background:var(--s2);
+  border:1px solid var(--br);
+  border-radius:14px;
+  padding:28px;
+  text-align:center;
+  width:90%;
+  max-width:320px;
+  ">
+
+    <div style="
+    font-size:18px;
+    font-weight:600;
+    margin-bottom:10px;
+    ">
+      Planeación enviada
+    </div>
+
+    <div style="
+    font-size:13px;
+    color:var(--mt);
+    margin-bottom:20px;
+    ">
+      Todo se guardó correctamente
+    </div>
+
+    <button onclick="nuevaPlaneacion()" class="btn">
+      Nueva planeación
+    </button>
+
+  </div>
+</div>
   
 <script>
 
@@ -993,7 +1040,7 @@ async function enviarPlaneacion(){
 
     setTimeout(() => {
       document.getElementById("estadoGuardado").textContent = "Planeación enviada ✔";
-      location.reload(); // 🔥 reinicia el formulario
+      mostrarExito();
     }, 600);
 
   } catch (error) {
@@ -1108,6 +1155,17 @@ function activarValidacionInputs(){
 
   });
 
+}
+
+function mostrarExito(){
+  const modal = document.getElementById("modalExito");
+  modal.style.opacity = "1";
+  modal.style.pointerEvents = "auto";
+}
+
+function nuevaPlaneacion(){
+  localStorage.removeItem("planeacion_borrador");
+  location.reload();
 }
 </script>
 
