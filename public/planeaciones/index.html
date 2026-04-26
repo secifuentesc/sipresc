@@ -560,7 +560,7 @@ function onMateria(){
     return;
   }
 
-  const data = ST.data.find(m => m.asignatura === materia);
+  if (!ST.data) return;
 
   if (!data || !data.grados) {
     bloque.classList.add("oculto");
@@ -1074,10 +1074,12 @@ function validarBotonEnviar(){
 
 }
 
+document.addEventListener("input", function(e){
+
   if(
     e.target.id === "indicadorInput" ||
-    e.target.id.startsWith("tema_") ||
-    e.target.id.startsWith("act_")
+    (e.target.id && e.target.id.startsWith("tema_")) ||
+    (e.target.id && e.target.id.startsWith("act_"))
   ){
     validarBotonEnviar();
   }
