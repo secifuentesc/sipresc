@@ -225,6 +225,28 @@ body{
   transform: scale(0.95);
 }
 
+.btn-opcion{
+  flex:1;
+  text-align:center;
+  padding:12px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--br);
+  cursor:pointer;
+  transition: all .2s ease;
+}
+
+.btn-opcion:hover{
+  transform: translateY(-2px);
+  border-color: var(--gold);
+}
+
+.btn-opcion.activa{
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color:#000;
+  border:none;
+}
+
 </style>
 </head>
 
@@ -276,6 +298,22 @@ body{
       <select class="input" id="semanaSelect"></select>
     </div>
     <div class="bloque oculto" id="b-intensidad">
+    <div class="bloque oculto" id="b-observacion">
+  <label class="pregunta">¿La clase anterior tuvo alguna novedad?</label>
+
+  <div style="display:flex; gap:10px; margin-top:10px;">
+    <div class="btn-opcion activa" onclick="setObs('no', this)">No</div>
+    <div class="btn-opcion" onclick="setObs('si', this)">Sí</div>
+  </div>
+
+  <div id="obsInputBox" class="oculto" style="margin-top:15px;">
+    <textarea 
+      class="input textarea" 
+      id="observacionInput"
+      placeholder="Describe brevemente la novedad (cancelación, ajuste de horario, actividad institucional, etc.)">
+    </textarea>
+  </div>
+</div>
   <label class="pregunta">Clases en la semana</label>
   <div id="intensidadBox" style="display:flex; gap:10px;"></div>
 </div>
@@ -437,10 +475,14 @@ function onGrado(){
   generarSemanas();
 
   mostrar("b-semana");
-  mostrar("b-indicador");
-  mostrar("b-actividades");
-  mostrar("b-intensidad");
-  mostrarIntensidad();
+
+mostrar("b-intensidad");
+mostrarIntensidad();
+
+mostrar("b-observacion"); // 🔥 AQUÍ
+
+mostrar("b-indicador");
+mostrar("b-actividades");
 
   document.getElementById("estadoGuardado").textContent =
     `${ST.materia} · ${ST.grado}`;
@@ -517,7 +559,10 @@ async function guardarAuto(){
         semana: document.getElementById("semanaSelect").value,
         indicador: document.getElementById("indicadorInput").value,
         d1_act: document.getElementById("actividadesInput").value,
-        intensidad: ST.intensidad || 1
+        intensidad: ST.intensidad || 1,
+        observacion: ST.observacionActiva === "si"
+  ? document.getElementById("observacionInput").value
+  : "",
 })
     });
 
@@ -576,7 +621,26 @@ function generarSemanas(){
   }
 
 }
+function setObs(valor, el){
 
+  ST.observacionActiva = valor;
+
+  document.querySelectorAll("#b-observacion .btn-opcion")
+    .forEach(b => b.classList.remove("activa"));
+
+  el.classList.add("activa");
+
+  const box = document.getElementById("obsInputBox");
+
+  if(valor === "si"){
+    box.classList.remove("oculto");
+  } else {
+    box.classList.add("oculto");
+    document.getElementById("observacionInput").value = "";
+  }
+
+  guardarAuto();
+}
 </script>
 
 </body>
