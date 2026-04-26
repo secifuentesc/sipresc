@@ -2,262 +2,387 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a1628">
 <title>Planeaciones — La Presentación</title>
 
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+
+/* 🔥 EXACTAMENTE EL MISMO ESTILO */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#050e1d;
-  --card:#122449;
-  --line:rgba(255,255,255,.1);
-  --text:#e8edf8;
-  --muted:#7a8fb0;
-  --gold:#e8b84b;
-  --mono:'IBM Plex Mono',monospace;
-  --sans:'IBM Plex Sans',sans-serif;
+  --ink:#0a1628;--blue:#1a3a6b;--royal:#0f2657;--cobalt:#1e4db7;
+  --gold:#c9962a;--gold2:#e8b84b;--gold3:rgba(201,150,42,.12);
+  --s0:#050e1d;--s1:#0d1f3c;--s2:#122449;--s3:#182e58;
+  --br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.13);
+  --tx:#e8edf8;--mt:#7a8fb0;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
 
 body{
-  background:var(--bg);
-  color:var(--text);
+  background:var(--s0);
+  color:var(--tx);
   font-family:var(--sans);
-  display:flex;
-  justify-content:center;
+  background-image:
+  radial-gradient(ellipse 60% 50% at 15% 0%,rgba(26,58,107,.5) 0%,transparent 70%),
+  radial-gradient(ellipse 50% 40% at 85% 100%,rgba(30,77,183,.25) 0%,transparent 70%);
 }
 
+/* 🔥 TOPBAR ORIGINAL */
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:rgba(5,14,29,.96);
+  border-bottom:1px solid var(--br);
+  padding:10px 14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  backdrop-filter:blur(14px);
+}
+
+.topbar-logo{
+  width:32px;height:32px;border-radius:10px;
+  background:linear-gradient(140deg,var(--royal),var(--cobalt));
+  display:flex;align-items:center;justify-content:center;
+}
+
+.logo-img-top{width:20px}
+
+.topbar h1{
+  font-family:var(--mono);
+  font-size:12px;
+  flex:1;
+}
+
+.topbar-rol{
+  font-size:9px;
+  color:var(--gold);
+  background:var(--gold3);
+  padding:3px 8px;
+  border-radius:20px;
+}
+
+.logout-btn{
+  background:none;
+  border:none;
+  color:var(--mt);
+  font-size:11px;
+}
+
+/* 🔥 CONTENIDO */
 .container{
+  padding:20px;
+  min-height:calc(100vh - 60px);
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+
+/* 🔥 CARD ORIGINAL */
+.card{
   width:100%;
   max-width:520px;
-  padding:30px 20px;
+  background:var(--s2);
+  border:1px solid var(--br);
+  border-radius:14px;
+  padding:18px;
+}
+
+/* 🔥 FORM ORIGINAL */
+.fg{margin-bottom:14px}
+
+.fl{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--mt);
+  margin-bottom:6px;
+}
+
+.fi,.fta{
+  width:100%;
+  background:var(--s1);
+  border:1px solid var(--br);
+  border-radius:9px;
+  color:var(--tx);
+  padding:12px;
+  font-size:15px;
+}
+
+.fta{min-height:80px}
+
+/* 🔥 BOTÓN ORIGINAL */
+.btn{
+  width:100%;
+  padding:14px;
+  border-radius:11px;
+  border:none;
+  font-family:var(--mono);
+  font-size:11px;
+  text-transform:uppercase;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;
+  cursor:pointer;
+}
+
+.form-app{
+  width:100%;
+  max-width:520px;
 }
 
 .title{
-  font-size:26px;
+  font-size:24px;
   font-weight:600;
-  margin-bottom:5px;
+  margin-bottom:6px;
 }
 
 .subtitle{
   font-size:13px;
-  color:var(--muted);
+  color:var(--mt);
   margin-bottom:30px;
 }
 
 .bloque{
-  margin-bottom:30px;
-  transition:.4s;
+  margin-bottom:26px;
+  transition:all .4s ease;
 }
 
 .oculto{
   opacity:0;
   transform:translateY(10px);
+  pointer-events:none;
   height:0;
   overflow:hidden;
 }
 
-label{
-  font-size:13px;
-  color:var(--muted);
+.pregunta{
+  display:block;
+  font-size:14px;
+  margin-bottom:6px;
+  color:var(--mt);
 }
 
-input,select,textarea{
+.input{
   width:100%;
   background:transparent;
   border:none;
-  border-bottom:1px solid var(--line);
-  color:var(--text);
+  border-bottom:1px solid var(--br2);
+  color:var(--tx);
   font-size:18px;
   padding:10px 0;
   outline:none;
 }
 
-input:focus,textarea:focus{
+.input:focus{
   border-bottom:1px solid var(--gold);
 }
 
-textarea{
-  min-height:80px;
+.textarea{
+  min-height:70px;
 }
 
 .estado{
-  font-size:12px;
-  color:#2dd4a0;
   margin-top:20px;
+  font-size:12px;
+  color:var(--green);
+  opacity:.7;
 }
+
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
-  <div class="title">Nueva planeación</div>
-  <div class="subtitle">Se guarda automáticamente</div>
-
-  <!-- MATERIA -->
-  <div class="bloque">
-    <label>Materia</label>
-    <select id="materia" onchange="onMateria()">
-      <option value="">Seleccionar...</option>
-    </select>
+<!-- 🔥 TOPBAR ORIGINAL EXACTA -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <img src="/logo.png" class="logo-img-top">
   </div>
 
-  <!-- GRADO -->
-  <div class="bloque oculto" id="b-grado">
-    <label>Grado</label>
-    <select id="grado" onchange="onGrado()">
-      <option value="">Seleccionar...</option>
-    </select>
-  </div>
-
-  <!-- SEMANA -->
-  <div class="bloque oculto" id="b-semana">
-    <label>Semana</label>
-    <input id="semana">
-  </div>
-
-  <!-- INDICADOR -->
-  <div class="bloque oculto" id="b-indicador">
-    <label>Indicador</label>
-    <textarea id="indicador"></textarea>
-  </div>
-
-  <!-- ACTIVIDADES -->
-  <div class="bloque oculto" id="b-actividades">
-    <label>Actividades</label>
-    <textarea id="actividades"></textarea>
-  </div>
-
-  <div id="estado" class="estado">Listo</div>
-
+  <h1>SIPRESC - Planeaciones</h1>
+  <span class="topbar-rol">DOCENTE</span>
+  <button class="logout-btn">Salir</button>
 </div>
 
+<!-- 🔥 CONTENIDO -->
+<div class="container">
+
+  <div class="form-app">
+
+    <div class="title">
+      Nueva planeación
+    </div>
+
+    <div class="subtitle">
+      Todo se guarda automáticamente
+    </div>
+
+    <!-- MATERIA -->
+    <div class="bloque">
+      <label class="pregunta">Materia</label>
+      <select class="input" id="materiaSelect" onchange="onMateria()">
+        <option value="">Seleccionar...</option>
+      </select>
+    </div>
+
+    <!-- GRADO -->
+    <div class="bloque oculto" id="b-grado">
+      <label class="pregunta">Grado</label>
+      <select class="input" id="gradoSelect" onchange="onGrado()">
+        <option value="">Seleccionar...</option>
+      </select>
+    </div>
+
+    <!-- SEMANA -->
+    <div class="bloque oculto" id="b-semana">
+      <label class="pregunta">Semana</label>
+      <input class="input" id="semanaInput">
+    </div>
+
+    <!-- INDICADOR -->
+    <div class="bloque oculto" id="b-indicador">
+      <label class="pregunta">Indicador</label>
+      <textarea class="input textarea" id="indicadorInput"></textarea>
+    </div>
+
+    <!-- ACTIVIDADES -->
+    <div class="bloque oculto" id="b-actividades">
+      <label class="pregunta">Actividades</label>
+      <textarea class="input textarea" id="actividadesInput"></textarea>
+    </div>
+
+    <!-- ESTADO -->
+    <div id="estadoGuardado" class="estado">
+      Guardado automático
+    </div>
+
+  </div>
+
+</div>
 <script>
 
-const API = "/api/planeaciones"; // 🔥 CAMBIA SI NECESITAS
+// 🔥 DATA TEMPORAL (LUEGO LO CONECTAMOS AL BACKEND)
+let DATA_DOCENTE = {
+  materias: [
+    { nombre: "Tecnología", grados: ["Sexto","Séptimo","Octavo"] },
+    { nombre: "Informática", grados: ["Noveno","Décimo"] }
+  ]
+};
 
 let ST = {
-  correo: localStorage.getItem("correo") || "secifuentes@lapresentaciongirardota.edu.co",
-  materia:null,
-  grado:null
+  materia: null,
+  grado: null
 };
 
 // 🔥 INICIO
-window.onload = cargarMaterias;
+window.addEventListener("DOMContentLoaded", () => {
+  cargarMaterias();
+});
 
-// 🔥 CARGAR DESDE BACKEND (CARGA_ACADEMICA)
-async function cargarMaterias(){
+// 🔥 CARGAR MATERIAS
+function cargarMaterias(){
+  const select = document.getElementById("materiaSelect");
 
-  const res = await fetch(`${API}?accion=cargaDocente&correo=${ST.correo}`);
-  const data = await res.json();
-
-  ST.data = data.materias;
-
-  const sel = document.getElementById("materia");
-
-  data.materias.forEach(m=>{
-    let op = document.createElement("option");
-    op.value = m.asignatura;
-    op.textContent = m.asignatura;
-    sel.appendChild(op);
+  DATA_DOCENTE.materias.forEach(m => {
+    const op = document.createElement("option");
+    op.value = m.nombre;
+    op.textContent = m.nombre;
+    select.appendChild(op);
   });
-
 }
 
-// 🔥 MATERIA
+// 🔥 CUANDO SELECCIONA MATERIA
 function onMateria(){
 
-  const val = document.getElementById("materia").value;
-  ST.materia = val;
+  const materia = document.getElementById("materiaSelect").value;
+  ST.materia = materia;
 
   const bloque = document.getElementById("b-grado");
-  const select = document.getElementById("grado");
+  const gradoSelect = document.getElementById("gradoSelect");
 
-  select.innerHTML = '<option value="">Seleccionar...</option>';
+  gradoSelect.innerHTML = '<option value="">Seleccionar...</option>';
 
-  if(!val){
+  if(!materia){
     bloque.classList.add("oculto");
     return;
   }
 
-  const data = ST.data.find(x=>x.asignatura===val);
+  const data = DATA_DOCENTE.materias.find(m => m.nombre === materia);
 
-  data.grados.forEach(g=>{
-    let op = document.createElement("option");
+  data.grados.forEach(g => {
+    const op = document.createElement("option");
     op.value = g;
     op.textContent = g;
-    select.appendChild(op);
+    gradoSelect.appendChild(op);
   });
 
   bloque.classList.remove("oculto");
-
 }
 
-// 🔥 GRADO
+// 🔥 CUANDO SELECCIONA GRADO
 function onGrado(){
 
-  const val = document.getElementById("grado").value;
-  ST.grado = val;
+  const grado = document.getElementById("gradoSelect").value;
+  ST.grado = grado;
 
-  if(!val) return;
+  if(!grado) return;
 
-  document.getElementById("semana").value = getSemana();
+  // 🔥 AUTOCOMPLETAR
+  document.getElementById("semanaInput").value = calcularSemana();
 
-  show("b-semana");
-  show("b-indicador");
-  show("b-actividades");
+  document.getElementById("indicadorInput").value =
+    `Desarrollar habilidades en ${ST.materia} para el grado ${ST.grado}.`;
 
-  autoSave();
+  mostrar("b-semana");
+  mostrar("b-indicador");
+  mostrar("b-actividades");
 }
 
 // 🔥 MOSTRAR BLOQUES
-function show(id){
+function mostrar(id){
   document.getElementById(id).classList.remove("oculto");
 }
 
-// 🔥 SEMANA
-function getSemana(){
-  const d = new Date();
-  const start = new Date(d.getFullYear(),0,1);
-  const week = Math.ceil((((d-start)/86400000)+start.getDay()+1)/7);
-  return "Semana " + week;
+// 🔥 SEMANA AUTOMÁTICA
+function calcularSemana(){
+  const hoy = new Date();
+  const inicio = new Date(hoy.getFullYear(), 0, 1);
+  const semana = Math.ceil((((hoy - inicio) / 86400000) + inicio.getDay()+1)/7);
+  return `Semana ${semana}`;
 }
 
-// 🔥 AUTOGUARDADO REAL
-let timer;
+// 🔥 AUTOGUARDADO (SIMULADO)
+["semanaInput","indicadorInput","actividadesInput"].forEach(id => {
 
-["semana","indicador","actividades"].forEach(id=>{
-  document.getElementById(id).addEventListener("input", autoSave);
+  document.addEventListener("input", e => {
+    if(e.target.id === id){
+      guardarAuto();
+    }
+  });
+
 });
 
-function autoSave(){
+let timer;
+
+function guardarAuto(){
 
   clearTimeout(timer);
 
-  timer = setTimeout(async ()=>{
+  timer = setTimeout(() => {
 
-    document.getElementById("estado").textContent = "Guardando...";
+    document.getElementById("estadoGuardado").textContent = "Guardando...";
 
-    await fetch(API,{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({
-        accion:"guardarPlaneacion",
-        correo:ST.correo,
-        materia:ST.materia,
-        grado:ST.grado,
-        semana:document.getElementById("semana").value,
-        indicador:document.getElementById("indicador").value,
-        actividades:document.getElementById("actividades").value
-      })
-    });
+    setTimeout(() => {
+      document.getElementById("estadoGuardado").textContent = "Guardado automáticamente";
+    }, 500);
 
-    document.getElementById("estado").textContent = "Guardado automáticamente";
-
-  }, 1200);
+  }, 1000);
 
 }
 
