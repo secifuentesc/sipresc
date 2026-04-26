@@ -5,250 +5,244 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIPRESC | Planeaciones</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
+/* 🔥 MISMAS VARIABLES SIPRESC */
 :root{
-  --ink:#0a1628;
-  --card:#122449;
-  --border:rgba(255,255,255,.08);
-  --text:#e8edf8;
-  --muted:#7a8fb0;
-  --gold:#FFCC00;
-  --blue:#1A428A;
+  --ink:#0a1628;--blue:#1a3a6b;--royal:#0f2657;--cobalt:#1e4db7;
+  --gold:#c9962a;--gold2:#e8b84b;--gold3:rgba(201,150,42,.12);
+  --s0:#050e1d;--s1:#0d1f3c;--s2:#122449;
+  --br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.13);
+  --tx:#e8edf8;--mt:#7a8fb0;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
-  background:var(--ink);
-  font-family:'Montserrat',sans-serif;
-  color:var(--text);
+  background:var(--s0);
+  color:var(--tx);
+  font-family:var(--sans);
+  padding-bottom:40px;
 }
 
-.header{
-  background:rgba(5,14,29,.95);
-  padding:14px 20px;
+/* 🔥 TOPBAR EXACTO */
+.topbar{
+  background:rgba(5,14,29,.96);
+  border-bottom:1px solid var(--br);
+  padding:12px 16px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  border-bottom:1px solid var(--border);
-}
-
-.header h1{
-  font-size:13px;
-  font-weight:500;
-}
-
-.badge{
-  background:rgba(255,204,0,.15);
-  color:var(--gold);
-  padding:6px 12px;
-  border-radius:20px;
-  font-size:11px;
-}
-
-.container{
-  max-width:800px;
-  margin:30px auto;
-  padding:20px;
-}
-
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:20px;
-}
-
-h2{
-  font-size:14px;
-  margin-bottom:15px;
-  color:var(--gold);
-  letter-spacing:1px;
-}
-
-label{
-  font-size:11px;
-  color:var(--muted);
-  margin-bottom:5px;
-  display:block;
-  letter-spacing:1px;
-}
-
-input, select, textarea{
-  width:100%;
-  background:#0d1f3c;
-  border:1px solid var(--border);
-  color:var(--text);
-  padding:11px;
-  border-radius:8px;
-  margin-bottom:14px;
-  font-size:14px;
-}
-
-textarea{
-  min-height:80px;
-  resize:vertical;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
   gap:10px;
 }
 
-button{
-  width:100%;
-  background:linear-gradient(135deg,#1A428A,#0f2657);
-  border:none;
-  padding:13px;
-  border-radius:10px;
-  color:white;
+.topbar h1{
+  font-family:var(--mono);
   font-size:12px;
-  font-weight:600;
+  flex:1;
+}
+
+.back{
+  font-size:18px;
+  cursor:pointer;
+}
+
+/* 🔥 CONTENIDO */
+.container{
+  padding:15px;
+}
+
+/* 🔥 CARD */
+.card{
+  background:var(--s2);
+  border:1px solid var(--br);
+  border-radius:14px;
+  padding:15px;
+}
+
+/* 🔥 LABEL */
+.fl{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:2px;
+  color:var(--mt);
+  margin-bottom:6px;
+  display:block;
+}
+
+/* 🔥 INPUTS */
+.fi,.fs,.fta{
+  width:100%;
+  background:var(--s1);
+  border:1px solid var(--br);
+  border-radius:9px;
+  color:var(--tx);
+  padding:12px;
+  margin-bottom:12px;
+  font-size:14px;
+}
+
+.fta{
+  min-height:70px;
+}
+
+/* 🔥 BOTÓN */
+.btn{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:none;
+  font-family:var(--mono);
+  font-size:11px;
   letter-spacing:1px;
   cursor:pointer;
 }
 
-button:hover{
-  opacity:.9;
+.btn-g{
+  background:linear-gradient(135deg,#7a5a14,var(--gold));
+  color:#000;
 }
 
-.msg{
-  margin-top:10px;
-  font-size:12px;
-  text-align:center;
+/* 🔥 GRID */
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <h1>SIPRESC | PLANEACIONES</h1>
-  <div class="badge" id="docenteNombre">Cargando...</div>
+<!-- 🔥 TOPBAR -->
+<div class="topbar">
+  <div class="back" onclick="volver()">←</div>
+  <h1>Planeaciones</h1>
 </div>
 
+<!-- 🔥 CONTENIDO -->
 <div class="container">
 
-<div class="card">
+  <div class="card">
 
-<h2>NUEVA PLANEACIÓN</h2>
+    <label class="fl">Asignatura</label>
+    <select class="fs" id="asignatura"></select>
 
-<label>ASIGNATURA</label>
-<select id="asignatura"></select>
+    <div class="row">
+      <div>
+        <label class="fl">Grado</label>
+        <input class="fi" id="grado">
+      </div>
 
-<div class="row">
-  <div>
-    <label>GRADO</label>
-    <input id="grado">
+      <div>
+        <label class="fl">Grupo</label>
+        <input class="fi" id="grupo">
+      </div>
+    </div>
+
+    <label class="fl">Semana</label>
+    <input class="fi" id="semana" placeholder="SEMANA 1">
+
+    <label class="fl">Indicador</label>
+    <textarea class="fta" id="indicador"></textarea>
+
+    <label class="fl">Clase 1 - Tema</label>
+    <textarea class="fta" id="d1tema"></textarea>
+
+    <label class="fl">Clase 1 - Actividades</label>
+    <textarea class="fta" id="d1act"></textarea>
+
+    <button class="btn btn-g" onclick="guardar()">
+      Guardar planeación
+    </button>
+
   </div>
-  <div>
-    <label>GRUPO</label>
-    <input id="grupo">
-  </div>
-</div>
-
-<label>SEMANA</label>
-<input id="semana" placeholder="Ej: SEMANA 1">
-
-<label>INDICADOR</label>
-<textarea id="indicador"></textarea>
-
-<label>CLASE 1 - TEMA</label>
-<textarea id="d1tema"></textarea>
-
-<label>CLASE 1 - ACTIVIDADES</label>
-<textarea id="d1act"></textarea>
-
-<button onclick="guardar()">GUARDAR PLANEACIÓN</button>
-
-<div class="msg" id="msg"></div>
-
-</div>
 
 </div>
 
 <script>
 
-// 🔥 TOMAR SESIÓN REAL DE SIPRESC
-const usuario = JSON.parse(localStorage.getItem("lp_user") || "{}");
+const API = "/api/proxy";
+let correo = "";
 
-if(!usuario.correo){
-  alert("Sesión no encontrada");
+// 🔐 CARGAR SESIÓN SIPRESC
+window.onload = async () => {
+
+  const data = JSON.parse(localStorage.getItem('lp_user') || '{}');
+
+  if (!data.correo) {
+    window.location.href = "/";
+    return;
+  }
+
+  correo = data.correo;
+
+  // 🔥 VALIDAR USUARIO
+  const r = await api("loginGoogle",{correo});
+
+  if(!r.ok){
+    localStorage.removeItem("lp_user");
+    window.location.href = "/";
+    return;
+  }
+
+  cargarMaterias();
+
+};
+
+// 🔥 API
+function api(action, payload){
+  return fetch(API,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({action, ...payload})
+  }).then(r=>r.json());
 }
 
-// Mostrar nombre
-document.getElementById("docenteNombre").innerText = usuario.correo.split("@")[0];
+// 🔥 MATERIAS
+async function cargarMaterias(){
 
-// 🔵 CARGAR MATERIAS
-function cargarMaterias(){
+  const r = await api("cargaDocente",{});
 
-  fetch(`/api/planeaciones?accion=cargaDocente&correo=${usuario.correo}`)
-    .then(res=>res.json())
-    .then(data=>{
+  const select = document.getElementById("asignatura");
+  select.innerHTML = "";
 
-      const select = document.getElementById("asignatura");
-      select.innerHTML = "";
-
-      data.materias.forEach(m=>{
-        const op = document.createElement("option");
-        op.value = m;
-        op.textContent = m;
-        select.appendChild(op);
-      });
-
-    });
+  (r.materias || []).forEach(m => {
+    const op = document.createElement("option");
+    op.value = m;
+    op.textContent = m;
+    select.appendChild(op);
+  });
 
 }
 
-cargarMaterias();
-
-// 💾 GUARDAR
-function guardar(){
-
-  const msg = document.getElementById("msg");
+// 🔥 GUARDAR
+async function guardar(){
 
   const data = {
-    correo: usuario.correo,
     asignatura: document.getElementById("asignatura").value,
     grado: document.getElementById("grado").value,
     gruposDestino: document.getElementById("grupo").value,
     semana: document.getElementById("semana").value,
-
     indicador: document.getElementById("indicador").value,
     d1_tema: document.getElementById("d1tema").value,
     d1_act: document.getElementById("d1act").value
   };
 
-  msg.innerText = "Guardando...";
+  const r = await api("guardarPlaneacion", data);
 
-  fetch(`/api/planeaciones`,{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body: JSON.stringify(data)
-  })
-  .then(res=>res.json())
-  .then(res=>{
+  if(r.ok){
+    alert("Planeación guardada");
+  }else{
+    alert(r.mensaje);
+  }
 
-    if(res.ok){
-      msg.style.color = "#2dd4a0";
-      msg.innerText = "Planeación guardada correctamente";
+}
 
-    }else{
-      msg.style.color = "#f06b6b";
-      msg.innerText = res.mensaje;
-    }
-
-  })
-  .catch(()=>{
-    msg.style.color = "#f06b6b";
-    msg.innerText = "Error de conexión";
-  });
-
+// 🔙 VOLVER
+function volver(){
+  window.location.href = "/";
 }
 
 </script>
