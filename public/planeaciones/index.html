@@ -282,22 +282,42 @@ window.addEventListener("DOMContentLoaded", () => {
 // 🔥 CARGAR MATERIAS
 async function cargarMaterias(){
 
+  const select = document.getElementById("materiaSelect");
+  select.innerHTML = '<option value="">Cargando materias...</option>';
+
   const correo = localStorage.getItem("correo") || "secifuentes@lapresentaciongirardota.edu.co";
 
-  const res = await fetch(`${API}?accion=cargaDocente&correo=${correo}`);
-  const data = await res.json();
+  try {
 
-  ST.data = data.materias;
+    const res = await fetch(`${API}?accion=cargaDocente&correo=${encodeURIComponent(correo)}`);
+    const data = await res.json();
 
-  const select = document.getElementById("materiaSelect");
+    console.log("Carga docente:", data);
 
-  data.materias.forEach(m => {
-    const op = document.createElement("option");
-    op.value = m.asignatura;
-    op.textContent = m.asignatura;
-    select.appendChild(op);
-  });
+    if (!data.ok) {
+      select.innerHTML = '<option value="">No se encontró carga académica</option>';
+      document.getElementById("estadoGuardado").textContent = data.mensaje || "Error cargando materias";
+      return;
+    }
 
+    ST.data = data.materias || [];
+
+    select.innerHTML = '<option value="">Seleccionar materia...</option>';
+
+    ST.data.forEach(m => {
+      const op = document.createElement("option");
+      op.value = m.asignatura;
+      op.textContent = m.asignatura;
+      select.appendChild(op);
+    });
+
+    document.getElementById("estadoGuardado").textContent = "Carga académica lista";
+
+  } catch (err) {
+    console.error(err);
+    select.innerHTML = '<option value="">Error cargando materias</option>';
+    document.getElementById("estadoGuardado").textContent = "No se pudo conectar con el backend";
+  }
 }
 
 // 🔥 CUANDO SELECCIONA MATERIA
@@ -309,7 +329,11 @@ function onMateria(){
   const bloque = document.getElementById("b-grado");
   const gradoSelect = document.getElementById("gradoSelect");
 
-  gradoSelect.innerHTML = '<option value="">Seleccionar...</option>';
+  gradoSelect.innerHTML = '<option value="">Seleccionar grado...</option>';
+
+  ocultar("b-semana");
+  ocultar("b-indicador");
+  ocultar("b-actividades");
 
   if(!materia){
     bloque.classList.add("oculto");
@@ -318,7 +342,12 @@ function onMateria(){
 
   const data = ST.data.find(m => m.asignatura === materia);
 
-data.grados.forEach(g => {
+  if (!data || !data.grados) {
+    bloque.classList.add("oculto");
+    return;
+  }
+
+  data.grados.forEach(g => {
     const op = document.createElement("option");
     op.value = g;
     op.textContent = g;
@@ -336,15 +365,14 @@ function onGrado(){
 
   if(!grado) return;
 
-  // 🔥 AUTOCOMPLETAR
   document.getElementById("semanaInput").value = calcularSemana();
-
-  document.getElementById("indicadorInput").value =
-    `Desarrollar habilidades en ${ST.materia} para el grado ${ST.grado}.`;
 
   mostrar("b-semana");
   mostrar("b-indicador");
   mostrar("b-actividades");
+
+  document.getElementById("estadoGuardado").textContent =
+    `${ST.materia} · ${ST.grado}`;
 }
 
 // 🔥 MOSTRAR BLOQUES
@@ -370,6 +398,10 @@ function calcularSemana(){
   });
 
 });
+
+function ocultar(id){
+  document.getElementById(id).classList.add("oculto");
+}
 
 let timer;
 
