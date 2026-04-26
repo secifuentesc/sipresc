@@ -620,22 +620,6 @@ function calcularSemana(){
 
 });
 
-document.addEventListener("input", () => {
-
-  const indicador = document.getElementById("indicadorInput")?.value || "";
-
-  // 🔥 validar si hay contenido REAL
-  if(indicador.trim().length > 10){
-
-    document.getElementById("btnEnviar").classList.add("activo");
-
-  } else {
-
-    document.getElementById("btnEnviar").classList.remove("activo");
-
-  }
-
-});
 
 function ocultar(id){
   document.getElementById(id).classList.add("oculto");
