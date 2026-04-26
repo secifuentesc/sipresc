@@ -286,8 +286,17 @@ async function cargarMaterias(){
 
   try {
 
-    const res = await fetch(`${API}?accion=cargaDocente&correo=${correo}`);
-    const data = await res.json();
+    const res = await fetch(`${API}?accion=cargaDocente&correo=${encodeURIComponent(correo)}`);
+    const text = await res.text();
+
+let data;
+try {
+  data = JSON.parse(text);
+} catch (e) {
+  console.error("Respuesta NO es JSON:", text);
+  alert("Error del servidor");
+  return;
+}
 
     // 🔴 VALIDACIÓN REAL
     if (!data.ok || !data.materias) {
@@ -414,12 +423,13 @@ async function guardarAuto(){
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({
-  correo: localStorage.getItem("correo"),
-  asignatura: ST.materia,
-  grado: ST.grado,
-  semana: document.getElementById("semanaInput").value,
-  indicador: document.getElementById("indicadorInput").value,
-  d1_act: document.getElementById("actividadesInput").value
+        correo: localStorage.getItem("correo"),
+        asignatura: ST.materia,
+        grado: ST.grado,
+        semana: document.getElementById("semanaInput").value,
+        indicador: document.getElementById("indicadorInput").value,
+        d1_act: document.getElementById("actividadesInput").value,
+        intensidad: 1
 })
     });
 
