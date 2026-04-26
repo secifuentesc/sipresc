@@ -282,42 +282,39 @@ window.addEventListener("DOMContentLoaded", () => {
 // 🔥 CARGAR MATERIAS
 async function cargarMaterias(){
 
-  const select = document.getElementById("materiaSelect");
-  select.innerHTML = '<option value="">Cargando materias...</option>';
-
   const correo = localStorage.getItem("correo") || "secifuentes@lapresentaciongirardota.edu.co";
 
   try {
 
-    const res = await fetch(`${API}?accion=cargaDocente&correo=${encodeURIComponent(correo)}`);
+    const res = await fetch(`${API}?accion=cargaDocente&correo=${correo}`);
     const data = await res.json();
 
-    console.log("Carga docente:", data);
-
-    if (!data.ok) {
-      select.innerHTML = '<option value="">No se encontró carga académica</option>';
-      document.getElementById("estadoGuardado").textContent = data.mensaje || "Error cargando materias";
+    // 🔴 VALIDACIÓN REAL
+    if (!data.ok || !data.materias) {
+      console.error("Error backend:", data);
+      alert("No se encontraron materias");
       return;
     }
 
-    ST.data = data.materias || [];
+    ST.data = data.materias;
 
-    select.innerHTML = '<option value="">Seleccionar materia...</option>';
+    const select = document.getElementById("materiaSelect");
 
-    ST.data.forEach(m => {
+    // 🔥 LIMPIAR POR SI SE RECARGA
+    select.innerHTML = '<option value="">Seleccionar...</option>';
+
+    data.materias.forEach(m => {
       const op = document.createElement("option");
       op.value = m.asignatura;
       op.textContent = m.asignatura;
       select.appendChild(op);
     });
 
-    document.getElementById("estadoGuardado").textContent = "Carga académica lista";
-
   } catch (err) {
-    console.error(err);
-    select.innerHTML = '<option value="">Error cargando materias</option>';
-    document.getElementById("estadoGuardado").textContent = "No se pudo conectar con el backend";
+    console.error("Error conexión:", err);
+    alert("Error cargando materias");
   }
+
 }
 
 // 🔥 CUANDO SELECCIONA MATERIA
