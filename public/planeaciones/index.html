@@ -39,6 +39,10 @@ button {
   font-weight: bold;
   cursor: pointer;
 }
+
+button:hover {
+  background: #163a78;
+}
 </style>
 
 </head>
@@ -70,13 +74,17 @@ button {
 
 <script>
 
-const URL = "TU_URL_DEPLOY_APPS_SCRIPT"; // 👈 pega aquí tu URL
-
+// 🔵 CARGAR MATERIAS
 function cargarMaterias(){
 
   const correo = document.getElementById("correo").value;
 
-  fetch(`${URL}?accion=cargaDocente&correo=${correo}`)
+  if(!correo){
+    alert("Ingrese el correo");
+    return;
+  }
+
+  fetch(`/api/planeaciones?accion=cargaDocente&correo=${correo}`)
     .then(res => res.json())
     .then(data => {
 
@@ -95,9 +103,15 @@ function cargarMaterias(){
         select.appendChild(option);
       });
 
+    })
+    .catch(err => {
+      alert("Error cargando materias");
+      console.error(err);
     });
 }
 
+
+// 🔴 GUARDAR PLANEACIÓN
 function guardar(){
 
   const data = {
@@ -113,19 +127,26 @@ function guardar(){
     d1_act: document.getElementById("d1act").value
   };
 
-  fetch(URL, {
+  fetch(`/api/planeaciones`, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify(data)
   })
   .then(res => res.json())
   .then(res => {
 
     if(res.ok){
-      alert("Guardado correctamente");
+      alert("Planeación guardada correctamente");
     } else {
       alert("Error: " + res.mensaje);
     }
 
+  })
+  .catch(err => {
+    alert("Error guardando planeación");
+    console.error(err);
   });
 
 }
