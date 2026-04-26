@@ -8,7 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-/* 🔥 MISMAS VARIABLES SIPRESC */
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* 🔥 VARIABLES ORIGINALES SIPRESC */
 :root{
   --ink:#0a1628;--blue:#1a3a6b;--royal:#0f2657;--cobalt:#1e4db7;
   --gold:#c9962a;--gold2:#e8b84b;--gold3:rgba(201,150,42,.12);
@@ -18,23 +20,39 @@
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
 
-*{margin:0;padding:0;box-sizing:border-box}
-
 body{
   background:var(--s0);
   color:var(--tx);
   font-family:var(--sans);
-  padding-bottom:40px;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 0%,rgba(26,58,107,.5) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 100%,rgba(30,77,183,.25) 0%,transparent 70%);
 }
 
-/* 🔥 TOPBAR EXACTO */
+/* 🔥 TOPBAR ORIGINAL */
 .topbar{
+  position:sticky;
+  top:0;
   background:rgba(5,14,29,.96);
   border-bottom:1px solid var(--br);
-  padding:12px 16px;
+  padding:10px 14px;
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
+}
+
+.topbar-logo{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  background:linear-gradient(140deg,var(--royal),var(--cobalt));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.logo-img-top{
+  width:20px;
 }
 
 .topbar h1{
@@ -43,8 +61,17 @@ body{
   flex:1;
 }
 
-.back{
-  font-size:18px;
+.topbar-rol{
+  font-size:9px;
+  color:var(--gold);
+  font-family:var(--mono);
+}
+
+.logout-btn{
+  background:none;
+  border:none;
+  color:var(--mt);
+  font-size:11px;
   cursor:pointer;
 }
 
@@ -84,7 +111,14 @@ body{
 }
 
 .fta{
-  min-height:70px;
+  min-height:80px;
+}
+
+/* 🔥 GRID */
+.row2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
 }
 
 /* 🔥 BOTÓN */
@@ -104,32 +138,38 @@ body{
   color:#000;
 }
 
-/* 🔥 GRID */
-.row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
+.slabel{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:2px;
+  margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🔥 TOPBAR -->
+<!-- 🔥 TOPBAR REAL -->
 <div class="topbar">
-  <div class="back" onclick="volver()">←</div>
-  <h1>Planeaciones</h1>
+  <div class="topbar-logo">
+    <img src="/logo.png" class="logo-img-top">
+  </div>
+
+  <h1>SIPRESC - Planeaciones</h1>
+  <span class="topbar-rol" id="tp-rol">—</span>
+  <button class="logout-btn" onclick="volver()">Salir</button>
 </div>
 
-<!-- 🔥 CONTENIDO -->
 <div class="container">
+
+  <div class="slabel">Nueva planeación</div>
 
   <div class="card">
 
     <label class="fl">Asignatura</label>
     <select class="fs" id="asignatura"></select>
 
-    <div class="row">
+    <div class="row2">
       <div>
         <label class="fl">Grado</label>
         <input class="fi" id="grado">
@@ -142,7 +182,7 @@ body{
     </div>
 
     <label class="fl">Semana</label>
-    <input class="fi" id="semana" placeholder="SEMANA 1">
+    <input class="fi" id="semana">
 
     <label class="fl">Indicador</label>
     <textarea class="fta" id="indicador"></textarea>
@@ -166,7 +206,7 @@ body{
 const API = "/api/proxy";
 let correo = "";
 
-// 🔐 CARGAR SESIÓN SIPRESC
+// 🔐 CARGAR SESIÓN
 window.onload = async () => {
 
   const data = JSON.parse(localStorage.getItem('lp_user') || '{}');
@@ -178,7 +218,6 @@ window.onload = async () => {
 
   correo = data.correo;
 
-  // 🔥 VALIDAR USUARIO
   const r = await api("loginGoogle",{correo});
 
   if(!r.ok){
@@ -187,8 +226,9 @@ window.onload = async () => {
     return;
   }
 
-  cargarMaterias();
+  document.getElementById("tp-rol").innerText = r.rol.toUpperCase();
 
+  cargarMaterias();
 };
 
 // 🔥 API
@@ -200,13 +240,12 @@ function api(action, payload){
   }).then(r=>r.json());
 }
 
-// 🔥 MATERIAS
+// 🔥 CARGAR MATERIAS
 async function cargarMaterias(){
 
   const r = await api("cargaDocente",{});
 
   const select = document.getElementById("asignatura");
-  select.innerHTML = "";
 
   (r.materias || []).forEach(m => {
     const op = document.createElement("option");
@@ -214,30 +253,29 @@ async function cargarMaterias(){
     op.textContent = m;
     select.appendChild(op);
   });
-
 }
 
 // 🔥 GUARDAR
 async function guardar(){
 
   const data = {
-    asignatura: document.getElementById("asignatura").value,
-    grado: document.getElementById("grado").value,
-    gruposDestino: document.getElementById("grupo").value,
-    semana: document.getElementById("semana").value,
-    indicador: document.getElementById("indicador").value,
-    d1_tema: document.getElementById("d1tema").value,
-    d1_act: document.getElementById("d1act").value
+    asignatura: asignatura.value,
+    grado: grado.value,
+    gruposDestino: grupo.value,
+    semana: semana.value,
+    indicador: indicador.value,
+    d1_tema: d1tema.value,
+    d1_act: d1act.value
   };
 
   const r = await api("guardarPlaneacion", data);
 
   if(r.ok){
-    alert("Planeación guardada");
+    alert("Planeación guardada correctamente");
+    location.reload();
   }else{
     alert(r.mensaje);
   }
-
 }
 
 // 🔙 VOLVER
