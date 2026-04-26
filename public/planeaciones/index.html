@@ -193,6 +193,16 @@ body{
   color:var(--green);
   opacity:.7;
 }
+.intensidad-item{
+  flex:1;
+  text-align:center;
+  padding:14px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--br);
+  font-size:18px;
+  font-weight:600;
+}
 
 </style>
 </head>
@@ -242,8 +252,12 @@ body{
     <!-- SEMANA -->
     <div class="bloque oculto" id="b-semana">
       <label class="pregunta">Semana</label>
-      <input class="input" id="semanaInput">
+      <select class="input" id="semanaSelect"></select>
     </div>
+    <div class="bloque oculto" id="b-intensidad">
+  <label class="pregunta">Clases en la semana</label>
+  <div id="intensidadBox" style="display:flex; gap:10px;"></div>
+</div>
 
     <!-- INDICADOR -->
     <div class="bloque oculto" id="b-indicador">
@@ -399,11 +413,13 @@ function onGrado(){
 
   if(!grado) return;
 
-  document.getElementById("semanaInput").value = calcularSemana();
+  generarSemanas();
 
   mostrar("b-semana");
   mostrar("b-indicador");
   mostrar("b-actividades");
+  mostrar("b-intensidad");
+  mostrarIntensidad();
 
   document.getElementById("estadoGuardado").textContent =
     `${ST.materia} · ${ST.grado}`;
@@ -436,6 +452,25 @@ function calcularSemana(){
 function ocultar(id){
   document.getElementById(id).classList.add("oculto");
 }
+function mostrarIntensidad(){
+
+  const box = document.getElementById("intensidadBox");
+
+  let clases = 2;
+
+  if(ST.grado.includes("SEXTO")) clases = 2;
+  if(ST.grado.includes("SÉPTIMO")) clases = 3;
+
+  box.innerHTML = "";
+
+  for(let i=1;i<=clases;i++){
+    const div = document.createElement("div");
+    div.className = "intensidad-item";
+    div.textContent = i;
+    box.appendChild(div);
+  }
+
+}
 
 let timer;
 
@@ -454,7 +489,7 @@ async function guardarAuto(){
         correo: localStorage.getItem("correo"),
         asignatura: ST.materia,
         grado: ST.grado,
-        semana: document.getElementById("semanaInput").value,
+        semana: document.getElementById("semanaSelect").value,
         indicador: document.getElementById("indicadorInput").value,
         d1_act: document.getElementById("actividadesInput").value,
         intensidad: 1
@@ -464,6 +499,52 @@ async function guardarAuto(){
     document.getElementById("estadoGuardado").textContent = "Guardado automáticamente";
 
   }, 1200);
+
+}
+
+function calcularSemanaActual(){
+
+  const inicio = new Date(2026, 0, 26); // 🔥 AJUSTA inicio real (Semana 1)
+  const hoy = new Date();
+
+  const diff = hoy - inicio;
+  const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  let semana = Math.floor(dias / 7) + 1;
+
+  if (semana < 1) semana = 1;
+  if (semana > 10) semana = 10;
+
+  return semana;
+
+}
+
+function generarSemanas(){
+
+  const select = document.getElementById("semanaSelect");
+  const actual = calcularSemanaActual();
+
+  select.innerHTML = "";
+
+  for(let i = 1; i <= 10; i++){
+
+    const op = document.createElement("option");
+    op.value = `Semana ${i}`;
+    op.textContent = `Semana ${i}`;
+
+    // 🔴 Bloquear semanas pasadas
+    if(i < actual){
+      op.disabled = true;
+      op.style.color = "#777";
+    }
+
+    // 🔵 Seleccionar semana actual automáticamente
+    if(i === actual){
+      op.selected = true;
+    }
+
+    select.appendChild(op);
+  }
 
 }
 
