@@ -18,7 +18,7 @@
   --gold:#c9962a;--gold2:#e8b84b;--gold3:rgba(201,150,42,.12);
   --s0:#050e1d;--s1:#0d1f3c;--s2:#122449;--s3:#182e58;
   --br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.13);
-  --tx:#e8edf8;--mt:#7a8fb0;async function guardarAuto(){
+  --tx:#e8edf8;--mt:#7a8fb0;
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
 
@@ -274,6 +274,33 @@ body{
   pointer-events:auto;
 }
 
+#btnEnviar{
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.4);
+  z-index:50;
+
+  opacity:0;
+  pointer-events:none;
+  transition: all .3s ease;
+}
+
+#btnEnviar.activo{
+  opacity:1;
+  pointer-events:auto;
+}
 </style>
 </head>
 
@@ -327,8 +354,9 @@ body{
       <label class="pregunta">Semana</label>
       <select class="input" id="semanaSelect"></select>
     </div>
-    <div class="bloque oculto" id="b-intensidad">
-    <div class="bloque oculto" id="b-observacion">
+
+    <!-- OBSERVACIÓN -->
+<div class="bloque oculto" id="b-observacion">
   <label class="pregunta">¿La clase anterior tuvo alguna novedad?</label>
 
   <div style="display:flex; gap:10px; margin-top:10px;">
@@ -340,10 +368,13 @@ body{
     <textarea 
       class="input textarea" 
       id="observacionInput"
-      placeholder="Describe brevemente la novedad (cancelación, ajuste de horario, actividad institucional, etc.)">
+      placeholder="Describe brevemente la novedad.">
     </textarea>
   </div>
 </div>
+
+<!-- INTENSIDAD -->
+<div class="bloque oculto" id="b-intensidad">
   <label class="pregunta">Clases en la semana</label>
   <div id="intensidadBox" style="display:flex; gap:10px;"></div>
 </div>
@@ -415,6 +446,8 @@ body{
 </div>
 
 <div id="btnBack" onclick="volverPaso1()">←</div>
+
+<div id="btnEnviar" onclick="enviarPlaneacion()">✓</div>
   
 <script>
 
@@ -656,7 +689,10 @@ function generarPlaneacion(){
   }
 
   mostrar("b-planeacion");
-  mostrar("b-complementaria");
+mostrar("b-complementaria");
+mostrar("b-familias");
+
+document.getElementById("btnEnviar").classList.add("activo");
 }
 
 let timer;
