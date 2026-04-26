@@ -461,6 +461,7 @@ const API = "/api/planeaciones"; // ⚠️ ajusta si tu ruta es otra
 // 🔥 INICIO
 window.addEventListener("load", () => {
   cargarMaterias();
+  cargarBorrador(); // 🔥 FALTABA ESTO
 });
 
 // 🔥 CARGAR MATERIAS
@@ -616,6 +617,23 @@ function calcularSemana(){
       guardarAuto();
     }
   });
+
+});
+
+document.addEventListener("input", () => {
+
+  const indicador = document.getElementById("indicadorInput")?.value || "";
+
+  // 🔥 validar si hay contenido REAL
+  if(indicador.trim().length > 10){
+
+    document.getElementById("btnEnviar").classList.add("activo");
+
+  } else {
+
+    document.getElementById("btnEnviar").classList.remove("activo");
+
+  }
 
 });
 
@@ -981,25 +999,71 @@ async function enviarPlaneacion(){
 function cargarBorrador(){
 
   const data = localStorage.getItem("planeacion_borrador");
-
   if(!data) return;
 
   const d = JSON.parse(data);
 
-  // 🔥 Restaurar valores básicos
-  ST.materia = d.asignatura;
-  ST.grado = d.grado;
-  ST.intensidad = d.intensidad;
+  // 🔹 Restaurar selects
+  if(d.semana){
+    document.getElementById("semanaSelect").value = d.semana;
+  }
 
-  // ⚠️ Esto lo puedes mejorar luego, pero mínimo:
+  // 🔹 Restaurar indicador
   setTimeout(() => {
+
     if(document.getElementById("indicadorInput")){
       document.getElementById("indicadorInput").value = d.indicador || "";
     }
+
+    // 🔹 Restaurar clases
+    for(let i=1;i<=5;i++){
+      if(document.getElementById("tema_"+i)){
+        document.getElementById("tema_"+i).value = d["d"+i+"_tema"] || "";
+      }
+      if(document.getElementById("act_"+i)){
+        document.getElementById("act_"+i).value = d["d"+i+"_act"] || "";
+      }
+    }
+
+    // 🔹 Complementarias
+    if(d.comp_obligatoria){
+      document.getElementById("compObligatoria").value = d.comp_obligatoria;
+    }
+
+    if(d.comp_anexo){
+      document.getElementById("compAnexo").value = d.comp_anexo;
+    }
+
+    // 🔹 Familias
+    if(d.fam_obs){
+      document.getElementById("famObs").value = d.fam_obs;
+    }
+
+    if(d.fam_anexo){
+      document.getElementById("famAnexo").value = d.fam_anexo;
+    }
+
   }, 800);
 
-}
-  
+} 
+
+document.addEventListener("input", () => {
+
+  const indicador = document.getElementById("indicadorInput")?.value || "";
+  const tema1 = document.getElementById("tema_1")?.value || "";
+  const act1 = document.getElementById("act_1")?.value || "";
+
+  if(
+    indicador.trim().length > 10 &&
+    tema1.trim().length > 5 &&
+    act1.trim().length > 5
+  ){
+    document.getElementById("btnEnviar").classList.add("activo");
+  } else {
+    document.getElementById("btnEnviar").classList.remove("activo");
+  }
+
+});
 </script>
 
 
