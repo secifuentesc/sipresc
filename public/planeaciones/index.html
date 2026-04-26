@@ -3,98 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Planeaciones</title>
+<title>SIPRESC | Planeaciones</title>
 
 <style>
-body {
-  font-family: Arial;
-  background: #f5f6fa;
-  margin: 0;
-  padding: 20px;
+:root{
+  --azul:#21145F;
+  --azul-claro:#1A428A;
+  --amarillo:#FFCC00;
+  --bg:#f4f6fb;
 }
 
-.container {
-  max-width: 600px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
+body{
+  margin:0;
+  font-family: 'Poppins', Arial;
+  background: var(--bg);
 }
 
-h2 {
-  color: #21145F;
+.header{
+  background: var(--azul);
+  color:white;
+  padding:15px 25px;
+  font-weight:600;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-input, select, textarea, button {
-  width: 100%;
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.container{
+  max-width:900px;
+  margin:30px auto;
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
 }
 
-button {
-  background: #1A428A;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
+h2{
+  margin-top:0;
+  color:var(--azul);
 }
 
-button:hover {
-  background: #163a78;
+label{
+  font-size:13px;
+  color:#555;
+}
+
+input, select, textarea{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  margin-bottom:15px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  font-family:inherit;
+}
+
+button{
+  background: var(--azul-claro);
+  color:white;
+  border:none;
+  padding:12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+.badge{
+  background:var(--amarillo);
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
 }
 </style>
-
 </head>
 
 <body>
 
+<div class="header">
+  <div>SIPRESC | Planeaciones</div>
+  <div class="badge" id="docenteNombre">Cargando...</div>
+</div>
+
 <div class="container">
 
-<h2>Planeación Docente</h2>
+<h2>Nueva planeación</h2>
 
-<input type="email" id="correo" placeholder="Correo institucional">
-
-<button onclick="cargarMaterias()">Cargar materias</button>
-
+<label>Asignatura</label>
 <select id="asignatura"></select>
 
-<input type="text" id="grado" placeholder="Grado (Ej: TERCERO)">
-<input type="text" id="grupo" placeholder="Grupo (Ej: A)">
-<input type="text" id="semana" placeholder="Semana (Ej: SEMANA 1)">
+<label>Grado</label>
+<input type="text" id="grado">
 
-<textarea id="indicador" placeholder="Indicador"></textarea>
+<label>Grupo</label>
+<input type="text" id="grupo">
 
-<textarea id="d1tema" placeholder="Tema clase 1"></textarea>
-<textarea id="d1act" placeholder="Actividades clase 1"></textarea>
+<label>Semana</label>
+<input type="text" id="semana">
 
-<button onclick="guardar()">Guardar Planeación</button>
+<label>Indicador</label>
+<textarea id="indicador"></textarea>
+
+<label>Clase 1 - Tema</label>
+<textarea id="d1tema"></textarea>
+
+<label>Clase 1 - Actividades</label>
+<textarea id="d1act"></textarea>
+
+<button onclick="guardar()">Guardar planeación</button>
 
 </div>
 
 <script>
 
-// 🔵 CARGAR MATERIAS
-function cargarMaterias(){
+// 🔐 ESTE CORREO DEBE VENIR DEL SISTEMA (LOGIN)
+const correoDocente = localStorage.getItem("correo") || "secifuentes@lapresentaciongirardota.edu.co";
 
-  const correo = document.getElementById("correo").value;
+// 🔥 CARGA AUTOMÁTICA
+window.onload = () => {
 
-  if(!correo){
-    alert("Ingrese el correo");
-    return;
-  }
+  document.getElementById("docenteNombre").innerText = correoDocente;
 
-  fetch(`/api/planeaciones?accion=cargaDocente&correo=${correo}`)
+  fetch(`/api/planeaciones?accion=cargaDocente&correo=${correoDocente}`)
     .then(res => res.json())
     .then(data => {
 
-      if(!data.ok){
-        alert("Docente no encontrado");
-        return;
-      }
-
       const select = document.getElementById("asignatura");
-      select.innerHTML = "";
 
       data.materias.forEach(m => {
         const option = document.createElement("option");
@@ -103,24 +140,20 @@ function cargarMaterias(){
         select.appendChild(option);
       });
 
-    })
-    .catch(err => {
-      alert("Error cargando materias");
-      console.error(err);
     });
+
 }
 
 
-// 🔴 GUARDAR PLANEACIÓN
+// 💾 GUARDAR
 function guardar(){
 
   const data = {
-    correo: document.getElementById("correo").value,
+    correo: correoDocente,
     asignatura: document.getElementById("asignatura").value,
     grado: document.getElementById("grado").value,
     gruposDestino: document.getElementById("grupo").value,
     semana: document.getElementById("semana").value,
-    intensidad: 2,
 
     indicador: document.getElementById("indicador").value,
     d1_tema: document.getElementById("d1tema").value,
@@ -128,25 +161,19 @@ function guardar(){
   };
 
   fetch(`/api/planeaciones`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
     },
     body: JSON.stringify(data)
   })
-  .then(res => res.json())
-  .then(res => {
-
+  .then(res=>res.json())
+  .then(res=>{
     if(res.ok){
       alert("Planeación guardada correctamente");
-    } else {
-      alert("Error: " + res.mensaje);
+    }else{
+      alert(res.mensaje);
     }
-
-  })
-  .catch(err => {
-    alert("Error guardando planeación");
-    console.error(err);
   });
 
 }
