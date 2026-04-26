@@ -275,54 +275,82 @@ let ST = {
 const API = "/api/planeaciones"; // ⚠️ ajusta si tu ruta es otra
 
 // 🔥 INICIO
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("load", () => {
   cargarMaterias();
 });
 
 // 🔥 CARGAR MATERIAS
+const CACHE_KEY = "materias_cache_v1";
+const CACHE_TIME = "materias_cache_time";
+const CACHE_MAX_AGE = 1000 * 60 * 60 * 6; // 6 horas
+
 async function cargarMaterias(){
 
   const correo = localStorage.getItem("correo") || "secifuentes@lapresentaciongirardota.edu.co";
+  const select = document.getElementById("materiaSelect");
 
+  // 🔥 1. CARGA INMEDIATA DESDE CACHE
+  const cache = localStorage.getItem(CACHE_KEY);
+  const cacheTime = localStorage.getItem(CACHE_TIME);
+
+  let cacheValido = false;
+
+  if (cache && cacheTime) {
+    const edad = Date.now() - parseInt(cacheTime);
+    if (edad < CACHE_MAX_AGE) {
+      cacheValido = true;
+    }
+  }
+
+  if (cacheValido) {
+    pintarMaterias(JSON.parse(cache));
+  } else {
+    select.innerHTML = '<option value="">Cargando...</option>';
+  }
+
+  // 🔄 2. ACTUALIZACIÓN EN SEGUNDO PLANO
   try {
 
-    const res = await fetch(`${API}?accion=cargaDocente&correo=${encodeURIComponent(correo)}`);
-    const text = await res.text();
+    const res = await fetch(`${API}?accion=cargaDocente&correo=${correo}`);
+    const json = await res.json();
 
-let data;
-try {
-  data = JSON.parse(text);
-} catch (e) {
-  console.error("Respuesta NO es JSON:", text);
-  alert("Error del servidor");
-  return;
-}
+    if (json.ok && json.materias) {
 
-    // 🔴 VALIDACIÓN REAL
-    if (!data.ok || !data.materias) {
-      console.error("Error backend:", data);
-      alert("No se encontraron materias");
-      return;
+      const nuevas = JSON.stringify(json.materias);
+      const actuales = localStorage.getItem(CACHE_KEY);
+
+      // 🔥 Solo actualiza si cambió (optimización real)
+      if (nuevas !== actuales) {
+
+        localStorage.setItem(CACHE_KEY, nuevas);
+        localStorage.setItem(CACHE_TIME, Date.now());
+
+        pintarMaterias(json.materias);
+
+      }
+
+      ST.data = json.materias;
+
     }
 
-    ST.data = data.materias;
-
-    const select = document.getElementById("materiaSelect");
-
-    // 🔥 LIMPIAR POR SI SE RECARGA
-    select.innerHTML = '<option value="">Seleccionar...</option>';
-
-    data.materias.forEach(m => {
-      const op = document.createElement("option");
-      op.value = m.asignatura;
-      op.textContent = m.asignatura;
-      select.appendChild(op);
-    });
-
   } catch (err) {
-    console.error("Error conexión:", err);
-    alert("Error cargando materias");
+    console.warn("Modo offline activo (usando cache)");
   }
+
+}
+
+function pintarMaterias(materias){
+
+  const select = document.getElementById("materiaSelect");
+
+  select.innerHTML = '<option value="">Seleccionar...</option>';
+
+  materias.forEach(m => {
+    const op = document.createElement("option");
+    op.value = m.asignatura;
+    op.textContent = m.asignatura;
+    select.appendChild(op);
+  });
 
 }
 
