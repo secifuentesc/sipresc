@@ -247,6 +247,33 @@ body{
   border:none;
 }
 
+#btnBack{
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  cursor:pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.4);
+  z-index:50;
+
+  opacity:0;
+  pointer-events:none;
+  transition: all .3s ease;
+}
+
+#btnBack.activo{
+  opacity:1;
+  pointer-events:auto;
+}
+
 </style>
 </head>
 
@@ -267,6 +294,9 @@ body{
 <div class="container">
 
   <div class="form-app">
+
+  <!-- 🔵 PASO 1 -->
+  <div id="paso1">
 
     <div class="title">
       Nueva planeación
@@ -318,6 +348,11 @@ body{
   <div id="intensidadBox" style="display:flex; gap:10px;"></div>
 </div>
 
+    </div> <!-- 🔴 CIERRA PASO 1 -->
+
+<!-- 🔵 PASO 2 -->
+<div id="paso2" class="oculto">
+
     <div class="bloque oculto" id="b-planeacion">
   <div id="planeacionBox"></div>
 </div>
@@ -330,6 +365,9 @@ body{
   </div>
 
 </div>
+
+<div id="btnBack" onclick="volverPaso1()">←</div>
+  
 <script>
 
 let ST = {
@@ -521,8 +559,13 @@ function mostrarIntensidad(){
 
   ST.intensidad = i;
 
-  generarPlaneacion();
-  guardarAuto();
+generarPlaneacion();
+
+setTimeout(() => {
+  irPaso2();
+}, 200);
+
+guardarAuto();
 };
 
     box.appendChild(div);
@@ -678,7 +721,30 @@ function setObs(valor, el){
 
   guardarAuto();
 }
+
+function irPaso2(){
+
+  document.getElementById("paso1").classList.add("oculto");
+  document.getElementById("paso2").classList.remove("oculto");
+
+  document.getElementById("btnBack").classList.add("activo");
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function volverPaso1(){
+
+  document.getElementById("paso1").classList.remove("oculto");
+  document.getElementById("paso2").classList.add("oculto");
+
+  document.getElementById("btnBack").classList.remove("activo");
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+  
 </script>
+
+
 
 </body>
 </html>
