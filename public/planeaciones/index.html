@@ -560,7 +560,13 @@ function onMateria(){
     return;
   }
 
-  if (!ST.data) return;
+  if (!ST.data) {
+    console.warn("No hay datos cargados aún");
+    return;
+  }
+
+  // 🔥 ESTA LÍNEA FALTABA
+  const data = ST.data.find(m => m.asignatura === materia);
 
   if (!data || !data.grados) {
     bloque.classList.add("oculto");
