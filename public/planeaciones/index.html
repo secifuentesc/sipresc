@@ -697,75 +697,74 @@ document.getElementById("btnEnviar").classList.add("activo");
 
 let timer;
 
-async function guardarAuto(){
+function guardarAuto(){
 
   clearTimeout(timer);
 
-  timer = setTimeout(async () => {
+  timer = setTimeout(() => {
 
     document.getElementById("estadoGuardado").textContent = "Guardando...";
 
     try {
 
-      await fetch(API,{
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({
-          correo: localStorage.getItem("correo"),
-          asignatura: ST.materia,
-          grado: ST.grado,
-          semana: document.getElementById("semanaSelect").value,
+      const data = {
+        correo: localStorage.getItem("correo"),
 
-          indicador: document.getElementById("indicadorInput")?.value || "",
+        asignatura: ST.materia,
+        grado: ST.grado,
+        semana: document.getElementById("semanaSelect")?.value || "",
 
-          d1_tema: document.getElementById("tema_1")?.value || "",
-          d1_act: document.getElementById("act_1")?.value || "",
+        indicador: document.getElementById("indicadorInput")?.value || "",
 
-          d2_tema: document.getElementById("tema_2")?.value || "",
-          d2_act: document.getElementById("act_2")?.value || "",
+        d1_tema: document.getElementById("tema_1")?.value || "",
+        d1_act: document.getElementById("act_1")?.value || "",
 
-          d3_tema: document.getElementById("tema_3")?.value || "",
-          d3_act: document.getElementById("act_3")?.value || "",
+        d2_tema: document.getElementById("tema_2")?.value || "",
+        d2_act: document.getElementById("act_2")?.value || "",
 
-          d4_tema: document.getElementById("tema_4")?.value || "",
-          d4_act: document.getElementById("act_4")?.value || "",
+        d3_tema: document.getElementById("tema_3")?.value || "",
+        d3_act: document.getElementById("act_3")?.value || "",
 
-          d5_tema: document.getElementById("tema_5")?.value || "",
-          d5_act: document.getElementById("act_5")?.value || "",
+        d4_tema: document.getElementById("tema_4")?.value || "",
+        d4_act: document.getElementById("act_4")?.value || "",
 
-          intensidad: ST.intensidad || 1,
+        d5_tema: document.getElementById("tema_5")?.value || "",
+        d5_act: document.getElementById("act_5")?.value || "",
 
-          observacion: ST.observacionActiva === "si"
-            ? document.getElementById("observacionInput").value
-            : "",
+        intensidad: ST.intensidad || 1,
 
-          comp_obligatoria: ST.compActiva === "si"
-            ? document.getElementById("compObligatoria").value
-            : "",
+        observacion: ST.observacionActiva === "si"
+          ? document.getElementById("observacionInput")?.value || ""
+          : "",
 
-          comp_anexo: ST.compActiva === "si"
-            ? document.getElementById("compAnexo").value
-            : "",
+        comp_obligatoria: ST.compActiva === "si"
+          ? document.getElementById("compObligatoria")?.value || ""
+          : "",
 
-          fam_obs: ST.famActiva === "si"
-            ? document.getElementById("famObs").value
-            : "",
+        comp_anexo: ST.compActiva === "si"
+          ? document.getElementById("compAnexo")?.value || ""
+          : "",
 
-          fam_anexo: ST.famActiva === "si"
-            ? document.getElementById("famAnexo").value
-            : ""
+        fam_obs: ST.famActiva === "si"
+          ? document.getElementById("famObs")?.value || ""
+          : "",
 
-        })
-      });
+        fam_anexo: ST.famActiva === "si"
+          ? document.getElementById("famAnexo")?.value || ""
+          : ""
+      };
 
-      document.getElementById("estadoGuardado").textContent = "Guardado automáticamente";
+      // 🔥 GUARDADO LOCAL (AQUÍ ESTÁ LA CLAVE)
+      localStorage.setItem("planeacion_borrador", JSON.stringify(data));
+
+      document.getElementById("estadoGuardado").textContent = "Guardado local";
 
     } catch (error) {
       console.error(error);
-      document.getElementById("estadoGuardado").textContent = "Error al guardar";
+      document.getElementById("estadoGuardado").textContent = "Error guardando";
     }
 
-  }, 1200);
+  }, 800); // más rápido y fluido
 
 }
 
@@ -964,10 +963,12 @@ async function enviarPlaneacion(){
       })
     });
 
+    localStorage.removeItem("planeacion_borrador");
+
     document.getElementById("estadoGuardado").textContent = "Planeación enviada correctamente";
 
     setTimeout(() => {
-      alert("Planeación enviada correctamente");
+      document.getElementById("estadoGuardado").textContent = "Planeación enviada ✔";
       location.reload(); // 🔥 reinicia el formulario
     }, 600);
 
@@ -975,6 +976,28 @@ async function enviarPlaneacion(){
     console.error(error);
     document.getElementById("estadoGuardado").textContent = "Error al enviar";
   }
+}
+
+function cargarBorrador(){
+
+  const data = localStorage.getItem("planeacion_borrador");
+
+  if(!data) return;
+
+  const d = JSON.parse(data);
+
+  // 🔥 Restaurar valores básicos
+  ST.materia = d.asignatura;
+  ST.grado = d.grado;
+  ST.intensidad = d.intensidad;
+
+  // ⚠️ Esto lo puedes mejorar luego, pero mínimo:
+  setTimeout(() => {
+    if(document.getElementById("indicadorInput")){
+      document.getElementById("indicadorInput").value = d.indicador || "";
+    }
+  }, 800);
+
 }
   
 </script>
