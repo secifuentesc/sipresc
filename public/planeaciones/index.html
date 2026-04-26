@@ -20,6 +20,7 @@
   --br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.13);
   --tx:#e8edf8;--mt:#7a8fb0;
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+  --green:#4ade80;
 }
 
 body{
@@ -293,12 +294,13 @@ body{
   z-index:50;
 
   opacity:0;
+  transform: scale(.8);
   pointer-events:none;
-  transition: all .3s ease;
 }
 
 #btnEnviar.activo{
   opacity:1;
+  transform: scale(1);
   pointer-events:auto;
 }
 </style>
@@ -649,6 +651,8 @@ setTimeout(() => {
 }, 200);
 
 guardarAuto();
+
+validarBotonEnviar(); // 🔥 fuerza primera validación
 };
 
     box.appendChild(div);
@@ -1048,19 +1052,39 @@ function cargarBorrador(){
 function validarBotonEnviar(){
 
   const indicador = document.getElementById("indicadorInput")?.value || "";
-  const tema1 = document.getElementById("tema_1")?.value || "";
-  const act1 = document.getElementById("act_1")?.value || "";
 
-  if(
-    indicador.trim().length > 5 &&
-    (tema1.trim().length > 3 || act1.trim().length > 3)
-  ){
+  let hayContenido = false;
+
+  for(let i = 1; i <= 5; i++){
+    const t = document.getElementById("tema_"+i)?.value || "";
+    const a = document.getElementById("act_"+i)?.value || "";
+
+    if(t.trim().length > 3 || a.trim().length > 3){
+      hayContenido = true;
+      break;
+    }
+  }
+
+  if(indicador.trim().length > 5 && hayContenido){
     document.getElementById("btnEnviar").classList.add("activo");
   } else {
     document.getElementById("btnEnviar").classList.remove("activo");
   }
 
 }
+
+// 🔥 LISTENER GLOBAL REAL (LA CLAVE)
+document.addEventListener("input", function(e){
+
+  if(
+    e.target.id === "indicadorInput" ||
+    e.target.id.startsWith("tema_") ||
+    e.target.id.startsWith("act_")
+  ){
+    validarBotonEnviar();
+  }
+
+});
 </script>
 
 
