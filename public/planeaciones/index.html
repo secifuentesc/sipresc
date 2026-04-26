@@ -267,18 +267,12 @@ body{
 </div>
 <script>
 
-// 🔥 DATA TEMPORAL (LUEGO LO CONECTAMOS AL BACKEND)
-let DATA_DOCENTE = {
-  materias: [
-    { nombre: "Tecnología", grados: ["Sexto","Séptimo","Octavo"] },
-    { nombre: "Informática", grados: ["Noveno","Décimo"] }
-  ]
-};
-
 let ST = {
   materia: null,
   grado: null
 };
+
+const API = "/api/planeaciones"; // ⚠️ ajusta si tu ruta es otra
 
 // 🔥 INICIO
 window.addEventListener("DOMContentLoaded", () => {
@@ -286,15 +280,24 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 // 🔥 CARGAR MATERIAS
-function cargarMaterias(){
+async function cargarMaterias(){
+
+  const correo = localStorage.getItem("correo") || "secifuentes@lapresentaciongirardota.edu.co";
+
+  const res = await fetch(`${API}?accion=cargaDocente&correo=${correo}`);
+  const data = await res.json();
+
+  ST.data = data.materias;
+
   const select = document.getElementById("materiaSelect");
 
-  DATA_DOCENTE.materias.forEach(m => {
+  data.materias.forEach(m => {
     const op = document.createElement("option");
-    op.value = m.nombre;
-    op.textContent = m.nombre;
+    op.value = m.asignatura;
+    op.textContent = m.asignatura;
     select.appendChild(op);
   });
+
 }
 
 // 🔥 CUANDO SELECCIONA MATERIA
@@ -313,9 +316,9 @@ function onMateria(){
     return;
   }
 
-  const data = DATA_DOCENTE.materias.find(m => m.nombre === materia);
+  const data = ST.data.find(m => m.asignatura === materia);
 
-  data.grados.forEach(g => {
+data.grados.forEach(g => {
     const op = document.createElement("option");
     op.value = g;
     op.textContent = g;
@@ -370,19 +373,31 @@ function calcularSemana(){
 
 let timer;
 
-function guardarAuto(){
+async function guardarAuto(){
 
   clearTimeout(timer);
 
-  timer = setTimeout(() => {
+  timer = setTimeout(async () => {
 
     document.getElementById("estadoGuardado").textContent = "Guardando...";
 
-    setTimeout(() => {
-      document.getElementById("estadoGuardado").textContent = "Guardado automáticamente";
-    }, 500);
+    await fetch(API,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({
+        accion:"guardarPlaneacion",
+        correo: localStorage.getItem("correo"),
+        materia: ST.materia,
+        grado: ST.grado,
+        semana: document.getElementById("semanaInput").value,
+        indicador: document.getElementById("indicadorInput").value,
+        actividades: document.getElementById("actividadesInput").value
+      })
+    });
 
-  }, 1000);
+    document.getElementById("estadoGuardado").textContent = "Guardado automáticamente";
+
+  }, 1200);
 
 }
 
