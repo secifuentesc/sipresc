@@ -3,46 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a1628">
 <title>Planeaciones — La Presentación</title>
 
+<link rel="icon" type="image/png" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
 
-/* 🔥 ESTILO SIPRESC ORIGINAL (SIMPLIFICADO PERO IGUAL VISUALMENTE) */
+/* 🔥 EXACTAMENTE EL MISMO ESTILO */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --s0:#050e1d;
-  --s1:#0d1f3c;
-  --s2:#122449;
-  --tx:#e8edf8;
-  --mt:#7a8fb0;
-  --gold:#c9962a;
-  --gold2:#e8b84b;
-  --br:rgba(255,255,255,.07);
-  --br2:rgba(255,255,255,.13);
-  --mono:'IBM Plex Mono',monospace;
-  --sans:'IBM Plex Sans',sans-serif;
+  --ink:#0a1628;--blue:#1a3a6b;--royal:#0f2657;--cobalt:#1e4db7;
+  --gold:#c9962a;--gold2:#e8b84b;--gold3:rgba(201,150,42,.12);
+  --s0:#050e1d;--s1:#0d1f3c;--s2:#122449;--s3:#182e58;
+  --br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.13);
+  --tx:#e8edf8;--mt:#7a8fb0;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
-
-*{margin:0;padding:0;box-sizing:border-box}
 
 body{
   background:var(--s0);
   color:var(--tx);
   font-family:var(--sans);
+  background-image:
+  radial-gradient(ellipse 60% 50% at 15% 0%,rgba(26,58,107,.5) 0%,transparent 70%),
+  radial-gradient(ellipse 50% 40% at 85% 100%,rgba(30,77,183,.25) 0%,transparent 70%);
 }
 
-/* TOPBAR (NO SE TOCA) */
+/* 🔥 TOPBAR ORIGINAL */
 .topbar{
   position:sticky;
   top:0;
+  z-index:20;
   background:rgba(5,14,29,.96);
   border-bottom:1px solid var(--br);
-  padding:12px;
+  padding:10px 14px;
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
+  backdrop-filter:blur(14px);
 }
+
+.topbar-logo{
+  width:32px;height:32px;border-radius:10px;
+  background:linear-gradient(140deg,var(--royal),var(--cobalt));
+  display:flex;align-items:center;justify-content:center;
+}
+
+.logo-img-top{width:20px}
 
 .topbar h1{
   font-family:var(--mono);
@@ -51,66 +60,72 @@ body{
 }
 
 .topbar-rol{
-  font-size:10px;
+  font-size:9px;
   color:var(--gold);
+  background:var(--gold3);
+  padding:3px 8px;
+  border-radius:20px;
 }
 
 .logout-btn{
   background:none;
   border:none;
   color:var(--mt);
-  cursor:pointer;
+  font-size:11px;
 }
 
-/* TAB */
-.tab{
+/* 🔥 CONTENIDO */
+.container{
   padding:20px;
+  min-height:calc(100vh - 60px);
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
 }
 
-/* 🔥 NUEVO: CENTRADO */
-.form-center{
-  max-width:520px;
-  margin:0 auto;
-  width:100%;
-}
-
-/* CARD */
+/* 🔥 CARD ORIGINAL */
 .card{
+  width:100%;
+  max-width:520px;
   background:var(--s2);
   border:1px solid var(--br);
   border-radius:14px;
-  padding:20px;
+  padding:18px;
 }
 
-/* FORM */
+/* 🔥 FORM ORIGINAL */
+.fg{margin-bottom:14px}
+
 .fl{
   font-family:var(--mono);
-  font-size:10px;
+  font-size:9px;
+  letter-spacing:2px;
+  text-transform:uppercase;
   color:var(--mt);
   margin-bottom:6px;
-  display:block;
 }
 
-.fi, .fta{
+.fi,.fta{
   width:100%;
-  padding:12px;
-  border-radius:8px;
-  border:1px solid var(--br);
   background:var(--s1);
+  border:1px solid var(--br);
+  border-radius:9px;
   color:var(--tx);
-  margin-bottom:12px;
+  padding:12px;
+  font-size:15px;
 }
 
-.fta{
-  min-height:90px;
-}
+.fta{min-height:80px}
 
+/* 🔥 BOTÓN ORIGINAL */
 .btn{
   width:100%;
   padding:14px;
+  border-radius:11px;
   border:none;
-  border-radius:10px;
   font-family:var(--mono);
+  font-size:11px;
+  text-transform:uppercase;
   background:linear-gradient(135deg,var(--gold),var(--gold2));
   color:#000;
   cursor:pointer;
@@ -121,39 +136,48 @@ body{
 
 <body>
 
-<!-- TOPBAR ORIGINAL -->
+<!-- 🔥 TOPBAR ORIGINAL EXACTA -->
 <div class="topbar">
+  <div class="topbar-logo">
+    <img src="/logo.png" class="logo-img-top">
+  </div>
+
   <h1>SIPRESC - Planeaciones</h1>
   <span class="topbar-rol">DOCENTE</span>
   <button class="logout-btn">Salir</button>
 </div>
 
-<!-- CONTENIDO -->
-<div class="tab">
+<!-- 🔥 CONTENIDO -->
+<div class="container">
 
-  <!-- 🔥 CENTRADO PERFECTO -->
-  <div class="form-center">
+  <div class="card">
 
-    <div class="card">
-
+    <div class="fg">
       <label class="fl">Semana</label>
       <input class="fi" placeholder="Ej: Semana 3">
+    </div>
 
+    <div class="fg">
       <label class="fl">Grado</label>
       <input class="fi" placeholder="Ej: Octavo">
+    </div>
 
+    <div class="fg">
       <label class="fl">Asignatura</label>
-      <input class="fi" placeholder="Ej: Tecnología">
+      <input class="fi" placeholder="Tecnología">
+    </div>
 
+    <div class="fg">
       <label class="fl">Indicador</label>
       <textarea class="fta"></textarea>
+    </div>
 
+    <div class="fg">
       <label class="fl">Actividades</label>
       <textarea class="fta"></textarea>
-
-      <button class="btn">Guardar Planeación</button>
-
     </div>
+
+    <button class="btn">Guardar planeación</button>
 
   </div>
 
