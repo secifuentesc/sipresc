@@ -905,6 +905,19 @@ function setFam(valor, el){
 
   guardarAuto();
 }
+
+async function enviarPlaneacion(){
+
+  document.getElementById("estadoGuardado").textContent = "Enviando...";
+
+  await guardarAuto();
+
+  document.getElementById("estadoGuardado").textContent = "Planeación enviada correctamente";
+
+  setTimeout(() => {
+    alert("Planeación enviada correctamente.");
+  }, 500);
+}
   
 </script>
 
