@@ -432,7 +432,7 @@ body{
 }
 
 .bloque{
-  display:none;
+  display:block;
   opacity:0;
   transform:translateY(20px);
   transition:all .4s ease;
@@ -460,6 +460,10 @@ body{
     opacity:1;
     transform:translateY(0);
   }
+}
+
+#paso2{
+  display:none;
 }
   
 </style>
@@ -1193,24 +1197,32 @@ function setObs(valor, el){
 
 function irPaso2(){
 
-  document.getElementById("paso1").classList.add("oculto");
-  document.getElementById("paso2").classList.remove("oculto");
+  const p1 = document.getElementById("paso1");
+  const p2 = document.getElementById("paso2");
+
+  // 🔴 ocultar paso 1 BIEN
+  p1.style.display = "none";
+
+  // 🟢 mostrar paso 2 FORZADO
+  p2.style.display = "block";
+  p2.classList.remove("oculto");
 
   document.getElementById("btnBack").classList.add("activo");
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 
-  // 🔥 CLAVE: forzar validación al entrar
   setTimeout(() => {
     validarBotonEnviar();
   }, 100);
-
 }
 
 function volverPaso1(){
 
-  document.getElementById("paso1").classList.remove("oculto");
-  document.getElementById("paso2").classList.add("oculto");
+  const p1 = document.getElementById("paso1");
+  const p2 = document.getElementById("paso2");
+
+  p1.style.display = "block";
+  p2.style.display = "none";
 
   document.getElementById("btnBack").classList.remove("activo");
 
