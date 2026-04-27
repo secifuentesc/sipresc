@@ -585,9 +585,19 @@ async function cargarMaterias(){
     return;
   }
 
-  select.disabled = true;
-  select.innerHTML = '<option value="">Cargando...</option>';
+  // 🔥 1. INTENTAR CACHE PRIMERO
+  const cache = localStorage.getItem(CACHE_KEY);
+  const cacheTime = localStorage.getItem(CACHE_TIME);
 
+  if(cache && cacheTime && (Date.now() - cacheTime < CACHE_MAX_AGE)){
+    ST.data = JSON.parse(cache);
+    pintarMaterias(ST.data);
+    console.log("Materias desde cache ⚡");
+  } else {
+    select.innerHTML = '<option value="">Cargando...</option>';
+  }
+
+  // 🔥 2. ACTUALIZAR EN SEGUNDO PLANO
   try {
 
     const res = await fetch(`${API}?accion=cargaDocente&correo=${correo}`);
@@ -598,27 +608,20 @@ async function cargarMaterias(){
       ST.data = json.materias;
       pintarMaterias(json.materias);
 
-      localStorage.setItem("materias_cache_v1", JSON.stringify(json.materias));
-      localStorage.setItem("materias_cache_time", Date.now());
+      localStorage.setItem(CACHE_KEY, JSON.stringify(json.materias));
+      localStorage.setItem(CACHE_TIME, Date.now());
 
-    } else {
-      select.innerHTML = '<option value="">Sin materias</option>';
+      console.log("Materias actualizadas 🔄");
+
     }
 
   } catch (err) {
 
-    const cache = localStorage.getItem("materias_cache_v1");
-
-    if (cache) {
-      ST.data = JSON.parse(cache);
-      pintarMaterias(ST.data);
-    } else {
+    if(!cache){
       select.innerHTML = '<option value="">Error conexión</option>';
     }
 
   }
-
-  select.disabled = false;
 }
   
 function pintarMaterias(materias){
