@@ -1835,9 +1835,9 @@ async function revisarIndicadorCoach(){
   <div class="coach-error">
     🔴 "${e.context.text}" → 
     <span class="sugerencia" 
-      onclick="aplicarCorreccion('${e.context.text}', '${sugerencia}', 'indicadorInput')"
-      ${sugerencia}
-    </span>
+  onclick="aplicarCorreccion('${e.context.text}', '${sugerencia}', 'indicadorInput')">
+  ${sugerencia}
+</span>
   </div>
 `);
 
@@ -1945,7 +1945,17 @@ mensajes.push(`
 
       erroresAct.slice(0,3).forEach(e => {
         const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
-        mensajes.push(`<div class="coach-error">🔴 "${e.context.text}" → <b>${sugerencia}</b></div>`);
+        const campoId = `act_${i}`;
+
+mensajes.push(`
+  <div class="coach-error">
+    🔴 "${e.context.text}" → 
+    <span class="sugerencia" 
+      onclick="aplicarCorreccion('${e.context.text}', '${sugerencia}', '${campoId}')">
+      ${sugerencia}
+    </span>
+  </div>
+`);
       });
 
     }else{
@@ -1972,7 +1982,7 @@ function aplicarCorreccion(original, sugerencia, campoId){
   let texto = campo.value;
 
   // 🔥 reemplazo inteligente (solo la palabra exacta)
-  const regex = new RegExp("\\b" + original + "\\b", "gi");
+  const regex = new RegExp(original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), "gi");
 
   texto = texto.replace(regex, sugerencia);
 
