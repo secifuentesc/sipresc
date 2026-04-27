@@ -432,16 +432,12 @@ body{
 }
 
 .bloque{
-  display:block;
-  opacity:0;
-  transform:translateY(20px);
-  transition:all .4s ease;
+  display:none;
 }
 
 .bloque.activo{
   display:block;
-  opacity:1;
-  transform:translateY(0);
+  animation:fadeIn .4s ease;
 }
 
 .bloque.activo{
@@ -977,9 +973,7 @@ function mostrarIntensidad(){
 
 generarPlaneacion();
 
-setTimeout(() => {
-  irPaso2();
-}, 200);
+irPaso2();
 
 guardarAuto();
 
@@ -1194,28 +1188,23 @@ function setObs(valor, el){
 
 function irPaso2(){
 
-  const p1 = document.getElementById("paso1");
-  const p2 = document.getElementById("paso2");
-
-  p1.classList.add("oculto");     // 🔴 oculta paso 1
-  p2.classList.remove("oculto");  // 🟢 muestra paso 2
+  document.getElementById("paso1").classList.add("oculto");
+  document.getElementById("paso2").classList.remove("oculto");
 
   document.getElementById("btnBack").classList.add("activo");
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  // 🔥 activar bloques internos
+  document.getElementById("b-planeacion").classList.add("activo");
+  document.getElementById("b-complementaria").classList.add("activo");
+  document.getElementById("b-familias").classList.add("activo");
 
-  setTimeout(() => {
-    validarBotonEnviar();
-  }, 100);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function volverPaso1(){
 
-  const p1 = document.getElementById("paso1");
-  const p2 = document.getElementById("paso2");
-
-  p1.classList.remove("oculto");
-  p2.classList.add("oculto");
+  document.getElementById("paso1").classList.remove("oculto");
+  document.getElementById("paso2").classList.add("oculto");
 
   document.getElementById("btnBack").classList.remove("activo");
 
