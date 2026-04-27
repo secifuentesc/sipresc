@@ -351,6 +351,16 @@ body{
       </select>
     </div>
 
+    <!-- GRUPOS -->
+<div class="bloque oculto" id="b-grupos">
+  <label class="pregunta">Grupo(s)</label>
+
+  <div style="display:flex; gap:10px; margin-top:10px;">
+    <div class="btn-opcion activa" onclick="toggleGrupo('A', this)">A</div>
+    <div class="btn-opcion activa" onclick="toggleGrupo('B', this)">B</div>
+  </div>
+</div>
+
     <!-- SEMANA -->
     <div class="bloque oculto" id="b-semana">
       <label class="pregunta">Semana</label>
@@ -635,12 +645,16 @@ function onMateria(){
     return;
   }
 
-  data.grados.forEach(g => {
-    const op = document.createElement("option");
-    op.value = g;
-    op.textContent = g;
-    gradoSelect.appendChild(op);
-  });
+  const gradosUnicos = [...new Set(
+  data.grados.map(g => g.replace(/\s?[A-Z]$/, "").trim())
+)];
+
+gradosUnicos.forEach(g => {
+  const op = document.createElement("option");
+  op.value = g;
+  op.textContent = g;
+  gradoSelect.appendChild(op);
+});
 
   bloque.classList.remove("oculto");
 }
@@ -653,13 +667,24 @@ function onGrado(){
 
   if(!grado) return;
 
-  generarSemanas();
+  // 🔥 Mostrar grupos primero
+const gradosAB = ["PRIMERO","SEGUNDO","TERCERO","CUARTO","QUINTO","SEXTO"];
 
-  mostrar("b-semana");
+if(gradosAB.includes(grado.toUpperCase())){
+  mostrar("b-grupos");
+  ST.grupos = ["A","B"];
+}else{
+  ocultar("b-grupos");
+  ST.grupos = [];
+}
 
+// 🔥 Luego semana
+generarSemanas();
+mostrar("b-semana");
+
+// 🔥 Luego lo demás
 mostrar("b-intensidad");
 mostrarIntensidad();
-
 mostrar("b-observacion"); // 🔥 AQUÍ
 
   document.getElementById("estadoGuardado").textContent =
@@ -1185,6 +1210,21 @@ function mostrarExito(){
 function nuevaPlaneacion(){
   localStorage.removeItem("planeacion_borrador");
   location.reload();
+}
+
+function toggleGrupo(grupo, el){
+
+  if(!ST.grupos) ST.grupos = ["A","B"];
+
+  if(ST.grupos.includes(grupo)){
+    ST.grupos = ST.grupos.filter(g => g !== grupo);
+    el.classList.remove("activa");
+  } else {
+    ST.grupos.push(grupo);
+    el.classList.add("activa");
+  }
+
+  guardarAuto();
 }
 </script>
 
