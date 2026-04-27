@@ -538,8 +538,12 @@ const API = "/api/planeaciones"; // ⚠️ ajusta si tu ruta es otra
 
 // 🔥 INICIO
 window.addEventListener("load", () => {
+
+  // 🔥 TEMPORAL (para que funcione YA)
+  localStorage.setItem("correo","secifuentes@lapresentaciongirardota.edu.co");
+
   cargarMaterias();
-  cargarBorrador(); // 🔥 FALTABA ESTO
+  cargarBorrador();
 });
 
 // 🔥 CARGAR MATERIAS
@@ -1026,12 +1030,13 @@ async function enviarPlaneacion(){
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({
-        correo: localStorage.getItem("correo"),
-        asignatura: ST.materia,
-        grado: ST.grado,
-        semana: document.getElementById("semanaSelect").value,
+  asignatura: ST.materia,
+  grado: ST.grado,
+  gruposDestino: (ST.grupos || []).join(","),
 
-        indicador: document.getElementById("indicadorInput")?.value || "",
+  semana: document.getElementById("semanaSelect").value.toUpperCase(),
+
+  indicador: document.getElementById("indicadorInput")?.value || "",
 
         d1_tema: document.getElementById("tema_1")?.value || "",
         d1_act: document.getElementById("act_1")?.value || "",
