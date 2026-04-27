@@ -892,16 +892,19 @@ function onGrado(){
     ST.grupos = [];
   }
 
-  // 🔥 SEMANA
-  generarSemanas();
-  activarBloque("b-semana");
+ // 🔥 SEMANA
+generarSemanas();
+mostrar("b-semana");
+activarBloque("b-semana");
 
-  // 🔥 OBSERVACIÓN
-  activarBloque("b-observacion");
+// 🔥 OBSERVACIÓN
+mostrar("b-observacion");
+activarBloque("b-observacion");
 
-  // 🔥 INTENSIDAD
-  activarBloque("b-intensidad");
-  mostrarIntensidad();
+// 🔥 INTENSIDAD
+mostrar("b-intensidad");
+activarBloque("b-intensidad");
+mostrarIntensidad();
 
   document.getElementById("estadoGuardado").textContent =
     `${ST.materia} · ${ST.grado}`;
