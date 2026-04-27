@@ -1799,6 +1799,9 @@ async function revisarIndicadorCoach(){
 
   if(!campo || !box) return;
 
+  box.innerHTML = "";
+  box.style.display = "none";
+
   const texto = campo.value.trim();
 
   if(!texto){
@@ -1889,6 +1892,12 @@ async function revisarClaseCoach(i){
   const boxAct = document.getElementById("coachAct_"+i);
 
   if(!boxTema || !boxAct) return;
+
+
+  boxTema.innerHTML = "";
+  boxAct.innerHTML = "";
+  boxTema.style.display = "none";
+  boxAct.style.display = "none";
 
   let mensajesTema = [];
   let mensajesAct = [];
@@ -2008,6 +2017,14 @@ function aplicarCorreccion(offset, length, sugerencia, campoId){
 
   campo.focus();
   campo.dispatchEvent(new Event("input"));
+
+// 🔥 FORZAR REVISIÓN INMEDIATA
+if(campoId === "indicadorInput"){
+  revisarIndicadorCoach();
+} else if(campoId.startsWith("tema_") || campoId.startsWith("act_")){
+  const i = campoId.split("_")[1];
+  revisarClaseCoach(i);
+}
 }
 </script>
 
