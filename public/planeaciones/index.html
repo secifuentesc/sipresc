@@ -1119,11 +1119,11 @@ bloque.classList.add("bloque", "activo");
 
   <label class="pregunta">Tema(s) de la clase ${i}</label>
   <textarea class="input textarea" id="tema_${i}"></textarea>
+  <div id="coachTema_${i}" class="coach-box"></div>
 
   <label class="pregunta" style="margin-top:14px;">Actividades principales de la clase ${i}</label>
   <textarea class="input textarea" id="act_${i}"></textarea>
-
-  <div id="coach_${i}" class="coach-box"></div>
+  <div id="coachAct_${i}" class="coach-box"></div>
 `;
 
     box.appendChild(bloque);
@@ -1837,8 +1837,8 @@ async function revisarIndicadorCoach(){
       mensajes.push(`
   <div class="coach-error">
     🔴 "${e.context.text}" → 
-    <span class="sugerencia" 
-  onclick="aplicarCorreccion(${e.offset}, ${e.length}, '${sugerencia}', 'indicadorInput')"
+    <span class="sugerencia"
+  onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'indicadorInput')">
   ${sugerencia}
 </span>
   </div>
@@ -1884,97 +1884,112 @@ async function revisarClaseCoach(i){
 
   const tema = document.getElementById("tema_"+i)?.value.trim() || "";
   const act = document.getElementById("act_"+i)?.value.trim() || "";
-  const box = document.getElementById("coach_"+i);
 
-  if(!box) return;
+  const boxTema = document.getElementById("coachTema_"+i);
+  const boxAct = document.getElementById("coachAct_"+i);
 
-  let mensajes = [];
+  if(!boxTema || !boxAct) return;
 
-  // 🔹 SI SOLO ESTÁ ESCRIBIENDO EN TEMA
-  if(tema && !act){
+  let mensajesTema = [];
+  let mensajesAct = [];
+
+  // 🔹 VALIDACIÓN TEMA
+  if(tema){
 
     if(tema.length < 5){
-      mensajes.push(`<div class="coach-warning">⚠ El tema es muy corto o poco claro.</div>`);
+      mensajesTema.push(`<div class="coach-warning">⚠ El tema es muy corto o poco claro.</div>`);
     }
 
-    // Ortografía tema
     const erroresTema = await revisarOrtografia(tema);
 
     if(erroresTema.length > 0){
 
-      mensajes.push(`<div class="coach-error"><b>Errores en el tema:</b></div>`);
+      mensajesTema.push(`<div class="coach-error"><b>Errores en el tema:</b></div>`);
 
       erroresTema.slice(0,3).forEach(e => {
-        const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
-        const campoId = act ? `act_${i}` : `tema_${i}`;
 
-mensajes.push(`
-  <div class="coach-error">
-    🔴 "${e.context.text}" → 
-    <span class="sugerencia" 
-      onclick="aplicarCorreccion('${e.context.text}', '${sugerencia}', '${campoId}')">
-      ${sugerencia}
-    </span>
-  </div>
-`);
+        const sugerencia = (e.replacements[0]?.value || "").replace(/'/g, "\\'");
+        const offset = e.offset;
+        const length = e.length;
+
+        mensajesTema.push(`
+          <div class="coach-error">
+            🔴 "${e.context.text}" → 
+            <span class="sugerencia"
+              onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'tema_${i}')">
+              ${sugerencia}
+            </span>
+          </div>
+        `);
+
       });
 
-    }else{
-      mensajes.push(`<div class="coach-ok">✔ Tema sin errores.</div>`);
+    } else {
+      mensajesTema.push(`<div class="coach-ok">✔ Tema sin errores.</div>`);
     }
 
+    boxTema.style.display = mensajesTema.length ? "block" : "none";
+    boxTema.innerHTML = mensajesTema.join("");
+
+  } else {
+    boxTema.style.display = "none";
+    boxTema.innerHTML = "";
   }
 
-  // 🔹 SI ESTÁ ESCRIBIENDO ACTIVIDADES
+  // 🔹 VALIDACIÓN ACTIVIDADES
   if(act){
 
     if(act.length < 10){
-      mensajes.push(`<div class="coach-warning">⚠ Las actividades deben ser más claras y completas.</div>`);
+      mensajesAct.push(`<div class="coach-warning">⚠ Las actividades deben ser más claras y completas.</div>`);
     }
 
     if(!/\d+\./.test(act)){
-      mensajes.push(`<div class="coach-warning">⚠ Organiza en pasos (1., 2., 3.).</div>`);
+      mensajesAct.push(`<div class="coach-warning">⚠ Organiza en pasos (1., 2., 3.).</div>`);
     }
 
     if(!act.endsWith(".")){
-      mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
+      mensajesAct.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
     }
 
-    const erroresAct = await revisarOrtografia(act);
+    let erroresAct = [];
+if(act.length > 15){
+  erroresAct = await revisarOrtografia(act);
+}
 
     if(erroresAct.length > 0){
 
-      mensajes.push(`<div class="coach-error"><b>Errores en actividades:</b></div>`);
+      mensajesAct.push(`<div class="coach-error"><b>Errores en actividades:</b></div>`);
 
       erroresAct.slice(0,3).forEach(e => {
-        const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
-        const campoId = `act_${i}`;
 
-mensajes.push(`
-  <div class="coach-error">
-    🔴 "${e.context.text}" → 
-    <span class="sugerencia" 
-      onclick="aplicarCorreccion('${e.context.text}', '${sugerencia}', '${campoId}')">
-      ${sugerencia}
-    </span>
-  </div>
-`);
+        const sugerencia = (e.replacements[0]?.value || "").replace(/'/g, "\\'");
+        const offset = e.offset;
+        const length = e.length;
+
+        mensajesAct.push(`
+          <div class="coach-error">
+            🔴 "${e.context.text}" → 
+            <span class="sugerencia"
+              onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'act_${i}')">
+              ${sugerencia}
+            </span>
+          </div>
+        `);
+
       });
 
-    }else{
-      mensajes.push(`<div class="coach-ok">✔ Actividades sin errores.</div>`);
+    } else {
+      mensajesAct.push(`<div class="coach-ok">✔ Actividades sin errores.</div>`);
     }
 
+    boxAct.style.display = "block";
+    boxAct.innerHTML = mensajesAct.join("");
+
+  } else {
+    boxAct.style.display = "none";
+    boxAct.innerHTML = "";
   }
 
-  if(!tema && !act){
-    box.style.display = "none";
-    box.innerHTML = "";
-    return;
-  }
-
-  box.style.display = "block";
-  box.innerHTML = mensajes.join("");
 }
 
 function aplicarCorreccion(offset, length, sugerencia, campoId){
@@ -1983,6 +1998,8 @@ function aplicarCorreccion(offset, length, sugerencia, campoId){
   if(!campo) return;
 
   let texto = campo.value;
+
+  if(offset < 0 || offset > texto.length) return;
 
   const antes = texto.substring(0, offset);
   const despues = texto.substring(offset + length);
