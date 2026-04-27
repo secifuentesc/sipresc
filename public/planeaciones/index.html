@@ -505,7 +505,7 @@ body{
     </div>
 
     <!-- GRADO -->
-    <div class="bloque oculto" id="b-grado">
+    <div class="bloque" id="b-grado">
       <label class="pregunta">Grado</label>
       <div class="custom-select" id="gradoBox">
   <div class="select-display" onclick="toggleSelect('grado')">
@@ -516,7 +516,7 @@ body{
     </div>
 
     <!-- GRUPOS -->
-<div class="bloque oculto" id="b-grupos">
+<div class="bloque" id="b-grupos">
   <label class="pregunta">Grupo(s)</label>
 
   <div style="display:flex; gap:10px; margin-top:10px;">
@@ -526,7 +526,7 @@ body{
 </div>
 
     <!-- SEMANA -->
-    <div class="bloque oculto" id="b-semana">
+    <div class="bloque" id="b-semana">
       <label class="pregunta">Semana</label>
       <div class="custom-select" id="semanaBox">
   <div class="select-display" onclick="toggleSelect('semana')">
@@ -537,7 +537,7 @@ body{
     </div>
 
     <!-- OBSERVACIÓN -->
-<div class="bloque oculto" id="b-observacion">
+<div class="bloque" id="b-observacion">
   <label class="pregunta">¿La clase anterior tuvo alguna novedad?</label>
 
   <div style="display:flex; gap:10px; margin-top:10px;">
@@ -555,7 +555,7 @@ body{
 </div>
 
 <!-- INTENSIDAD -->
-<div class="bloque oculto" id="b-intensidad">
+<div class="bloque" id="b-intensidad">
   <label class="pregunta">Clases en la semana</label>
   <div id="intensidadBox" style="display:flex; gap:10px;"></div>
 </div>
@@ -565,12 +565,12 @@ body{
 <!-- 🔵 PASO 2 -->
 <div id="paso2" class="oculto">
 
-    <div class="bloque oculto" id="b-planeacion">
+    <div class="bloque" id="b-planeacion">
   <div id="planeacionBox"></div>
 </div>
 
 <!-- 🔵 ACTIVIDADES COMPLEMENTARIAS -->
-<div class="bloque oculto" id="b-complementaria">
+<div class="bloque" id="b-complementaria">
 
   <label class="pregunta">¿Actividades complementarias?</label>
 
@@ -596,7 +596,7 @@ body{
 </div>
 
   <!-- 🔵 COMUNICACIÓN A FAMILIAS -->
-<div class="bloque oculto" id="b-familias">
+<div class="bloque" id="b-familias">
 
   <label class="pregunta">¿Comunicación a las familias?</label>
 
@@ -895,9 +895,9 @@ generarSemanas();
 activarBloque("b-semana");
 
 // 🔥 Luego lo demás
-mostrar("b-intensidad");
+
 mostrarIntensidad();
-mostrar("b-observacion"); // 🔥 AQUÍ
+
 
   document.getElementById("estadoGuardado").textContent =
     `${ST.materia} · ${ST.grado}`;
@@ -1148,12 +1148,15 @@ function generarSemanas(){
     }
 
     div.onclick = () => {
-      document.getElementById("semanaText").textContent = "Semana " + i;
-      ST.semana = "Semana " + i;
-      box.style.display = "none";
+  document.getElementById("semanaText").textContent = "Semana " + i;
+  ST.semana = "Semana " + i;
+  box.style.display = "none";
 
-      actualizarProgreso(); // 🔥 actualiza la barra
-    };
+  activarBloque("b-observacion"); // 🔥 CLAVE
+  actualizarProgreso();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
     box.appendChild(div);
   }
