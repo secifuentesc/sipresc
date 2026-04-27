@@ -496,17 +496,28 @@ body{
   transform: scale(1.05);
 }
 
-.preview-error{
-  margin-top:8px;
-  font-size:13px;
+.coach-box{
+  margin-top:10px;
+  font-size:12px;
   line-height:1.5;
-  color:var(--tx);
   text-align:left;
-  background:rgba(255,255,255,0.03);
+  background:rgba(255,255,255,0.035);
   border:1px solid var(--br);
   border-radius:10px;
   padding:10px;
   display:none;
+}
+
+.coach-ok{
+  color:#4ade80;
+}
+
+.coach-warning{
+  color:#facc15;
+}
+
+.coach-error{
+  color:#f06b6b;
 }
 
 .marca-error{
@@ -1077,7 +1088,7 @@ function generarPlaneacion(){
 indicador.innerHTML = `
   <label class="pregunta">Indicador de desempeño</label>
   <textarea class="input textarea" id="indicadorInput" spellcheck="true"></textarea>
-  <div id="previewIndicador" class="preview-error"></div>
+  <div id="coachIndicador" class="coach-box"></div>
 `;
   box.appendChild(indicador);
 
@@ -1540,7 +1551,7 @@ function validarBotonEnviar(){
 
 document.addEventListener("input", function(e){
   if(e.target.id === "indicadorInput"){
-  revisarIndicadorVisual();
+  revisarIndicadorCoach();
 }
 
   if(
@@ -1721,61 +1732,50 @@ function generarClasesDispositivo(){
   }
 }
 
-function resaltarErroresBasicos(texto){
 
-  const errores = [
-    "basicos",
-    "basica",
-    "creacion",
-    "pagina",
-    "paginas",
-    "matematica",
-    "fisica",
-    "informatica",
-    "tecnologia",
-    "evaluacion",
-    "actividades",
-    "desempeno",
-    "planeacion"
-  ];
 
-  let resultado = texto;
+function esIndicadorValido(texto){
 
-  errores.forEach(palabra => {
-    const regex = new RegExp("\\b" + palabra + "\\b", "gi");
+  const primeraPalabra = texto.trim().split(/\s+/)[0]?.toLowerCase() || "";
 
-    resultado = resultado.replace(regex, match => {
-      return `<span class="marca-error">${match}</span>`;
-    });
-  });
+  // Infinitivo: aplicar, resolver, analizar, identificar, comprender...
+  const terminaEnInfinitivo = /(ar|er|ir)$/.test(primeraPalabra);
 
-  return resultado;
+  // Tercera persona básica: el estudiante aplica, analiza, identifica...
+  const terceraPersona = /^el estudiante\s+[a-záéíóúñ]+/i.test(texto.trim());
+
+  return terminaEnInfinitivo || terceraPersona;
 }
 
-function revisarIndicadorVisual(){
+function revisarIndicadorCoach(){
 
   const campo = document.getElementById("indicadorInput");
-  const preview = document.getElementById("previewIndicador");
+  const box = document.getElementById("coachIndicador");
 
-  if(!campo || !preview) return;
+  if(!campo || !box) return;
 
   const texto = campo.value.trim();
 
   if(!texto){
-    preview.style.display = "none";
-    preview.innerHTML = "";
+    box.style.display = "none";
+    box.innerHTML = "";
     return;
   }
 
-  const marcado = resaltarErroresBasicos(texto);
+  let mensajes = [];
 
-  if(marcado !== texto){
-    preview.style.display = "block";
-    preview.innerHTML = marcado;
+  if(esIndicadorValido(texto)){
+    mensajes.push(`<div class="coach-ok">✔ El indicador está redactado en infinitivo o tercera persona.</div>`);
   }else{
-    preview.style.display = "none";
-    preview.innerHTML = "";
+    mensajes.push(`<div class="coach-warning">⚠ El indicador debe iniciar con un verbo en infinitivo o redactarse en tercera persona.</div>`);
   }
+
+  if(!texto.endsWith(".")){
+    mensajes.push(`<div class="coach-warning">⚠ Recuerda finalizar el enunciado con punto.</div>`);
+  }
+
+  box.style.display = "block";
+  box.innerHTML = mensajes.join("");
 }
 </script>
 
