@@ -1868,57 +1868,69 @@ async function revisarClaseCoach(i){
 
   if(!box) return;
 
+  let mensajes = [];
+
+  // 🔹 SI SOLO ESTÁ ESCRIBIENDO EN TEMA
+  if(tema && !act){
+
+    if(tema.length < 5){
+      mensajes.push(`<div class="coach-warning">⚠ El tema es muy corto o poco claro.</div>`);
+    }
+
+    // Ortografía tema
+    const erroresTema = await revisarOrtografia(tema);
+
+    if(erroresTema.length > 0){
+
+      mensajes.push(`<div class="coach-error"><b>Errores en el tema:</b></div>`);
+
+      erroresTema.slice(0,3).forEach(e => {
+        const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
+        mensajes.push(`<div class="coach-error">🔴 "${e.context.text}" → <b>${sugerencia}</b></div>`);
+      });
+
+    }else{
+      mensajes.push(`<div class="coach-ok">✔ Tema sin errores.</div>`);
+    }
+
+  }
+
+  // 🔹 SI ESTÁ ESCRIBIENDO ACTIVIDADES
+  if(act){
+
+    if(act.length < 10){
+      mensajes.push(`<div class="coach-warning">⚠ Las actividades deben ser más claras y completas.</div>`);
+    }
+
+    if(!/\d+\./.test(act)){
+      mensajes.push(`<div class="coach-warning">⚠ Organiza en pasos (1., 2., 3.).</div>`);
+    }
+
+    if(!act.endsWith(".")){
+      mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
+    }
+
+    const erroresAct = await revisarOrtografia(act);
+
+    if(erroresAct.length > 0){
+
+      mensajes.push(`<div class="coach-error"><b>Errores en actividades:</b></div>`);
+
+      erroresAct.slice(0,3).forEach(e => {
+        const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
+        mensajes.push(`<div class="coach-error">🔴 "${e.context.text}" → <b>${sugerencia}</b></div>`);
+      });
+
+    }else{
+      mensajes.push(`<div class="coach-ok">✔ Actividades sin errores.</div>`);
+    }
+
+  }
+
   if(!tema && !act){
     box.style.display = "none";
     box.innerHTML = "";
     return;
-  }
-
-  let mensajes = [];
-
-  // 🔹 TEMA
-  if(tema.length < 5){
-    mensajes.push(`<div class="coach-warning">⚠ El tema es muy corto o poco claro.</div>`);
-  }
-
-  // 🔹 ACTIVIDADES
-  if(act.length < 10){
-    mensajes.push(`<div class="coach-warning">⚠ Las actividades deben ser más claras y completas.</div>`);
-  }
-
-  // 🔹 REGLA CLAVE (coordinación)
-  if(!/\d+\./.test(act)){
-    mensajes.push(`<div class="coach-warning">⚠ Se recomienda organizar las actividades en pasos (1., 2., 3.).</div>`);
-  }
-
-  if(!act.endsWith(".")){
-    mensajes.push(`<div class="coach-warning">⚠ Las actividades deben finalizar con punto.</div>`);
-  }
-
-  // 🔥 ORTOGRAFÍA (tema + actividades)
-  const erroresTema = await revisarOrtografia(tema);
-  const erroresAct = await revisarOrtografia(act);
-
-  const errores = [...erroresTema, ...erroresAct];
-
-  if(errores.length > 0){
-
-    mensajes.push(`<div class="coach-error" style="margin-top:8px;"><b>Errores detectados:</b></div>`);
-
-    errores.slice(0,3).forEach(e => {
-
-      const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
-
-      mensajes.push(`
-        <div class="coach-error">
-        🔴 "${e.context.text}" → <b>${sugerencia}</b>
-        </div>
-      `);
-
-    });
-
-  }else{
-    mensajes.push(`<div class="coach-ok">✔ Sin errores ortográficos.</div>`);
   }
 
   box.style.display = "block";
