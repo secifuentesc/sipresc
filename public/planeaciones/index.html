@@ -462,10 +462,7 @@ body{
   }
 }
 
-#paso2{
-  display:none;
-}
-  
+
 </style>
 </head>
 
@@ -575,7 +572,7 @@ body{
     </div> <!-- 🔴 CIERRA PASO 1 -->
 
 <!-- 🔵 PASO 2 -->
-<div id="paso2" class="oculto">
+<div id="paso2">
 
     <div class="bloque" id="b-planeacion">
   <div id="planeacionBox"></div>
@@ -1200,12 +1197,8 @@ function irPaso2(){
   const p1 = document.getElementById("paso1");
   const p2 = document.getElementById("paso2");
 
-  // 🔴 ocultar paso 1 BIEN
-  p1.style.display = "none";
-
-  // 🟢 mostrar paso 2 FORZADO
-  p2.style.display = "block";
-  p2.classList.remove("oculto");
+  p1.classList.add("oculto");     // 🔴 oculta paso 1
+  p2.classList.remove("oculto");  // 🟢 muestra paso 2
 
   document.getElementById("btnBack").classList.add("activo");
 
@@ -1221,8 +1214,8 @@ function volverPaso1(){
   const p1 = document.getElementById("paso1");
   const p2 = document.getElementById("paso2");
 
-  p1.style.display = "block";
-  p2.style.display = "none";
+  p1.classList.remove("oculto");
+  p2.classList.add("oculto");
 
   document.getElementById("btnBack").classList.remove("activo");
 
