@@ -568,7 +568,7 @@ body{
     </div> <!-- 🔴 CIERRA PASO 1 -->
 
 <!-- 🔵 PASO 2 -->
-<div id="paso2">
+<div id="paso2" class="oculto">
 
     <div class="bloque" id="b-planeacion">
   <div id="planeacionBox"></div>
@@ -1188,12 +1188,15 @@ function setObs(valor, el){
 
 function irPaso2(){
 
-  document.getElementById("paso1").classList.add("oculto");
-  document.getElementById("paso2").classList.remove("oculto");
+  const p1 = document.getElementById("paso1");
+  const p2 = document.getElementById("paso2");
+
+  p1.classList.add("oculto");
+  p2.classList.remove("oculto");
 
   document.getElementById("btnBack").classList.add("activo");
 
-  // 🔥 activar bloques internos
+  // 🔥 ACTIVAR CONTENIDO REAL
   document.getElementById("b-planeacion").classList.add("activo");
   document.getElementById("b-complementaria").classList.add("activo");
   document.getElementById("b-familias").classList.add("activo");
