@@ -392,9 +392,12 @@ body{
     <!-- GRADO -->
     <div class="bloque oculto" id="b-grado">
       <label class="pregunta">Grado</label>
-      <select class="input" id="gradoSelect" onchange="onGrado()">
-        <option value="">Seleccionar...</option>
-      </select>
+      <div class="custom-select" id="gradoBox">
+  <div class="select-display" onclick="toggleSelect('grado')">
+    <span id="gradoText">Seleccionar grado...</span>
+  </div>
+  <div class="select-options" id="gradoOptions"></div>
+</div>
     </div>
 
     <!-- GRUPOS -->
@@ -410,7 +413,12 @@ body{
     <!-- SEMANA -->
     <div class="bloque oculto" id="b-semana">
       <label class="pregunta">Semana</label>
-      <select class="input" id="semanaSelect"></select>
+      <div class="custom-select" id="semanaBox">
+  <div class="select-display" onclick="toggleSelect('semana')">
+    <span id="semanaText">Seleccionar semana...</span>
+  </div>
+  <div class="select-options" id="semanaOptions"></div>
+</div>
     </div>
 
     <!-- OBSERVACIÓN -->
@@ -704,9 +712,23 @@ function onMateria(){
   if(!materia) return;
 
   const bloque = document.getElementById("b-grado");
-  const gradoSelect = document.getElementById("gradoSelect");
+  const box = document.getElementById("gradoOptions");
+box.innerHTML = "";
 
-  gradoSelect.innerHTML = '<option value="">Seleccionar grado...</option>';
+gradosUnicos.forEach(g => {
+
+  const div = document.createElement("div");
+  div.textContent = g;
+
+  div.onclick = () => {
+    document.getElementById("gradoText").textContent = g;
+    ST.grado = g;
+    box.style.display = "none";
+    onGrado();
+  };
+
+  box.appendChild(div);
+});
 
   ocultar("b-semana");
   ocultar("b-planeacion");
@@ -740,7 +762,7 @@ function onMateria(){
 // 🔥 CUANDO SELECCIONA GRADO
 function onGrado(){
 
-  const grado = document.getElementById("gradoSelect").value;
+  const grado = ST.grado;
   ST.grado = grado;
 
   if(!grado) return;
@@ -973,31 +995,34 @@ function calcularSemanaActual(){
 
 function generarSemanas(){
 
-  const select = document.getElementById("semanaSelect");
+  const box = document.getElementById("semanaOptions");
   const actual = calcularSemanaActual();
 
-  select.innerHTML = "";
+  box.innerHTML = "";
 
   for(let i = 1; i <= 10; i++){
 
-    const op = document.createElement("option");
-    op.value = `Semana ${i}`;
-    op.textContent = `Semana ${i}`;
+    const div = document.createElement("div");
+    div.textContent = "Semana " + i;
 
-    // 🔴 Bloquear semanas pasadas
     if(i < actual){
-      op.disabled = true;
-      op.style.color = "#777";
+      div.style.opacity = "0.4";
+      div.style.pointerEvents = "none";
     }
 
-    // 🔵 Seleccionar semana actual automáticamente
     if(i === actual){
-      op.selected = true;
+      document.getElementById("semanaText").textContent = "Semana " + i;
+      ST.semana = "Semana " + i;
     }
 
-    select.appendChild(op);
-  }
+    div.onclick = () => {
+      document.getElementById("semanaText").textContent = "Semana " + i;
+      ST.semana = "Semana " + i;
+      box.style.display = "none";
+    };
 
+    box.appendChild(div);
+  }
 }
 function setObs(valor, el){
 
@@ -1115,7 +1140,7 @@ async function enviarPlaneacion(){
       grado: ST.grado,
       gruposDestino: (ST.grupos || []).join(","),
 
-      semana: document.getElementById("semanaSelect").value.toUpperCase(),
+      semana: (ST.semana || "").toUpperCase(),
 
       indicador: document.getElementById("indicadorInput")?.value || "",
 
