@@ -526,6 +526,18 @@ body{
   border-radius:3px;
   padding:0 2px;
 }
+
+.sugerencia{
+  color:#4ade80;
+  font-weight:600;
+  cursor:pointer;
+  padding:2px 4px;
+  border-radius:4px;
+}
+
+.sugerencia:hover{
+  background:rgba(74,222,128,.15);
+}
 </style>
 </head>
 
@@ -1552,6 +1564,7 @@ function validarBotonEnviar(){
 }
 
 let timersClases = {};
+let timerIA;
 
 function activarRevisionClase(i){
 
@@ -1563,7 +1576,7 @@ function activarRevisionClase(i){
 }
 
 document.addEventListener("input", function(e){
-  let timerIA;
+  
 
 if(e.target.id === "indicadorInput"){
 
@@ -1819,10 +1832,14 @@ async function revisarIndicadorCoach(){
       const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
 
       mensajes.push(`
-        <div class="coach-error">
-        🔴 "${e.context.text}" → sugerencia: <b>${sugerencia}</b>
-        </div>
-      `);
+  <div class="coach-error">
+    🔴 "${e.context.text}" → 
+    <span class="sugerencia" 
+      onclick="aplicarCorreccion('${e.context.text}', '${sugerencia}', 'indicadorInput')"
+      ${sugerencia}
+    </span>
+  </div>
+`);
 
     });
 
@@ -1886,7 +1903,17 @@ async function revisarClaseCoach(i){
 
       erroresTema.slice(0,3).forEach(e => {
         const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
-        mensajes.push(`<div class="coach-error">🔴 "${e.context.text}" → <b>${sugerencia}</b></div>`);
+        const campoId = act ? `act_${i}` : `tema_${i}`;
+
+mensajes.push(`
+  <div class="coach-error">
+    🔴 "${e.context.text}" → 
+    <span class="sugerencia" 
+      onclick="aplicarCorreccion('${e.context.text}', '${sugerencia}', '${campoId}')">
+      ${sugerencia}
+    </span>
+  </div>
+`);
       });
 
     }else{
@@ -1935,6 +1962,24 @@ async function revisarClaseCoach(i){
 
   box.style.display = "block";
   box.innerHTML = mensajes.join("");
+}
+
+function aplicarCorreccion(original, sugerencia, campoId){
+
+  const campo = document.getElementById(campoId);
+  if(!campo) return;
+
+  let texto = campo.value;
+
+  // 🔥 reemplazo inteligente (solo la palabra exacta)
+  const regex = new RegExp("\\b" + original + "\\b", "gi");
+
+  texto = texto.replace(regex, sugerencia);
+
+  campo.value = texto;
+
+  // 🔄 volver a evaluar
+  campo.dispatchEvent(new Event("input"));
 }
 </script>
 
