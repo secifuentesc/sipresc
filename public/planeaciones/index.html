@@ -541,28 +541,11 @@ async function cargarMaterias(){
 
   const correo = localStorage.getItem("correo") || "secifuentes@lapresentaciongirardota.edu.co";
   const select = document.getElementById("materiaSelect");
+
+  // 🔒 Bloquear mientras carga
   select.disabled = true;
+  select.innerHTML = '<option value="">Cargando...</option>';
 
-  // 🔥 1. CARGA INMEDIATA DESDE CACHE
-  const cache = localStorage.getItem(CACHE_KEY);
-  const cacheTime = localStorage.getItem(CACHE_TIME);
-
-  let cacheValido = false;
-
-  if (cache && cacheTime) {
-    const edad = Date.now() - parseInt(cacheTime);
-    if (edad < CACHE_MAX_AGE) {
-      cacheValido = true;
-    }
-  }
-
-  if (cacheValido) {
-    pintarMaterias(JSON.parse(cache));
-  } else {
-    select.innerHTML = '<option value="">Cargando...</option>';
-  }
-
-  // 🔄 2. ACTUALIZACIÓN EN SEGUNDO PLANO
   try {
 
     const res = await fetch(`${API}?accion=cargaDocente&correo=${correo}`);
@@ -570,46 +553,39 @@ async function cargarMaterias(){
 
     if (json.ok && json.materias) {
 
-  // 🔥 SIEMPRE guardar data primero
-  ST.data = json.materias;
-
-  const nuevas = JSON.stringify(json.materias);
-  const actuales = localStorage.getItem(CACHE_KEY);
-
-  // 🔥 SI CAMBIA → guarda cache
-  if (nuevas !== actuales) {
-    localStorage.setItem(CACHE_KEY, nuevas);
-    localStorage.setItem(CACHE_TIME, Date.now());
-  }
-
-  // 🔥 SIEMPRE pinta (CLAVE DEL FIX)
-  pintarMaterias(json.materias);
-}
-}
-
-      const nuevas = JSON.stringify(json.materias);
-      const actuales = localStorage.getItem(CACHE_KEY);
-
-      // 🔥 Solo actualiza si cambió (optimización real)
-      if (nuevas !== actuales) {
-
-        localStorage.setItem(CACHE_KEY, nuevas);
-        localStorage.setItem(CACHE_TIME, Date.now());
-
-        pintarMaterias(json.materias);
-
-      }
-
+      // 🔥 1. Guardar data SIEMPRE
       ST.data = json.materias;
 
+      // 🔥 2. Pintar SIEMPRE
+      pintarMaterias(json.materias);
+
+      // 🔥 3. Guardar cache
+      localStorage.setItem("materias_cache_v1", JSON.stringify(json.materias));
+      localStorage.setItem("materias_cache_time", Date.now());
+
+    } else {
+      select.innerHTML = '<option value="">Sin materias disponibles</option>';
     }
 
   } catch (err) {
-    console.warn("Modo offline activo (usando cache)");
+
+    console.warn("Error en API, usando cache");
+
+    const cache = localStorage.getItem("materias_cache_v1");
+
+    if (cache) {
+      ST.data = JSON.parse(cache);
+      pintarMaterias(ST.data);
+    } else {
+      select.innerHTML = '<option value="">Error de conexión</option>';
+    }
+
   }
 
+  // 🔓 Activar select al final
+  select.disabled = false;
 }
-
+  
 function pintarMaterias(materias){
 
   const select = document.getElementById("materiaSelect");
