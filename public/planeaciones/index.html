@@ -303,6 +303,49 @@ body{
   transform: scale(1);
   pointer-events:auto;
 }
+
+.custom-select{
+  position:relative;
+}
+
+.select-display{
+  background:var(--s1);
+  border:1px solid var(--br);
+  border-radius:12px;
+  padding:14px;
+  font-size:15px;
+  cursor:pointer;
+  transition: all .2s ease;
+}
+
+.select-display:hover{
+  border-color: var(--gold);
+}
+
+.select-options{
+  position:absolute;
+  top:110%;
+  left:0;
+  width:100%;
+  background:var(--s2);
+  border:1px solid var(--br);
+  border-radius:12px;
+  max-height:200px;
+  overflow:auto;
+  display:none;
+  z-index:10;
+}
+
+.select-options div{
+  padding:12px;
+  cursor:pointer;
+  transition: all .2s ease;
+}
+
+.select-options div:hover{
+  background:rgba(255,255,255,0.05);
+  color:var(--gold);
+}
 </style>
 </head>
 
@@ -338,9 +381,12 @@ body{
     <!-- MATERIA -->
     <div class="bloque">
       <label class="pregunta">Materia</label>
-      <select class="input" id="materiaSelect" onchange="onMateria()">
-        <option value="">Seleccionar...</option>
-      </select>
+      <div class="custom-select" id="materiaBox">
+  <div class="select-display" onclick="toggleSelect('materia')">
+    <span id="materiaText">Seleccionar materia...</span>
+  </div>
+  <div class="select-options" id="materiaOptions"></div>
+</div>
     </div>
 
     <!-- GRADO -->
@@ -578,26 +624,27 @@ const CACHE_MAX_AGE = 1000 * 60 * 60 * 6; // 6 horas
 async function cargarMaterias(){
 
   const correo = obtenerCorreo();
-  const select = document.getElementById("materiaSelect");
+  const display = document.getElementById("materiaText");
 
   if(!correo){
-    select.innerHTML = '<option value="">Sesión no válida</option>';
+    display.textContent = "Sesión no válida";
     return;
   }
 
-  // 🔥 1. INTENTAR CACHE PRIMERO
+  // 🔥 1. INTENTAR CACHE PRIMERO (CARGA INMEDIATA)
   const cache = localStorage.getItem(CACHE_KEY);
   const cacheTime = localStorage.getItem(CACHE_TIME);
 
   if(cache && cacheTime && (Date.now() - cacheTime < CACHE_MAX_AGE)){
     ST.data = JSON.parse(cache);
     pintarMaterias(ST.data);
+    display.textContent = "Seleccionar materia...";
     console.log("Materias desde cache ⚡");
   } else {
-    select.innerHTML = '<option value="">Cargando...</option>';
+    display.textContent = "Cargando...";
   }
 
-  // 🔥 2. ACTUALIZAR EN SEGUNDO PLANO
+  // 🔥 2. ACTUALIZAR DESDE API
   try {
 
     const res = await fetch(`${API}?accion=cargaDocente&correo=${correo}`);
@@ -611,14 +658,19 @@ async function cargarMaterias(){
       localStorage.setItem(CACHE_KEY, JSON.stringify(json.materias));
       localStorage.setItem(CACHE_TIME, Date.now());
 
+      display.textContent = "Seleccionar materia...";
       console.log("Materias actualizadas 🔄");
 
+    } else {
+      display.textContent = "Sin materias";
     }
 
   } catch (err) {
 
+    console.error(err);
+
     if(!cache){
-      select.innerHTML = '<option value="">Error conexión</option>';
+      display.textContent = "Error de conexión";
     }
 
   }
@@ -626,19 +678,23 @@ async function cargarMaterias(){
   
 function pintarMaterias(materias){
 
-  const select = document.getElementById("materiaSelect");
-
-  select.innerHTML = '<option value="">Seleccionar...</option>';
+  const box = document.getElementById("materiaOptions");
+  box.innerHTML = "";
 
   materias.forEach(m => {
-    const op = document.createElement("option");
-    op.value = m.asignatura;
-    op.textContent = m.asignatura;
-    select.appendChild(op);
-    select.disabled = false;
-  });
-  
 
+    const div = document.createElement("div");
+    div.textContent = m.asignatura;
+
+    div.onclick = () => {
+      document.getElementById("materiaText").textContent = m.asignatura;
+      ST.materia = m.asignatura;
+      box.style.display = "none";
+      onMateria();
+    };
+
+    box.appendChild(div);
+  });
 }
 
 // 🔥 CUANDO SELECCIONA MATERIA
@@ -1282,6 +1338,11 @@ function toggleGrupo(grupo, el){
 function cerrarSesion(){
   localStorage.removeItem("lp_user");
   window.location.href = "/";
+}
+
+function toggleSelect(tipo){
+  const box = document.getElementById(tipo + "Options");
+  box.style.display = box.style.display === "block" ? "none" : "block";
 }
 </script>
 
