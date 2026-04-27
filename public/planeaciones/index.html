@@ -646,7 +646,7 @@ function onMateria(){
   }
 
   const gradosUnicos = [...new Set(
-  data.grados.map(g => g.replace(/\s?[A-Z]$/, "").trim())
+  data.grados.map(g => g.replace(/\s+[A-B]$/, "").trim())
 )];
 
 gradosUnicos.forEach(g => {
