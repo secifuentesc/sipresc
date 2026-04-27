@@ -1557,6 +1557,29 @@ function toggleSelect(tipo){
   box.style.display = box.style.display === "block" ? "none" : "block";
   box.style.zIndex = 999999;
 
+  // 🔥 NUEVO: SCROLL A LA OPCIÓN ACTIVA
+  if(tipo === "semana" && ST.semana){
+
+    setTimeout(() => {
+
+      const opciones = box.querySelectorAll("div");
+
+      opciones.forEach(op => {
+
+        if(op.textContent === ST.semana){
+
+          op.scrollIntoView({
+            block: "center",
+            behavior: "smooth"
+          });
+
+        }
+
+      });
+
+    }, 50); // pequeño delay para render
+
+  }
 }
 
 function activarBloque(id){
