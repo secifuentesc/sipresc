@@ -1550,8 +1550,16 @@ function validarBotonEnviar(){
 }
 
 document.addEventListener("input", function(e){
-  if(e.target.id === "indicadorInput"){
-  revisarIndicadorCoach();
+  let timerIA;
+
+if(e.target.id === "indicadorInput"){
+
+  clearTimeout(timerIA);
+
+  timerIA = setTimeout(() => {
+    revisarIndicadorCoach();
+  }, 600);
+
 }
 
   if(
@@ -1747,7 +1755,7 @@ function esIndicadorValido(texto){
   return terminaEnInfinitivo || terceraPersona;
 }
 
-function revisarIndicadorCoach(){
+async function revisarIndicadorCoach(){
 
   const campo = document.getElementById("indicadorInput");
   const box = document.getElementById("coachIndicador");
@@ -1764,18 +1772,68 @@ function revisarIndicadorCoach(){
 
   let mensajes = [];
 
+  // 🔹 VALIDACIÓN PEDAGÓGICA
   if(esIndicadorValido(texto)){
-    mensajes.push(`<div class="coach-ok">✔ El indicador está redactado en infinitivo o tercera persona.</div>`);
+    mensajes.push(`<div class="coach-ok">✔ Redacción adecuada (infinitivo o tercera persona).</div>`);
   }else{
-    mensajes.push(`<div class="coach-warning">⚠ El indicador debe iniciar con un verbo en infinitivo o redactarse en tercera persona.</div>`);
+    mensajes.push(`<div class="coach-warning">⚠ El indicador debe iniciar con un verbo en infinitivo o en tercera persona.</div>`);
   }
 
   if(!texto.endsWith(".")){
-    mensajes.push(`<div class="coach-warning">⚠ Recuerda finalizar el enunciado con punto.</div>`);
+    mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
+  }
+
+  // 🔥 ORTOGRAFÍA REAL
+  const errores = await revisarOrtografia(texto);
+
+  if(errores.length > 0){
+
+    mensajes.push(`<div class="coach-error" style="margin-top:8px;"><b>Errores detectados:</b></div>`);
+
+    errores.forEach(e => {
+
+      const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
+
+      mensajes.push(`
+        <div class="coach-error">
+        🔴 "${e.context.text}" → sugerencia: <b>${sugerencia}</b>
+        </div>
+      `);
+
+    });
+
+  }else{
+    mensajes.push(`<div class="coach-ok">✔ Sin errores ortográficos.</div>`);
   }
 
   box.style.display = "block";
   box.innerHTML = mensajes.join("");
+}
+
+async function revisarOrtografia(texto){
+
+  try{
+
+    const res = await fetch("https://api.languagetool.org/v2/check", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        text: texto,
+        language: "es"
+      })
+    });
+
+    const data = await res.json();
+
+    return data.matches || [];
+
+  }catch(e){
+    console.error("Error LanguageTool:", e);
+    return [];
+  }
+
 }
 </script>
 
