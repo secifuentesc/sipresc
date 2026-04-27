@@ -700,8 +700,8 @@ function pintarMaterias(materias){
 // 🔥 CUANDO SELECCIONA MATERIA
 function onMateria(){
 
-  const materia = document.getElementById("materiaSelect").value;
-  ST.materia = materia;
+  const materia = ST.materia; // 🔥 CLAVE
+  if(!materia) return;
 
   const bloque = document.getElementById("b-grado");
   const gradoSelect = document.getElementById("gradoSelect");
@@ -711,17 +711,11 @@ function onMateria(){
   ocultar("b-semana");
   ocultar("b-planeacion");
 
-  if(!materia){
-    bloque.classList.add("oculto");
-    return;
-  }
-
   if (!ST.data) {
     console.warn("No hay datos cargados aún");
     return;
   }
 
-  // 🔥 ESTA LÍNEA FALTABA
   const data = ST.data.find(m => m.asignatura === materia);
 
   if (!data || !data.grados) {
@@ -730,15 +724,15 @@ function onMateria(){
   }
 
   const gradosUnicos = [...new Set(
-  data.grados.map(g => g.replace(/\s+[A-B]$/, "").trim())
-)];
+    data.grados.map(g => g.replace(/\s+[A-B]$/, "").trim())
+  )];
 
-gradosUnicos.forEach(g => {
-  const op = document.createElement("option");
-  op.value = g;
-  op.textContent = g;
-  gradoSelect.appendChild(op);
-});
+  gradosUnicos.forEach(g => {
+    const op = document.createElement("option");
+    op.value = g;
+    op.textContent = g;
+    gradoSelect.appendChild(op);
+  });
 
   bloque.classList.remove("oculto");
 }
