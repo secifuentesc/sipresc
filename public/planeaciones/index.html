@@ -1831,11 +1831,14 @@ async function revisarIndicadorCoach(){
 
       const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
 
+      const offset = e.offset;
+      const length = e.length;
+
       mensajes.push(`
   <div class="coach-error">
     🔴 "${e.context.text}" → 
     <span class="sugerencia" 
-  onclick="aplicarCorreccion('${e.context.text}', '${sugerencia}', 'indicadorInput')">
+  onclick="aplicarCorreccion(${e.offset}, ${e.length}, '${sugerencia}', 'indicadorInput')"
   ${sugerencia}
 </span>
   </div>
@@ -1974,21 +1977,19 @@ mensajes.push(`
   box.innerHTML = mensajes.join("");
 }
 
-function aplicarCorreccion(original, sugerencia, campoId){
+function aplicarCorreccion(offset, length, sugerencia, campoId){
 
   const campo = document.getElementById(campoId);
   if(!campo) return;
 
   let texto = campo.value;
 
-  // 🔥 reemplazo inteligente (solo la palabra exacta)
-  const regex = new RegExp(original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), "gi");
+  const antes = texto.substring(0, offset);
+  const despues = texto.substring(offset + length);
 
-  texto = texto.replace(regex, sugerencia);
+  campo.value = antes + sugerencia + despues;
 
-  campo.value = texto;
-
-  // 🔄 volver a evaluar
+  campo.focus();
   campo.dispatchEvent(new Event("input"));
 }
 </script>
