@@ -321,7 +321,7 @@ body{
 }
 
 .select-options{
-  position:absolute;
+  position:fixed;
   top:110%;
   left:0;
   width:100%;
@@ -1541,8 +1541,22 @@ function cerrarSesion(){
 }
 
 function toggleSelect(tipo){
+
   const box = document.getElementById(tipo + "Options");
+  const trigger = document.getElementById(tipo + "Box");
+
+  const rect = trigger.getBoundingClientRect();
+
+  // 🔥 MOVER AL BODY
+  document.body.appendChild(box);
+
+  box.style.position = "fixed";
+  box.style.top = rect.bottom + "px";
+  box.style.left = rect.left + "px";
+  box.style.width = rect.width + "px";
   box.style.display = box.style.display === "block" ? "none" : "block";
+  box.style.zIndex = 999999;
+
 }
 
 function activarBloque(id){
