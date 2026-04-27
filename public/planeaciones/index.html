@@ -708,27 +708,10 @@ function pintarMaterias(materias){
 // 🔥 CUANDO SELECCIONA MATERIA
 function onMateria(){
 
-  const materia = ST.materia; // 🔥 CLAVE
+  const materia = ST.materia;
   if(!materia) return;
 
   const bloque = document.getElementById("b-grado");
-  const box = document.getElementById("gradoOptions");
-box.innerHTML = "";
-
-gradosUnicos.forEach(g => {
-
-  const div = document.createElement("div");
-  div.textContent = g;
-
-  div.onclick = () => {
-    document.getElementById("gradoText").textContent = g;
-    ST.grado = g;
-    box.style.display = "none";
-    onGrado();
-  };
-
-  box.appendChild(div);
-});
 
   ocultar("b-semana");
   ocultar("b-planeacion");
@@ -745,20 +728,32 @@ gradosUnicos.forEach(g => {
     return;
   }
 
+  // 🔥 PRIMERO calculamos
   const gradosUnicos = [...new Set(
     data.grados.map(g => g.replace(/\s+[A-B]$/, "").trim())
   )];
 
+  // 🔥 LUEGO pintamos
+  const box = document.getElementById("gradoOptions");
+  box.innerHTML = "";
+
   gradosUnicos.forEach(g => {
-    const op = document.createElement("option");
-    op.value = g;
-    op.textContent = g;
-    gradoSelect.appendChild(op);
+
+    const div = document.createElement("div");
+    div.textContent = g;
+
+    div.onclick = () => {
+      document.getElementById("gradoText").textContent = g;
+      ST.grado = g;
+      box.style.display = "none";
+      onGrado();
+    };
+
+    box.appendChild(div);
   });
 
   bloque.classList.remove("oculto");
 }
-
 // 🔥 CUANDO SELECCIONA GRADO
 function onGrado(){
 
