@@ -440,6 +440,19 @@ body{
   background:linear-gradient(90deg,var(--gold),var(--gold2));
   transition:width .4s ease;
 }
+
+.bloque{
+  display:none;
+  opacity:0;
+  transform:translateY(20px);
+  transition:all .4s ease;
+}
+
+.bloque.activo{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
+}
   
 </style>
 </head>
@@ -472,19 +485,16 @@ body{
   <div id="paso1">
 
     <div class="title-main">
-  Diseña tu planeación
+  Diseña tu Planeación
 </div>
 
 <div class="subtitle-main">
-  Familia Presentación
+  Todo se guarda automáticamente
 </div>
 
-    <div class="subtitle">
-      Todo se guarda automáticamente
-    </div>
 
     <!-- MATERIA -->
-    <div class="bloque">
+    <div class="bloque activo">
       <label class="pregunta">Materia</label>
       <div class="custom-select" id="materiaBox">
   <div class="select-display" onclick="toggleSelect('materia')">
@@ -857,7 +867,7 @@ function onMateria(){
     box.appendChild(div);
   });
 
-  bloque.classList.remove("oculto");
+  activarBloque("b-grado");
 
   actualizarProgreso();
 }
@@ -882,7 +892,7 @@ if(gradosAB.includes(grado.toUpperCase())){
 
 // 🔥 Luego semana
 generarSemanas();
-mostrar("b-semana");
+activarBloque("b-semana");
 
 // 🔥 Luego lo demás
 mostrar("b-intensidad");
@@ -1487,6 +1497,16 @@ function cerrarSesion(){
 function toggleSelect(tipo){
   const box = document.getElementById(tipo + "Options");
   box.style.display = box.style.display === "block" ? "none" : "block";
+}
+
+function activarBloque(id){
+
+  // 🔴 Oculta TODOS los bloques del paso 1
+  document.querySelectorAll("#paso1 .bloque")
+    .forEach(b => b.classList.remove("activo"));
+
+  // 🟢 Activa SOLO el que quieres
+  document.getElementById(id).classList.add("activo");
 }
 </script>
 
