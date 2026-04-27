@@ -316,7 +316,7 @@ body{
 
   <h1>SIPRESC - Planeaciones</h1>
   <span class="topbar-rol">DOCENTE</span>
-  <button class="logout-btn">Salir</button>
+  <button class="logout-btn" onclick="cerrarSesion()">Salir</button>
 </div>
 
 <!-- 🔥 CONTENIDO -->
@@ -529,6 +529,24 @@ transition:all .3s ease;
   
 <script>
 
+function obtenerSesion(){
+
+  const data = localStorage.getItem("lp_user");
+
+  if(!data) return null;
+
+  try{
+    return JSON.parse(data);
+  }catch{
+    return null;
+  }
+}
+
+function obtenerCorreo(){
+  const sesion = obtenerSesion();
+  return sesion?.correo || null;
+}
+
 let ST = {
   materia: null,
   grado: null
@@ -539,8 +557,14 @@ const API = "/api/planeaciones"; // ⚠️ ajusta si tu ruta es otra
 // 🔥 INICIO
 window.addEventListener("load", () => {
 
-  // 🔥 TEMPORAL (para que funcione YA)
-  localStorage.setItem("correo","secifuentes@lapresentaciongirardota.edu.co");
+  const correo = obtenerCorreo();
+
+  if(!correo){
+    window.location.href = "/"; // redirige al login
+    return;
+  }
+
+  ST.correo = correo;
 
   cargarMaterias();
   cargarBorrador();
@@ -553,10 +577,14 @@ const CACHE_MAX_AGE = 1000 * 60 * 60 * 6; // 6 horas
 
 async function cargarMaterias(){
 
-  const correo = localStorage.getItem("correo") || "secifuentes@lapresentaciongirardota.edu.co";
+  const correo = obtenerCorreo();
   const select = document.getElementById("materiaSelect");
 
-  // 🔒 Bloquear mientras carga
+  if(!correo){
+    select.innerHTML = '<option value="">Sesión no válida</option>';
+    return;
+  }
+
   select.disabled = true;
   select.innerHTML = '<option value="">Cargando...</option>';
 
@@ -567,23 +595,17 @@ async function cargarMaterias(){
 
     if (json.ok && json.materias) {
 
-      // 🔥 1. Guardar data SIEMPRE
       ST.data = json.materias;
-
-      // 🔥 2. Pintar SIEMPRE
       pintarMaterias(json.materias);
 
-      // 🔥 3. Guardar cache
       localStorage.setItem("materias_cache_v1", JSON.stringify(json.materias));
       localStorage.setItem("materias_cache_time", Date.now());
 
     } else {
-      select.innerHTML = '<option value="">Sin materias disponibles</option>';
+      select.innerHTML = '<option value="">Sin materias</option>';
     }
 
   } catch (err) {
-
-    console.warn("Error en API, usando cache");
 
     const cache = localStorage.getItem("materias_cache_v1");
 
@@ -591,12 +613,11 @@ async function cargarMaterias(){
       ST.data = JSON.parse(cache);
       pintarMaterias(ST.data);
     } else {
-      select.innerHTML = '<option value="">Error de conexión</option>';
+      select.innerHTML = '<option value="">Error conexión</option>';
     }
 
   }
 
-  // 🔓 Activar select al final
   select.disabled = false;
 }
   
@@ -817,7 +838,6 @@ function guardarAuto(){
     try {
 
       const data = {
-        correo: localStorage.getItem("correo"),
 
         asignatura: ST.materia,
         grado: ST.grado,
@@ -1026,7 +1046,7 @@ async function enviarPlaneacion(){
 
   try {
 
-    const correo = localStorage.getItem("correo");
+    const correo = obtenerCorreo();
 
     // 🔴 Validación básica
     if(!correo){
@@ -1254,6 +1274,11 @@ function toggleGrupo(grupo, el){
   }
 
   guardarAuto();
+}
+
+function cerrarSesion(){
+  localStorage.removeItem("lp_user");
+  window.location.href = "/";
 }
 </script>
 
