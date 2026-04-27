@@ -486,14 +486,33 @@ transition:all .3s ease;
     <div style="
     font-size:13px;
     color:var(--mt);
-    margin-bottom:20px;
+    margin-bottom:22px;
     ">
       Todo se guardó correctamente
     </div>
 
-    <button onclick="nuevaPlaneacion()" class="btn">
-      Nueva planeación
-    </button>
+    <!-- BOTONES -->
+    <div style="display:flex; flex-direction:column; gap:10px;">
+
+      <button onclick="nuevaPlaneacion()" class="btn">
+        Nueva planeación
+      </button>
+
+      <button onclick="volverInicio()" style="
+      padding:12px;
+      border-radius:10px;
+      border:1px solid var(--br);
+      background:transparent;
+      color:var(--tx);
+      font-family:var(--mono);
+      font-size:11px;
+      text-transform:uppercase;
+      cursor:pointer;
+      ">
+        Volver al inicio
+      </button>
+
+    </div>
 
   </div>
 </div>
@@ -1155,6 +1174,10 @@ function activarValidacionInputs(){
 
   });
 
+}
+
+function volverInicio(){
+  window.location.href = "/index.html"; // ⚠️ cambia la ruta si es necesario
 }
 
 function mostrarExito(){
