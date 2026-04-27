@@ -302,6 +302,8 @@ body{
 
 .custom-select{
   position:relative;
+  z-index:10;
+
 }
 
 .select-display{
@@ -341,6 +343,10 @@ body{
 .select-options div:hover{
   background:rgba(255,255,255,0.05);
   color:var(--gold);
+}
+
+.container{
+  overflow:visible;
 }
 
 /* 🔥 TYPEFORM STYLE */
@@ -456,6 +462,21 @@ body{
     opacity:1;
     transform:translateY(0);
   }
+}
+
+.select-options{
+  position:absolute;
+  top:110%;
+  left:0;
+  width:100%;
+  background:var(--s2);
+  border:1px solid var(--br);
+  border-radius:12px;
+  max-height:200px;
+  overflow:auto;
+
+  display:none;
+  z-index:9999; /* 🔥 CLAVE */
 }
 
 
