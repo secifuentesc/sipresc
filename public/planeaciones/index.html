@@ -1369,54 +1369,58 @@ async function enviarPlaneacion(){
 
 function cargarBorrador(){
 
-  const data = localStorage.getItem("planeacion_borrador");
-  if(!data) return;
+  try {
 
-  const d = JSON.parse(data);
+    const data = localStorage.getItem("planeacion_borrador");
+    if(!data) return;
 
-  // 🔹 Restaurar selects
-  if(d.semana){
-    document.getElementById("semanaSelect").value = d.semana;
+    const d = JSON.parse(data);
+
+    if(d.semana){
+      const semanaEl = document.getElementById("semanaText");
+      if(semanaEl){
+        semanaEl.textContent = d.semana;
+        ST.semana = d.semana;
+      }
+    }
+
+    setTimeout(() => {
+
+      if(document.getElementById("indicadorInput")){
+        document.getElementById("indicadorInput").value = d.indicador || "";
+      }
+
+      for(let i=1;i<=5;i++){
+        const tema = document.getElementById("tema_"+i);
+        const act = document.getElementById("act_"+i);
+
+        if(tema) tema.value = d["d"+i+"_tema"] || "";
+        if(act) act.value = d["d"+i+"_act"] || "";
+      }
+
+      if(document.getElementById("compObligatoria")){
+        document.getElementById("compObligatoria").value = d.comp_obligatoria || "";
+      }
+
+      if(document.getElementById("compAnexo")){
+        document.getElementById("compAnexo").value = d.comp_anexo || "";
+      }
+
+      if(document.getElementById("famObs")){
+        document.getElementById("famObs").value = d.fam_obs || "";
+      }
+
+      if(document.getElementById("famAnexo")){
+        document.getElementById("famAnexo").value = d.fam_anexo || "";
+      }
+
+    }, 800);
+
+  } catch (error){
+    console.error("Error cargando borrador:", error);
   }
 
-  // 🔹 Restaurar indicador
-  setTimeout(() => {
-
-    if(document.getElementById("indicadorInput")){
-      document.getElementById("indicadorInput").value = d.indicador || "";
-    }
-
-    // 🔹 Restaurar clases
-    for(let i=1;i<=5;i++){
-      if(document.getElementById("tema_"+i)){
-        document.getElementById("tema_"+i).value = d["d"+i+"_tema"] || "";
-      }
-      if(document.getElementById("act_"+i)){
-        document.getElementById("act_"+i).value = d["d"+i+"_act"] || "";
-      }
-    }
-
-    // 🔹 Complementarias
-    if(d.comp_obligatoria){
-      document.getElementById("compObligatoria").value = d.comp_obligatoria;
-    }
-
-    if(d.comp_anexo){
-      document.getElementById("compAnexo").value = d.comp_anexo;
-    }
-
-    // 🔹 Familias
-    if(d.fam_obs){
-      document.getElementById("famObs").value = d.fam_obs;
-    }
-
-    if(d.fam_anexo){
-      document.getElementById("famAnexo").value = d.fam_anexo;
-    }
-
-  }, 800);
-
-} 
+}
 
 
 
