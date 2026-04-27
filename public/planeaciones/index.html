@@ -155,11 +155,7 @@ body{
 }
 
 .oculto{
-  opacity:0;
-  transform:translateY(10px);
-  pointer-events:none;
-  height:0;
-  overflow:hidden;
+  display:none !important;
 }
 
 .pregunta{
@@ -421,12 +417,6 @@ body{
   text-align:center;
 }
 
-/* TRANSICIÓN MÁS SUAVE */
-.oculto{
-  opacity:0;
-  transform:translateY(20px);
-  transition:all .4s ease;
-}
 
 .progress-bar{
   width:100%;
@@ -1064,7 +1054,7 @@ function guardarAuto(){
 
         asignatura: ST.materia,
         grado: ST.grado,
-        semana: document.getElementById("semanaSelect")?.value || "",
+        semana: ST.semana || "",
 
         indicador: document.getElementById("indicadorInput")?.value || "",
 
