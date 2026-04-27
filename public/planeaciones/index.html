@@ -541,6 +541,7 @@ async function cargarMaterias(){
 
   const correo = localStorage.getItem("correo") || "secifuentes@lapresentaciongirardota.edu.co";
   const select = document.getElementById("materiaSelect");
+  select.disabled = true;
 
   // 🔥 1. CARGA INMEDIATA DESDE CACHE
   const cache = localStorage.getItem(CACHE_KEY);
@@ -568,6 +569,23 @@ async function cargarMaterias(){
     const json = await res.json();
 
     if (json.ok && json.materias) {
+
+  // 🔥 SIEMPRE guardar data primero
+  ST.data = json.materias;
+
+  const nuevas = JSON.stringify(json.materias);
+  const actuales = localStorage.getItem(CACHE_KEY);
+
+  // 🔥 SI CAMBIA → guarda cache
+  if (nuevas !== actuales) {
+    localStorage.setItem(CACHE_KEY, nuevas);
+    localStorage.setItem(CACHE_TIME, Date.now());
+  }
+
+  // 🔥 SIEMPRE pinta (CLAVE DEL FIX)
+  pintarMaterias(json.materias);
+}
+}
 
       const nuevas = JSON.stringify(json.materias);
       const actuales = localStorage.getItem(CACHE_KEY);
@@ -603,7 +621,9 @@ function pintarMaterias(materias){
     op.value = m.asignatura;
     op.textContent = m.asignatura;
     select.appendChild(op);
+    select.disabled = false;
   });
+  
 
 }
 
