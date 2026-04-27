@@ -1152,7 +1152,7 @@ function guardarAuto(){
 
         fam_anexo: ST.famActiva === "si"
           ? document.getElementById("famAnexo")?.value || ""
-          : ""
+          : "",
         disp_clases: ST.dispActivo === "si" ? (ST.dispClases || []).join(",") : "",
 
 disp_desc: ST.dispActivo === "si"
@@ -1641,7 +1641,7 @@ function setDisp(valor, el){
 
   el.classList.add("activa");
 
-  const box = document.getElementById("dispBox");
+  const box = document.getElementById("dispClasesBox");
 
   if(valor === "si"){
 
@@ -1661,7 +1661,7 @@ function setDisp(valor, el){
 
 function generarClasesDispositivo(){
 
-  const cont = document.getElementById("dispClases");
+  const cont = document.getElementById("dispClasesOpciones");
   cont.innerHTML = "";
 
   const total = ST.intensidad || 1;
