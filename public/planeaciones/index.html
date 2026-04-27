@@ -893,33 +893,32 @@ function onMateria(){
 function onGrado(){
 
   const grado = ST.grado;
-  ST.grado = grado;
-
   if(!grado) return;
 
-  // 🔥 Mostrar grupos primero
-const gradosAB = ["PRIMERO","SEGUNDO","TERCERO","CUARTO","QUINTO","SEXTO"];
+  // 🔥 GRUPOS
+  const gradosAB = ["PRIMERO","SEGUNDO","TERCERO","CUARTO","QUINTO","SEXTO"];
 
-if(gradosAB.includes(grado.toUpperCase())){
-  mostrar("b-grupos");
-  ST.grupos = ["A","B"];
-}else{
-  ocultar("b-grupos");
-  ST.grupos = [];
-}
+  if(gradosAB.includes(grado.toUpperCase())){
+    activarBloque("b-grupos");
+    ST.grupos = ["A","B"];
+  }else{
+    ST.grupos = [];
+  }
 
-// 🔥 Luego semana
-generarSemanas();
-activarBloque("b-semana");
+  // 🔥 SEMANA
+  generarSemanas();
+  activarBloque("b-semana");
 
-// 🔥 Luego lo demás
+  // 🔥 OBSERVACIÓN
+  activarBloque("b-observacion");
 
-mostrarIntensidad();
-
+  // 🔥 INTENSIDAD
+  activarBloque("b-intensidad");
+  mostrarIntensidad();
 
   document.getElementById("estadoGuardado").textContent =
     `${ST.materia} · ${ST.grado}`;
-  
+
   actualizarProgreso();
 }
 
