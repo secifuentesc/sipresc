@@ -453,6 +453,24 @@ body{
   opacity:1;
   transform:translateY(0);
 }
+
+.bloque.activo{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
+  animation:fadeIn .4s ease;
+}
+
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
   
 </style>
 </head>
@@ -1504,12 +1522,11 @@ function toggleSelect(tipo){
 
 function activarBloque(id){
 
-  // 🔴 Oculta TODOS los bloques del paso 1
-  document.querySelectorAll("#paso1 .bloque")
-    .forEach(b => b.classList.remove("activo"));
+  const el = document.getElementById(id);
 
-  // 🟢 Activa SOLO el que quieres
-  document.getElementById(id).classList.add("activo");
+  el.classList.add("activo");
+
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 </script>
 
