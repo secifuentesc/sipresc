@@ -489,6 +489,12 @@ body{
   z-index:1;
   overflow:visible;
 }
+
+#dispClases .btn-opcion.activa{
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color:#000;
+  transform: scale(1.05);
+}
   
 </style>
 </head>
@@ -603,6 +609,30 @@ body{
 
     <div class="bloque" id="b-planeacion">
   <div id="planeacionBox"></div>
+</div>
+
+<!-- 🔵 DISPOSITIVOS -->
+<div class="bloque" id="b-dispositivo">
+
+  <label class="pregunta">¿Requiere algún dispositivo para el desarrollo de la clase?</label>
+
+  <div style="display:flex; gap:10px; margin-top:10px;">
+    <div class="btn-opcion activa" onclick="setDisp('no', this)">No</div>
+    <div class="btn-opcion" onclick="setDisp('si', this)">Sí</div>
+  </div>
+
+  <!-- CLASES -->
+  <div id="dispClasesBox" class="oculto" style="margin-top:15px;">
+
+    <label class="pregunta">Seleccione las clases</label>
+    <div id="dispClasesOpciones" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+
+    <!-- DESCRIPCIÓN -->
+    <label class="pregunta" style="margin-top:14px;">¿Para qué se utilizará?</label>
+    <textarea class="input textarea" id="dispDescripcion"></textarea>
+
+  </div>
+
 </div>
 
 <!-- 🔵 ACTIVIDADES COMPLEMENTARIAS -->
@@ -1123,6 +1153,12 @@ function guardarAuto(){
         fam_anexo: ST.famActiva === "si"
           ? document.getElementById("famAnexo")?.value || ""
           : ""
+        disp_clases: ST.dispActivo === "si" ? (ST.dispClases || []).join(",") : "",
+
+disp_desc: ST.dispActivo === "si"
+  ? document.getElementById("dispDescripcion")?.value || ""
+  : "",
+        
       };
 
       // 🔥 GUARDADO LOCAL (AQUÍ ESTÁ LA CLAVE)
@@ -1357,6 +1393,11 @@ async function enviarPlaneacion(){
       fam_anexo: ST.famActiva === "si"
         ? document.getElementById("famAnexo")?.value || ""
         : "",
+      disp_clases: ST.dispActivo === "si" ? (ST.dispClases || []).join(",") : "",
+
+disp_desc: ST.dispActivo === "si"
+  ? document.getElementById("dispDescripcion")?.value || ""
+  : "",
 
       accion: "guardarFinal"
     };
@@ -1590,6 +1631,72 @@ function activarBloque(id){
 
   el.scrollIntoView({ behavior: "smooth", block: "center" });
 }
+
+function setDisp(valor, el){
+
+  ST.dispActivo = valor;
+
+  document.querySelectorAll("#b-dispositivo .btn-opcion")
+    .forEach(b => b.classList.remove("activa"));
+
+  el.classList.add("activa");
+
+  const box = document.getElementById("dispBox");
+
+  if(valor === "si"){
+
+    box.classList.remove("oculto");
+    generarClasesDispositivo();
+
+  }else{
+
+    box.classList.add("oculto");
+    ST.dispClases = [];
+    document.getElementById("dispDescripcion").value = "";
+
+  }
+
+  guardarAuto();
+}
+
+function generarClasesDispositivo(){
+
+  const cont = document.getElementById("dispClases");
+  cont.innerHTML = "";
+
+  const total = ST.intensidad || 1;
+
+  ST.dispClases = [];
+
+  for(let i = 1; i <= total; i++){
+
+    const div = document.createElement("div");
+
+    div.className = "btn-opcion";
+    div.textContent = "Clase " + i;
+
+    div.onclick = () => {
+
+      if(ST.dispClases.includes(i)){
+
+        ST.dispClases = ST.dispClases.filter(n => n !== i);
+        div.classList.remove("activa");
+
+      }else{
+
+        ST.dispClases.push(i);
+        div.classList.add("activa");
+
+      }
+
+      guardarAuto();
+    };
+
+    cont.appendChild(div);
+  }
+}
+
+
 </script>
 
 
