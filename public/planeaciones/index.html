@@ -1101,16 +1101,18 @@ bloque.classList.add("bloque", "activo");
     bloque.style.marginTop = "28px";
 
     bloque.innerHTML = `
-      <div style="font-family:var(--mono); font-size:11px; color:var(--gold); margin-bottom:12px;">
-        CLASE ${i}
-      </div>
+  <div style="font-family:var(--mono); font-size:11px; color:var(--gold); margin-bottom:12px;">
+    CLASE ${i}
+  </div>
 
-      <label class="pregunta">Tema(s) de la clase ${i}</label>
-      <textarea class="input textarea" id="tema_${i}"></textarea>
+  <label class="pregunta">Tema(s) de la clase ${i}</label>
+  <textarea class="input textarea" id="tema_${i}"></textarea>
 
-      <label class="pregunta" style="margin-top:14px;">Actividades principales de la clase ${i}</label>
-      <textarea class="input textarea" id="act_${i}"></textarea>
-    `;
+  <label class="pregunta" style="margin-top:14px;">Actividades principales de la clase ${i}</label>
+  <textarea class="input textarea" id="act_${i}"></textarea>
+
+  <div id="coach_${i}" class="coach-box"></div>
+`;
 
     box.appendChild(bloque);
   }
@@ -1549,6 +1551,17 @@ function validarBotonEnviar(){
 
 }
 
+let timersClases = {};
+
+function activarRevisionClase(i){
+
+  clearTimeout(timersClases[i]);
+
+  timersClases[i] = setTimeout(() => {
+    revisarClaseCoach(i);
+  }, 700);
+}
+
 document.addEventListener("input", function(e){
   let timerIA;
 
@@ -1560,6 +1573,17 @@ if(e.target.id === "indicadorInput"){
     revisarIndicadorCoach();
   }, 600);
 
+}
+
+  // 🔥 REVISIÓN DE CLASES
+if(e.target.id && e.target.id.startsWith("tema_")){
+  const i = e.target.id.split("_")[1];
+  activarRevisionClase(i);
+}
+
+if(e.target.id && e.target.id.startsWith("act_")){
+  const i = e.target.id.split("_")[1];
+  activarRevisionClase(i);
 }
 
   if(
@@ -1834,6 +1858,71 @@ async function revisarOrtografia(texto){
     return [];
   }
 
+}
+
+async function revisarClaseCoach(i){
+
+  const tema = document.getElementById("tema_"+i)?.value.trim() || "";
+  const act = document.getElementById("act_"+i)?.value.trim() || "";
+  const box = document.getElementById("coach_"+i);
+
+  if(!box) return;
+
+  if(!tema && !act){
+    box.style.display = "none";
+    box.innerHTML = "";
+    return;
+  }
+
+  let mensajes = [];
+
+  // 🔹 TEMA
+  if(tema.length < 5){
+    mensajes.push(`<div class="coach-warning">⚠ El tema es muy corto o poco claro.</div>`);
+  }
+
+  // 🔹 ACTIVIDADES
+  if(act.length < 10){
+    mensajes.push(`<div class="coach-warning">⚠ Las actividades deben ser más claras y completas.</div>`);
+  }
+
+  // 🔹 REGLA CLAVE (coordinación)
+  if(!/\d+\./.test(act)){
+    mensajes.push(`<div class="coach-warning">⚠ Se recomienda organizar las actividades en pasos (1., 2., 3.).</div>`);
+  }
+
+  if(!act.endsWith(".")){
+    mensajes.push(`<div class="coach-warning">⚠ Las actividades deben finalizar con punto.</div>`);
+  }
+
+  // 🔥 ORTOGRAFÍA (tema + actividades)
+  const erroresTema = await revisarOrtografia(tema);
+  const erroresAct = await revisarOrtografia(act);
+
+  const errores = [...erroresTema, ...erroresAct];
+
+  if(errores.length > 0){
+
+    mensajes.push(`<div class="coach-error" style="margin-top:8px;"><b>Errores detectados:</b></div>`);
+
+    errores.slice(0,3).forEach(e => {
+
+      const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
+
+      mensajes.push(`
+        <div class="coach-error">
+        🔴 "${e.context.text}" → <b>${sugerencia}</b>
+        </div>
+      `);
+
+    });
+
+  }else{
+    mensajes.push(`<div class="coach-ok">✔ Sin errores ortográficos.</div>`);
+  }
+
+  box.style.display = "block";
+  box.innerHTML = mensajes.join("");
 }
 </script>
 
