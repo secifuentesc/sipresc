@@ -635,7 +635,7 @@ body{
   </div>
 
   <div id="obsInputBox" class="oculto" style="margin-top:15px;">
-    <textarea 
+    <textarea
   class="input textarea" 
   id="observacionInput"
   placeholder="Describe brevemente la novedad.">
@@ -1298,12 +1298,19 @@ function setObs(valor, el){
 
   const box = document.getElementById("obsInputBox");
 
-  if(valor === "si"){
-    box.classList.remove("oculto");
-  } else {
-    box.classList.add("oculto");
-    document.getElementById("observacionInput").value = "";
-  }
+if(valor === "si"){
+  box.classList.remove("oculto");
+
+  // 🔥 ENFOQUE AUTOMÁTICO
+  setTimeout(() => {
+    document.getElementById("observacionInput").focus();
+  }, 200);
+
+} else {
+  box.classList.add("oculto");
+  document.getElementById("observacionInput").value = "";
+  document.getElementById("coachObservacion").style.display = "none"; // 🔥 LIMPIA EL COACH
+}
 
   guardarAuto();
 }
