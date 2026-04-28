@@ -698,6 +698,7 @@ body{
 
     <label class="pregunta">Actividad obligatoria</label>
     <textarea class="input textarea" id="compObligatoria"></textarea>
+    <div id="coachComp" class="coach-box"></div>
 
     <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
     <input class="input" id="compAnexo" placeholder="Pega aquí el enlace de Drive">
@@ -724,6 +725,7 @@ body{
 
     <label class="pregunta">Observación para las familias</label>
     <textarea class="input textarea" id="famObs"></textarea>
+    <div id="coachFamilia" class="coach-box"></div>
 
     <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
     <input class="input" id="famAnexo" placeholder="Pega aquí el enlace de Drive">
@@ -1581,6 +1583,8 @@ let timersClases = {};
 let timerIA;
 let cacheIndicador = "";
 let cacheObservacion = "";
+let cacheComp = "";
+let cacheFamilia = "";
 
 function activarRevisionClase(i){
   clearTimeout(timersClases[i]);
@@ -1591,6 +1595,26 @@ function activarRevisionClase(i){
 }
 
 document.addEventListener("input", function(e){
+
+if(e.target.id === "compObligatoria"){
+
+  clearTimeout(timerIA);
+
+  timerIA = setTimeout(() => {
+    revisarCompCoach();
+  }, 1000);
+
+}
+
+if(e.target.id === "famObs"){
+
+  clearTimeout(timerIA);
+
+  timerIA = setTimeout(() => {
+    revisarFamiliaCoach();
+  }, 1000);
+
+}
   
 
 if(e.target.id === "indicadorInput"){
@@ -2042,19 +2066,36 @@ function aplicarCorreccion(offset, length, sugerencia, campoId){
   campo.value = antes + sugerencia + despues;
 
   campo.focus();
+
+  // 🔥 DISPARA EVENTO PARA QUE TODO SE ACTUALICE
   campo.dispatchEvent(new Event("input"));
 
-// 🔥 FORZAR REVISIÓN INMEDIATA
-if(campoId === "indicadorInput"){
-  revisarIndicadorCoach();
+  // 🔥 FORZAR REVISIÓN INMEDIATA SEGÚN CAMPO
+  if(campoId === "indicadorInput"){
 
-} else if(campoId.startsWith("tema_") || campoId.startsWith("act_")){
-  const i = campoId.split("_")[1];
-  revisarClaseCoach(i);
+    revisarIndicadorCoach();
 
-} else if(campoId === "observacionInput"){
-  revisarObservacionCoach(); // 🔥 FIX
-}
+  } else if(campoId.startsWith("tema_") || campoId.startsWith("act_")){
+
+    const i = campoId.split("_")[1];
+    revisarClaseCoach(i);
+
+  } else if(campoId === "observacionInput"){
+
+    revisarObservacionCoach();
+
+  } else if(campoId === "compObligatoria"){
+
+    revisarCompCoach();
+
+  } else if(campoId === "famObs"){
+
+    revisarFamiliaCoach();
+
+  }
+
+  // 🔥 VALIDACIÓN GENERAL (ACTIVA BOTÓN ENVIAR SI APLICA)
+  validarBotonEnviar();
 }
 
 async function revisarObservacionCoach(){
@@ -2068,9 +2109,10 @@ async function revisarObservacionCoach(){
 
   // 🔥 vacío
   if(!texto){
-    box.style.display = "none";
-    return;
-  }
+  box.style.display = "none";
+  box.innerHTML = "";
+  return;
+}
 
   // 🔥 evitar repetir
   if(texto === cacheObservacion){
@@ -2116,6 +2158,123 @@ async function revisarObservacionCoach(){
 
   } else {
     mensajes.push(`<div class="coach-ok">✔ Sin errores ortográficos.</div>`);
+  }
+
+  box.innerHTML = mensajes.join("");
+  box.style.display = "block";
+}
+
+async function revisarCompCoach(){
+
+  const campo = document.getElementById("compObligatoria");
+  const box = document.getElementById("coachComp");
+
+  if(!campo || !box) return;
+
+  const texto = campo.value.trim();
+
+  if(texto === cacheComp) return;
+cacheComp = texto;
+
+  if(!texto){
+  box.style.display = "none";
+  box.innerHTML = "";
+  return;
+}
+
+  let mensajes = [];
+
+  if(texto.length < 10){
+    mensajes.push(`<div class="coach-warning">⚠ Describe mejor la actividad.</div>`);
+  }
+
+  if(!texto.endsWith(".")){
+    mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
+  }
+
+  const errores = await revisarOrtografia(texto);
+
+  if(errores.length > 0){
+
+    mensajes.push(`<div class="coach-error"><b>Errores detectados:</b></div>`);
+
+    errores.slice(0,3).forEach(e => {
+
+      const sugerencia = (e.replacements[0]?.value || "").replace(/'/g, "\'");
+      const offset = e.offset;
+      const length = e.length;
+
+      mensajes.push(`
+        <div class="coach-error">
+          🔴 "${e.context.text}" →
+          <span class="sugerencia"
+            onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'compObligatoria')">
+            ${sugerencia}
+          </span>
+        </div>
+      `);
+    });
+
+  } else {
+    mensajes.push(`<div class="coach-ok">✔ Redacción correcta.</div>`);
+  }
+
+  box.innerHTML = mensajes.join("");
+  box.style.display = "block";
+}
+
+async function revisarFamiliaCoach(){
+
+  const campo = document.getElementById("famObs");
+  const box = document.getElementById("coachFamilia");
+
+  if(!campo || !box) return;
+
+  const texto = campo.value.trim();
+
+  if(texto === cacheFamilia) return;
+cacheFamilia = texto;
+
+  if(!texto){
+    box.style.display = "none";
+    return;
+  }
+
+  let mensajes = [];
+
+  if(texto.length < 15){
+    mensajes.push(`<div class="coach-warning">⚠ El mensaje es muy corto.</div>`);
+  }
+
+  if(!texto.endsWith(".")){
+    mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
+  }
+
+  const errores = await revisarOrtografia(texto);
+
+  if(errores.length > 0){
+
+    mensajes.push(`<div class="coach-error"><b>Errores detectados:</b></div>`);
+
+    errores.slice(0,4).forEach(e => {
+
+      const sugerencia = (e.replacements[0]?.value || "").replace(/'/g, "\'");
+      const offset = e.offset;
+      const length = e.length;
+
+      mensajes.push(`
+        <div class="coach-error">
+          🔴 "${e.context.text}" →
+          <span class="sugerencia"
+            onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'famObs')">
+            ${sugerencia}
+          </span>
+        </div>
+      `);
+    });
+
+  } else {
+    mensajes.push(`<div class="coach-ok">✔ Mensaje claro y correcto.</div>`);
   }
 
   box.innerHTML = mensajes.join("");
