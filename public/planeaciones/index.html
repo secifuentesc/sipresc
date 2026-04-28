@@ -752,7 +752,7 @@ body{
     <div id="coachComp" class="coach-box"></div>
 
     <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
-    <input class="input" id="compAnexo" placeholder="Pega aquí el enlace de Drive">
+    <input type="file" class="input" id="compArchivo">
 
     <div style="font-size:11px; color:var(--mt); margin-top:6px;">
       Carpeta institucional de anexos
@@ -779,7 +779,7 @@ body{
     <div id="coachFamilia" class="coach-box"></div>
 
     <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
-    <input class="input" id="famAnexo" placeholder="Pega aquí el enlace de Drive">
+    <input type="file" class="input" id="famArchivo">
 
   </div>
 
@@ -1359,8 +1359,8 @@ function guardarAuto(){
 
       const data = {
 
-        asignatura: ST.materia,
-        grado: ST.grado,
+        asignatura: ST.materia || "",
+        grado: ST.grado || "",
         semana: ST.semana || "",
 
         indicador: document.getElementById("indicadorInput")?.value || "",
@@ -1390,39 +1390,35 @@ function guardarAuto(){
           ? document.getElementById("compObligatoria")?.value || ""
           : "",
 
-        comp_anexo: ST.compActiva === "si"
-          ? document.getElementById("compAnexo")?.value || ""
-          : "",
+        // ❌ IMPORTANTE: NO guardar archivos en localStorage
 
         fam_obs: ST.famActiva === "si"
           ? document.getElementById("famObs")?.value || ""
           : "",
 
-        fam_anexo: ST.famActiva === "si"
-          ? document.getElementById("famAnexo")?.value || ""
+        disp_clases: ST.dispActivo === "si"
+          ? (ST.dispClases || []).join(",")
           : "",
-        disp_clases: ST.dispActivo === "si" ? (ST.dispClases || []).join(",") : "",
 
-disp_desc: ST.dispActivo === "si"
-  ? document.getElementById("dispDescripcion")?.value || ""
-  : "",
-        
+        disp_desc: ST.dispActivo === "si"
+          ? document.getElementById("dispDescripcion")?.value || ""
+          : ""
+
       };
 
-      // 🔥 GUARDADO LOCAL (AQUÍ ESTÁ LA CLAVE)
+      // 🔥 GUARDADO LOCAL
       localStorage.setItem("planeacion_borrador", JSON.stringify(data));
 
-      document.getElementById("estadoGuardado").textContent = "Guardado local";
+      document.getElementById("estadoGuardado").textContent = "Guardado local ✔";
 
     } catch (error) {
       console.error(error);
       document.getElementById("estadoGuardado").textContent = "Error guardando";
     }
 
-  }, 800); // más rápido y fluido
+  }, 800);
 
   actualizarProgreso();
-
 }
 
 function calcularSemanaActual(){
@@ -1557,7 +1553,7 @@ function setComp(valor, el){
   } else {
     box.classList.add("oculto");
     document.getElementById("compObligatoria").value = "";
-    document.getElementById("compAnexo").value = "";
+    document.getElementById("compArchivo").value = "";
   }
 
   // 🔥 AQUÍ está la magia
@@ -1582,7 +1578,7 @@ function setFam(valor, el){
   } else {
     box.classList.add("oculto");
     document.getElementById("famObs").value = "";
-    document.getElementById("famAnexo").value = "";
+    document.getElementById("famArchivo").value = "";
   }
 
   guardarAuto();
@@ -1596,85 +1592,107 @@ async function enviarPlaneacion(){
 
     const correo = obtenerCorreo();
 
-    // 🔴 Validación básica
     if(!correo){
       alert("Error: no se encontró el correo del docente");
       document.getElementById("estadoGuardado").textContent = "Error: sin correo";
       return;
     }
 
-    const payload = {
-      correo: correo, // 🔥 CLAVE PARA QUE GUARDE EN LA HOJA
+    // 🔥 ARCHIVOS
+    const compFile = document.getElementById("compArchivo")?.files[0];
+    const famFile = document.getElementById("famArchivo")?.files[0];
 
-      asignatura: ST.materia,
-      grado: ST.grado,
-      gruposDestino: (ST.grupos || []).join(","),
+    // 🔥 FORM DATA (CLAVE PARA ARCHIVOS)
+    const formData = new FormData();
 
-      semana: (ST.semana || "").toUpperCase(),
+    formData.append("accion", "guardarFinal");
+    formData.append("correo", correo);
 
-      indicador: document.getElementById("indicadorInput")?.value || "",
+    formData.append("asignatura", ST.materia || "");
+    formData.append("grado", ST.grado || "");
+    formData.append("gruposDestino", (ST.grupos || []).join(","));
 
-      d1_tema: document.getElementById("tema_1")?.value || "",
-      d1_act: document.getElementById("act_1")?.value || "",
+    formData.append("semana", (ST.semana || "").toUpperCase());
 
-      d2_tema: document.getElementById("tema_2")?.value || "",
-      d2_act: document.getElementById("act_2")?.value || "",
+    formData.append("indicador", document.getElementById("indicadorInput")?.value || "");
 
-      d3_tema: document.getElementById("tema_3")?.value || "",
-      d3_act: document.getElementById("act_3")?.value || "",
+    formData.append("d1_tema", document.getElementById("tema_1")?.value || "");
+    formData.append("d1_act", document.getElementById("act_1")?.value || "");
 
-      d4_tema: document.getElementById("tema_4")?.value || "",
-      d4_act: document.getElementById("act_4")?.value || "",
+    formData.append("d2_tema", document.getElementById("tema_2")?.value || "");
+    formData.append("d2_act", document.getElementById("act_2")?.value || "");
 
-      d5_tema: document.getElementById("tema_5")?.value || "",
-      d5_act: document.getElementById("act_5")?.value || "",
+    formData.append("d3_tema", document.getElementById("tema_3")?.value || "");
+    formData.append("d3_act", document.getElementById("act_3")?.value || "");
 
-      intensidad: ST.intensidad || 1,
+    formData.append("d4_tema", document.getElementById("tema_4")?.value || "");
+    formData.append("d4_act", document.getElementById("act_4")?.value || "");
 
-      observacion: ST.observacionActiva === "si"
+    formData.append("d5_tema", document.getElementById("tema_5")?.value || "");
+    formData.append("d5_act", document.getElementById("act_5")?.value || "");
+
+    formData.append("intensidad", ST.intensidad || 1);
+
+    formData.append(
+      "observacion",
+      ST.observacionActiva === "si"
         ? document.getElementById("observacionInput")?.value || ""
-        : "",
+        : ""
+    );
 
-      comp_obligatoria: ST.compActiva === "si"
+    formData.append(
+      "comp_obligatoria",
+      ST.compActiva === "si"
         ? document.getElementById("compObligatoria")?.value || ""
-        : "",
+        : ""
+    );
 
-      comp_anexo: ST.compActiva === "si"
-        ? document.getElementById("compAnexo")?.value || ""
-        : "",
-
-      fam_obs: ST.famActiva === "si"
+    formData.append(
+      "fam_obs",
+      ST.famActiva === "si"
         ? document.getElementById("famObs")?.value || ""
-        : "",
+        : ""
+    );
 
-      fam_anexo: ST.famActiva === "si"
-        ? document.getElementById("famAnexo")?.value || ""
-        : "",
-      disp_clases: ST.dispActivo === "si" ? (ST.dispClases || []).join(",") : "",
+    formData.append(
+      "disp_clases",
+      ST.dispActivo === "si"
+        ? (ST.dispClases || []).join(",")
+        : ""
+    );
 
-disp_desc: ST.dispActivo === "si"
-  ? document.getElementById("dispDescripcion")?.value || ""
-  : "",
+    formData.append(
+      "disp_desc",
+      ST.dispActivo === "si"
+        ? document.getElementById("dispDescripcion")?.value || ""
+        : ""
+    );
 
-      accion: "guardarFinal"
-    };
+    // 🔥 ARCHIVOS SOLO SI EXISTEN
+    if(compFile){
+      formData.append("comp_anexo", compFile);
+    }
 
-    // 🔍 Debug (puedes quitar luego)
-    console.log("Enviando payload:", payload);
+    if(famFile){
+      formData.append("fam_anexo", famFile);
+    }
 
+    // 🔍 DEBUG
+    console.log("Enviando datos...");
+
+    // 🚀 FETCH SIN HEADERS (IMPORTANTE)
     const res = await fetch(API,{
       method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(payload)
+      body: formData
     });
 
     const json = await res.json();
 
     if(!json.ok){
-      throw new Error(json.error || "Error desconocido del backend");
+      throw new Error(json.error || "Error del backend");
     }
 
-    // 🧹 Limpiar borrador
+    // 🧹 LIMPIAR BORRADOR
     localStorage.removeItem("planeacion_borrador");
 
     document.getElementById("estadoGuardado").textContent = "Planeación enviada correctamente";
@@ -1685,8 +1703,11 @@ disp_desc: ST.dispActivo === "si"
     }, 600);
 
   } catch (error) {
+
     console.error(error);
+
     document.getElementById("estadoGuardado").textContent = "Error al enviar";
+
     alert("Hubo un problema al enviar la planeación");
   }
 }
@@ -1700,6 +1721,7 @@ function cargarBorrador(){
 
     const d = JSON.parse(data);
 
+    // 🔥 SEMANA
     if(d.semana){
       const semanaEl = document.getElementById("semanaText");
       if(semanaEl){
@@ -1710,11 +1732,13 @@ function cargarBorrador(){
 
     setTimeout(() => {
 
+      // 🔥 INDICADOR
       if(document.getElementById("indicadorInput")){
         document.getElementById("indicadorInput").value = d.indicador || "";
       }
 
-      for(let i=1;i<=5;i++){
+      // 🔥 CLASES
+      for(let i = 1; i <= 5; i++){
         const tema = document.getElementById("tema_"+i);
         const act = document.getElementById("act_"+i);
 
@@ -1722,21 +1746,24 @@ function cargarBorrador(){
         if(act) act.value = d["d"+i+"_act"] || "";
       }
 
+      // 🔥 ACTIVIDAD COMPLEMENTARIA
       if(document.getElementById("compObligatoria")){
         document.getElementById("compObligatoria").value = d.comp_obligatoria || "";
       }
 
-      if(document.getElementById("compAnexo")){
-        document.getElementById("compAnexo").value = d.comp_anexo || "";
-      }
+      // ❌ ELIMINADO: compArchivo (no se puede restaurar)
 
+      // 🔥 FAMILIAS
       if(document.getElementById("famObs")){
         document.getElementById("famObs").value = d.fam_obs || "";
       }
 
-      if(document.getElementById("famAnexo")){
-        document.getElementById("famAnexo").value = d.fam_anexo || "";
-      }
+      // ❌ ELIMINADO: famArchivo (no se puede restaurar)
+
+      // 🔥 DISPARAR VALIDACIONES
+      document.querySelectorAll("textarea").forEach(t => {
+        t.dispatchEvent(new Event("input"));
+      });
 
     }, 800);
 
@@ -2105,9 +2132,6 @@ async function revisarOrtografia(texto){
 
     const res = await fetch("https://api.languagetool.org/v2/check", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
       body: new URLSearchParams({
         text: texto,
         language: "es"
