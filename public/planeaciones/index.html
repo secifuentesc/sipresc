@@ -2047,10 +2047,13 @@ function aplicarCorreccion(offset, length, sugerencia, campoId){
 // 🔥 FORZAR REVISIÓN INMEDIATA
 if(campoId === "indicadorInput"){
   revisarIndicadorCoach();
+
 } else if(campoId.startsWith("tema_") || campoId.startsWith("act_")){
   const i = campoId.split("_")[1];
   revisarClaseCoach(i);
-}
+
+} else if(campoId === "observacionInput"){
+  revisarObservacionCoach(); // 🔥 FIX
 }
 
 async function revisarObservacionCoach(){
