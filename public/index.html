@@ -483,6 +483,7 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
         <div style="font-size:14px;color:var(--mt);margin-bottom:30px;">¿Qué deseas hacer hoy?</div>
         <button class="btn btn-g" style="margin-bottom:12px;font-size:13px;" onclick="abrirModulo('planeaciones')">Planeaciones</button>
         <button class="btn btn-p" style="font-size:13px;" onclick="abrirModulo('citas')">Citas</button>
+        <button class="btn btn-o" style="font-size:13px;" onclick="abrirModulo('evaluaciones')">Evaluaciones finales</button>
       </div>
     </div>
   </div>
@@ -1204,7 +1205,10 @@ function mostrarPantallaInicial(){
   }catch{localStorage.removeItem('lp_user');splash.style.display='none';$('s-login').classList.add('on');}}
 
 function abrirModulo(modulo){
-  const rutas={planeaciones:'/planeaciones/'};
+  const rutas = {
+  planeaciones: '/planeaciones/',
+  evaluaciones: '/evaluaciones/' // 👈 NUEVO
+};
   if(modulo==='citas'){goTab('citas',document.getElementById('ni-citas'));return;}
   if(rutas[modulo]){window.location.href=rutas[modulo];return;}
   toast('Módulo no disponible','er');}
