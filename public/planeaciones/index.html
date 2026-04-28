@@ -860,59 +860,67 @@ transition:all .3s ease;
 
 async function corregirTodo(){
 
-  const campos = [
-    { id: "indicadorInput", tipo: "indicador" },
-    { id: "observacionInput", tipo: "observacion" },
-    { id: "compObligatoria", tipo: "comp" },
-    { id: "famObs", tipo: "familia" }
-  ];
+  // 🔥 TODOS LOS CAMPOS DEL FORM
+  const campos = document.querySelectorAll("textarea");
 
-  for(const c of campos){
-
-    const campo = document.getElementById(c.id);
-    if(!campo) continue;
+  for(const campo of campos){
 
     let texto = campo.value;
-    if(!texto) continue;
 
-    const errores = await revisarOrtografia(texto);
+    if(!texto || texto.trim().length < 3) continue;
 
-    // 🔥 CLAVE: ordenar de atrás hacia adelante
-    errores.sort((a,b) => b.offset - a.offset);
+    try{
 
-    errores.forEach(e => {
+      const errores = await revisarOrtografia(texto);
 
-      const sugerencia = e.replacements[0]?.value;
-      if(!sugerencia) return;
+      // 🔥 ORDENAR DE ATRÁS HACIA ADELANTE
+      errores.sort((a,b) => b.offset - a.offset);
 
-      const antes = texto.substring(0, e.offset);
-      const despues = texto.substring(e.offset + e.length);
+      errores.forEach(e => {
 
-      texto = antes + sugerencia + despues;
+        const sugerencia = e.replacements[0]?.value;
+        if(!sugerencia) return;
 
-    });
+        const antes = texto.substring(0, e.offset);
+        const despues = texto.substring(e.offset + e.length);
 
-    // 🔥 Agregar punto automático si no tiene
-texto = texto.trim();
+        texto = antes + sugerencia + despues;
 
-if(texto && !texto.endsWith(".")){
-  texto += ".";
-}
+      });
 
-campo.value = texto;
+      // 🔥 LIMPIAR TEXTO
+      texto = texto.trim();
 
-    // 🔥 DISPARA VALIDACIÓN
-    campo.dispatchEvent(new Event("input"));
+      // 🔥 AGREGAR PUNTO AUTOMÁTICO
+      if(texto && !texto.endsWith(".")){
+        texto += ".";
+      }
+
+      campo.value = texto;
+
+      // 🔥 DISPARAR VALIDACIONES
+      campo.dispatchEvent(new Event("input"));
+
+    }catch(err){
+      console.error("Error corrigiendo:", err);
+    }
+
   }
 
-  // 🔥 ACTUALIZA TODO
+  // 🔥 FORZAR ACTUALIZACIÓN GLOBAL
   revisarIndicadorCoach();
   revisarObservacionCoach();
   revisarCompCoach();
   revisarFamiliaCoach();
 
-  evaluarErroresGlobal();
+  // 🔥 REVISAR TODAS LAS CLASES
+  const total = ST.intensidad || 1;
 
+  for(let i = 1; i <= total; i++){
+    revisarClaseCoach(i);
+  }
+
+  evaluarErroresGlobal();
 }
 
 function obtenerSesion(){
