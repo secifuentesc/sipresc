@@ -892,7 +892,14 @@ async function corregirTodo(){
 
     });
 
-    campo.value = texto;
+    // 🔥 Agregar punto automático si no tiene
+texto = texto.trim();
+
+if(texto && !texto.endsWith(".")){
+  texto += ".";
+}
+
+campo.value = texto;
 
     // 🔥 DISPARA VALIDACIÓN
     campo.dispatchEvent(new Event("input"));
@@ -903,6 +910,8 @@ async function corregirTodo(){
   revisarObservacionCoach();
   revisarCompCoach();
   revisarFamiliaCoach();
+
+  evaluarErroresGlobal();
 
 }
 
@@ -1687,68 +1696,62 @@ function activarRevisionClase(i){
 
 document.addEventListener("input", function(e){
 
-if(e.target.id === "compObligatoria"){
+  const campo = e.target;
 
-  clearTimeout(timerIA);
+  // 🔥 ACTIVIDADES COMPLEMENTARIAS
+  if(campo.id === "compObligatoria"){
+    clearTimeout(timerIA);
+    timerIA = setTimeout(() => {
+      revisarCompCoach();
+    }, 400); // ⚡ más rápido
+  }
 
-  timerIA = setTimeout(() => {
-    revisarCompCoach();
-  }, 1000);
+  // 🔥 COMUNICACIÓN A FAMILIAS
+  if(campo.id === "famObs"){
+    clearTimeout(timerIA);
+    timerIA = setTimeout(() => {
+      revisarFamiliaCoach();
+    }, 400);
+  }
 
-}
+  // 🔥 INDICADOR
+  if(campo.id === "indicadorInput"){
+    clearTimeout(timerIA);
+    timerIA = setTimeout(() => {
+      revisarIndicadorCoach();
+    }, 400);
+  }
 
-if(e.target.id === "famObs"){
-
-  clearTimeout(timerIA);
-
-  timerIA = setTimeout(() => {
-    revisarFamiliaCoach();
-  }, 1000);
-
-}
-  
-
-if(e.target.id === "indicadorInput"){
-
-  clearTimeout(timerIA);
-
-  timerIA = setTimeout(() => {
-    revisarIndicadorCoach();
-  }, 1000);
-
-}
-
-if(e.target.id === "observacionInput"){
-
-  clearTimeout(timerIA);
-
-  timerIA = setTimeout(() => {
-    revisarObservacionCoach();
-  }, 1000);
-
-}
+  // 🔥 OBSERVACIÓN
+  if(campo.id === "observacionInput"){
+    clearTimeout(timerIA);
+    timerIA = setTimeout(() => {
+      revisarObservacionCoach();
+    }, 400);
+  }
 
   // 🔥 REVISIÓN DE CLASES
-if(e.target.id && e.target.id.startsWith("tema_")){
-  const i = e.target.id.split("_")[1];
-  activarRevisionClase(i);
-}
+  if(campo.id && campo.id.startsWith("tema_")){
+    const i = campo.id.split("_")[1];
+    activarRevisionClase(i);
+  }
 
-if(e.target.id && e.target.id.startsWith("act_")){
-  const i = e.target.id.split("_")[1];
-  activarRevisionClase(i);
-}
+  if(campo.id && campo.id.startsWith("act_")){
+    const i = campo.id.split("_")[1];
+    activarRevisionClase(i);
+  }
 
+  // 🔥 VALIDAR BOTÓN ENVIAR
   if(
-    e.target.id === "indicadorInput" ||
-    (e.target.id && e.target.id.startsWith("tema_")) ||
-    (e.target.id && e.target.id.startsWith("act_"))
+    campo.id === "indicadorInput" ||
+    (campo.id && campo.id.startsWith("tema_")) ||
+    (campo.id && campo.id.startsWith("act_"))
   ){
     validarBotonEnviar();
   }
-  setTimeout(() => {
+
+  // 🔥 EVALUAR ERRORES GLOBAL (INMEDIATO)
   evaluarErroresGlobal();
-}, 1200);
 
 });
 
