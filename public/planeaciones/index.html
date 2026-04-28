@@ -1673,8 +1673,10 @@ async function enviarPlaneacion(){
     console.log("RESPUESTA:", json);
 
     if(!json.ok){
-      throw new Error(json.mensaje || "Error del backend");
-    }
+  console.log("ERROR REAL BACKEND:", json);
+  alert(JSON.stringify(json)); // 🔥 AQUÍ VERÁS EL ERROR REAL
+  throw new Error(json.mensaje || "Error del backend");
+}
 
     // 🧹 LIMPIAR BORRADOR
     localStorage.removeItem("planeacion_borrador");
