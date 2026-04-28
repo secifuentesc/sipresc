@@ -46,8 +46,19 @@ export default async function handler(req, res) {
     // 🔴 POST
     if (req.method === "POST") {
 
-      // 🔥 IMPORTANTE: aceptar lo que venga (FormData convertido o JSON)
-      const payload = req.body || {};
+      let payload = {};
+
+      // 🔥 DETECTAR SI VIENE DE FORM DATA
+      if (req.headers["content-type"]?.includes("multipart/form-data")) {
+        payload = req.body; // Vercel lo deja como objeto
+      } else {
+        payload = typeof req.body === "string"
+          ? JSON.parse(req.body)
+          : req.body || {};
+      }
+
+      // 🔥 DEBUG CLAVE
+      console.log("PAYLOAD FINAL:", payload);
 
       const response = await fetchConTimeout(SCRIPT_URL, {
         method: "POST",
