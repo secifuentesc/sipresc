@@ -1090,7 +1090,7 @@ async function cargarMaterias(){
       pintarMaterias(json.materias);
 
       localStorage.setItem(CACHE_KEY, JSON.stringify(json.materias));
-      localStorage.setItem(CACHE_TIME, Date.now());
+      localStorage.setItem(CACHE_TIME, String(Date.now()));
 
       display.textContent = "Seleccionar materia...";
       console.log("Materias actualizadas 🔄");
