@@ -1,6 +1,6 @@
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxaErInUj96K3bJtArXlc0QXsPtaxQ-L4TYmSVz8Qky68bZ8HWtE5-Z2SWlarPa0iu5/exec";
 
-// ⏱️ Timeout para evitar cuelgues
+// ⏱️ Timeout
 async function fetchConTimeout(url, options = {}, timeout = 15000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
@@ -15,13 +15,23 @@ async function fetchConTimeout(url, options = {}, timeout = 15000) {
 
 export default async function handler(req, res) {
   try {
-    console.log("REQ:", req.method, req.query || req.body);
 
+    console.log("REQ:", req.method);
+
+    // =========================
     // 🔵 GET
+    // =========================
     if (req.method === "GET") {
 
       const accion = (req.query?.accion || "").trim();
       const correo = (req.query?.correo || "").trim();
+
+      if (!accion) {
+        return res.status(400).json({
+          ok: false,
+          mensaje: "Falta accion"
+        });
+      }
 
       const url = `${SCRIPT_URL}?accion=${encodeURIComponent(accion)}&correo=${encodeURIComponent(correo)}`;
 
@@ -43,23 +53,37 @@ export default async function handler(req, res) {
       }
     }
 
+    // =========================
     // 🔴 POST
+    // =========================
     if (req.method === "POST") {
 
       let payload = {};
 
-      // 🔥 DETECTAR SI VIENE DE FORM DATA
-      if (req.headers["content-type"]?.includes("multipart/form-data")) {
-        payload = req.body; // Vercel lo deja como objeto
-      } else {
+      // 🔥 PARSEO SEGURO
+      try {
         payload = typeof req.body === "string"
           ? JSON.parse(req.body)
           : req.body || {};
+      } catch (e) {
+        payload = {};
       }
 
-      // 🔥 DEBUG CLAVE
+      // 🔥 FIX CLAVE: GARANTIZAR CORREO
+      if (!payload.correo) {
+        payload.correo = req.headers["x-correo"] || "";
+      }
+
       console.log("PAYLOAD FINAL:", payload);
 
+      if (!payload.correo) {
+        return res.status(400).json({
+          ok: false,
+          mensaje: "Correo no enviado"
+        });
+      }
+
+      // 🔥 ENVÍO A APPS SCRIPT
       const response = await fetchConTimeout(SCRIPT_URL, {
         method: "POST",
         headers: {
@@ -81,7 +105,9 @@ export default async function handler(req, res) {
       }
     }
 
-    // ❌ Método no permitido
+    // =========================
+    // ❌ MÉTODO NO PERMITIDO
+    // =========================
     return res.status(405).json({
       ok: false,
       mensaje: "Método no permitido"
@@ -91,13 +117,9 @@ export default async function handler(req, res) {
 
     console.error("ERROR:", error);
 
-    const isTimeout = error.name === "AbortError";
-
-    return res.status(isTimeout ? 504 : 500).json({
+    return res.status(500).json({
       ok: false,
-      mensaje: isTimeout
-        ? "Tiempo de espera agotado"
-        : error.message
+      mensaje: error.message
     });
   }
 }
