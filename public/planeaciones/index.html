@@ -571,6 +571,15 @@ body{
 .coach-box{
   transition: all .2s ease;
 }
+
+#btnCorregir.cargando{
+  animation: girar 0.8s linear infinite;
+}
+
+@keyframes girar{
+  from{ transform: rotate(0deg); }
+  to{ transform: rotate(360deg); }
+}
   
 </style>
 </head>
@@ -860,7 +869,14 @@ transition:all .3s ease;
 
 async function corregirTodo(){
 
-  // 🔥 TODOS LOS CAMPOS DEL FORM
+  const btn = document.getElementById("btnCorregir");
+
+  // 🔥 ACTIVAR ANIMACIÓN
+  btn.classList.add("cargando");
+
+  // 🔥 PEQUEÑO DELAY VISUAL (para que se note)
+  await new Promise(r => setTimeout(r, 200));
+
   const campos = document.querySelectorAll("textarea");
 
   for(const campo of campos){
@@ -873,7 +889,6 @@ async function corregirTodo(){
 
       const errores = await revisarOrtografia(texto);
 
-      // 🔥 ORDENAR DE ATRÁS HACIA ADELANTE
       errores.sort((a,b) => b.offset - a.offset);
 
       errores.forEach(e => {
@@ -888,39 +903,36 @@ async function corregirTodo(){
 
       });
 
-      // 🔥 LIMPIAR TEXTO
       texto = texto.trim();
 
-      // 🔥 AGREGAR PUNTO AUTOMÁTICO
       if(texto && !texto.endsWith(".")){
         texto += ".";
       }
 
       campo.value = texto;
 
-      // 🔥 DISPARAR VALIDACIONES
       campo.dispatchEvent(new Event("input"));
 
     }catch(err){
       console.error("Error corrigiendo:", err);
     }
-
   }
 
-  // 🔥 FORZAR ACTUALIZACIÓN GLOBAL
+  // 🔥 ACTUALIZAR TODO
   revisarIndicadorCoach();
   revisarObservacionCoach();
   revisarCompCoach();
   revisarFamiliaCoach();
 
-  // 🔥 REVISAR TODAS LAS CLASES
   const total = ST.intensidad || 1;
-
   for(let i = 1; i <= total; i++){
     revisarClaseCoach(i);
   }
 
   evaluarErroresGlobal();
+
+  // 🔥 DESACTIVAR ANIMACIÓN
+  btn.classList.remove("cargando");
 }
 
 function obtenerSesion(){
