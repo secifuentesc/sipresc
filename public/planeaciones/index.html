@@ -538,6 +538,11 @@ body{
 .sugerencia:hover{
   background:rgba(74,222,128,.15);
 }
+
+.coach-box{
+  transition: all .2s ease;
+}
+  
 </style>
 </head>
 
@@ -1896,8 +1901,6 @@ async function revisarClaseCoach(i){
 
   boxTema.innerHTML = "";
   boxAct.innerHTML = "";
-  boxTema.style.display = "none";
-  boxAct.style.display = "none";
 
   let mensajesTema = [];
   let mensajesAct = [];
@@ -1908,6 +1911,10 @@ async function revisarClaseCoach(i){
     if(tema.length < 5){
       mensajesTema.push(`<div class="coach-warning">⚠ El tema es muy corto o poco claro.</div>`);
     }
+
+    if(!tema.endsWith(".")){
+  mensajesTema.push(`<div class="coach-warning">⚠ El tema debe finalizar con punto.</div>`);
+}
 
     const erroresTema = await revisarOrtografia(tema);
 
