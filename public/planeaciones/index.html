@@ -678,6 +678,18 @@ body{
   id="observacionInput"
   placeholder="Describe brevemente la novedad.">
 </textarea>
+  <button onclick="importarPlaneacion()" style="
+  margin-top:10px;
+  font-size:12px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--br);
+  color:var(--tx);
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+">
+  Importar planeación anterior ⬇️
+</button>
 
 <div id="coachObservacion" class="coach-box"></div>
   </div>
@@ -934,7 +946,68 @@ async function corregirTodo(){
   // 🔥 DESACTIVAR ANIMACIÓN
   btn.classList.remove("cargando");
 }
+async function importarPlaneacion(){
 
+  const correo = obtenerCorreo();
+
+  if(!correo){
+    alert("No se pudo identificar el docente");
+    return;
+  }
+
+  try{
+
+    const res = await fetch(API + "?accion=ultimaPlaneacion&correo=" + correo);
+    const json = await res.json();
+
+    if(!json.ok || !json.data){
+      alert("No hay planeación anterior disponible");
+      return;
+    }
+
+    const d = json.data;
+
+    // 🔥 INDICADOR
+    if(document.getElementById("indicadorInput")){
+      document.getElementById("indicadorInput").value = d.indicador || "";
+    }
+
+    // 🔥 CLASES
+    for(let i = 1; i <= 5; i++){
+
+      const tema = document.getElementById("tema_"+i);
+      const act = document.getElementById("act_"+i);
+
+      if(tema && d["d"+i+"_tema"]){
+        tema.value = d["d"+i+"_tema"];
+      }
+
+      if(act && d["d"+i+"_act"]){
+        act.value = d["d"+i+"_act"];
+      }
+
+    }
+
+    // 🔥 OBSERVACIÓN
+    if(document.getElementById("observacionInput")){
+      document.getElementById("observacionInput").value = d.observacion || "";
+    }
+
+    // 🔥 DISPARAR VALIDACIONES
+    document.querySelectorAll("textarea").forEach(t => {
+      t.dispatchEvent(new Event("input"));
+    });
+
+    // 🔥 MENSAJE
+    document.getElementById("estadoGuardado").textContent = "Planeación importada ✔";
+
+  }catch(err){
+    console.error(err);
+    alert("Error cargando la planeación");
+  }
+
+}
+  
 function obtenerSesion(){
 
   const data = localStorage.getItem("lp_user");
