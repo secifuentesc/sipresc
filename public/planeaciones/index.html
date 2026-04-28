@@ -1598,7 +1598,7 @@ async function enviarPlaneacion(){
       return;
     }
 
-    // 🔥 PAYLOAD LIMPIO (SIN FORMDATA)
+    // 🔥 PAYLOAD LIMPIO
     const payload = {
 
       accion: "guardarFinal",
@@ -1656,14 +1656,14 @@ async function enviarPlaneacion(){
 
     };
 
-    // 🔍 DEBUG CLAVE
     console.log("PAYLOAD:", payload);
 
-    // 🚀 FETCH CORRECTO
+    // 🚀 FETCH CORRECTO (🔥 ESTE ERA EL ERROR)
     const res = await fetch(API,{
       method:"POST",
       headers:{
-        "Content-Type":"application/json"
+        "Content-Type":"application/json",
+        "x-correo": correo // 🔥 ESTE FIX ERA EL QUE FALTABA
       },
       body: JSON.stringify(payload)
     });
@@ -1673,8 +1673,8 @@ async function enviarPlaneacion(){
     console.log("RESPUESTA:", json);
 
     if(!json.ok){
-  throw new Error(json.mensaje || "Error del backend");
-}
+      throw new Error(json.mensaje || "Error del backend");
+    }
 
     // 🧹 LIMPIAR BORRADOR
     localStorage.removeItem("planeacion_borrador");
