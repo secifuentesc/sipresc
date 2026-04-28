@@ -1570,6 +1570,7 @@ function validarBotonEnviar(){
 
 let timersClases = {};
 let timerIA;
+let cacheIndicador = "";
 
 function activarRevisionClase(i){
   clearTimeout(timersClases[i]);
@@ -1588,7 +1589,7 @@ if(e.target.id === "indicadorInput"){
 
   timerIA = setTimeout(() => {
     revisarIndicadorCoach();
-  }, 600);
+  }, 1000);
 
 }
 
@@ -1803,16 +1804,20 @@ async function revisarIndicadorCoach(){
 
   if(!campo || !box) return;
 
-  box.innerHTML = "";
-  box.style.display = "none";
-
   const texto = campo.value.trim();
 
+  // 🔥 1. vacío → oculta y sale
   if(!texto){
     box.style.display = "none";
-    box.innerHTML = "";
     return;
   }
+
+  // 🔥 2. evitar repetir
+  if(texto === cacheIndicador){
+    return;
+  }
+
+  cacheIndicador = texto;
 
   let mensajes = [];
 
@@ -1827,7 +1832,7 @@ async function revisarIndicadorCoach(){
     mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
   }
 
-  // 🔥 ORTOGRAFÍA REAL
+  // 🔥 ORTOGRAFÍA
   const errores = await revisarOrtografia(texto);
 
   if(errores.length > 0){
@@ -1837,28 +1842,26 @@ async function revisarIndicadorCoach(){
     errores.forEach(e => {
 
       const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
-
       const offset = e.offset;
       const length = e.length;
 
       mensajes.push(`
-  <div class="coach-error">
-    🔴 "${e.context.text}" → 
-    <span class="sugerencia"
-  onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'indicadorInput')">
-  ${sugerencia}
-</span>
-  </div>
-`);
-
+        <div class="coach-error">
+          🔴 "${e.context.text}" → 
+          <span class="sugerencia"
+            onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'indicadorInput')">
+            ${sugerencia}
+          </span>
+        </div>
+      `);
     });
 
   }else{
     mensajes.push(`<div class="coach-ok">✔ Sin errores ortográficos.</div>`);
   }
 
-  box.style.display = "block";
   box.innerHTML = mensajes.join("");
+  box.style.display = "block";
 }
 
 async function revisarOrtografia(texto){
