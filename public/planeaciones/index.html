@@ -542,6 +542,54 @@ body{
 .coach-box{
   transition: all .2s ease;
 }
+
+async function corregirTodo(){
+
+  const campos = [
+    { id: "indicadorInput", tipo: "indicador" },
+    { id: "observacionInput", tipo: "observacion" },
+    { id: "compObligatoria", tipo: "comp" },
+    { id: "famObs", tipo: "familia" }
+  ];
+
+  for(const c of campos){
+
+    const campo = document.getElementById(c.id);
+    if(!campo) continue;
+
+    let texto = campo.value;
+    if(!texto) continue;
+
+    const errores = await revisarOrtografia(texto);
+
+    // 🔥 CLAVE: ordenar de atrás hacia adelante
+    errores.sort((a,b) => b.offset - a.offset);
+
+    errores.forEach(e => {
+
+      const sugerencia = e.replacements[0]?.value;
+      if(!sugerencia) return;
+
+      const antes = texto.substring(0, e.offset);
+      const despues = texto.substring(e.offset + e.length);
+
+      texto = antes + sugerencia + despues;
+
+    });
+
+    campo.value = texto;
+
+    // 🔥 DISPARA VALIDACIÓN
+    campo.dispatchEvent(new Event("input"));
+  }
+
+  // 🔥 ACTUALIZA TODO
+  revisarIndicadorCoach();
+  revisarObservacionCoach();
+  revisarCompCoach();
+  revisarFamiliaCoach();
+
+}
   
 </style>
 </head>
@@ -738,6 +786,19 @@ body{
     <div id="estadoGuardado" class="estado">
       Guardado automático
     </div>
+  <div style="margin-top:10px; text-align:right;">
+  <button onclick="corregirTodo()" style="
+    font-size:11px;
+    background:transparent;
+    border:1px solid var(--br);
+    color:var(--mt);
+    padding:6px 10px;
+    border-radius:8px;
+    cursor:pointer;
+  ">
+    Corregir todo ✨
+  </button>
+</div>
 
   </div>
 
