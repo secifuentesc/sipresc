@@ -294,6 +294,35 @@ body{
   pointer-events:none;
 }
 
+#btnCorregir{
+  position: fixed;
+  bottom: 90px; /* arriba del enviar */
+  right: 20px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+  color:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  cursor:pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.4);
+  z-index:50;
+
+  opacity:0;
+  transform: scale(.8);
+  pointer-events:none;
+  transition: all .3s ease;
+}
+
+#btnCorregir.activo{
+  opacity:1;
+  transform: scale(1);
+  pointer-events:auto;
+}
+
 #btnEnviar.activo{
   opacity:1;
   transform: scale(1);
@@ -542,54 +571,6 @@ body{
 .coach-box{
   transition: all .2s ease;
 }
-
-async function corregirTodo(){
-
-  const campos = [
-    { id: "indicadorInput", tipo: "indicador" },
-    { id: "observacionInput", tipo: "observacion" },
-    { id: "compObligatoria", tipo: "comp" },
-    { id: "famObs", tipo: "familia" }
-  ];
-
-  for(const c of campos){
-
-    const campo = document.getElementById(c.id);
-    if(!campo) continue;
-
-    let texto = campo.value;
-    if(!texto) continue;
-
-    const errores = await revisarOrtografia(texto);
-
-    // 🔥 CLAVE: ordenar de atrás hacia adelante
-    errores.sort((a,b) => b.offset - a.offset);
-
-    errores.forEach(e => {
-
-      const sugerencia = e.replacements[0]?.value;
-      if(!sugerencia) return;
-
-      const antes = texto.substring(0, e.offset);
-      const despues = texto.substring(e.offset + e.length);
-
-      texto = antes + sugerencia + despues;
-
-    });
-
-    campo.value = texto;
-
-    // 🔥 DISPARA VALIDACIÓN
-    campo.dispatchEvent(new Event("input"));
-  }
-
-  // 🔥 ACTUALIZA TODO
-  revisarIndicadorCoach();
-  revisarObservacionCoach();
-  revisarCompCoach();
-  revisarFamiliaCoach();
-
-}
   
 </style>
 </head>
@@ -807,6 +788,7 @@ async function corregirTodo(){
 <div id="btnBack" onclick="volverPaso1()">←</div>
 
 <div id="btnEnviar" onclick="enviarPlaneacion()">✓</div>
+<div id="btnCorregir" onclick="corregirTodo()">✦</div>
 
 <div id="modalExito" style="
 position:fixed;
@@ -875,6 +857,54 @@ transition:all .3s ease;
 </div>
   
 <script>
+
+async function corregirTodo(){
+
+  const campos = [
+    { id: "indicadorInput", tipo: "indicador" },
+    { id: "observacionInput", tipo: "observacion" },
+    { id: "compObligatoria", tipo: "comp" },
+    { id: "famObs", tipo: "familia" }
+  ];
+
+  for(const c of campos){
+
+    const campo = document.getElementById(c.id);
+    if(!campo) continue;
+
+    let texto = campo.value;
+    if(!texto) continue;
+
+    const errores = await revisarOrtografia(texto);
+
+    // 🔥 CLAVE: ordenar de atrás hacia adelante
+    errores.sort((a,b) => b.offset - a.offset);
+
+    errores.forEach(e => {
+
+      const sugerencia = e.replacements[0]?.value;
+      if(!sugerencia) return;
+
+      const antes = texto.substring(0, e.offset);
+      const despues = texto.substring(e.offset + e.length);
+
+      texto = antes + sugerencia + despues;
+
+    });
+
+    campo.value = texto;
+
+    // 🔥 DISPARA VALIDACIÓN
+    campo.dispatchEvent(new Event("input"));
+  }
+
+  // 🔥 ACTUALIZA TODO
+  revisarIndicadorCoach();
+  revisarObservacionCoach();
+  revisarCompCoach();
+  revisarFamiliaCoach();
+
+}
 
 function obtenerSesion(){
 
@@ -1716,6 +1746,9 @@ if(e.target.id && e.target.id.startsWith("act_")){
   ){
     validarBotonEnviar();
   }
+  setTimeout(() => {
+  evaluarErroresGlobal();
+}, 1200);
 
 });
 
@@ -2340,6 +2373,22 @@ cacheFamilia = texto;
 
   box.innerHTML = mensajes.join("");
   box.style.display = "block";
+}
+
+function evaluarErroresGlobal(){
+
+  const hayErrores =
+    document.querySelectorAll(".coach-error").length > 0;
+
+  const btn = document.getElementById("btnCorregir");
+
+  if(!btn) return;
+
+  if(hayErrores){
+    btn.classList.add("activo");
+  }else{
+    btn.classList.remove("activo");
+  }
 }
 </script>
 
