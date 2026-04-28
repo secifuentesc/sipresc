@@ -1598,98 +1598,82 @@ async function enviarPlaneacion(){
       return;
     }
 
-    // 🔥 ARCHIVOS
-    const compFile = document.getElementById("compArchivo")?.files[0];
-    const famFile = document.getElementById("famArchivo")?.files[0];
+    // 🔥 PAYLOAD LIMPIO (SIN FORMDATA)
+    const payload = {
 
-    // 🔥 FORM DATA (CLAVE PARA ARCHIVOS)
-    const formData = new FormData();
+      accion: "guardarFinal",
+      correo: correo,
 
-    formData.append("accion", "guardarFinal");
-    formData.append("correo", correo);
+      asignatura: ST.materia || "",
+      grado: ST.grado || "",
+      gruposDestino: (ST.grupos || []).join(","),
 
-    formData.append("asignatura", ST.materia || "");
-    formData.append("grado", ST.grado || "");
-    formData.append("gruposDestino", (ST.grupos || []).join(","));
+      semana: (ST.semana || "").toUpperCase(),
 
-    formData.append("semana", (ST.semana || "").toUpperCase());
+      indicador: document.getElementById("indicadorInput")?.value || "",
 
-    formData.append("indicador", document.getElementById("indicadorInput")?.value || "");
+      d1_tema: document.getElementById("tema_1")?.value || "",
+      d1_act: document.getElementById("act_1")?.value || "",
 
-    formData.append("d1_tema", document.getElementById("tema_1")?.value || "");
-    formData.append("d1_act", document.getElementById("act_1")?.value || "");
+      d2_tema: document.getElementById("tema_2")?.value || "",
+      d2_act: document.getElementById("act_2")?.value || "",
 
-    formData.append("d2_tema", document.getElementById("tema_2")?.value || "");
-    formData.append("d2_act", document.getElementById("act_2")?.value || "");
+      d3_tema: document.getElementById("tema_3")?.value || "",
+      d3_act: document.getElementById("act_3")?.value || "",
 
-    formData.append("d3_tema", document.getElementById("tema_3")?.value || "");
-    formData.append("d3_act", document.getElementById("act_3")?.value || "");
+      d4_tema: document.getElementById("tema_4")?.value || "",
+      d4_act: document.getElementById("act_4")?.value || "",
 
-    formData.append("d4_tema", document.getElementById("tema_4")?.value || "");
-    formData.append("d4_act", document.getElementById("act_4")?.value || "");
+      d5_tema: document.getElementById("tema_5")?.value || "",
+      d5_act: document.getElementById("act_5")?.value || "",
 
-    formData.append("d5_tema", document.getElementById("tema_5")?.value || "");
-    formData.append("d5_act", document.getElementById("act_5")?.value || "");
+      intensidad: ST.intensidad || 1,
 
-    formData.append("intensidad", ST.intensidad || 1);
+      observacion:
+        ST.observacionActiva === "si"
+          ? document.getElementById("observacionInput")?.value || ""
+          : "",
 
-    formData.append(
-      "observacion",
-      ST.observacionActiva === "si"
-        ? document.getElementById("observacionInput")?.value || ""
-        : ""
-    );
+      comp_obligatoria:
+        ST.compActiva === "si"
+          ? document.getElementById("compObligatoria")?.value || ""
+          : "",
 
-    formData.append(
-      "comp_obligatoria",
-      ST.compActiva === "si"
-        ? document.getElementById("compObligatoria")?.value || ""
-        : ""
-    );
+      fam_obs:
+        ST.famActiva === "si"
+          ? document.getElementById("famObs")?.value || ""
+          : "",
 
-    formData.append(
-      "fam_obs",
-      ST.famActiva === "si"
-        ? document.getElementById("famObs")?.value || ""
-        : ""
-    );
+      disp_clases:
+        ST.dispActivo === "si"
+          ? (ST.dispClases || []).join(",")
+          : "",
 
-    formData.append(
-      "disp_clases",
-      ST.dispActivo === "si"
-        ? (ST.dispClases || []).join(",")
-        : ""
-    );
+      disp_desc:
+        ST.dispActivo === "si"
+          ? document.getElementById("dispDescripcion")?.value || ""
+          : ""
 
-    formData.append(
-      "disp_desc",
-      ST.dispActivo === "si"
-        ? document.getElementById("dispDescripcion")?.value || ""
-        : ""
-    );
+    };
 
-    // 🔥 ARCHIVOS SOLO SI EXISTEN
-    if(compFile){
-      formData.append("comp_anexo", compFile);
-    }
+    // 🔍 DEBUG CLAVE
+    console.log("PAYLOAD:", payload);
 
-    if(famFile){
-      formData.append("fam_anexo", famFile);
-    }
-
-    // 🔍 DEBUG
-    console.log("Enviando datos...");
-
-    // 🚀 FETCH SIN HEADERS (IMPORTANTE)
+    // 🚀 FETCH CORRECTO
     const res = await fetch(API,{
       method:"POST",
-      body: formData
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify(payload)
     });
 
     const json = await res.json();
 
+    console.log("RESPUESTA:", json);
+
     if(!json.ok){
-      throw new Error(json.error || "Error del backend");
+      throw new Error(json.mensaje || "Error del backend");
     }
 
     // 🧹 LIMPIAR BORRADOR
@@ -1708,7 +1692,7 @@ async function enviarPlaneacion(){
 
     document.getElementById("estadoGuardado").textContent = "Error al enviar";
 
-    alert("Hubo un problema al enviar la planeación");
+    alert(error.message || "Hubo un problema al enviar la planeación");
   }
 }
 
