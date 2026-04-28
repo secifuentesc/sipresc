@@ -4,6 +4,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxaErInUj96K3bJtArXl
 async function fetchConTimeout(url, options = {}, timeout = 15000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
+
   try {
     const res = await fetch(url, { ...options, signal: controller.signal });
     return res;
@@ -18,12 +19,9 @@ export default async function handler(req, res) {
 
     // 🔵 GET
     if (req.method === "GET") {
+
       const accion = (req.query?.accion || "").trim();
       const correo = (req.query?.correo || "").trim();
-
-      if (!accion) {
-        return res.status(400).json({ ok: false, mensaje: "Falta 'accion'" });
-      }
 
       const url = `${SCRIPT_URL}?accion=${encodeURIComponent(accion)}&correo=${encodeURIComponent(correo)}`;
 
@@ -38,25 +36,23 @@ export default async function handler(req, res) {
       try {
         return res.status(200).json(JSON.parse(text));
       } catch {
-        return res.status(502).json({ ok: false, mensaje: text });
+        return res.status(500).json({
+          ok: false,
+          mensaje: text
+        });
       }
     }
 
     // 🔴 POST
     if (req.method === "POST") {
-      // Asegura que siempre enviamos un objeto
-      const payload = req.body && typeof req.body === "object" ? req.body : {};
 
-      // Opcional: valida que venga 'accion'
-      if (!payload.accion) {
-        return res.status(400).json({ ok: false, mensaje: "Falta 'accion' en el body" });
-      }
+      // 🔥 IMPORTANTE: aceptar lo que venga (FormData convertido o JSON)
+      const payload = req.body || {};
 
       const response = await fetchConTimeout(SCRIPT_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)
       });
@@ -67,19 +63,30 @@ export default async function handler(req, res) {
       try {
         return res.status(200).json(JSON.parse(text));
       } catch {
-        return res.status(502).json({ ok: false, mensaje: text });
+        return res.status(500).json({
+          ok: false,
+          mensaje: text
+        });
       }
     }
 
     // ❌ Método no permitido
-    return res.status(405).json({ ok: false, mensaje: "Método no permitido" });
+    return res.status(405).json({
+      ok: false,
+      mensaje: "Método no permitido"
+    });
 
   } catch (error) {
+
     console.error("ERROR:", error);
+
     const isTimeout = error.name === "AbortError";
+
     return res.status(isTimeout ? 504 : 500).json({
       ok: false,
-      mensaje: isTimeout ? "Tiempo de espera agotado" : error.message
+      mensaje: isTimeout
+        ? "Tiempo de espera agotado"
+        : error.message
     });
   }
 }
