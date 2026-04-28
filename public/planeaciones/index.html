@@ -636,10 +636,12 @@ body{
 
   <div id="obsInputBox" class="oculto" style="margin-top:15px;">
     <textarea 
-      class="input textarea" 
-      id="observacionInput"
-      placeholder="Describe brevemente la novedad.">
-    </textarea>
+  class="input textarea" 
+  id="observacionInput"
+  placeholder="Describe brevemente la novedad.">
+</textarea>
+
+<div id="coachObservacion" class="coach-box"></div>
   </div>
 </div>
 
@@ -1571,6 +1573,7 @@ function validarBotonEnviar(){
 let timersClases = {};
 let timerIA;
 let cacheIndicador = "";
+let cacheObservacion = "";
 
 function activarRevisionClase(i){
   clearTimeout(timersClases[i]);
@@ -1589,6 +1592,16 @@ if(e.target.id === "indicadorInput"){
 
   timerIA = setTimeout(() => {
     revisarIndicadorCoach();
+  }, 1000);
+
+}
+
+if(e.target.id === "observacionInput"){
+
+  clearTimeout(timerIA);
+
+  timerIA = setTimeout(() => {
+    revisarObservacionCoach();
   }, 1000);
 
 }
@@ -2031,6 +2044,71 @@ if(campoId === "indicadorInput"){
   const i = campoId.split("_")[1];
   revisarClaseCoach(i);
 }
+}
+
+async function revisarObservacionCoach(){
+
+  const campo = document.getElementById("observacionInput");
+  const box = document.getElementById("coachObservacion");
+
+  if(!campo || !box) return;
+
+  const texto = campo.value.trim();
+
+  // 🔥 vacío
+  if(!texto){
+    box.style.display = "none";
+    return;
+  }
+
+  // 🔥 evitar repetir
+  if(texto === cacheObservacion){
+    return;
+  }
+
+  cacheObservacion = texto;
+
+  let mensajes = [];
+
+  // 🔹 VALIDACIÓN
+  if(texto.length < 10){
+    mensajes.push(`<div class="coach-warning">⚠ La observación es muy corta.</div>`);
+  }
+
+  if(!texto.endsWith(".")){
+    mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
+  }
+
+  // 🔥 ORTOGRAFÍA
+  const errores = await revisarOrtografia(texto);
+
+  if(errores.length > 0){
+
+    mensajes.push(`<div class="coach-error"><b>Errores detectados:</b></div>`);
+
+    errores.slice(0,4).forEach(e => {
+
+      const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
+      const offset = e.offset;
+      const length = e.length;
+
+      mensajes.push(`
+        <div class="coach-error">
+          🔴 "${e.context.text}" → 
+          <span class="sugerencia"
+            onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'observacionInput')">
+            ${sugerencia}
+          </span>
+        </div>
+      `);
+    });
+
+  } else {
+    mensajes.push(`<div class="coach-ok">✔ Sin errores ortográficos.</div>`);
+  }
+
+  box.innerHTML = mensajes.join("");
+  box.style.display = "block";
 }
 </script>
 
