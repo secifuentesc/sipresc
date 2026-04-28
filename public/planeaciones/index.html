@@ -1572,12 +1572,11 @@ let timersClases = {};
 let timerIA;
 
 function activarRevisionClase(i){
-
   clearTimeout(timersClases[i]);
 
   timersClases[i] = setTimeout(() => {
     revisarClaseCoach(i);
-  }, 700);
+  }, 1200); // 🔥 más suave
 }
 
 document.addEventListener("input", function(e){
@@ -1898,9 +1897,6 @@ async function revisarClaseCoach(i){
 
   if(!boxTema || !boxAct) return;
 
-
-  boxTema.innerHTML = "";
-  boxAct.innerHTML = "";
 
   let mensajesTema = [];
   let mensajesAct = [];
