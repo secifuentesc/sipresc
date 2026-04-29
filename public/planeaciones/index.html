@@ -1311,13 +1311,15 @@ window.addEventListener("DOMContentLoaded", () => {
   const correo = obtenerCorreo();
 
   if(!correo){
-    window.location.href = "/"; // redirige al login
+    window.location.href = "/";
     return;
   }
 
   ST.correo = correo;
 
-  cargarMaterias();
+  // ❌ QUITA ESTO
+  // cargarMaterias();
+
   cargarBorrador();
 });
 
@@ -1332,7 +1334,7 @@ async function cargarMaterias(){
   const display = document.getElementById("materiaText");
 
 // 🔥 FEEDBACK INMEDIATO
-display.textContent = "Cargando...";
+display.textContent = "Cargando materias...";
   // 🔥 EVITA QUE SE VEA VACÍO MUCHO TIEMPO
 setTimeout(()=>{
   if(!ST.data){
@@ -2292,6 +2294,10 @@ function cerrarSesion(){
 }
 
 function toggleSelect(tipo){
+  // 🔥 CARGA SOLO CUANDO EL USUARIO ABRE
+if(tipo === "materia" && !ST.data){
+  cargarMaterias();
+}
 
   const box = document.getElementById(tipo + "Options");
   const trigger = document.getElementById(tipo + "Box");
