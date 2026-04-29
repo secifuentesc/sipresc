@@ -560,10 +560,9 @@ body{
 }
 
 .marca-error{
-  background:rgba(240,107,107,.16);
-  border-bottom:2px solid #f06b6b;
-  border-radius:3px;
-  padding:0 2px;
+  background: rgba(240,107,107,.12);
+  border-bottom:2px solid #f06b6b !important;
+  border-radius:4px;
 }
 
 .sugerencia{
@@ -1765,10 +1764,24 @@ async function enviarPlaneacion(){
   const loaderText = document.getElementById("loaderText");
   const loaderSuccess = document.getElementById("loaderSuccess");
 
-  // 🔥 BLOQUEAR DOBLE CLICK
+  // 🔒 BLOQUEAR DOBLE CLICK
   if(btn.classList.contains("loading")) return;
 
-  // 🔥 ACTIVAR TODO EL SHOW
+  // ✅ VALIDACIÓN FINAL
+  if(!validarBotonEnviar()){
+    const mensaje = obtenerMensajeError();
+
+    if(mensaje){
+      alert(mensaje);
+    }else{
+      alert("Completa todos los campos obligatorios");
+    }
+
+    irAlPrimerError();
+    return;
+  }
+
+  // 🔥 ACTIVAR UI
   btn.classList.add("loading");
   icon.textContent = "";
 
@@ -1815,7 +1828,7 @@ async function enviarPlaneacion(){
     const payload = {
 
       accion: "guardarFinal",
-      correo: correo,
+      correo,
 
       asignatura: ST.materia || "",
       grado: ST.grado || "",
@@ -1872,55 +1885,9 @@ async function enviarPlaneacion(){
         ST.dispActivo === "si"
           ? document.getElementById("dispDescripcion")?.value || ""
           : ""
-
     };
 
-    // 🔥 RESPUESTA INMEDIATA (UX PRO)
-// 🔥 RESPUESTA INMEDIATA (UX PRO)
-loaderText.textContent = "Enviado correctamente";
-loaderSuccess.style.opacity = "1";
-loaderSuccess.style.transform = "scale(1.2)";
-
-btn.classList.remove("loading");
-btn.classList.add("success");
-icon.textContent = "✔";
-
-estado.textContent = "Planeación enviada ✔";
-
-localStorage.removeItem("planeacion_borrador");
-
-setTimeout(() => {
-  overlay.classList.remove("activo");
-  document.querySelector(".form-app").classList.remove("blur");
-  mostrarExito();
-}, 500);
-
-    // 🚀 ENVÍO
-    // 🚀 ENVÍO REAL (sin bloquear UX)
-fetch(API,{
-  method:"POST",
-  headers:{
-    "Content-Type":"application/json",
-    "x-correo": correo
-  },
-  body: JSON.stringify(payload)
-})
-.then(res => res.json())
-.then(json => {
-  if(!json.ok){
-    console.error("Error backend:", json);
-  }
-})
-.catch(err => {
-  console.error("Error real:", err);
-});
-
-
-
-    // 🧹 LIMPIAR BORRADOR
-    localStorage.removeItem("planeacion_borrador");
-
-    // 🔥 ANIMACIÓN DE ÉXITO (WOW)
+    // ⚡ UX INMEDIATA (NO ESPERA BACKEND)
     loaderText.textContent = "Enviado correctamente";
     loaderSuccess.style.opacity = "1";
     loaderSuccess.style.transform = "scale(1.2)";
@@ -1931,21 +1898,44 @@ fetch(API,{
 
     estado.textContent = "Planeación enviada ✔";
 
-    // 🔥 PEQUEÑO DELAY PARA SENTIRLO PRO
-    setTimeout(() => {
+    localStorage.removeItem("planeacion_borrador");
 
+    setTimeout(() => {
       overlay.classList.remove("activo");
       document.querySelector(".form-app").classList.remove("blur");
-
       mostrarExito();
+    }, 600);
 
-    }, 900);
+    // 🚀 ENVÍO REAL (EN BACKGROUND)
+    fetch(API,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "x-correo": correo
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(json => {
+      if(!json.ok){
+        console.error("Error backend:", json);
+
+        // 🔴 FALLBACK SILENCIOSO (opcional)
+        estado.textContent = "Enviado (pendiente verificación)";
+      }
+    })
+    .catch(err => {
+      console.error("Error real:", err);
+
+      // 🔴 FALLBACK
+      estado.textContent = "Enviado (sin confirmación del servidor)";
+    });
 
   } catch (error) {
 
     console.error(error);
 
-    // 🔥 ERROR VISUAL
+    // 🔥 ERROR VISUAL PRO
     loaderText.textContent = "Error al enviar";
     loaderSuccess.textContent = "✕";
     loaderSuccess.style.color = "#ef4444";
@@ -2033,34 +2023,100 @@ function cargarBorrador(){
 
 function validarBotonEnviar(){
 
-  const indicador = document.getElementById("indicadorInput")?.value || "";
+  const indicador = document.getElementById("indicadorInput")?.value.trim() || "";
+  const total = ST.intensidad || 1;
 
-  let hayContenido = false;
+  let valido = true;
 
-  for(let i = 1; i <= 5; i++){
-    const t = document.getElementById("tema_"+i)?.value || "";
-    const a = document.getElementById("act_"+i)?.value || "";
+  // 🔴 INDICADOR
+  const campoIndicador = document.getElementById("indicadorInput");
+  campoIndicador?.classList.remove("marca-error");
 
-    if(t.trim().length > 3 || a.trim().length > 3){
-      hayContenido = true;
-      break;
-    }
+  if(indicador.length < 5){
+    valido = false;
+    campoIndicador?.classList.add("marca-error");
   }
 
-  if(indicador.trim().length > 5 && hayContenido){
-    document.getElementById("btnEnviar").classList.add("activo");
-  } else {
-    document.getElementById("btnEnviar").classList.remove("activo");
+  // 🔴 CLASES SEGÚN INTENSIDAD
+  for(let i = 1; i <= total; i++){
+
+    const campoTema = document.getElementById("tema_"+i);
+    const campoAct = document.getElementById("act_"+i);
+
+    const tema = campoTema?.value.trim() || "";
+    const act = campoAct?.value.trim() || "";
+
+    // LIMPIAR ERRORES PREVIOS
+    campoTema?.classList.remove("marca-error");
+    campoAct?.classList.remove("marca-error");
+
+    // VALIDAR TEMA
+    if(tema.length < 5){
+      valido = false;
+      campoTema?.classList.add("marca-error");
+    }
+
+    // VALIDAR ACTIVIDADES
+    if(act.length < 10){
+      valido = false;
+      campoAct?.classList.add("marca-error");
+    }
+
+  }
+
+  // 🔴 BOTÓN ENVIAR
+  const btn = document.getElementById("btnEnviar");
+
+  if(valido){
+    btn.classList.add("activo");
+  }else{
+    btn.classList.remove("activo");
+  }
+
+  // 🔥 RETORNO CLAVE (para usar en otras funciones)
+  return valido;
+}
+
+function irAlPrimerError(){
+
+  const error = document.querySelector(".marca-error");
+
+  if(error){
+    error.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+
+    error.focus();
   }
 
 }
 
-let timersClases = {};
-let timerIA;
-let cacheIndicador = "";
-let cacheObservacion = "";
-let cacheComp = "";
-let cacheFamilia = "";
+function obtenerMensajeError(){
+
+  const indicador = document.getElementById("indicadorInput")?.value.trim() || "";
+  const total = ST.intensidad || 1;
+
+  if(indicador.length < 5){
+    return "Falta completar el indicador de desempeño";
+  }
+
+  for(let i = 1; i <= total; i++){
+
+    const tema = document.getElementById("tema_"+i)?.value.trim() || "";
+    const act = document.getElementById("act_"+i)?.value.trim() || "";
+
+    if(tema.length < 5){
+      return "Falta completar el tema de la clase " + i;
+    }
+
+    if(act.length < 10){
+      return "Falta completar las actividades de la clase " + i;
+    }
+  }
+
+  return "";
+}
 
 function activarRevisionClase(i){
   clearTimeout(timersClases[i]);
