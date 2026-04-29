@@ -1775,26 +1775,7 @@ async function enviarPlaneacion(){
   // ✅ VALIDACIÓN FINAL
   const valido = validarBotonEnviar();
 
-if(!valido){
-  const mensaje = obtenerMensajeError();
-
-  if(mensaje){
-    alert(mensaje);
-  }else{
-    alert("Completa todos los campos obligatorios");
-  }
-
-  irAlPrimerError();
-  return;
-}
-
-  const hayErrores = await hayErroresOrtograficos();
-
-if(hayErrores){
-  alert("Revisa ortografía y que todos los textos terminen en punto.");
-  return;
-}
-
+  if(!valido){
     const mensaje = obtenerMensajeError();
 
     if(mensaje){
@@ -1804,6 +1785,14 @@ if(hayErrores){
     }
 
     irAlPrimerError();
+    return;
+  }
+
+  // 🔥 VALIDACIÓN ORTOGRÁFICA
+  const hayErrores = await hayErroresOrtograficos();
+
+  if(hayErrores){
+    alert("Revisa ortografía y que todos los textos terminen en punto.");
     return;
   }
 
@@ -1913,73 +1902,71 @@ if(hayErrores){
           : ""
     };
 
-    
-// 🚀 ENVÍO REAL (CORRECTO)
-const res = await fetch(API,{
-  method:"POST",
-  headers:{
-    "Content-Type":"application/json",
-    "x-correo": correo
-  },
-  body: JSON.stringify(payload)
-});
+    // 🚀 ENVÍO
+    const res = await fetch(API,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "x-correo": correo
+      },
+      body: JSON.stringify(payload)
+    });
 
-// 🔥 VALIDAR RESPUESTA HTTP
-if(!res.ok){
-  throw new Error("Error HTTP: " + res.status);
-}
+    // 🔥 VALIDAR HTTP
+    if(!res.ok){
+      throw new Error("Error HTTP: " + res.status);
+    }
 
-// 🔥 VALIDAR JSON
-const json = await res.json();
+    // 🔥 VALIDAR RESPUESTA
+    const json = await res.json();
 
-if(!json || !json.ok){
-  console.error("Respuesta backend:", json);
-  alert("Error del servidor: " + (json?.msg || "sin detalle"));
-  throw new Error("El servidor rechazó la planeación");
-}
+    if(!json || !json.ok){
+      console.error("Respuesta backend:", json);
+      alert("Error del servidor: " + (json?.msg || "sin detalle"));
+      throw new Error("El servidor rechazó la planeación");
+    }
 
-// ✅ SOLO AQUÍ ES ÉXITO REAL
-loaderText.textContent = "Enviado correctamente";
-loaderSuccess.style.opacity = "1";
-loaderSuccess.style.transform = "scale(1.2)";
-loaderSuccess.style.color = "#4ade80";
-loaderSuccess.textContent = "✔";
+    // ✅ ÉXITO
+    loaderText.textContent = "Enviado correctamente";
+    loaderSuccess.style.opacity = "1";
+    loaderSuccess.style.transform = "scale(1.2)";
+    loaderSuccess.style.color = "#4ade80";
+    loaderSuccess.textContent = "✔";
 
-btn.classList.remove("loading");
-btn.classList.add("success");
-icon.textContent = "✔";
+    btn.classList.remove("loading");
+    btn.classList.add("success");
+    icon.textContent = "✔";
 
-estado.textContent = "Planeación enviada ✔";
+    estado.textContent = "Planeación enviada ✔";
 
-localStorage.removeItem("planeacion_borrador");
+    localStorage.removeItem("planeacion_borrador");
 
     setTimeout(() => {
-  overlay.classList.remove("activo");
-  document.querySelector(".form-app").classList.remove("blur");
-  mostrarExito();
-}, 600);
+      overlay.classList.remove("activo");
+      document.querySelector(".form-app").classList.remove("blur");
+      mostrarExito();
+    }, 600);
 
-} catch (error) {
+  } catch (error) {
 
-  console.error(error);
+    console.error(error);
 
-  loaderText.textContent = "Error enviando";
-  loaderSuccess.style.opacity = "1";
-  loaderSuccess.style.color = "#f06b6b";
-  loaderSuccess.textContent = "✖";
+    loaderText.textContent = "Error enviando";
+    loaderSuccess.style.opacity = "1";
+    loaderSuccess.style.color = "#f06b6b";
+    loaderSuccess.textContent = "✖";
 
-  btn.classList.remove("loading");
-  icon.textContent = "✖";
+    btn.classList.remove("loading");
+    icon.textContent = "✖";
 
-  document.querySelector(".form-app").classList.remove("blur");
+    document.querySelector(".form-app").classList.remove("blur");
 
-  setTimeout(() => {
-    overlay.classList.remove("activo");
-  }, 1200);
+    setTimeout(() => {
+      overlay.classList.remove("activo");
+    }, 1200);
 
-  alert("Ocurrió un error al enviar la planeación");
-
-}
+    alert("Ocurrió un error al enviar la planeación");
+  }
 }
 
 function cargarBorrador(){
