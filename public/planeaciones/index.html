@@ -1773,8 +1773,27 @@ async function enviarPlaneacion(){
   if(btn.classList.contains("loading")) return;
 
   // ✅ VALIDACIÓN FINAL
-  if(!validarBotonEnviar()){
-    // 🔥 NUEVA VALIDACIÓN PRO
+  const valido = validarBotonEnviar();
+
+if(!valido){
+  const mensaje = obtenerMensajeError();
+
+  if(mensaje){
+    alert(mensaje);
+  }else{
+    alert("Completa todos los campos obligatorios");
+  }
+
+  irAlPrimerError();
+  return;
+}
+
+  const hayErrores = await hayErroresOrtograficos();
+
+if(hayErrores){
+  alert("Revisa ortografía y que todos los textos terminen en punto.");
+  return;
+}
 const hayErrores = await hayErroresOrtograficos();
 
 if(hayErrores){
@@ -2920,17 +2939,21 @@ async function hayErroresOrtograficos(){
 
     const texto = campo.value.trim();
 
-    if(!texto) continue;
+    if(!texto || texto.length < 10) continue;
 
-    // 🔴 validar punto final
+    // 🔴 validar punto final (esto sí es obligatorio)
     if(!texto.endsWith(".")){
       return true;
     }
 
-    // 🔴 validar ortografía
+    // 🔥 SOLO errores graves (máximo 2)
     const errores = await revisarOrtografia(texto);
 
-    if(errores.length > 0){
+    const erroresReales = errores.filter(e => 
+      e.rule.issueType === "misspelling" // SOLO ortografía real
+    );
+
+    if(erroresReales.length > 0){
       return true;
     }
   }
