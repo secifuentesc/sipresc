@@ -1598,7 +1598,27 @@ async function enviarPlaneacion(){
       return;
     }
 
-    // 🔥 PAYLOAD LIMPIO
+    // 🔥 ARCHIVOS
+    const compFile = document.getElementById("compArchivo")?.files[0];
+    const famFile = document.getElementById("famArchivo")?.files[0];
+
+    let compBase64 = "";
+    let compNombre = "";
+
+    let famBase64 = "";
+    let famNombre = "";
+
+    if(compFile){
+      compBase64 = await fileToBase64(compFile);
+      compNombre = compFile.name;
+    }
+
+    if(famFile){
+      famBase64 = await fileToBase64(famFile);
+      famNombre = famFile.name;
+    }
+
+    // 🔥 PAYLOAD COMPLETO
     const payload = {
 
       accion: "guardarFinal",
@@ -1639,10 +1659,18 @@ async function enviarPlaneacion(){
           ? document.getElementById("compObligatoria")?.value || ""
           : "",
 
+      // 🔥 ARCHIVO COMPLEMENTARIO
+      comp_anexo: compBase64,
+      comp_nombre: compNombre,
+
       fam_obs:
         ST.famActiva === "si"
           ? document.getElementById("famObs")?.value || ""
           : "",
+
+      // 🔥 ARCHIVO FAMILIAS
+      fam_anexo: famBase64,
+      fam_nombre: famNombre,
 
       disp_clases:
         ST.dispActivo === "si"
@@ -1658,12 +1686,12 @@ async function enviarPlaneacion(){
 
     console.log("PAYLOAD:", payload);
 
-    // 🚀 FETCH CORRECTO (🔥 ESTE ERA EL ERROR)
+    // 🚀 FETCH
     const res = await fetch(API,{
       method:"POST",
       headers:{
         "Content-Type":"application/json",
-        "x-correo": correo // 🔥 ESTE FIX ERA EL QUE FALTABA
+        "x-correo": correo
       },
       body: JSON.stringify(payload)
     });
@@ -1673,10 +1701,10 @@ async function enviarPlaneacion(){
     console.log("RESPUESTA:", json);
 
     if(!json.ok){
-  console.log("ERROR REAL BACKEND:", json);
-  alert(JSON.stringify(json)); // 🔥 AQUÍ VERÁS EL ERROR REAL
-  throw new Error(json.mensaje || "Error del backend");
-}
+      console.log("ERROR REAL BACKEND:", json);
+      alert(JSON.stringify(json));
+      throw new Error(json.mensaje || "Error del backend");
+    }
 
     // 🧹 LIMPIAR BORRADOR
     localStorage.removeItem("planeacion_borrador");
@@ -2496,6 +2524,15 @@ function evaluarErroresGlobal(){
   }else{
     btn.classList.remove("activo");
   }
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=> resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 </script>
 
