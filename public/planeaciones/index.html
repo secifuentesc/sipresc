@@ -1945,6 +1945,33 @@ setTimeout(() => {
   document.querySelector(".form-app").classList.remove("blur");
   mostrarExito();
 }, 600);
+    setTimeout(() => {
+  overlay.classList.remove("activo");
+  document.querySelector(".form-app").classList.remove("blur");
+  mostrarExito();
+}, 600);
+
+} catch (error) {
+
+  console.error(error);
+
+  loaderText.textContent = "Error enviando";
+  loaderSuccess.style.opacity = "1";
+  loaderSuccess.style.color = "#f06b6b";
+  loaderSuccess.textContent = "✖";
+
+  btn.classList.remove("loading");
+  icon.textContent = "✖";
+
+  document.querySelector(".form-app").classList.remove("blur");
+
+  setTimeout(() => {
+    overlay.classList.remove("activo");
+  }, 1200);
+
+  alert("Ocurrió un error al enviar la planeación");
+
+}
 }
 
 function cargarBorrador(){
