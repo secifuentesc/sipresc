@@ -1306,7 +1306,7 @@ let ST = {
 const API = "/api/planeaciones"; // ⚠️ ajusta si tu ruta es otra
 
 // 🔥 INICIO
-window.addEventListener("load", () => {
+window.addEventListener("DOMContentLoaded", () => {
 
   const correo = obtenerCorreo();
 
@@ -1331,58 +1331,49 @@ async function cargarMaterias(){
   const correo = obtenerCorreo();
   const display = document.getElementById("materiaText");
 
+// 🔥 FEEDBACK INMEDIATO
+display.textContent = "Cargando...";
+  // 🔥 EVITA QUE SE VEA VACÍO MUCHO TIEMPO
+setTimeout(()=>{
+  if(!ST.data){
+    display.textContent = "Seleccionar materia...";
+  }
+}, 200);
+
   if(!correo){
     display.textContent = "Sesión no válida";
     return;
   }
 
-  // 🔥 1. INTENTAR CACHE PRIMERO (CARGA INMEDIATA)
+  // 🔥 1. CARGA INMEDIATA DESDE CACHE
   const cache = localStorage.getItem(CACHE_KEY);
   const cacheTime = localStorage.getItem(CACHE_TIME);
 
   if(cache && cacheTime && (Date.now() - cacheTime < CACHE_MAX_AGE)){
     ST.data = JSON.parse(cache);
     pintarMaterias(ST.data);
-    if(!ST.materia){
-  display.textContent = "Seleccionar materia...";
-}
-    console.log("Materias desde cache ⚡");
+    display.textContent = "Seleccionar materia...";
   } else {
-    display.textContent = "Cargando...";
+    display.textContent = "Seleccionar materia...";
   }
 
-  // 🔥 2. ACTUALIZAR DESDE API
-  try {
+  // 🔥 2. FETCH EN SEGUNDO PLANO (SIN BLOQUEAR)
+  fetch(`${API}?accion=cargaDocente&correo=${correo}`)
+    .then(res => res.json())
+    .then(json => {
 
-    const res = await fetch(`${API}?accion=cargaDocente&correo=${correo}`);
-    const json = await res.json();
+      if(json.ok && json.materias){
+        ST.data = json.materias;
+        pintarMaterias(json.materias);
 
-    if (json.ok && json.materias) {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(json.materias));
+        localStorage.setItem(CACHE_TIME, String(Date.now()));
+        // 🔥 GUARDAR TODO PARA CARGA INMEDIATA FUTURA
+        localStorage.setItem("lp_user_data", JSON.stringify(json.materias));
+      }
 
-      ST.data = json.materias;
-      pintarMaterias(json.materias);
-
-      localStorage.setItem(CACHE_KEY, JSON.stringify(json.materias));
-      localStorage.setItem(CACHE_TIME, String(Date.now()));
-
-      if(!ST.materia){
-  display.textContent = "Seleccionar materia...";
-}
-      console.log("Materias actualizadas 🔄");
-
-    } else {
-      display.textContent = "Sin materias";
-    }
-
-  } catch (err) {
-
-    console.error(err);
-
-    if(!cache){
-      display.textContent = "Error de conexión";
-    }
-
-  }
+    })
+    .catch(err => console.error(err));
 }
   
 function pintarMaterias(materias){
