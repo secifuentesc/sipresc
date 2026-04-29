@@ -1792,9 +1792,9 @@ async function enviarPlaneacion(){
   const hayErrores = await hayErroresOrtograficos();
 
   if(hayErrores){
-    alert("Revisa ortografía y que todos los textos terminen en punto.");
-    return;
-  }
+  mostrarAvisoIA();
+  return;
+}
 
   // 🔥 ACTIVAR UI
   btn.classList.add("loading");
@@ -2935,6 +2935,37 @@ async function hayErroresOrtograficos(){
   }
 
   return false;
+}
+
+function mostrarAvisoIA(){
+
+  const estado = document.getElementById("estadoGuardado");
+  const btnIA = document.getElementById("btnCorregir");
+
+  // 🔥 Mensaje elegante
+  estado.innerHTML = "Detectamos detalles en la redacción. Usa el <b>Asistente inteligente ✦</b> para mejorarlo.";
+
+  estado.style.color = "#facc15"; // amarillo suave
+  estado.style.opacity = "1";
+
+  // 🔥 Animación botón IA
+  btnIA.classList.add("activo");
+
+  btnIA.animate([
+    { transform: "scale(1)" },
+    { transform: "scale(1.15)" },
+    { transform: "scale(1)" }
+  ], {
+    duration: 600,
+    iterations: 2
+  });
+
+  // 🔥 Scroll suave hacia el botón
+  btnIA.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+
 }
 </script>
 
