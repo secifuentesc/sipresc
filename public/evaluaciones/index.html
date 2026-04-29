@@ -3,295 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Centro de Evaluación — SIPRESC</title>
+<title>Evaluaciones — La Presentación</title>
+
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --bg:#050e1d;
-  --card:#122449;
-  --card2:#0d1f3c;
-  --gold:#c9962a;
-  --gold2:#e8b84b;
-  --text:#e8edf8;
-  --muted:#7a8fb0;
-  --ok:#4ade80;
-  --bad:#f87171;
-}
-
 body{
-  margin:0;
-  font-family:sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-
-.header{
-  padding:14px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  display:flex;
-  justify-content:space-between;
+margin:0;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#0a1628;
+font-family:'IBM Plex Sans',sans-serif;
+color:#e8edf8;
 }
 
 .container{
-  max-width:520px;
-  margin:auto;
-  padding:20px;
+text-align:center;
+max-width:420px;
+padding:20px;
 }
 
-.card{
-  background:var(--card);
-  padding:18px;
-  border-radius:16px;
-  margin-bottom:16px;
+.icon{
+width:90px;
+height:90px;
+border-radius:20px;
+background:linear-gradient(135deg,#0f2657,#1e4db7);
+display:flex;
+align-items:center;
+justify-content:center;
+margin:auto;
+margin-bottom:20px;
+box-shadow:0 10px 30px rgba(30,77,183,.4);
+}
+
+.icon span{
+font-size:40px;
+}
+
+.title{
+font-size:22px;
+font-weight:600;
+margin-bottom:8px;
+}
+
+.subtitle{
+font-size:14px;
+color:#7a8fb0;
+margin-bottom:25px;
+}
+
+.badge{
+display:inline-block;
+padding:6px 12px;
+border-radius:20px;
+font-family:'IBM Plex Mono',monospace;
+font-size:10px;
+letter-spacing:1px;
+background:rgba(201,150,42,.15);
+border:1px solid rgba(201,150,42,.3);
+color:#e8b84b;
 }
 
 .btn{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:12px;
-  margin-top:10px;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
-  cursor:pointer;
-  font-weight:bold;
+margin-top:25px;
+padding:12px 20px;
+border-radius:10px;
+border:none;
+background:linear-gradient(135deg,#c9962a,#e8b84b);
+color:#0a1628;
+font-family:'IBM Plex Mono',monospace;
+font-size:11px;
+letter-spacing:1px;
+cursor:pointer;
 }
 
-.input{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:10px;
-  background:var(--card2);
-  color:white;
+.btn:active{
+transform:scale(.97);
 }
-
-.codigo{
-  font-size:30px;
-  text-align:center;
-  color:var(--gold2);
-  letter-spacing:3px;
-}
-
-.opcion{
-  padding:12px;
-  margin-top:8px;
-  border-radius:10px;
-  background:var(--card2);
-  cursor:pointer;
-}
-
-.opcion:hover{
-  border:1px solid var(--gold);
-}
-
-.correcta{ background:rgba(74,222,128,.2); }
-.incorrecta{ background:rgba(248,113,113,.2); }
-
-.oculto{ display:none; }
-
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <div>Centro de Evaluación</div>
-  <div>ADMIN</div>
-</div>
-
 <div class="container">
 
-<!-- CREAR -->
-<div class="card" id="crearBox">
-  <h3>Crear evaluación</h3>
-
-  <input class="input" id="titulo" placeholder="Nombre del examen">
-
-  <div id="preguntasBox"></div>
-
-  <button class="btn" onclick="agregarPregunta()">+ Agregar pregunta</button>
-  <button class="btn" onclick="guardarEvaluacion()">Crear evaluación</button>
+<div class="icon">
+<span>🛠️</span>
 </div>
 
-<!-- CODIGO -->
-<div class="card oculto" id="codigoBox">
-  <h3>Código de acceso</h3>
-  <div class="codigo" id="codigo"></div>
+<div class="title">Evaluaciones Finales</div>
+
+<div class="subtitle">
+Este módulo se encuentra en desarrollo.<br>
+Pronto estará disponible para toda la institución.
 </div>
 
-<!-- INGRESO -->
-<div class="card">
-  <h3>Ingresar como estudiante</h3>
+<div class="badge">EN CONSTRUCCIÓN</div>
 
-  <input class="input" id="codigoIngreso" placeholder="Código">
-  <input class="input" id="nombreEst" placeholder="Nombre">
+<br>
 
-  <button class="btn" onclick="iniciar()">Entrar</button>
-</div>
-
-<!-- JUEGO -->
-<div class="card oculto" id="juegoBox">
-  <h3 id="pregunta"></h3>
-  <div id="opciones"></div>
-</div>
-
-<!-- RESULTADO -->
-<div class="card oculto" id="resultadoBox">
-  <h3>Resultado final</h3>
-  <div id="puntaje"></div>
-</div>
+<button class="btn" onclick="window.history.back()">
+← Volver
+</button>
 
 </div>
-
-<script>
-
-// 🔒 ADMIN
-const user = JSON.parse(localStorage.getItem("lp_user") || "{}");
-if(user.rol !== "admin"){
-  window.location.href = "/";
-}
-
-let preguntas = [];
-let actual = 0;
-let score = 0;
-let evaluacionActiva = null;
-
-// 🔥 AGREGAR PREGUNTA
-function agregarPregunta(){
-
-  const box = document.getElementById("preguntasBox");
-
-  const div = document.createElement("div");
-  div.className = "card";
-
-  div.innerHTML = `
-    <input class="input p" placeholder="Pregunta">
-    <input class="input o1" placeholder="Opción 1">
-    <input class="input o2" placeholder="Opción 2">
-    <input class="input o3" placeholder="Opción 3">
-    <input class="input o4" placeholder="Opción 4">
-    <input class="input c" placeholder="Respuesta correcta (1-4)">
-  `;
-
-  box.appendChild(div);
-}
-
-// 🔥 GUARDAR
-function guardarEvaluacion(){
-
-  const titulo = document.getElementById("titulo").value;
-
-  const bloques = document.querySelectorAll("#preguntasBox .card");
-
-  let preguntasFinal = [];
-
-  bloques.forEach(b => {
-    preguntasFinal.push({
-      p: b.querySelector(".p").value,
-      opciones: [
-        b.querySelector(".o1").value,
-        b.querySelector(".o2").value,
-        b.querySelector(".o3").value,
-        b.querySelector(".o4").value
-      ],
-      correcta: parseInt(b.querySelector(".c").value) - 1
-    });
-  });
-
-  const codigo = Math.floor(100000 + Math.random()*900000);
-
-  const data = JSON.parse(localStorage.getItem("evaluaciones") || "[]");
-
-  data.push({
-    titulo,
-    codigo,
-    preguntas: preguntasFinal
-  });
-
-  localStorage.setItem("evaluaciones", JSON.stringify(data));
-
-  document.getElementById("codigoBox").classList.remove("oculto");
-  document.getElementById("codigo").innerText = codigo;
-
-}
-
-// 🔥 INICIAR
-function iniciar(){
-
-  const codigo = document.getElementById("codigoIngreso").value;
-
-  const data = JSON.parse(localStorage.getItem("evaluaciones") || "[]");
-
-  const ev = data.find(e => e.codigo == codigo);
-
-  if(!ev){
-    alert("Código inválido");
-    return;
-  }
-
-  evaluacionActiva = ev;
-  preguntas = ev.preguntas;
-
-  document.getElementById("juegoBox").classList.remove("oculto");
-  mostrarPregunta();
-}
-
-// 🔥 MOSTRAR
-function mostrarPregunta(){
-
-  if(actual >= preguntas.length){
-    finalizar();
-    return;
-  }
-
-  const p = preguntas[actual];
-
-  document.getElementById("pregunta").innerText = p.p;
-
-  const cont = document.getElementById("opciones");
-  cont.innerHTML = "";
-
-  p.opciones.forEach((op,i)=>{
-
-    const div = document.createElement("div");
-    div.className = "opcion";
-    div.innerText = op;
-
-    div.onclick = () => responder(i, p.correcta, div);
-
-    cont.appendChild(div);
-
-  });
-}
-
-// 🔥 RESPONDER
-function responder(i, correcta, el){
-
-  if(i === correcta){
-    score++;
-    el.classList.add("correcta");
-  }else{
-    el.classList.add("incorrecta");
-  }
-
-  setTimeout(()=>{
-    actual++;
-    mostrarPregunta();
-  },800);
-}
-
-// 🔥 FINAL
-function finalizar(){
-
-  document.getElementById("juegoBox").classList.add("oculto");
-  document.getElementById("resultadoBox").classList.remove("oculto");
-
-  document.getElementById("puntaje").innerText =
-    `Tu puntaje: ${score} / ${preguntas.length}`;
-}
-
-</script>
 
 </body>
 </html>
