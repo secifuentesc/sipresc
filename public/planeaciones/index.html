@@ -1897,19 +1897,19 @@ async function enviarPlaneacion(){
   // 🔥 VALIDACIÓN ORTOGRÁFICA
   // 🔥 NO BLOQUEAR ENVÍO
 // 🔥 VALIDACIÓN ORTOGRÁFICA (BLOQUEANTE)
-const hayErrores = await hayErroresOrtograficos();
-
-if(hayErrores){
-  mostrarAvisoIA();
-  return; // 🚫 DETIENE EL ENVÍO
-}
+// 🔥 SOLO AVISA, NO BLOQUEA
+hayErroresOrtograficos().then(hayErrores => {
+  if(hayErrores){
+    mostrarAvisoIA();
+  }
+});
 
   // 🔥 ACTIVAR UI
 btn.classList.add("loading");
 icon.textContent = "";
 document.querySelector(".form-app").classList.add("blur");
 overlay.classList.add("activo");
-loaderText.textContent = "Guardando...";
+loaderText.textContent = "Enviando...";
 loaderSuccess.style.opacity = "0";
 loaderSuccess.style.transform = "scale(.6)";
 loaderSuccess.style.color = "#4ade80";
@@ -2015,13 +2015,14 @@ setTimeout(()=>{
 
     // 🚀 ENVÍO
     const res = await fetch(API,{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "x-correo": correo
-      },
-      body: JSON.stringify(payload)
-    });
+  method:"POST",
+  headers:{
+    "Content-Type":"application/json",
+    "x-correo": correo
+  },
+  body: JSON.stringify(payload),
+  keepalive: true
+});
 
     // 🔥 VALIDAR HTTP
     if(!res.ok){
@@ -2037,7 +2038,6 @@ setTimeout(()=>{
       throw new Error("El servidor rechazó la planeación");
     }
 
-    await new Promise(r => setTimeout(r, 600));
 
     // ✅ ÉXITO
     loaderText.textContent = "Enviado correctamente";
@@ -2058,7 +2058,7 @@ setTimeout(()=>{
       overlay.classList.remove("activo");
       document.querySelector(".form-app").classList.remove("blur");
       mostrarExito();
-    }, 600);
+    }, 200);
 
   } catch (error) {
 
