@@ -1794,18 +1794,7 @@ if(hayErrores){
   alert("Revisa ortografía y que todos los textos terminen en punto.");
   return;
 }
-const hayErrores = await hayErroresOrtograficos();
 
-if(hayErrores){
-
-  alert("Debes corregir errores ortográficos y asegurar que todos los textos terminen en punto.");
-
-  await corregirTodo(); // 🔥 OPCIONAL: lo corrige automáticamente
-
-  irAlPrimerError();
-
-  return;
-}
     const mensaje = obtenerMensajeError();
 
     if(mensaje){
