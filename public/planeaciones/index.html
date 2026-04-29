@@ -987,6 +987,19 @@ body{
     <div class="file-upload" onclick="document.getElementById('compArchivo').click()">
   <span id="compLabel">Seleccionar archivo</span>
   <strong id="compNombre">Ningún archivo</strong>
+      <button id="btnQuitarComp" onclick="quitarArchivoComp()" style="
+margin-top:8px;
+font-size:11px;
+background:transparent;
+border:1px solid var(--br);
+color:var(--mt);
+padding:6px 10px;
+border-radius:8px;
+cursor:pointer;
+display:none;
+">
+Quitar archivo ✕
+</button>
 
   <div class="file-bar">
     <div class="file-progress" id="compProgress"></div>
@@ -2969,6 +2982,9 @@ document.getElementById("compArchivo").addEventListener("change", function(){
     box.style.boxShadow = "0 0 0 1px #4ade80 inset";
   }, 350);
 
+  // 🔥 mostrar botón quitar
+document.getElementById("btnQuitarComp").style.display = "inline-block";
+
 });
 
 document.getElementById("famArchivo").addEventListener("change", function(){
@@ -3048,6 +3064,28 @@ function mostrarAvisoIA(){
   setTimeout(() => {
     toast.classList.remove("activo");
   }, 2800);
+
+}
+
+function quitarArchivoComp(){
+
+  const input = document.getElementById("compArchivo");
+
+  // 🔥 limpiar archivo real
+  input.value = "";
+
+  // 🔥 limpiar UI
+  document.getElementById("compNombre").textContent = "Ningún archivo";
+  document.getElementById("compLabel").textContent = "Seleccionar archivo";
+
+  document.getElementById("compProgress").style.width = "0%";
+
+  const box = document.querySelector(".file-upload");
+  box.style.borderColor = "";
+  box.style.boxShadow = "";
+
+  // 🔥 ocultar botón
+  document.getElementById("btnQuitarComp").style.display = "none";
 
 }
 </script>
