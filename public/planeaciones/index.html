@@ -1252,7 +1252,9 @@ async function cargarMaterias(){
   if(cache && cacheTime && (Date.now() - cacheTime < CACHE_MAX_AGE)){
     ST.data = JSON.parse(cache);
     pintarMaterias(ST.data);
-    display.textContent = "Seleccionar materia...";
+    if(!ST.materia){
+  display.textContent = "Seleccionar materia...";
+}
     console.log("Materias desde cache ⚡");
   } else {
     display.textContent = "Cargando...";
@@ -1272,7 +1274,9 @@ async function cargarMaterias(){
       localStorage.setItem(CACHE_KEY, JSON.stringify(json.materias));
       localStorage.setItem(CACHE_TIME, String(Date.now()));
 
-      display.textContent = "Seleccionar materia...";
+      dif(!ST.materia){
+  display.textContent = "Seleccionar materia...";
+}
       console.log("Materias actualizadas 🔄");
 
     } else {
