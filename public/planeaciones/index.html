@@ -1770,6 +1770,19 @@ async function enviarPlaneacion(){
 
   // ✅ VALIDACIÓN FINAL
   if(!validarBotonEnviar()){
+    // 🔥 NUEVA VALIDACIÓN PRO
+const hayErrores = await hayErroresOrtograficos();
+
+if(hayErrores){
+
+  alert("Debes corregir errores ortográficos y asegurar que todos los textos terminen en punto.");
+
+  await corregirTodo(); // 🔥 OPCIONAL: lo corrige automáticamente
+
+  irAlPrimerError();
+
+  return;
+}
     const mensaje = obtenerMensajeError();
 
     if(mensaje){
@@ -2893,6 +2906,32 @@ document.getElementById("famArchivo").addEventListener("change", function(){
   }, 350);
 
 });
+
+async function hayErroresOrtograficos(){
+
+  const campos = document.querySelectorAll("textarea");
+
+  for(const campo of campos){
+
+    const texto = campo.value.trim();
+
+    if(!texto) continue;
+
+    // 🔴 validar punto final
+    if(!texto.endsWith(".")){
+      return true;
+    }
+
+    // 🔴 validar ortografía
+    const errores = await revisarOrtografia(texto);
+
+    if(errores.length > 0){
+      return true;
+    }
+  }
+
+  return false;
+}
 </script>
 
 
