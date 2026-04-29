@@ -831,7 +831,16 @@ body{
     <div id="coachFamilia" class="coach-box"></div>
 
     <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
-    <input type="file" class="input" id="famArchivo">
+    <div class="file-upload" id="famUpload" onclick="document.getElementById('famArchivo').click()">
+  <span>Seleccionar archivo</span>
+  <strong id="famNombre">Ningún archivo</strong>
+
+  <div class="file-bar">
+    <div class="file-progress" id="famProgress"></div>
+  </div>
+</div>
+
+<input type="file" id="famArchivo" style="display:none;">
 
   </div>
 
@@ -2608,6 +2617,29 @@ document.getElementById("compArchivo").addEventListener("change", function(){
   setTimeout(()=>{ bar.style.width = "100%"; }, 320);
 
   // 🔥 Feedback visual
+  setTimeout(()=>{
+    box.style.borderColor = "#4ade80";
+    box.style.boxShadow = "0 0 0 1px #4ade80 inset";
+  }, 350);
+
+});
+
+document.getElementById("famArchivo").addEventListener("change", function(){
+
+  const file = this.files[0];
+  if(!file) return;
+
+  document.getElementById("famNombre").textContent = file.name;
+
+  const bar = document.getElementById("famProgress");
+  const box = document.getElementById("famUpload");
+
+  bar.style.width = "0%";
+
+  setTimeout(()=>{ bar.style.width = "35%"; }, 80);
+  setTimeout(()=>{ bar.style.width = "70%"; }, 180);
+  setTimeout(()=>{ bar.style.width = "100%"; }, 320);
+
   setTimeout(()=>{
     box.style.borderColor = "#4ade80";
     box.style.boxShadow = "0 0 0 1px #4ade80 inset";
