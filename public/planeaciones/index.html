@@ -987,7 +987,7 @@ body{
     <div class="file-upload" onclick="document.getElementById('compArchivo').click()">
   <span id="compLabel">Seleccionar archivo</span>
   <strong id="compNombre">Ningún archivo</strong>
-      <button id="btnQuitarComp" onclick="quitarArchivoComp()" style="
+      <button id="btnQuitarComp" onclick="quitarArchivoComp(event)" style="
 margin-top:8px;
 font-size:11px;
 background:transparent;
@@ -1036,6 +1036,19 @@ Quitar archivo ✕
     <div class="file-upload" id="famUpload" onclick="document.getElementById('famArchivo').click()">
   <span>Seleccionar archivo</span>
   <strong id="famNombre">Ningún archivo</strong>
+      <button id="btnQuitarFam" onclick="quitarArchivoFam(event)" style="
+margin-top:8px;
+font-size:11px;
+background:transparent;
+border:1px solid var(--br);
+color:var(--mt);
+padding:6px 10px;
+border-radius:8px;
+cursor:pointer;
+display:none;
+">
+Quitar archivo ✕
+</button>
 
   <div class="file-bar">
     <div class="file-progress" id="famProgress"></div>
@@ -2966,7 +2979,7 @@ document.getElementById("compArchivo").addEventListener("change", function(){
   document.getElementById("compLabel").textContent = "Archivo cargado ✔";
 
   const bar = document.getElementById("compProgress");
-  const box = document.querySelector(".file-upload");
+  const box = input.closest(".file-upload");
 
   // 🔹 Reset
   bar.style.width = "0%";
@@ -3007,6 +3020,9 @@ document.getElementById("famArchivo").addEventListener("change", function(){
     box.style.borderColor = "#4ade80";
     box.style.boxShadow = "0 0 0 1px #4ade80 inset";
   }, 350);
+
+  // 🔥 mostrar botón quitar
+document.getElementById("btnQuitarFam").style.display = "inline-block";
 
 });
 
@@ -3067,27 +3083,55 @@ function mostrarAvisoIA(){
 
 }
 
-function quitarArchivoComp(){
+function quitarArchivoComp(e){
+
+  // 🔥 CLAVE: evita que se abra el explorador
+  e.stopPropagation();
 
   const input = document.getElementById("compArchivo");
 
-  // 🔥 limpiar archivo real
+  // limpiar archivo
   input.value = "";
 
-  // 🔥 limpiar UI
+  // limpiar texto
   document.getElementById("compNombre").textContent = "Ningún archivo";
   document.getElementById("compLabel").textContent = "Seleccionar archivo";
 
+  // reset barra
   document.getElementById("compProgress").style.width = "0%";
 
-  const box = document.querySelector(".file-upload");
+  // reset estilos
+  const box = input.closest(".file-upload");
   box.style.borderColor = "";
   box.style.boxShadow = "";
 
-  // 🔥 ocultar botón
+  // ocultar botón
   document.getElementById("btnQuitarComp").style.display = "none";
 
 }
+
+function quitarArchivoFam(e){
+
+  // 🔥 CLAVE: evita que suba el click
+  e.stopPropagation();
+
+  const input = document.getElementById("famArchivo");
+
+  input.value = "";
+
+  document.getElementById("famNombre").textContent = "Ningún archivo";
+
+  const bar = document.getElementById("famProgress");
+  bar.style.width = "0%";
+
+  const box = document.getElementById("famUpload");
+  box.style.borderColor = "";
+  box.style.boxShadow = "";
+
+  document.getElementById("btnQuitarFam").style.display = "none";
+
+}
+
 </script>
 
 
