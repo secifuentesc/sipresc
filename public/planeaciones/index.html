@@ -623,6 +623,36 @@ body{
   background:linear-gradient(90deg,var(--gold),var(--gold2));
   transition: width .3s ease;
 }
+
+#btnEnviar.loading{
+  pointer-events:none;
+  opacity:.9;
+}
+
+#btnEnviar.loading #iconEnviar{
+  width:22px;
+  height:22px;
+  border:2px solid rgba(0,0,0,.3);
+  border-top:2px solid #000;
+  border-radius:50%;
+  display:inline-block;
+  animation:spin .7s linear infinite;
+}
+
+#btnEnviar.success{
+  background:linear-gradient(135deg,#4ade80,#22c55e);
+}
+
+@keyframes spin{
+  to{ transform:rotate(360deg); }
+}
+
+/* 🔥 BLUR GLOBAL */
+.blur{
+  filter:blur(6px);
+  transform:scale(.98);
+  transition:all .3s ease;
+}
   
 </style>
 </head>
@@ -870,7 +900,9 @@ body{
 
 <div id="btnBack" onclick="volverPaso1()">←</div>
 
-<div id="btnEnviar" onclick="enviarPlaneacion()">✓</div>
+<div id="btnEnviar" onclick="enviarPlaneacion()">
+  <span id="iconEnviar">✓</span>
+</div>
 <div id="btnCorregir" onclick="corregirTodo()">✦</div>
 
 <div id="modalExito" style="
@@ -1647,16 +1679,27 @@ function setFam(valor, el){
 
 async function enviarPlaneacion(){
 
-  document.getElementById("estadoGuardado").textContent = "Enviando...";
+  const btn = document.getElementById("btnEnviar");
+  const icon = document.getElementById("iconEnviar");
+  const estado = document.getElementById("estadoGuardado");
+
+  // 🔥 BLOQUEAR DOBLE CLICK
+  if(btn.classList.contains("loading")) return;
+
+  // 🔥 ACTIVAR EFECTO VISUAL
+  btn.classList.add("loading");
+  icon.textContent = ""; // limpia icono
+
+  document.querySelector(".form-app").classList.add("blur");
+
+  estado.textContent = "Enviando...";
 
   try {
 
     const correo = obtenerCorreo();
 
     if(!correo){
-      alert("Error: no se encontró el correo del docente");
-      document.getElementById("estadoGuardado").textContent = "Error: sin correo";
-      return;
+      throw new Error("No se encontró el correo del docente");
     }
 
     // 🔥 ARCHIVOS
@@ -1679,7 +1722,7 @@ async function enviarPlaneacion(){
       famNombre = famFile.name;
     }
 
-    // 🔥 PAYLOAD COMPLETO
+    // 🔥 PAYLOAD
     const payload = {
 
       accion: "guardarFinal",
@@ -1720,7 +1763,6 @@ async function enviarPlaneacion(){
           ? document.getElementById("compObligatoria")?.value || ""
           : "",
 
-      // 🔥 ARCHIVO COMPLEMENTARIO
       comp_anexo: compBase64,
       comp_nombre: compNombre,
 
@@ -1729,7 +1771,6 @@ async function enviarPlaneacion(){
           ? document.getElementById("famObs")?.value || ""
           : "",
 
-      // 🔥 ARCHIVO FAMILIAS
       fam_anexo: famBase64,
       fam_nombre: famNombre,
 
@@ -1745,9 +1786,7 @@ async function enviarPlaneacion(){
 
     };
 
-    console.log("PAYLOAD:", payload);
-
-    // 🚀 FETCH
+    // 🚀 ENVÍO
     const res = await fetch(API,{
       method:"POST",
       headers:{
@@ -1759,21 +1798,24 @@ async function enviarPlaneacion(){
 
     const json = await res.json();
 
-    console.log("RESPUESTA:", json);
-
     if(!json.ok){
-      console.log("ERROR REAL BACKEND:", json);
-      alert(JSON.stringify(json));
       throw new Error(json.mensaje || "Error del backend");
     }
 
     // 🧹 LIMPIAR BORRADOR
     localStorage.removeItem("planeacion_borrador");
 
-    document.getElementById("estadoGuardado").textContent = "Planeación enviada correctamente";
+    // 🔥 ÉXITO VISUAL
+    btn.classList.remove("loading");
+    btn.classList.add("success");
+    icon.textContent = "✔";
+
+    estado.textContent = "Planeación enviada ✔";
+
+    // quitar blur
+    document.querySelector(".form-app").classList.remove("blur");
 
     setTimeout(() => {
-      document.getElementById("estadoGuardado").textContent = "Planeación enviada ✔";
       mostrarExito();
     }, 600);
 
@@ -1781,9 +1823,17 @@ async function enviarPlaneacion(){
 
     console.error(error);
 
-    document.getElementById("estadoGuardado").textContent = "Error al enviar";
+    // 🔥 ERROR VISUAL
+    btn.classList.remove("loading");
+    btn.style.background = "#ef4444";
+    icon.textContent = "✕";
+
+    document.querySelector(".form-app").classList.remove("blur");
+
+    estado.textContent = "Error al enviar";
 
     alert(error.message || "Hubo un problema al enviar la planeación");
+
   }
 }
 
