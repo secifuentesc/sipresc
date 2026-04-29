@@ -1869,27 +1869,30 @@ async function enviarPlaneacion(){
   }
 
   // 🔥 VALIDACIÓN ORTOGRÁFICA
-  const hayErrores = await hayErroresOrtograficos();
-
+  // 🔥 NO BLOQUEAR ENVÍO
+hayErroresOrtograficos().then(hayErrores => {
   if(hayErrores){
-  mostrarAvisoIA();
-  return;
-}
+    mostrarAvisoIA();
+  }
+});
 
   // 🔥 ACTIVAR UI
-  btn.classList.add("loading");
-  icon.textContent = "";
+btn.classList.add("loading");
+icon.textContent = "";
+document.querySelector(".form-app").classList.add("blur");
+overlay.classList.add("activo");
+loaderText.textContent = "Guardando...";
+loaderSuccess.style.opacity = "0";
+loaderSuccess.style.transform = "scale(.6)";
+loaderSuccess.style.color = "#4ade80";
+loaderSuccess.textContent = "✔";
+estado.textContent = "Guardando...";
 
-  document.querySelector(".form-app").classList.add("blur");
+// 🔥 AQUÍ VA (NUEVO)
 
-  overlay.classList.add("activo");
-  loaderText.textContent = "Enviando planeación";
-  loaderSuccess.style.opacity = "0";
-  loaderSuccess.style.transform = "scale(.6)";
-  loaderSuccess.style.color = "#4ade80";
-  loaderSuccess.textContent = "✔";
-
-  estado.textContent = "Enviando...";
+setTimeout(()=>{
+  loaderText.textContent = "Procesando...";
+}, 900);
 
   try {
 
@@ -2005,6 +2008,8 @@ async function enviarPlaneacion(){
       alert("Error del servidor: " + (json?.msg || "sin detalle"));
       throw new Error("El servidor rechazó la planeación");
     }
+
+    await new Promise(r => setTimeout(r, 600));
 
     // ✅ ÉXITO
     loaderText.textContent = "Enviado correctamente";
