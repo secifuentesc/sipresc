@@ -8,7 +8,26 @@
 
 <link rel="icon" type="image/png" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+(function(){
+  try{
+    const s = localStorage.getItem("lp_user");
+    if(!s){
+      window.location.replace("/");
+      return;
+    }
 
+    const json = JSON.parse(s);
+
+    if(!json || !json.correo){
+      window.location.replace("/");
+    }
+
+  }catch(e){
+    window.location.replace("/");
+  }
+})();
+</script>
   <style>
 
 /* 🔥 EXACTAMENTE EL MISMO ESTILO */
