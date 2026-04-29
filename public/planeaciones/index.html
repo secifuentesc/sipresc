@@ -1901,28 +1901,8 @@ if(hayErrores){
           : ""
     };
 
-    // ⚡ UX INMEDIATA (NO ESPERA BACKEND)
-    // ✅ BIEN
-    loaderText.textContent = "Enviando...";
-    loaderSuccess.style.opacity = "1";
-    loaderSuccess.style.transform = "scale(1.2)";
-
-    btn.classList.remove("loading");
-    btn.classList.add("success");
-    icon.textContent = "✔";
-
-    estado.textContent = "Planeación enviada ✔";
-
-    localStorage.removeItem("planeacion_borrador");
-
-    setTimeout(() => {
-      overlay.classList.remove("activo");
-      document.querySelector(".form-app").classList.remove("blur");
-      mostrarExito();
-    }, 600);
-
-    // 🚀 ENVÍO REAL (EN BACKGROUND)
-    // 🚀 ENVÍO REAL (AHORA SÍ CONTROLADO)
+    
+// 🚀 ENVÍO REAL (CORRECTO)
 const res = await fetch(API,{
   method:"POST",
   headers:{
@@ -1932,14 +1912,25 @@ const res = await fetch(API,{
   body: JSON.stringify(payload)
 });
 
-const json = await res.json();
-
-// 🔴 SI FALLA → NO DEJA PASAR
-if(!json.ok){
-  throw new Error("No se pudo guardar la planeación en el servidor");
+// 🔥 VALIDAR RESPUESTA HTTP
+if(!res.ok){
+  throw new Error("Error HTTP: " + res.status);
 }
 
+// 🔥 VALIDAR JSON
+const json = await res.json();
 
+if(!json || !json.ok){
+  console.error("Respuesta backend:", json);
+  throw new Error("El servidor rechazó la planeación");
+}
+
+// ✅ SOLO AQUÍ ES ÉXITO REAL
+loaderText.textContent = "Enviado correctamente";
+loaderSuccess.style.opacity = "1";
+loaderSuccess.style.transform = "scale(1.2)";
+loaderSuccess.style.color = "#4ade80";
+loaderSuccess.textContent = "✔";
 
 btn.classList.remove("loading");
 btn.classList.add("success");
@@ -1954,32 +1945,6 @@ setTimeout(() => {
   document.querySelector(".form-app").classList.remove("blur");
   mostrarExito();
 }, 600);
-
-  } catch (error) {
-
-    console.error(error);
-
-    // 🔥 ERROR VISUAL PRO
-    loaderText.textContent = "Error al enviar";
-    loaderSuccess.textContent = "✕";
-    loaderSuccess.style.color = "#ef4444";
-    loaderSuccess.style.opacity = "1";
-    loaderSuccess.style.transform = "scale(1.1)";
-
-    btn.classList.remove("loading");
-    btn.style.background = "#ef4444";
-    icon.textContent = "✕";
-
-    estado.textContent = "Error al enviar";
-
-    setTimeout(() => {
-      overlay.classList.remove("activo");
-      document.querySelector(".form-app").classList.remove("blur");
-    }, 1200);
-
-    alert(error.message || "Hubo un problema al enviar la planeación");
-  }
-}
 
 function cargarBorrador(){
 
