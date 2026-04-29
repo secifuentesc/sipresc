@@ -3008,6 +3008,11 @@ document.getElementById("btnQuitarComp").style.display = "inline-block";
 document.getElementById("famArchivo").addEventListener("change", function(){
 
   const file = this.files[0];
+  if(file && file.size > 3 * 1024 * 1024){
+  alert("El archivo supera el tamaño permitido (máx 3MB)");
+  this.value = "";
+  return;
+}
   if(!file) return;
 
   document.getElementById("famNombre").textContent = file.name;
