@@ -8,17 +8,6 @@
 
 <link rel="icon" type="image/png" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<div id="overlayEnviar">
-  <div class="loader-box">
-    
-    <div class="loader-ring"></div>
-
-    <div id="loaderText">Enviando planeación</div>
-
-    <div id="loaderSuccess">✔</div>
-
-  </div>
-</div>
 <style>
 
 /* 🔥 EXACTAMENTE EL MISMO ESTILO */
@@ -736,6 +725,19 @@ body{
 
 <body>
 
+<div id="overlayEnviar">
+  <div class="loader-box">
+    
+    <div class="loader-ring"></div>
+
+    <div id="loaderText">Enviando planeación</div>
+
+    <div id="loaderSuccess">✔</div>
+
+  </div>
+</div>
+
+
 <!-- 🔥 TOPBAR ORIGINAL EXACTA -->
 <div class="topbar">
   <div class="topbar-logo">
@@ -1050,6 +1052,13 @@ transition:all .3s ease;
   
 <script>
 
+  let timersClases = {};
+let timerIA;
+let cacheIndicador = "";
+let cacheObservacion = "";
+let cacheComp = "";
+let cacheFamilia = "";
+
 async function corregirTodo(){
 
   const btn = document.getElementById("btnCorregir");
@@ -1201,6 +1210,14 @@ let ST = {
   materia: null,
   grado: null
 };
+// 🔥 VARIABLES GLOBALES NECESARIAS
+let timersClases = {};
+let timerIA;
+
+let cacheIndicador = "";
+let cacheObservacion = "";
+let cacheComp = "";
+let cacheFamilia = "";
 
 const API = "/api/planeaciones"; // ⚠️ ajusta si tu ruta es otra
 
@@ -2024,6 +2041,10 @@ function cargarBorrador(){
 function validarBotonEnviar(){
 
   const indicador = document.getElementById("indicadorInput")?.value.trim() || "";
+  // 🔥 EVITAR VALIDACIÓN PREMATURA
+if(indicador.length === 0){
+  return false;
+}
   const total = ST.intensidad || 1;
 
   let valido = true;
@@ -2051,13 +2072,13 @@ function validarBotonEnviar(){
     campoAct?.classList.remove("marca-error");
 
     // VALIDAR TEMA
-    if(tema.length < 5){
+    if(tema.length > 0 && tema.length < 5){
       valido = false;
       campoTema?.classList.add("marca-error");
     }
 
     // VALIDAR ACTIVIDADES
-    if(act.length < 10){
+    if(act.length > 0 && act.length < 10){
       valido = false;
       campoAct?.classList.add("marca-error");
     }
@@ -2439,13 +2460,18 @@ async function revisarIndicadorCoach(){
 
 async function revisarOrtografia(texto){
 
+  // 🔥 EVITAR LLAMADAS INÚTILES
+  if(!texto || texto.length < 10){
+    return [];
+  }
+
   try{
 
     const res = await fetch("https://api.languagetool.org/v2/check", {
       method: "POST",
       body: new URLSearchParams({
         text: texto,
-        language: "es"
+        language: "es-ES"
       })
     });
 
