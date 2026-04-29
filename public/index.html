@@ -459,7 +459,9 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
       <button class="btn btn-g" onclick="enviarCodigoLogin(this)">Enviar código</button>
       <div id="bloqueCodigo" style="display:none;margin-top:10px;">
         <input type="text" id="inputCodigo" placeholder="Código de verificación" class="fi" style="margin-bottom:8px;">
-        <button class="btn btn-g" onclick="verificarCodigoLogin()">Verificar código</button>
+        <button class="btn btn-g" id="btnVerificar" onclick="verificarCodigoLogin()">
+  Verificar código
+</button>
       </div>
     </div>
   </div>
@@ -1180,16 +1182,69 @@ window.enviarCodigoLogin=async function(btn){
   setTimeout(()=>{btn.innerHTML=original;btn.disabled=false;},4000);};
 
 async function verificarCodigoLogin(){
-  const input=document.getElementById('correoCodigo').value;
-  const correo=input.includes('@')?input:input+'@lapresentaciongirardota.edu.co';
-  const codigo=document.getElementById('inputCodigo').value;
-  if(!codigo){toast('Ingresa el código','er');return;}
-  const r=await api('verificarCodigo',{correo,codigo});
-  if(r.ok){toast('Ingreso exitoso','ok');
-    ST.rol=r.rol;ST.correo=r.correo;ST.nombre=r.nombre;ST.docenteId=r.docenteId;
-    localStorage.setItem('lp_user',JSON.stringify({correo:r.correo,loginTime:Date.now()}));
-    iniciarApp();}
-  else toast(r.mensaje,'er');}
+
+  const btn = document.getElementById("btnVerificar");
+
+  const input = document.getElementById('correoCodigo').value;
+  const correo = input.includes('@') ? input : input + '@lapresentaciongirardota.edu.co';
+  const codigo = document.getElementById('inputCodigo').value;
+
+  if(!codigo){
+    toast('Ingresa el código','er');
+    return;
+  }
+
+  // 🔥 SI DA CLICK MANUAL
+  activarVerificando();
+
+  try{
+
+    const r = await api('verificarCodigo',{correo,codigo});
+
+    if(r.ok){
+
+      btn.innerHTML = '✔ Acceso concedido';
+      btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
+      
+      toast('Ingreso exitoso','ok');
+
+      ST.rol = r.rol;
+      ST.correo = r.correo;
+      ST.nombre = r.nombre;
+      ST.docenteId = r.docenteId;
+
+      localStorage.setItem('lp_user', JSON.stringify({
+        correo: r.correo,
+        loginTime: Date.now()
+      }));
+
+      setTimeout(() => {
+        iniciarApp();
+      }, 500);
+
+    } else {
+
+      btn.innerHTML = 'Código incorrecto';
+      btn.style.background = 'linear-gradient(135deg,#f87171,#ef4444)';
+      btn.disabled = false;
+
+      toast(r.mensaje,'er');
+
+      setTimeout(()=>{
+        btn.innerHTML = 'Verificar código';
+        btn.style.background = '';
+      },1500);
+
+    }
+
+  }catch(e){
+
+    btn.innerHTML = 'Error';
+    btn.disabled = false;
+    toast('Error de conexión','er');
+
+  }
+}
 
 function mostrarPantallaInicial(){
   const splash=document.getElementById('splash');const data=localStorage.getItem('lp_user');
@@ -1529,6 +1584,42 @@ function plnEnviarAjustes(){
       plnActualizarStats();
     } else toast(r.mensaje||'Error','er');
   }).catch(()=>{rest();toast('Error de conexión','er');});}
+
+const inputCodigo = document.getElementById("inputCodigo");
+const btnVerificar = document.getElementById("btnVerificar");
+
+let timeoutVerificacion;
+
+inputCodigo.addEventListener("input", () => {
+
+  const codigo = inputCodigo.value.trim();
+
+  // Solo números y máximo 6
+  inputCodigo.value = codigo.replace(/\D/g, "").slice(0,6);
+
+  if(inputCodigo.value.length === 6){
+
+    // 🔥 Estado visual inmediato
+    activarVerificando();
+
+    // 🔥 pequeño delay tipo app pro
+    clearTimeout(timeoutVerificacion);
+    timeoutVerificacion = setTimeout(() => {
+      verificarCodigoLogin();
+    }, 400); // se siente natural
+
+  }
+
+});
+
+function activarVerificando(){
+
+  const btn = document.getElementById("btnVerificar");
+
+  btn.innerHTML = '<span class="spin"></span> Verificando...';
+  btn.disabled = true;
+
+}
 </script>
 </body>
 </html>
