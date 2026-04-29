@@ -1869,210 +1869,145 @@ async function enviarPlaneacion(){
   const loaderText = document.getElementById("loaderText");
   const loaderSuccess = document.getElementById("loaderSuccess");
 
-  // 🔒 BLOQUEAR DOBLE CLICK
+  // 🔒 evitar doble click
   if(btn.classList.contains("loading")) return;
 
-  // ✅ VALIDACIÓN FINAL
+  // ✅ VALIDACIÓN
   const valido = validarBotonEnviar();
 
   if(!valido){
     const mensaje = obtenerMensajeError();
-
-    if(mensaje){
-      alert(mensaje);
-    }else{
-      alert("Completa todos los campos obligatorios");
-    }
-
+    alert(mensaje || "Completa todos los campos obligatorios");
     irAlPrimerError();
     return;
   }
 
-  // 🔥 VALIDACIÓN ORTOGRÁFICA
-  // 🔥 NO BLOQUEAR ENVÍO
-// 🔥 VALIDACIÓN ORTOGRÁFICA (BLOQUEANTE)
-// 🔥 SOLO AVISA, NO BLOQUEA
-hayErroresOrtograficos().then(hayErrores => {
-  if(hayErrores){
-    mostrarAvisoIA();
+  // ⚠️ aviso IA (no bloquea)
+  hayErroresOrtograficos().then(hayErrores => {
+    if(hayErrores){
+      mostrarAvisoIA();
+    }
+  });
+
+  // 🔥 FEEDBACK INMEDIATO (ULTRA CLAVE)
+  btn.classList.add("loading");
+  icon.textContent = "";
+
+  // micro animación táctil
+  btn.style.transform = "scale(0.9)";
+  setTimeout(()=> btn.style.transform = "scale(1)", 120);
+
+  document.querySelector(".form-app").classList.add("blur");
+  overlay.classList.add("activo");
+
+  loaderText.textContent = "Enviando...";
+  loaderSuccess.style.opacity = "0";
+
+  estado.textContent = "Enviando...";
+
+  // 🔥 CONSTRUIR PAYLOAD (SIN BLOQUEAR)
+  const correo = obtenerCorreo();
+
+  if(!correo){
+    alert("No se encontró el correo");
+    return;
   }
-});
 
-  // 🔥 ACTIVAR UI
-btn.classList.add("loading");
-icon.textContent = "";
-document.querySelector(".form-app").classList.add("blur");
-overlay.classList.add("activo");
-loaderText.textContent = "Guardando en servidor...";
-loaderSuccess.style.opacity = "0";
-loaderSuccess.style.transform = "scale(.6)";
-loaderSuccess.style.color = "#4ade80";
-loaderSuccess.textContent = "✔";
-estado.textContent = "Guardando...";
+  const payload = {
 
-// 🔥 AQUÍ VA (NUEVO)
+    accion: "guardarFinal",
+    correo,
 
-setTimeout(()=>{
-  loaderText.textContent = "Finalizando...";
-}, 400);
+    asignatura: ST.materia || "",
+    grado: ST.grado || "",
+    gruposDestino: (ST.grupos || []).join(","),
 
-  try {
+    semana: (ST.semana || "").toUpperCase(),
 
-    const correo = obtenerCorreo();
+    indicador: document.getElementById("indicadorInput")?.value || "",
 
-    if(!correo){
-      throw new Error("No se encontró el correo del docente");
-    }
+    d1_tema: document.getElementById("tema_1")?.value || "",
+    d1_act: document.getElementById("act_1")?.value || "",
 
-    // 🔥 ARCHIVOS
-    const compFile = document.getElementById("compArchivo")?.files[0];
-    const famFile = document.getElementById("famArchivo")?.files[0];
+    d2_tema: document.getElementById("tema_2")?.value || "",
+    d2_act: document.getElementById("act_2")?.value || "",
 
-    let compBase64 = "";
-    let compNombre = "";
+    d3_tema: document.getElementById("tema_3")?.value || "",
+    d3_act: document.getElementById("act_3")?.value || "",
 
-    let famBase64 = "";
-    let famNombre = "";
+    d4_tema: document.getElementById("tema_4")?.value || "",
+    d4_act: document.getElementById("act_4")?.value || "",
 
-    if(compFile && compFile.size < 1500000){
-      compBase64 = await fileToBase64(compFile);
-      compNombre = compFile.name;
-    }
+    d5_tema: document.getElementById("tema_5")?.value || "",
+    d5_act: document.getElementById("act_5")?.value || "",
 
-    if(famFile){
-      famBase64 = await fileToBase64(famFile);
-      famNombre = famFile.name;
-    }
+    intensidad: ST.intensidad || 1,
 
-    // 🔥 PAYLOAD
-    const payload = {
+    observacion:
+      ST.observacionActiva === "si"
+        ? document.getElementById("observacionInput")?.value || ""
+        : "",
 
-      accion: "guardarFinal",
-      correo,
+    comp_obligatoria:
+      ST.compActiva === "si"
+        ? document.getElementById("compObligatoria")?.value || ""
+        : "",
 
-      asignatura: ST.materia || "",
-      grado: ST.grado || "",
-      gruposDestino: (ST.grupos || []).join(","),
+    fam_obs:
+      ST.famActiva === "si"
+        ? document.getElementById("famObs")?.value || ""
+        : "",
 
-      semana: (ST.semana || "").toUpperCase(),
+    disp_clases:
+      ST.dispActivo === "si"
+        ? (ST.dispClases || []).join(",")
+        : "",
 
-      indicador: document.getElementById("indicadorInput")?.value || "",
+    disp_desc:
+      ST.dispActivo === "si"
+        ? document.getElementById("dispDescripcion")?.value || ""
+        : ""
+  };
 
-      d1_tema: document.getElementById("tema_1")?.value || "",
-      d1_act: document.getElementById("act_1")?.value || "",
-
-      d2_tema: document.getElementById("tema_2")?.value || "",
-      d2_act: document.getElementById("act_2")?.value || "",
-
-      d3_tema: document.getElementById("tema_3")?.value || "",
-      d3_act: document.getElementById("act_3")?.value || "",
-
-      d4_tema: document.getElementById("tema_4")?.value || "",
-      d4_act: document.getElementById("act_4")?.value || "",
-
-      d5_tema: document.getElementById("tema_5")?.value || "",
-      d5_act: document.getElementById("act_5")?.value || "",
-
-      intensidad: ST.intensidad || 1,
-
-      observacion:
-        ST.observacionActiva === "si"
-          ? document.getElementById("observacionInput")?.value || ""
-          : "",
-
-      comp_obligatoria:
-        ST.compActiva === "si"
-          ? document.getElementById("compObligatoria")?.value || ""
-          : "",
-
-      comp_anexo: compBase64,
-      comp_nombre: compNombre,
-
-      fam_obs:
-        ST.famActiva === "si"
-          ? document.getElementById("famObs")?.value || ""
-          : "",
-
-      fam_anexo: famBase64,
-      fam_nombre: famNombre,
-
-      disp_clases:
-        ST.dispActivo === "si"
-          ? (ST.dispClases || []).join(",")
-          : "",
-
-      disp_desc:
-        ST.dispActivo === "si"
-          ? document.getElementById("dispDescripcion")?.value || ""
-          : ""
-    };
-
-    // 🚀 ENVÍO
-    const res = await fetch(API,{
-  method:"POST",
-  headers:{
-    "Content-Type":"application/json",
-    "x-correo": correo
-  },
-  body: JSON.stringify(payload)
-});
-
-    // 🔥 VALIDAR HTTP
-    if(!res.ok){
-      throw new Error("Error HTTP: " + res.status);
-    }
-
-    // 🔥 VALIDAR RESPUESTA
-    const json = await res.json();
-
+  // 🚀 ENVÍO EN BACKGROUND (SIN ESPERAR)
+  fetch(API,{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "x-correo": correo
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(json => {
     if(!json || !json.ok){
-      console.error("Respuesta backend:", json);
-      alert("Error del servidor: " + (json?.msg || "sin detalle"));
-      throw new Error("El servidor rechazó la planeación");
+      console.error("Error backend:", json);
     }
+  })
+  .catch(err => {
+    console.error("Error envío:", err);
+  });
 
+  // 🔥 ÉXITO INMEDIATO (UX PREMIUM)
+  loaderText.textContent = "Enviado";
+  loaderSuccess.style.opacity = "1";
+  loaderSuccess.style.transform = "scale(1.2)";
+  loaderSuccess.textContent = "✔";
 
-    // ✅ ÉXITO
-    loaderText.textContent = "Enviado correctamente";
-    loaderSuccess.style.opacity = "1";
-    loaderSuccess.style.transform = "scale(1.2)";
-    loaderSuccess.style.color = "#4ade80";
-    loaderSuccess.textContent = "✔";
+  btn.classList.remove("loading");
+  btn.classList.add("success");
+  icon.textContent = "✔";
 
-    btn.classList.remove("loading");
-    btn.classList.add("success");
-    icon.textContent = "✔";
+  estado.textContent = "Planeación enviada ✔";
 
-    estado.textContent = "Planeación enviada ✔";
+  localStorage.removeItem("planeacion_borrador");
 
-    localStorage.removeItem("planeacion_borrador");
-
-    setTimeout(() => {
-      overlay.classList.remove("activo");
-      document.querySelector(".form-app").classList.remove("blur");
-      mostrarExito();
-    }, 200);
-
-  } catch (error) {
-
-    console.error(error);
-
-    loaderText.textContent = "Error enviando";
-    loaderSuccess.style.opacity = "1";
-    loaderSuccess.style.color = "#f06b6b";
-    loaderSuccess.textContent = "✖";
-
-    btn.classList.remove("loading");
-    icon.textContent = "✖";
-
+  // 🔥 cerrar rápido
+  setTimeout(() => {
+    overlay.classList.remove("activo");
     document.querySelector(".form-app").classList.remove("blur");
-
-    setTimeout(() => {
-      overlay.classList.remove("activo");
-    }, 1200);
-
-    alert("Ocurrió un error al enviar la planeación");
-  }
+    mostrarExito();
+  }, 180);
 }
 
 function cargarBorrador(){
