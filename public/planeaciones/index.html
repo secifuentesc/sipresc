@@ -1876,6 +1876,7 @@ async function enviarPlaneacion(){
     };
 
     // 🔥 RESPUESTA INMEDIATA (UX PRO)
+// 🔥 RESPUESTA INMEDIATA (UX PRO)
 loaderText.textContent = "Enviado correctamente";
 loaderSuccess.style.opacity = "1";
 loaderSuccess.style.transform = "scale(1.2)";
@@ -1895,7 +1896,8 @@ setTimeout(() => {
 }, 500);
 
     // 🚀 ENVÍO
-    fetch(API,{
+    // 🚀 ENVÍO REAL (sin bloquear UX)
+fetch(API,{
   method:"POST",
   headers:{
     "Content-Type":"application/json",
@@ -1913,11 +1915,7 @@ setTimeout(() => {
   console.error("Error real:", err);
 });
 
-    const json = await res.json();
 
-    if(!json.ok){
-      throw new Error(json.mensaje || "Error del backend");
-    }
 
     // 🧹 LIMPIAR BORRADOR
     localStorage.removeItem("planeacion_borrador");
