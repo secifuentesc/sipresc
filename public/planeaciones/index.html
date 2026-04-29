@@ -8,23 +8,7 @@
 
 <link rel="icon" type="image/png" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<div id="toastIA">
 
-  <div class="toast-box">
-
-    <div class="ftoast-icon">✦</div>
-
-    <div class="toast-text">
-
-      Detectamos detalles en la redacción.<br>
-
-      <span>Usa el Asistente inteligente para mejorarlo.</span>
-
-    </div>
-
-  </div>
-
-</div>
   <style>
 
 /* 🔥 EXACTAMENTE EL MISMO ESTILO */
@@ -1142,6 +1126,16 @@ transition:all .3s ease;
 
   </div>
 </div>
+
+<div id="toastIA">
+  <div class="toast-box">
+    <div class="toast-icon">✦</div>
+    <div class="toast-text">
+      Detectamos detalles en la redacción.<br>
+      <span>Usa el Asistente inteligente para mejorarlo.</span>
+    </div>
+  </div>
+</div>
   
 <script>
 
@@ -2020,8 +2014,7 @@ setTimeout(()=>{
     "Content-Type":"application/json",
     "x-correo": correo
   },
-  body: JSON.stringify(payload),
-  keepalive: true
+  body: JSON.stringify(payload)
 });
 
     // 🔥 VALIDAR HTTP
