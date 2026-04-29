@@ -1902,7 +1902,8 @@ if(hayErrores){
     };
 
     // ⚡ UX INMEDIATA (NO ESPERA BACKEND)
-    loaderText.textContent = "Enviado correctamente";
+    // ✅ BIEN
+    loaderText.textContent = "Enviando...";
     loaderSuccess.style.opacity = "1";
     loaderSuccess.style.transform = "scale(1.2)";
 
@@ -1921,29 +1922,38 @@ if(hayErrores){
     }, 600);
 
     // 🚀 ENVÍO REAL (EN BACKGROUND)
-    fetch(API,{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "x-correo": correo
-      },
-      body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(json => {
-      if(!json.ok){
-        console.error("Error backend:", json);
+    // 🚀 ENVÍO REAL (AHORA SÍ CONTROLADO)
+const res = await fetch(API,{
+  method:"POST",
+  headers:{
+    "Content-Type":"application/json",
+    "x-correo": correo
+  },
+  body: JSON.stringify(payload)
+});
 
-        // 🔴 FALLBACK SILENCIOSO (opcional)
-        estado.textContent = "Enviado (pendiente verificación)";
-      }
-    })
-    .catch(err => {
-      console.error("Error real:", err);
+const json = await res.json();
 
-      // 🔴 FALLBACK
-      estado.textContent = "Enviado (sin confirmación del servidor)";
-    });
+// 🔴 SI FALLA → NO DEJA PASAR
+if(!json.ok){
+  throw new Error("No se pudo guardar la planeación en el servidor");
+}
+
+
+
+btn.classList.remove("loading");
+btn.classList.add("success");
+icon.textContent = "✔";
+
+estado.textContent = "Planeación enviada ✔";
+
+localStorage.removeItem("planeacion_borrador");
+
+setTimeout(() => {
+  overlay.classList.remove("activo");
+  document.querySelector(".form-app").classList.remove("blur");
+  mostrarExito();
+}, 600);
 
   } catch (error) {
 
