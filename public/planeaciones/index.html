@@ -1195,7 +1195,11 @@ function obtenerCorreo(){
 
 let ST = {
   materia: null,
-  grado: null
+  grado: null,
+  dispActivo: "no",
+  compActiva: "no",
+  famActiva: "no"
+
 };
 
 
@@ -1922,6 +1926,7 @@ const json = await res.json();
 
 if(!json || !json.ok){
   console.error("Respuesta backend:", json);
+  alert("Error del servidor: " + (json?.msg || "sin detalle"));
   throw new Error("El servidor rechazó la planeación");
 }
 
@@ -1940,11 +1945,6 @@ estado.textContent = "Planeación enviada ✔";
 
 localStorage.removeItem("planeacion_borrador");
 
-setTimeout(() => {
-  overlay.classList.remove("activo");
-  document.querySelector(".form-app").classList.remove("blur");
-  mostrarExito();
-}, 600);
     setTimeout(() => {
   overlay.classList.remove("activo");
   document.querySelector(".form-app").classList.remove("blur");
@@ -2043,6 +2043,8 @@ function validarBotonEnviar(){
   const indicador = document.getElementById("indicadorInput")?.value.trim() || "";
   // 🔥 EVITAR VALIDACIÓN PREMATURA
 if(indicador.length === 0){
+  const btn = document.getElementById("btnEnviar");
+  btn.classList.remove("activo");
   return false;
 }
   const total = ST.intensidad || 1;
