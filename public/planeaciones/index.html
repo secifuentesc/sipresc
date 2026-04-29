@@ -2069,16 +2069,17 @@ if(indicador.length === 0){
     campoAct?.classList.remove("marca-error");
 
     // VALIDAR TEMA
-    if(tema.length > 0 && tema.length < 5){
-      valido = false;
-      campoTema?.classList.add("marca-error");
-    }
+    // 🔴 VALIDAR TEMA (OBLIGATORIO)
+if(tema.length < 5){
+  valido = false;
+  campoTema?.classList.add("marca-error");
+}
 
-    // VALIDAR ACTIVIDADES
-    if(act.length > 0 && act.length < 10){
-      valido = false;
-      campoAct?.classList.add("marca-error");
-    }
+// 🔴 VALIDAR ACTIVIDADES (OBLIGATORIO)
+if(act.length < 10){
+  valido = false;
+  campoAct?.classList.add("marca-error");
+}
 
   }
 
