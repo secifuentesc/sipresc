@@ -1317,10 +1317,20 @@ window.addEventListener("DOMContentLoaded", () => {
 
   ST.correo = correo;
 
-  // ❌ QUITA ESTO
-  // cargarMaterias();
+  // 🔥 CARGA INMEDIATA DESDE CACHE
+  const cache = localStorage.getItem("lp_user_data");
+
+  if(cache){
+    try{
+      ST.data = JSON.parse(cache);
+      pintarMaterias(ST.data); // 🚀 muestra inmediato
+    }catch(e){
+      console.error(e);
+    }
+  }
 
   cargarBorrador();
+
 });
 
 // 🔥 CARGAR MATERIAS
@@ -1360,6 +1370,7 @@ setTimeout(()=>{
   }
 
   // 🔥 2. FETCH EN SEGUNDO PLANO (SIN BLOQUEAR)
+  setTimeout(()=>{
   fetch(`${API}?accion=cargaDocente&correo=${correo}`)
     .then(res => res.json())
     .then(json => {
@@ -1375,8 +1386,10 @@ setTimeout(()=>{
       }
 
     })
-    .catch(err => console.error(err));
-}
+
+.catch(err => console.error(err));
+
+}, 0);
   
 function pintarMaterias(materias){
 
@@ -2295,8 +2308,10 @@ function cerrarSesion(){
 
 function toggleSelect(tipo){
   // 🔥 CARGA SOLO CUANDO EL USUARIO ABRE
-if(tipo === "materia" && !ST.data){
-  cargarMaterias();
+if(tipo === "materia"){
+  if(!ST.data){
+    cargarMaterias(); // 🔥 solo si no hay cache
+  }
 }
 
   const box = document.getElementById(tipo + "Options");
