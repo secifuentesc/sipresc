@@ -1909,7 +1909,7 @@ btn.classList.add("loading");
 icon.textContent = "";
 document.querySelector(".form-app").classList.add("blur");
 overlay.classList.add("activo");
-loaderText.textContent = "Enviando...";
+loaderText.textContent = "Guardando en servidor...";
 loaderSuccess.style.opacity = "0";
 loaderSuccess.style.transform = "scale(.6)";
 loaderSuccess.style.color = "#4ade80";
@@ -1919,8 +1919,8 @@ estado.textContent = "Guardando...";
 // 🔥 AQUÍ VA (NUEVO)
 
 setTimeout(()=>{
-  loaderText.textContent = "Procesando...";
-}, 900);
+  loaderText.textContent = "Finalizando...";
+}, 400);
 
   try {
 
@@ -1940,7 +1940,7 @@ setTimeout(()=>{
     let famBase64 = "";
     let famNombre = "";
 
-    if(compFile){
+    if(compFile && compFile.size < 1500000){
       compBase64 = await fileToBase64(compFile);
       compNombre = compFile.name;
     }
@@ -2571,30 +2571,32 @@ async function revisarIndicadorCoach(){
 
 async function revisarOrtografia(texto){
 
-  // 🔥 EVITAR LLAMADAS INÚTILES
-  if(!texto || texto.length < 10){
-    return [];
-  }
+  if(!texto || texto.length < 25) return []; // 🔥 SOLO textos largos
+
+  // 🔥 LIMITE GLOBAL
+  if(window.__bloqueoIA) return [];
+
+  window.__bloqueoIA = true;
+
+  setTimeout(()=>{
+    window.__bloqueoIA = false;
+  }, 1500); // 🔥 solo 1 llamada cada 1.5s
 
   try{
-
     const res = await fetch("https://api.languagetool.org/v2/check", {
-      method: "POST",
-      body: new URLSearchParams({
+      method:"POST",
+      body:new URLSearchParams({
         text: texto,
-        language: "es-ES"
+        language:"es-ES"
       })
     });
 
     const data = await res.json();
-
     return data.matches || [];
 
-  }catch(e){
-    console.error("Error LanguageTool:", e);
+  }catch{
     return [];
   }
-
 }
 
 async function revisarClaseCoach(i){
