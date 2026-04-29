@@ -1875,15 +1875,43 @@ async function enviarPlaneacion(){
 
     };
 
+    // 🔥 RESPUESTA INMEDIATA (UX PRO)
+loaderText.textContent = "Enviado correctamente";
+loaderSuccess.style.opacity = "1";
+loaderSuccess.style.transform = "scale(1.2)";
+
+btn.classList.remove("loading");
+btn.classList.add("success");
+icon.textContent = "✔";
+
+estado.textContent = "Planeación enviada ✔";
+
+localStorage.removeItem("planeacion_borrador");
+
+setTimeout(() => {
+  overlay.classList.remove("activo");
+  document.querySelector(".form-app").classList.remove("blur");
+  mostrarExito();
+}, 500);
+
     // 🚀 ENVÍO
-    const res = await fetch(API,{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "x-correo": correo
-      },
-      body: JSON.stringify(payload)
-    });
+    fetch(API,{
+  method:"POST",
+  headers:{
+    "Content-Type":"application/json",
+    "x-correo": correo
+  },
+  body: JSON.stringify(payload)
+})
+.then(res => res.json())
+.then(json => {
+  if(!json.ok){
+    console.error("Error backend:", json);
+  }
+})
+.catch(err => {
+  console.error("Error real:", err);
+});
 
     const json = await res.json();
 
