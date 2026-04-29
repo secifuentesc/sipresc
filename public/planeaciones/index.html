@@ -2564,16 +2564,10 @@ async function revisarIndicadorCoach(){
 
 async function revisarOrtografia(texto){
 
-  if(!texto || texto.length < 25) return []; // 🔥 SOLO textos largos
+  if(!texto || texto.length < 5) return [];
 
-  // 🔥 LIMITE GLOBAL
-  if(window.__bloqueoIA) return [];
-
-  window.__bloqueoIA = true;
-
-  setTimeout(()=>{
-    window.__bloqueoIA = false;
-  }, 1500); // 🔥 solo 1 llamada cada 1.5s
+  // 🔥 textos muy cortos → revisión básica
+  const esCorto = texto.length < 20;
 
   try{
     const res = await fetch("https://api.languagetool.org/v2/check", {
@@ -2585,7 +2579,15 @@ async function revisarOrtografia(texto){
     });
 
     const data = await res.json();
-    return data.matches || [];
+
+    let errores = data.matches || [];
+
+    // 🔥 si es corto → solo errores graves
+    if(esCorto){
+      errores = errores.filter(e => e.rule.issueType === "misspelling");
+    }
+
+    return errores;
 
   }catch{
     return [];
