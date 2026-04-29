@@ -2979,7 +2979,7 @@ document.getElementById("compArchivo").addEventListener("change", function(){
   document.getElementById("compLabel").textContent = "Archivo cargado ✔";
 
   const bar = document.getElementById("compProgress");
-  const box = input.closest(".file-upload");
+  const box = this.closest(".file-upload");
 
   // 🔹 Reset
   bar.style.width = "0%";
