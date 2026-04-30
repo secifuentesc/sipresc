@@ -1,102 +1,236 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Prompts - La Presentación</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompts IA - La Presentación</title>
 
-  <!-- Tipografía institucional -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-  <style>
-    body{
-      margin:0;
-      font-family:'Poppins',sans-serif;
-      background:#0a1628;
-      color:white;
-      padding:20px;
-    }
+<style>
 
-    h1{
-      font-size:20px;
-      margin-bottom:20px;
-    }
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:#0a1628;
+  color:#fff;
+  padding:15px;
+}
 
-    .card{
-      background:#122449;
-      border-radius:12px;
-      padding:15px;
-      margin-bottom:10px;
-      cursor:pointer;
-      transition:.2s;
-    }
+h1{
+  font-size:18px;
+  margin-bottom:10px;
+}
 
-    .card:hover{
-      background:#1e4db7;
-    }
+.search{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  margin-bottom:10px;
+  background:#122449;
+  color:white;
+}
 
-    .titulo{
-      font-weight:600;
-      margin-bottom:5px;
-    }
+.categorias{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  margin-bottom:15px;
+}
 
-    .desc{
-      font-size:13px;
-      opacity:.7;
-    }
+.cat{
+  padding:6px 12px;
+  border-radius:20px;
+  background:#122449;
+  font-size:12px;
+  cursor:pointer;
+}
 
-    .btn{
-      margin-top:10px;
-      background:#FFCC00;
-      border:none;
-      padding:8px 12px;
-      border-radius:8px;
-      cursor:pointer;
-      font-size:12px;
-      font-weight:600;
-    }
-  </style>
+.cat.active{
+  background:#FFCC00;
+  color:#000;
+}
+
+.card{
+  background:#122449;
+  padding:14px;
+  border-radius:12px;
+  margin-bottom:10px;
+  transition:.2s;
+}
+
+.card:hover{
+  transform:scale(.98);
+}
+
+.titulo{
+  font-weight:600;
+}
+
+.desc{
+  font-size:13px;
+  opacity:.7;
+  margin:5px 0 10px;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+}
+
+.btn{
+  flex:1;
+  padding:8px;
+  border:none;
+  border-radius:8px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.copy{background:#FFCC00;}
+.fav{background:#1e4db7;color:white;}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:#122449;
+  padding:20px;
+  border-radius:12px;
+  width:90%;
+  max-width:400px;
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>Banco de Prompts</h1>
+<h1>Banco de Prompts IA</h1>
 
-<div id="lista-prompts"></div>
+<input class="search" placeholder="Buscar prompt..." oninput="buscar(this.value)">
+
+<div class="categorias" id="categorias"></div>
+
+<div id="lista"></div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <div id="modal-texto"></div>
+    <button class="btn copy" onclick="copiarActual()">Copiar</button>
+  </div>
+</div>
 
 <script>
 
-const prompts = [
+let prompts = [
   {
-    titulo: "Planeación de clase",
-    desc: "Generar planeaciones semanales estructuradas",
-    texto: "Crea una planeación semanal con indicador de desempeño en infinitivo, temas y actividades claras..."
+    titulo:"Planeación semanal",
+    desc:"Planeaciones con estructura institucional",
+    categoria:"Docencia",
+    texto:"Crea una planeación semanal con indicador en infinitivo, temas y actividades claras..."
   },
   {
-    titulo: "Copy institucional",
-    desc: "Textos para redes sociales del colegio",
-    texto: "Redacta un copy para Instagram del Instituto La Presentación con tono cercano, humano y profesional..."
+    titulo:"Copy Instagram",
+    desc:"Contenido institucional para redes",
+    categoria:"Redes",
+    texto:"Redacta un copy para Instagram del Instituto La Presentación con tono cercano, humano y profesional..."
+  },
+  {
+    titulo:"Evaluación académica",
+    desc:"Creación de evaluaciones",
+    categoria:"Evaluación",
+    texto:"Diseña una evaluación para estudiantes con preguntas tipo ICFES..."
   }
 ];
 
-function render(){
-  const cont = document.getElementById('lista-prompts');
+let categoriaActiva = "Todos";
+let actual = "";
 
-  cont.innerHTML = prompts.map((p,i)=>`
+function init(){
+  renderCategorias();
+  renderPrompts();
+}
+
+function renderCategorias(){
+  const cats = ["Todos",...new Set(prompts.map(p=>p.categoria))];
+
+  document.getElementById('categorias').innerHTML = cats.map(c=>`
+    <div class="cat ${c==categoriaActiva?'active':''}" onclick="filtrar('${c}')">
+      ${c}
+    </div>
+  `).join('');
+}
+
+function renderPrompts(lista = prompts){
+  const cont = document.getElementById('lista');
+
+  cont.innerHTML = lista.map((p,i)=>`
     <div class="card">
       <div class="titulo">${p.titulo}</div>
       <div class="desc">${p.desc}</div>
-      <button class="btn" onclick="copiar(${i})">Copiar prompt</button>
+
+      <div class="actions">
+        <button class="btn copy" onclick="copiar(${i})">Copiar</button>
+        <button class="btn fav" onclick="ver(${i})">Ver</button>
+      </div>
     </div>
   `).join('');
 }
 
 function copiar(i){
   navigator.clipboard.writeText(prompts[i].texto);
-  alert("Prompt copiado");
+  alert("Copiado");
 }
 
-render();
+function ver(i){
+  actual = prompts[i].texto;
+  document.getElementById('modal-texto').innerText = actual;
+  document.getElementById('modal').style.display='flex';
+}
+
+function copiarActual(){
+  navigator.clipboard.writeText(actual);
+  alert("Copiado");
+}
+
+function buscar(txt){
+  let lista = prompts.filter(p =>
+    p.titulo.toLowerCase().includes(txt.toLowerCase())
+  );
+
+  if(categoriaActiva !== "Todos"){
+    lista = lista.filter(p=>p.categoria === categoriaActiva);
+  }
+
+  renderPrompts(lista);
+}
+
+function filtrar(cat){
+  categoriaActiva = cat;
+  renderCategorias();
+
+  let lista = prompts;
+
+  if(cat !== "Todos"){
+    lista = prompts.filter(p=>p.categoria === cat);
+  }
+
+  renderPrompts(lista);
+}
+
+document.getElementById('modal').onclick = ()=> {
+  document.getElementById('modal').style.display='none';
+};
+
+init();
 
 </script>
 
