@@ -644,6 +644,7 @@ function editarVariable(el, key){
   const input = el.querySelector("input");
 
   input.focus();
+input.select(); // 🔥 selecciona todo automáticamente
 
   input.onblur = () => guardarValor(el, input.value, key);
   input.onkeydown = (e)=>{
