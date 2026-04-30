@@ -2015,22 +2015,36 @@ async function enviarPlaneacion(){
 
   // 🚀 ENVÍO EN BACKGROUND (SIN ESPERAR)
   fetch(API,{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      "x-correo": correo
-    },
-    body: JSON.stringify(payload)
-  })
-  .then(res => res.json())
-  .then(json => {
-    if(!json || !json.ok){
-      console.error("Error backend:", json);
-    }
-  })
-  .catch(err => {
-    console.error("Error envío:", err);
-  });
+  method:"POST",
+  headers:{
+    "Content-Type":"application/json",
+    "x-correo": correo
+  },
+  body: JSON.stringify(payload)
+})
+.then(res => res.json())
+.then(json => {
+
+  if(!json || !json.ok){
+
+    console.error("Error backend:", json);
+
+    mostrarErrorEnvio("No se pudo guardar la planeación. Posible archivo muy pesado.");
+
+    return;
+  }
+
+  // 🔥 CONFIRMACIÓN REAL
+  confirmarEnvioExitoso();
+
+})
+.catch(err => {
+
+  console.error("Error envío:", err);
+
+  mostrarErrorEnvio("Error de conexión. La planeación no se guardó.");
+
+});
 
   // 🔥 ÉXITO INMEDIATO (UX PREMIUM)
   loaderText.textContent = "Enviado";
@@ -3146,6 +3160,31 @@ function quitarArchivoFam(e){
   box.style.boxShadow = "";
 
   document.getElementById("btnQuitarFam").style.display = "none";
+
+}
+
+function mostrarErrorEnvio(mensaje){
+
+  const toast = document.getElementById("toastIA");
+
+  toast.querySelector(".toast-text").innerHTML = `
+    <b>No se pudo guardar</b><br>
+    <span>${mensaje}</span>
+  `;
+
+  toast.classList.add("activo");
+
+  setTimeout(()=>{
+    toast.classList.remove("activo");
+  }, 3500);
+
+}
+
+function confirmarEnvioExitoso(){
+
+  const estado = document.getElementById("estadoGuardado");
+
+  estado.textContent = "Guardado en sistema ✔";
 
 }
 
