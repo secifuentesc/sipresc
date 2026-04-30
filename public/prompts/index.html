@@ -199,17 +199,17 @@ h1{
 }
 
 .prompt-preview{
-  font-size:13px;
-  line-height:1.5;
-  color:var(--muted);
-  margin-bottom:10px;
+  font-size:15px;              /* antes 13 */
+  line-height:1.6;
+  color:#dbe7ff;               /* mucho más claro */
+  margin-bottom:12px;
 
   display:-webkit-box;
   -webkit-line-clamp:8;
   -webkit-box-orient:vertical;
   overflow:hidden;
 
-  cursor:pointer;
+  cursor:text;
 }
 
 .prompt-preview.expandido{
@@ -226,11 +226,30 @@ h1{
 }
 
 .var{
-  background:rgba(30,77,183,.2);
-  color:#93c5fd;
-  padding:2px 6px;
-  border-radius:6px;
+  background:rgba(255,204,0,.12);
+  color:#FFCC00;
+  padding:3px 8px;
+  border-radius:8px;
   cursor:pointer;
+  font-weight:500;
+  border:1px solid rgba(255,204,0,.3);
+  transition:.2s;
+}
+
+.var:hover{
+  background:rgba(255,204,0,.25);
+}
+
+.input-inline{
+  width:auto;
+  min-width:80px;
+  border:none;
+  outline:none;
+  background:rgba(255,255,255,.05);
+  color:#fff;
+  font-size:14px;
+  border-radius:6px;
+  padding:2px 6px;
 }
 </style>
 </head>
@@ -615,12 +634,23 @@ function formatearPrompt(texto){
 
 function editarVariable(el, key){
 
-  const valor = prompt(`Ingresa ${key}`);
+  // Evita crear múltiples inputs
+  if(el.querySelector("input")) return;
 
-  if(valor){
-    el.textContent = valor;
-    el.setAttribute("data-value", valor);
-  }
+  const valorActual = el.getAttribute("data-value") || key;
+
+  el.innerHTML = `<input class="input-inline" value="${valorActual}" />`;
+
+  const input = el.querySelector("input");
+
+  input.focus();
+
+  input.onblur = () => guardarValor(el, input.value, key);
+  input.onkeydown = (e)=>{
+    if(e.key === "Enter"){
+      input.blur();
+    }
+  };
 
 }
 
@@ -652,7 +682,14 @@ function copiarPrompt(i){
   alert("Prompt copiado listo para usar");
 }
 
+function guardarValor(el, valor, key){
 
+  const final = valor || key;
+
+  el.textContent = final;
+  el.setAttribute("data-value", final);
+
+}
 </script>
 
 </body>
