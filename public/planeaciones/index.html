@@ -1097,6 +1097,51 @@ Quitar archivo ✕
 
 </div>
 
+
+<div class="bloque" id="b-copia" style="margin-top:20px;">
+
+  <div style="
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--br);
+    padding:14px;
+    border-radius:12px;
+  ">
+
+    <div style="text-align:left;">
+      <div style="font-size:14px;">Enviar copia a mi correo</div>
+      <div style="font-size:11px; color:var(--mt);">
+        Recibirás esta planeación al finalizar
+      </div>
+    </div>
+
+    <div id="toggleCopia" onclick="toggleCopia(this)" style="
+      width:42px;
+      height:22px;
+      border-radius:20px;
+      background:rgba(255,255,255,0.15);
+      position:relative;
+      cursor:pointer;
+      transition:.3s;
+    ">
+      <div id="bolaCopia" style="
+        width:18px;
+        height:18px;
+        background:#fff;
+        border-radius:50%;
+        position:absolute;
+        top:2px;
+        left:2px;
+        transition:.3s;
+      "></div>
+    </div>
+
+  </div>
+
+</div>
+
     <!-- ESTADO -->
     <div id="estadoGuardado" class="estado">
       Guardado automático
@@ -1355,8 +1400,8 @@ let ST = {
   grado: null,
   dispActivo: "no",
   compActiva: "no",
-  famActiva: "no"
-
+  famActiva: "no",
+  enviarCopia: false
 };
 
 
@@ -2044,7 +2089,9 @@ async function enviarPlaneacion(){
   disp_desc:
     ST.dispActivo === "si"
       ? document.getElementById("dispDescripcion")?.value || ""
-      : ""
+      : "",
+
+  enviar_copia: ST.enviarCopia,
 };
 
   // 🚀 ENVÍO EN BACKGROUND (SIN ESPERAR)
@@ -3221,7 +3268,21 @@ function confirmarEnvioExitoso(){
   estado.textContent = "Guardado en sistema ✔";
 
 }
+function toggleCopia(el){
 
+  ST.enviarCopia = !ST.enviarCopia;
+
+  const bola = document.getElementById("bolaCopia");
+
+  if(ST.enviarCopia){
+    el.style.background = "linear-gradient(135deg,var(--gold),var(--gold2))";
+    bola.style.left = "22px";
+  }else{
+    el.style.background = "rgba(255,255,255,0.15)";
+    bola.style.left = "2px";
+  }
+
+}
 </script>
 
 
