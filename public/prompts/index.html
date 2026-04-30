@@ -372,6 +372,28 @@ body{
   cursor:default;
 }
 
+#toast{
+  position:fixed;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:linear-gradient(135deg,#1A428A,#1e4db7);
+  color:#fff;
+  padding:10px 18px;
+  border-radius:12px;
+  font-size:13px;
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  z-index:999;
+}
+
+#toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
 </style>
 </head>
 
@@ -409,6 +431,8 @@ body{
     <div id="modal-texto"></div>
   </div>
 </div>
+
+  <div id="toast">Copiado</div>
 
 </body>
 
@@ -775,7 +799,7 @@ function copiarPrompt(i){
 
   navigator.clipboard.writeText(textoFinal);
 
-  alert("Prompt copiado listo para usar");
+  showToast("Prompt copiado");
 }
 
 function guardarValor(el, valor, key){
@@ -795,6 +819,16 @@ function doLogout(){
   document.getElementById('s-login').classList.add('on');
 
   document.getElementById('bnav').style.display='none';
+}
+
+function showToast(msg="Copiado"){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+
+  setTimeout(()=>{
+    t.classList.remove("show");
+  },1500);
 }
 
 </script>
