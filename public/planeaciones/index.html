@@ -2990,10 +2990,6 @@ document.getElementById("famArchivo").addEventListener("change", async function(
   archivoFamNombre = file.name;
   archivoFamBase64 = await fileToBase64(file);
 
-});
-
-  if(!file) return;
-
   document.getElementById("famNombre").textContent = file.name;
 
   const bar = document.getElementById("famProgress");
@@ -3010,8 +3006,7 @@ document.getElementById("famArchivo").addEventListener("change", async function(
     box.style.boxShadow = "0 0 0 1px #4ade80 inset";
   }, 350);
 
-  // 🔥 mostrar botón quitar
-document.getElementById("btnQuitarFam").style.display = "inline-block";
+  document.getElementById("btnQuitarFam").style.display = "inline-block";
 
 });
 
