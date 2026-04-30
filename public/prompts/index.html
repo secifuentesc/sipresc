@@ -358,6 +358,12 @@ body{
   padding:2px 6px;
 }
 
+.cat.disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+  pointer-events:none;
+}
+
 </style>
 </head>
 
@@ -401,9 +407,9 @@ body{
 <script>
 
 const CATEGORIAS = [
-  {nombre:"Todos", activa:true},
+  {nombre:"Todos", activa:false},
   {nombre:"Planeaciones", activa:true},
-  {nombre:"Correos", activa:true},
+  {nombre:"Correos", activa:false},
   {nombre:"Evaluaciones", activa:false},
   {nombre:"Actividades", activa:false},
   {nombre:"Informes", activa:false},
