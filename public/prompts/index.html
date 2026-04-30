@@ -9,26 +9,47 @@
 
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+
+/* RESET */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* VARIABLES EXACTAS DEL SISTEMA */
 :root{
   --ink:#0a1628;
   --blue:#1a3a6b;
   --royal:#0f2657;
   --cobalt:#1e4db7;
+
   --gold:#c9962a;
   --gold2:#e8b84b;
   --gold3:rgba(201,150,42,.12);
+
   --s0:#050e1d;
   --s1:#0d1f3c;
   --s2:#122449;
   --s3:#182e58;
+
   --br:rgba(255,255,255,.07);
   --br2:rgba(255,255,255,.13);
+
   --tx:#e8edf8;
   --mt:#7a8fb0;
+
+  --card:var(--s1);
+  --card2:var(--s2);
+  --line:var(--br);
+  --muted:var(--mt);
+
   --mono:'IBM Plex Mono',monospace;
   --sans:'IBM Plex Sans',sans-serif;
 }
 
+/* BODY */
 body{
   margin:0;
   font-family:var(--sans);
@@ -45,6 +66,74 @@ body{
   max-width:900px;
   margin:auto;
   padding:20px;
+  margin-top:10px;
+}
+
+/* ───────────── TOPBAR EXACTA ───────────── */
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(5,14,29,.96);
+  border-bottom:1px solid var(--br);
+  padding:10px 14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  backdrop-filter:blur(14px);
+}
+
+.topbar h1{
+  font-family:var(--mono);
+  font-size:12px;
+  font-weight:500;
+  flex:1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.topbar-rol{
+  font-size:9px;
+  color:var(--gold);
+  font-family:var(--mono);
+  background:var(--gold3);
+  border:1px solid rgba(201,150,42,.25);
+  padding:3px 8px;
+  border-radius:20px;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+}
+
+.topbar-logo{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  background:linear-gradient(140deg,var(--royal),var(--cobalt));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.logo-img-top{
+  width:20px;
+}
+
+/* BOTÓN SALIR EXACTO */
+.logout-btn{
+  background:none;
+  border:none;
+  color:var(--mt);
+  font-size:11px;
+  cursor:pointer;
+  padding:4px 6px;
+  font-family:var(--mono);
+  transition:.2s;
+}
+
+.logout-btn:hover{
+  color:#fff;
 }
 
 /* HEADER */
@@ -68,16 +157,16 @@ body{
 
 .rol{
   font-size:10px;
-  background:rgba(255,204,0,.1);
+  background:var(--gold3);
   padding:4px 10px;
   border-radius:20px;
 }
 
+/* TITULOS */
 h1{
   font-size:24px;
   font-weight:600;
   margin-bottom:20px;
-  letter-spacing:.5px;
 }
 
 /* SEARCH */
@@ -120,7 +209,7 @@ h1{
   gap:14px;
 }
 
-/* CARD PRO */
+/* CARD */
 .card{
   background:linear-gradient(160deg,#0f1f3d,#0a1628);
   border:1px solid var(--line);
@@ -174,10 +263,9 @@ h1{
 }
 
 .copy{
-  background:linear-gradient(135deg, #1A428A, #1e4db7);
+  background:linear-gradient(135deg,#1A428A,#1e4db7);
   color:#fff;
   box-shadow:0 4px 12px rgba(30,77,183,.35);
-  transition:.2s;
 }
 
 .copy:hover{
@@ -219,24 +307,23 @@ h1{
   color:white;
 }
 
+/* PROMPT */
 .prompt-preview{
-  font-size:15px;              /* antes 13 */
+  font-size:15px;
   line-height:1.6;
-  color:#dbe7ff;               /* mucho más claro */
+  color:#dbe7ff;
   margin-bottom:12px;
-
   display:-webkit-box;
   -webkit-line-clamp:8;
   -webkit-box-orient:vertical;
   overflow:hidden;
-
-  cursor:text;
 }
 
 .prompt-preview.expandido{
   -webkit-line-clamp:unset;
 }
 
+/* BOTÓN VER MÁS */
 .ver-mas{
   background:none;
   border:none;
@@ -246,6 +333,7 @@ h1{
   margin-bottom:10px;
 }
 
+/* VARIABLES */
 .var{
   background:rgba(255,204,0,.12);
   color:#FFCC00;
@@ -254,7 +342,6 @@ h1{
   cursor:pointer;
   font-weight:500;
   border:1px solid rgba(255,204,0,.3);
-  transition:.2s;
 }
 
 .var:hover{
@@ -262,10 +349,8 @@ h1{
 }
 
 .input-inline{
-  width:auto;
   min-width:80px;
   border:none;
-  outline:none;
   background:rgba(255,255,255,.05);
   color:#fff;
   font-size:14px;
@@ -273,82 +358,6 @@ h1{
   padding:2px 6px;
 }
 
-.topbar{
-  position:sticky;
-  top:0;
-  z-index:20;
-  background:rgba(5,14,29,.96);
-  border-bottom:1px solid rgba(255,255,255,.07);
-  padding:10px 14px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  backdrop-filter:blur(14px);
-}
-
-.topbar h1{
-  font-size:12px;
-  font-weight:500;
-  flex:1;
-}
-
-.topbar-rol{
-  font-size:9px;
-  color:#FFCC00;
-  background:rgba(255,204,0,.1);
-  padding:3px 8px;
-  border-radius:20px;
-}
-
-.topbar-logo{
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  background:linear-gradient(140deg,#0f2657,#1e4db7);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.logo-img-top{
-  width:20px;
-}
-
-.app{
-  max-width:900px;
-  margin:auto;
-  padding:20px;
-  margin-top:10px;
-}
-
-.topbar{
-  position:sticky;
-  top:0;
-  z-index:50;
-}
-
-.topbar{
-  position:sticky;
-  top:0;
-  z-index:20;
-}
-
-.logout-btn{
-  background:transparent;
-  border:1px solid rgba(255,255,255,.15);
-  color:#fff;
-  padding:6px 12px;
-  border-radius:8px;
-  font-size:12px;
-  cursor:pointer;
-  transition:.2s;
-}
-
-.logout-btn:hover{
-  background:rgba(255,255,255,.08);
-  border-color:rgba(255,255,255,.3);
-}
-  
 </style>
 </head>
 
@@ -359,9 +368,12 @@ h1{
   <div class="topbar-logo">
     <img src="/logo.png" class="logo-img-top">
   </div>
+
   <h1>SIPRESC - La Presentación</h1>
-  <span class="topbar-rol">DOCENTE</span>
-  <button class="logout-btn">Salir</button>
+
+  <span class="topbar-rol" id="tp-rol">—</span>
+
+  <button class="logout-btn" onclick="doLogout()">Salir</button>
 </div>
 
 <!-- CONTENIDO CENTRADO -->
@@ -789,6 +801,16 @@ function guardarValor(el, valor, key){
   el.textContent = final;
   el.setAttribute("data-value", final);
 
+}
+
+function doLogout(){
+  firebase.auth().signOut();
+  localStorage.removeItem('lp_user');
+
+  document.getElementById('s-app').classList.remove('on');
+  document.getElementById('s-login').classList.add('on');
+
+  document.getElementById('bnav').style.display='none';
 }
 </script>
 
