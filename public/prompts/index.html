@@ -74,8 +74,10 @@ body{
 }
 
 h1{
-  font-size:22px;
-  margin-bottom:12px;
+  font-size:24px;
+  font-weight:600;
+  margin-bottom:20px;
+  letter-spacing:.5px;
 }
 
 /* SEARCH */
@@ -330,6 +332,22 @@ h1{
   top:0;
   z-index:20;
 }
+
+.logout-btn{
+  background:transparent;
+  border:1px solid rgba(255,255,255,.15);
+  color:#fff;
+  padding:6px 12px;
+  border-radius:8px;
+  font-size:12px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.logout-btn:hover{
+  background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.3);
+}
   
 </style>
 </head>
@@ -344,28 +362,13 @@ h1{
     <img src="/logo.png" class="logo-img-top">
   </div>
   <h1>SIPRESC - La Presentación</h1>
-  <span class="topbar-rol">IA DOCENTE</span>
+  <span class="topbar-rol"> DOCENTE</span>
   <button class="logout-btn">Salir</button>
 </div>
 
-<!-- CONTENIDO -->
-<div class="app">
-  ...
-</div>
-
-</body>
-<div class="app">
-
-  <!-- HEADER PRO -->
-  <div class="header">
-    <div class="header-top">
-      <div class="logo">SIPRESC</div>
-      <div class="rol">IA DOCENTE</div>
-    </div>
 
     <h1>Banco de Prompts</h1>
 
-    <input class="search" placeholder="Buscar prompt..." oninput="aplicarFiltros(this.value)">
   </div>
 
   <!-- CATEGORÍAS -->
