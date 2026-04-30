@@ -1360,7 +1360,9 @@ let ST = {
 };
 
 
-const API = "/api/planeaciones"; // ⚠️ ajusta si tu ruta es otra
+const API = location.hostname.includes("git-")
+  ? "/api/planeaciones-test"
+  : "/api/planeaciones"; // ⚠️ ajusta si tu ruta es otra
 
 // 🔥 INICIO
 window.addEventListener("DOMContentLoaded", () => {
