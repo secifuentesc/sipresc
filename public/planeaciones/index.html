@@ -1374,13 +1374,16 @@ window.addEventListener("DOMContentLoaded", () => {
 
   ST.correo = correo;
 
-  // 🔥 CARGA INMEDIATA DESDE CACHE
+  // 🔥 AÑADE ESTA LÍNEA
+  cargarMaterias();
+
+  // 🔥 CACHE (esto ya lo tienes)
   const cache = localStorage.getItem("lp_user_data");
 
   if(cache){
     try{
       ST.data = JSON.parse(cache);
-      pintarMaterias(ST.data); // 🚀 muestra inmediato
+      pintarMaterias(ST.data);
     }catch(e){
       console.error(e);
     }
