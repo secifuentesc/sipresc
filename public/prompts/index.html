@@ -23,9 +23,24 @@
 body{
   margin:0;
   font-family:'Poppins',sans-serif;
-  background:var(--bg);
   color:var(--text);
   padding:16px;
+
+  /* Fondo base */
+  background: var(--bg);
+
+  /* Capas premium (profundidad visual) */
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 0%, rgba(30,77,183,.35) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 100%, rgba(255,204,0,.12) 0%, transparent 70%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.03), transparent 60%);
+
+  /* Sensación más fluida */
+  background-attachment: fixed;
+
+  /* Mejora visual */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1{
@@ -71,12 +86,26 @@ h1{
 }
 
 .card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:10px;
+  background:linear-gradient(160deg,#122449,#0f1f3d);
+  border:1px solid rgba(255,255,255,.04);
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:12px;
   transition:.2s;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  position:relative;
+  overflow:hidden;
+}
+
+.card::after{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:2px;
+  background:linear-gradient(90deg,#1e4db7,#FFCC00);
+  opacity:.4;
 }
 
 .card:hover{
@@ -101,12 +130,19 @@ h1{
 
 .btn{
   flex:1;
-  padding:8px;
+  padding:10px;
   border:none;
-  border-radius:8px;
+  border-radius:10px;
   font-size:11px;
   cursor:pointer;
   font-weight:600;
+  transition:.2s;
+
+}
+
+.btn:active{
+  transform:scale(.96);
+
 }
 
 .copy{background:var(--gold);}
@@ -373,21 +409,32 @@ function copiar(i){
 }
 
 function ver(i){
+
   const prompt = prompts[i].texto;
 
   const campos = [...prompt.matchAll(/\[(.*?)\]/g)].map(m => m[1]);
 
-  let html = `<div style="font-weight:600;margin-bottom:10px">Completa el prompt</div>`;
+  let html = `
+    <div style="font-weight:600;font-size:15px;margin-bottom:12px">
+      Personaliza el prompt
+    </div>
+  `;
 
   campos.forEach(c=>{
     html += `
-      <input class="input-dinamico" placeholder="${c}" data-key="${c}">
+      <div style="margin-bottom:8px">
+        <label style="font-size:11px;color:var(--muted)">${c}</label>
+        <input class="input-dinamico" placeholder="Escribe ${c}" data-key="${c}">
+      </div>
     `;
   });
 
   html += `
-    <button class="btn copy" onclick="copiarDinamico()">Copiar completo</button>
-    <div class="preview" id="preview"></div>
+    <button class="btn copy" style="margin-top:10px" onclick="generarPreview()">Generar</button>
+
+    <div class="preview" id="preview" style="margin-top:12px;background:#0f1f3d;padding:12px;border-radius:10px;border:1px solid var(--border)"></div>
+
+    <button class="btn fav" style="margin-top:10px" onclick="copiarPreview()">Copiar prompt final</button>
   `;
 
   document.getElementById('modal-texto').innerHTML = html;
@@ -456,6 +503,33 @@ function copiarDinamico(){
   navigator.clipboard.writeText(resultado);
 
   document.getElementById('preview').innerText = resultado;
+}
+
+function generarPreview(){
+
+  let resultado = window.promptBase;
+
+  const inputs = document.querySelectorAll('.input-dinamico');
+
+  inputs.forEach(inp=>{
+    const key = inp.getAttribute('data-key');
+    const val = inp.value || `[${key}]`;
+    resultado = resultado.replace(`[${key}]`, val);
+  });
+
+  document.getElementById('preview').innerText = resultado;
+
+  window.promptFinal = resultado;
+}
+
+function copiarPreview(){
+  if(!window.promptFinal){
+    alert("Primero genera el prompt");
+    return;
+  }
+
+  navigator.clipboard.writeText(window.promptFinal);
+  alert("Prompt copiado");
 }
 
 
