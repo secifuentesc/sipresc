@@ -197,6 +197,41 @@ h1{
   background:#0a1628;
   color:white;
 }
+
+.prompt-preview{
+  font-size:13px;
+  line-height:1.5;
+  color:var(--muted);
+  margin-bottom:10px;
+
+  display:-webkit-box;
+  -webkit-line-clamp:8;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+
+  cursor:pointer;
+}
+
+.prompt-preview.expandido{
+  -webkit-line-clamp:unset;
+}
+
+.ver-mas{
+  background:none;
+  border:none;
+  color:var(--gold);
+  font-size:12px;
+  cursor:pointer;
+  margin-bottom:10px;
+}
+
+.var{
+  background:rgba(30,77,183,.2);
+  color:#93c5fd;
+  padding:2px 6px;
+  border-radius:6px;
+  cursor:pointer;
+}
 </style>
 </head>
 
@@ -420,17 +455,24 @@ function renderPrompts(lista = prompts){
   const cont = document.getElementById('lista');
 
   cont.innerHTML = lista.map((p,i)=>`
+
     <div class="card">
 
       <div class="titulo">${p.titulo}</div>
       <div class="desc">${p.desc}</div>
 
+      <div class="prompt-preview" id="prev-${i}">
+        ${formatearPrompt(p.texto)}
+      </div>
+
+      <button class="ver-mas" onclick="togglePrompt(${i})">Ver más</button>
+
       <div class="actions">
-        <button class="btn copy" onclick="copiar(${i})">Copiar</button>
-        <button class="btn fav" onclick="ver(${i})">Personalizar</button>
+        <button class="btn copy" onclick="copiarPrompt(${i})">Copiar</button>
       </div>
 
     </div>
+
   `).join('');
 }
 
@@ -561,6 +603,53 @@ function copiarPreview(){
 
   navigator.clipboard.writeText(window.promptFinal);
   alert("Prompt copiado");
+}
+
+function formatearPrompt(texto){
+
+  return texto.replace(/\[(.*?)\]/g, (match, p1)=>{
+    return `<span class="var" onclick="editarVariable(this,'${p1}')">[${p1}]</span>`;
+  });
+
+}
+
+function editarVariable(el, key){
+
+  const valor = prompt(`Ingresa ${key}`);
+
+  if(valor){
+    el.textContent = valor;
+    el.setAttribute("data-value", valor);
+  }
+
+}
+
+function togglePrompt(i){
+
+  const el = document.getElementById(`prev-${i}`);
+
+  el.classList.toggle("expandido");
+
+}
+
+function copiarPrompt(i){
+
+  let html = document.getElementById(`prev-${i}`).innerHTML;
+
+  // reemplazar variables editadas
+  const temp = document.createElement("div");
+  temp.innerHTML = html;
+
+  temp.querySelectorAll(".var").forEach(el=>{
+    const val = el.getAttribute("data-value") || el.textContent;
+    el.replaceWith(val);
+  });
+
+  const textoFinal = temp.innerText;
+
+  navigator.clipboard.writeText(textoFinal);
+
+  alert("Prompt copiado listo para usar");
 }
 
 
