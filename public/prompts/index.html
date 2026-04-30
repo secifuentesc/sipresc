@@ -430,8 +430,9 @@ let prompts = [
   titulo:"Planeación oficial institucional",
   desc:"Formato oficial del colegio para planeaciones semanales",
   categoria:"Planeaciones",
-  texto:`
+  texto: `
 Actúa como un docente experto en planeación educativa del Instituto Parroquial Nuestra Señora de la Presentación.
+
 Tu tarea es construir una planeación de clase clara, organizada, coherente y aplicable en el aula, siguiendo estrictamente los lineamientos institucionales.
 
 DATOS (COMPLETAR):
@@ -447,7 +448,7 @@ LINEAMIENTOS INSTITUCIONALES:
 Presente + contenido + contexto + evidencia (opcional).
 
 Ejemplo:
-Identifica ideas principales en textos narrativos mediante ejercicios escritos.
+Identifica etiquetas básicas de HTML mediante ejercicios prácticos.
 
 2. Debe existir coherencia total entre:
 - Indicador
@@ -455,7 +456,7 @@ Identifica ideas principales en textos narrativos mediante ejercicios escritos.
 - Actividades
 
 3. Las actividades deben:
-- Estar organizadas por clase según el número de clases indicado por el docente.
+- Estar organizadas por clase según el número de clases indicado.
 - Generar exactamente la cantidad de clases solicitadas.
 - Estar enumeradas dentro de cada clase.
 - Ser oraciones completas, claras y específicas.
@@ -463,13 +464,24 @@ Identifica ideas principales en textos narrativos mediante ejercicios escritos.
 - Ser concretas y aplicables en el aula.
 - Evitar frases generales como “realizar taller”.
 
-4. Cada clase debe incluir:
+4. ESTILO DE REDACCIÓN (MUY IMPORTANTE):
+- Usar lenguaje directo y operativo.
+- No usar expresiones como: “el docente…”, “los estudiantes…”, “se realiza…”, “se busca…”.
+- Redactar en forma de acción concreta: explicación, identificación, análisis, aplicación, construcción.
+- Enfocar cada actividad en lo que se hace en clase.
+
+Ejemplos correctos:
+Explicación de la estructura básica de HTML con ejemplos en pantalla.
+Identificación de etiquetas HTML en fragmentos de código.
+Creación de una página básica usando etiquetas vistas.
+
+5. Cada clase debe incluir:
 - Tema específico de la clase.
-- Actividades pertinentes a ese tema.
+- Actividades alineadas al tema.
 
-5. La cantidad de clases debe coincidir exactamente con el número ingresado en “Número de clases en la semana”.
+6. La cantidad de clases debe coincidir exactamente con el número ingresado.
 
-6. Redacción:
+7. Redacción:
 - Clara, concreta y sin extensión innecesaria.
 - Correcta ortografía y puntuación.
 - Cada enunciado con punto final.
@@ -493,7 +505,7 @@ INDICADOR DE DESEMPEÑO:
 Redactado correctamente según lineamientos
 
 PLANEACIÓN POR CLASES:
-Generar únicamente la cantidad de clases indicada por el docente
+Generar únicamente la cantidad de clases indicada
 
 CLASE 1
 Tema:
@@ -511,11 +523,7 @@ CLASE 4
 Tema:
 Actividades:
 
-CLASE 5
-Tema:
-Actividades:
-
-Ajustar automáticamente la cantidad de clases. No agregar ni omitir clases.
+(Ajustar automáticamente la cantidad de clases. No agregar ni omitir clases.)
 
 Asegúrate de que la planeación sea breve, clara, coherente y lista para aplicarse en el aula.
 `
