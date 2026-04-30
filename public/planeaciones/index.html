@@ -581,6 +581,11 @@ body{
   border-bottom:2px solid #f06b6b !important;
   border-radius:4px;
 }
+.marca-warning{
+  background: rgba(250,204,21,.12);
+  border-bottom:2px solid #facc15 !important;
+  border-radius:4px;
+}
 
 .sugerencia{
   color:#4ade80;
@@ -2129,11 +2134,11 @@ if(indicador.length === 0){
   // 🔴 INDICADOR
   const campoIndicador = document.getElementById("indicadorInput");
   campoIndicador?.classList.remove("marca-error");
+  campoIndicador?.classList.remove("marca-warning");
 
   if(indicador.length < 5){
-    valido = false;
-    campoIndicador?.classList.add("marca-error");
-  }
+  campoIndicador?.classList.add("marca-warning");
+}
 
   // 🔴 CLASES SEGÚN INTENSIDAD
   for(let i = 1; i <= total; i++){
@@ -2464,15 +2469,35 @@ function generarClasesDispositivo(){
 
 function esIndicadorValido(texto){
 
-  const primeraPalabra = texto.trim().split(/\s+/)[0]?.toLowerCase() || "";
+  const t = texto.trim().toLowerCase();
+  if(!t) return false;
 
-  // Infinitivo: aplicar, resolver, analizar, identificar, comprender...
-  const terminaEnInfinitivo = /(ar|er|ir)$/.test(primeraPalabra);
+  const primera = t.split(/\s+/)[0];
 
-  // Tercera persona básica: el estudiante aplica, analiza, identifica...
-  const terceraPersona = /^el estudiante\s+[a-záéíóúñ]+/i.test(texto.trim());
+  // ❌ infinitivo
+  if(/(ar|er|ir)$/.test(primera)) return false;
 
-  return terminaEnInfinitivo || terceraPersona;
+  // ❌ tercera persona tipo "el estudiante..."
+  if(/^el estudiante\s+/.test(t)) return false;
+
+  // ✅ presente (aproximación funcional)
+  const esPresente = (
+    primera.endsWith("a") ||
+    primera.endsWith("e") ||
+    primera.endsWith("iza") ||
+    primera.endsWith("ece") ||
+    primera.endsWith("ye")
+  );
+
+  if(!esPresente) return false;
+
+  // ✅ estructura mínima (contenido + contexto)
+  const tieneContexto = t.includes(" mediante ") || 
+                        t.includes(" en ") || 
+                        t.includes(" a través de ") ||
+                        t.includes(" usando ");
+
+  return tieneContexto;
 }
 
 async function revisarIndicadorCoach(){
@@ -2501,9 +2526,9 @@ async function revisarIndicadorCoach(){
 
   // 🔹 VALIDACIÓN PEDAGÓGICA
   if(esIndicadorValido(texto)){
-    mensajes.push(`<div class="coach-ok">✔ Redacción adecuada (infinitivo o tercera persona).</div>`);
+    mensajes.push(`<div class="coach-ok">✔ Indicador correctamente redactado en presente y con estructura adecuada.</div>`);
   }else{
-    mensajes.push(`<div class="coach-warning">⚠ El indicador debe iniciar con un verbo en infinitivo o en tercera persona.</div>`);
+    mensajes.push(`<div class="coach-warning">⚠ El indicador debe estar en presente y tener estructura clara (contenido + contexto).</div>`);
   }
 
   if(!texto.endsWith(".")){
