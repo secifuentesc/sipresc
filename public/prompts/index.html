@@ -190,20 +190,36 @@ h1{
 
 <body>
 
-<h1>Banco de Prompts IA</h1>
+<div class="app">
 
-<input class="search" placeholder="Buscar prompt..." oninput="aplicarFiltros(this.value)">
+  <!-- HEADER PRO -->
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">SIPRESC</div>
+      <div class="rol">IA DOCENTE</div>
+    </div>
 
-<div class="categorias" id="categorias"></div>
+    <h1>Banco de Prompts</h1>
 
-<div id="lista"></div>
+    <input class="search" placeholder="Buscar prompt..." oninput="aplicarFiltros(this.value)">
+  </div>
 
+  <!-- CATEGORÍAS -->
+  <div class="categorias" id="categorias"></div>
+
+  <!-- LISTA -->
+  <div class="lista" id="lista"></div>
+
+</div>
+
+<!-- MODAL -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <div id="modal-texto"></div>
-    <button class="btn copy" onclick="copiarActual()">Copiar</button>
   </div>
 </div>
+
+</body>
 
 <script>
 
