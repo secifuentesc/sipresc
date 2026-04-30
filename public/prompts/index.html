@@ -163,7 +163,7 @@ body{
 }
 
 /* TITULOS */
-h1{
+.app h1{
   font-size:24px;
   font-weight:600;
   margin-bottom:20px;
@@ -674,6 +674,7 @@ document.getElementById('modal').onclick = ()=> {
 };
 
 init();
+document.getElementById('tp-rol').textContent = 'DOCENTE';
 
 function aplicarFiltros(texto=""){
   let lista = prompts;
@@ -812,6 +813,7 @@ function doLogout(){
 
   document.getElementById('bnav').style.display='none';
 }
+
 </script>
 
 </body>
