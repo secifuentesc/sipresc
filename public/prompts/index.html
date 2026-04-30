@@ -108,6 +108,12 @@ h1{
   max-width:400px;
 }
 
+.cat.disabled{
+  opacity:.3;
+  cursor:not-allowed;
+  background:#1a2b4a;
+}
+
 </style>
 </head>
 
@@ -115,7 +121,7 @@ h1{
 
 <h1>Banco de Prompts IA</h1>
 
-<input class="search" placeholder="Buscar prompt..." oninput="buscar(this.value)">
+<input class="search" placeholder="Buscar prompt..." oninput="aplicarFiltros(this.value)">
 
 <div class="categorias" id="categorias"></div>
 
@@ -130,24 +136,28 @@ h1{
 
 <script>
 
+const CATEGORIAS = [
+  {nombre:"Todos", activa:true},
+  {nombre:"Planeaciones", activa:true},
+  {nombre:"Correos", activa:true},
+  {nombre:"Evaluaciones", activa:false},
+  {nombre:"Actividades", activa:false},
+  {nombre:"Informes", activa:false},
+  {nombre:"Contenido", activa:false}
+];
+
 let prompts = [
   {
     titulo:"Planeación semanal",
     desc:"Planeaciones con estructura institucional",
-    categoria:"Docencia",
-    texto:"Crea una planeación semanal con indicador en infinitivo, temas y actividades claras..."
+    categoria:"Planeaciones",
+    texto:"Crea una planeación semanal con indicador en infinitivo, temas y actividades claras, alineadas al plan de área..."
   },
   {
-    titulo:"Copy Instagram",
-    desc:"Contenido institucional para redes",
-    categoria:"Redes",
-    texto:"Redacta un copy para Instagram del Instituto La Presentación con tono cercano, humano y profesional..."
-  },
-  {
-    titulo:"Evaluación académica",
-    desc:"Creación de evaluaciones",
-    categoria:"Evaluación",
-    texto:"Diseña una evaluación para estudiantes con preguntas tipo ICFES..."
+    titulo:"Correo institucional a familias",
+    desc:"Comunicación clara, humana y formal",
+    categoria:"Correos",
+    texto:"Redacta un correo institucional dirigido a familias, con tono cercano, claro, sin redundancias, bien estructurado..."
   }
 ];
 
@@ -160,12 +170,13 @@ function init(){
 }
 
 function renderCategorias(){
-  const cats = ["Todos",...new Set(prompts.map(p=>p.categoria))];
+  document.getElementById('categorias').innerHTML = CATEGORIAS.map(c=>`
 
-  document.getElementById('categorias').innerHTML = cats.map(c=>`
-    <div class="cat ${c==categoriaActiva?'active':''}" onclick="filtrar('${c}')">
-      ${c}
+    <div class="cat ${c.nombre==categoriaActiva?'active':''} ${!c.activa?'disabled':''}"
+         onclick="${c.activa ? `filtrar('${c.nombre}')` : ''}">
+      ${c.nombre}
     </div>
+
   `).join('');
 }
 
@@ -216,14 +227,7 @@ function buscar(txt){
 function filtrar(cat){
   categoriaActiva = cat;
   renderCategorias();
-
-  let lista = prompts;
-
-  if(cat !== "Todos"){
-    lista = prompts.filter(p=>p.categoria === cat);
-  }
-
-  renderPrompts(lista);
+  aplicarFiltros();
 }
 
 document.getElementById('modal').onclick = ()=> {
@@ -231,6 +235,22 @@ document.getElementById('modal').onclick = ()=> {
 };
 
 init();
+
+function aplicarFiltros(texto=""){
+  let lista = prompts;
+
+  if(categoriaActiva !== "Todos"){
+    lista = lista.filter(p=>p.categoria === categoriaActiva);
+  }
+
+  if(texto){
+    lista = lista.filter(p =>
+      p.titulo.toLowerCase().includes(texto.toLowerCase())
+    );
+  }
+
+  renderPrompts(lista);
+}
 
 </script>
 
