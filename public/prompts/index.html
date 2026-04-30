@@ -7,27 +7,37 @@
 <link rel="icon" type="image/png" href="/logo.png">
 <meta name="theme-color" content="#0a1628">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#070f1f;
-  --card:#0f1f3d;
-  --card2:#122449;
-  --line:rgba(255,255,255,.05);
-  --text:#e8edf8;
-  --muted:#7a8fb0;
-  --gold:#FFCC00;
-  --blue:#1e4db7;
+  --ink:#0a1628;
+  --blue:#1a3a6b;
+  --royal:#0f2657;
+  --cobalt:#1e4db7;
+  --gold:#c9962a;
+  --gold2:#e8b84b;
+  --gold3:rgba(201,150,42,.12);
+  --s0:#050e1d;
+  --s1:#0d1f3c;
+  --s2:#122449;
+  --s3:#182e58;
+  --br:rgba(255,255,255,.07);
+  --br2:rgba(255,255,255,.13);
+  --tx:#e8edf8;
+  --mt:#7a8fb0;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'IBM Plex Sans',sans-serif;
 }
 
 body{
   margin:0;
-  font-family:'Poppins',sans-serif;
-  color:var(--text);
-  background:
-    radial-gradient(circle at 20% 0%, rgba(30,77,183,.3), transparent 40%),
-    radial-gradient(circle at 80% 100%, rgba(255,204,0,.15), transparent 40%),
-    var(--bg);
+  font-family:var(--sans);
+  color:var(--tx);
+  background:var(--s0);
+
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 0%,rgba(26,58,107,.5) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 100%,rgba(30,77,183,.25) 0%,transparent 70%);
 }
 
 /* APP */
@@ -314,26 +324,36 @@ h1{
   top:0;
   z-index:50;
 }
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:20;
+}
   
 </style>
 </head>
 
 <body>
 
+<body>
+
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-logo">
     <img src="/logo.png" class="logo-img-top">
   </div>
-
   <h1>SIPRESC - La Presentación</h1>
-
   <span class="topbar-rol">IA DOCENTE</span>
-
-  <button class="logout-btn" onclick="window.location.href='/'">
-    Salir
-  </button>
+  <button class="logout-btn">Salir</button>
 </div>
 
+<!-- CONTENIDO -->
+<div class="app">
+  ...
+</div>
+
+</body>
 <div class="app">
 
   <!-- HEADER PRO -->
