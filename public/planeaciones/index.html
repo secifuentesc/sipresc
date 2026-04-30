@@ -2949,44 +2949,36 @@ function fileToBase64(file){
 document.getElementById("compArchivo").addEventListener("change", async function(){
 
   const file = this.files[0];
+
   if(!file) return;
+
+  if(file.size > 3 * 1024 * 1024){
+    alert("El archivo supera el tamaño permitido (máx 3MB)");
+    this.value = "";
+    return;
+  }
 
   archivoCompNombre = file.name;
   archivoCompBase64 = await fileToBase64(file);
 
-});
-
-  const file = this.files[0];
-  if(file && file.size > 3 * 1024 * 1024){
-  alert("El archivo supera el tamaño permitido (máx 3MB)");
-  this.value = "";
-  return;
-}
-  if(!file) return;
-
-  // 🔹 Nombre del archivo
   document.getElementById("compNombre").textContent = file.name;
   document.getElementById("compLabel").textContent = "Archivo cargado ✔";
 
   const bar = document.getElementById("compProgress");
   const box = document.getElementById("compBox").querySelector(".file-upload");
 
-  // 🔹 Reset
   bar.style.width = "0%";
 
-  // 🔥 Animación rápida tipo app
   setTimeout(()=>{ bar.style.width = "35%"; }, 80);
   setTimeout(()=>{ bar.style.width = "70%"; }, 180);
   setTimeout(()=>{ bar.style.width = "100%"; }, 320);
 
-  // 🔥 Feedback visual
   setTimeout(()=>{
     box.style.borderColor = "#4ade80";
     box.style.boxShadow = "0 0 0 1px #4ade80 inset";
   }, 350);
 
-  // 🔥 mostrar botón quitar
-document.getElementById("btnQuitarComp").style.display = "inline-block";
+  document.getElementById("btnQuitarComp").style.display = "inline-block";
 
 });
 
@@ -3000,12 +2992,6 @@ document.getElementById("famArchivo").addEventListener("change", async function(
 
 });
 
-  const file = this.files[0];
-  if(file && file.size > 3 * 1024 * 1024){
-  alert("El archivo supera el tamaño permitido (máx 3MB)");
-  this.value = "";
-  return;
-}
   if(!file) return;
 
   document.getElementById("famNombre").textContent = file.name;
