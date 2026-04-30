@@ -1,1 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Prompts - La Presentación</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Tipografía institucional -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body{
+      margin:0;
+      font-family:'Poppins',sans-serif;
+      background:#0a1628;
+      color:white;
+      padding:20px;
+    }
+
+    h1{
+      font-size:20px;
+      margin-bottom:20px;
+    }
+
+    .card{
+      background:#122449;
+      border-radius:12px;
+      padding:15px;
+      margin-bottom:10px;
+      cursor:pointer;
+      transition:.2s;
+    }
+
+    .card:hover{
+      background:#1e4db7;
+    }
+
+    .titulo{
+      font-weight:600;
+      margin-bottom:5px;
+    }
+
+    .desc{
+      font-size:13px;
+      opacity:.7;
+    }
+
+    .btn{
+      margin-top:10px;
+      background:#FFCC00;
+      border:none;
+      padding:8px 12px;
+      border-radius:8px;
+      cursor:pointer;
+      font-size:12px;
+      font-weight:600;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Banco de Prompts</h1>
+
+<div id="lista-prompts"></div>
+
+<script>
+
+const prompts = [
+  {
+    titulo: "Planeación de clase",
+    desc: "Generar planeaciones semanales estructuradas",
+    texto: "Crea una planeación semanal con indicador de desempeño en infinitivo, temas y actividades claras..."
+  },
+  {
+    titulo: "Copy institucional",
+    desc: "Textos para redes sociales del colegio",
+    texto: "Redacta un copy para Instagram del Instituto La Presentación con tono cercano, humano y profesional..."
+  }
+];
+
+function render(){
+  const cont = document.getElementById('lista-prompts');
+
+  cont.innerHTML = prompts.map((p,i)=>`
+    <div class="card">
+      <div class="titulo">${p.titulo}</div>
+      <div class="desc">${p.desc}</div>
+      <button class="btn" onclick="copiar(${i})">Copiar prompt</button>
+    </div>
+  `).join('');
+}
+
+function copiar(i){
+  navigator.clipboard.writeText(prompts[i].texto);
+  alert("Prompt copiado");
+}
+
+render();
+
+</script>
+
+</body>
+</html>
