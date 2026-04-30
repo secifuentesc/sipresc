@@ -485,6 +485,9 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
         <button class="btn btn-g" style="margin-bottom:12px;font-size:13px;" onclick="abrirModulo('planeaciones')">Planeaciones</button>
         <button class="btn btn-p" style="font-size:13px;" onclick="abrirModulo('citas')">Citas</button>
         <button class="btn btn-o" style="font-size:13px;" onclick="abrirModulo('evaluaciones')">Evaluaciones finales</button>
+        <button class="btn btn-o" onclick="abrirModulo('prompts')">
+  Prompts IA
+</button>
       </div>
     </div>
   </div>
@@ -1261,7 +1264,8 @@ function mostrarPantallaInicial(){
 function abrirModulo(modulo){
   const rutas = {
   planeaciones: '/planeaciones/',
-  evaluaciones: '/evaluaciones/' // 👈 NUEVO
+  evaluaciones: '/evaluaciones/', // 👈 NUEVO
+  prompts: '/prompts/'
 };
   if(modulo==='citas'){goTab('citas',document.getElementById('ni-citas'));return;}
   if(rutas[modulo]){window.location.href=rutas[modulo];return;}
