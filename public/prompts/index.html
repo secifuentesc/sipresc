@@ -9,69 +9,89 @@
 
 <style>
 
+:root{
+  --bg:#0a1628;
+  --card:#122449;
+  --card2:#0f1f3d;
+  --border:rgba(255,255,255,.06);
+  --text:#e8edf8;
+  --muted:#7a8fb0;
+  --gold:#FFCC00;
+  --blue:#1e4db7;
+}
+
 body{
   margin:0;
   font-family:'Poppins',sans-serif;
-  background:#0a1628;
-  color:#fff;
-  padding:15px;
+  background:var(--bg);
+  color:var(--text);
+  padding:16px;
 }
 
 h1{
   font-size:18px;
-  margin-bottom:10px;
+  font-weight:600;
+  margin-bottom:14px;
 }
 
 .search{
   width:100%;
   padding:12px;
-  border-radius:10px;
-  border:none;
-  margin-bottom:10px;
-  background:#122449;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--card2);
   color:white;
+  margin-bottom:12px;
 }
 
 .categorias{
   display:flex;
   gap:8px;
   overflow-x:auto;
-  margin-bottom:15px;
+  margin-bottom:16px;
 }
 
 .cat{
-  padding:6px 12px;
+  padding:7px 14px;
   border-radius:20px;
-  background:#122449;
-  font-size:12px;
+  background:var(--card2);
+  font-size:11px;
+  border:1px solid var(--border);
   cursor:pointer;
 }
 
 .cat.active{
-  background:#FFCC00;
+  background:var(--gold);
   color:#000;
 }
 
+.cat.disabled{
+  opacity:.3;
+  cursor:not-allowed;
+}
+
 .card{
-  background:#122449;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
   padding:14px;
-  border-radius:12px;
   margin-bottom:10px;
   transition:.2s;
 }
 
 .card:hover{
-  transform:scale(.98);
+  border-color:rgba(255,204,0,.4);
 }
 
 .titulo{
   font-weight:600;
+  font-size:14px;
 }
 
 .desc{
-  font-size:13px;
-  opacity:.7;
-  margin:5px 0 10px;
+  font-size:12px;
+  color:var(--muted);
+  margin:6px 0 10px;
 }
 
 .actions{
@@ -84,34 +104,49 @@ h1{
   padding:8px;
   border:none;
   border-radius:8px;
-  font-size:12px;
+  font-size:11px;
   cursor:pointer;
+  font-weight:600;
 }
 
-.copy{background:#FFCC00;}
-.fav{background:#1e4db7;color:white;}
+.copy{background:var(--gold);}
+.fav{background:var(--blue);color:white;}
 
 .modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.8);
+  background:rgba(0,0,0,.85);
   display:none;
   justify-content:center;
   align-items:center;
 }
 
 .modal-content{
-  background:#122449;
-  padding:20px;
-  border-radius:12px;
-  width:90%;
-  max-width:400px;
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:18px;
+  border-radius:14px;
+  width:92%;
+  max-width:420px;
+  max-height:80vh;
+  overflow:auto;
 }
 
-.cat.disabled{
-  opacity:.3;
-  cursor:not-allowed;
-  background:#1a2b4a;
+.input-dinamico{
+  width:100%;
+  padding:8px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  margin:5px 0;
+  background:#0a1628;
+  color:white;
+}
+
+.preview{
+  margin-top:10px;
+  font-size:12px;
+  color:var(--muted);
+  white-space:pre-line;
 }
 
 </style>
@@ -147,18 +182,154 @@ const CATEGORIAS = [
 ];
 
 let prompts = [
+
   {
-    titulo:"Planeación semanal",
-    desc:"Planeaciones con estructura institucional",
+    titulo:"Planeación semanal institucional",
+    desc:"Planeación completa alineada al formato del colegio",
     categoria:"Planeaciones",
-    texto:"Crea una planeación semanal con indicador en infinitivo, temas y actividades claras, alineadas al plan de área..."
+    texto:`
+Actúa como docente experto del Instituto Parroquial Nuestra Señora de la Presentación.
+
+Crea una planeación semanal para:
+Grado: [grado]  
+Asignatura: [asignatura]  
+Semana: [semana]  
+Tema central: [tema]
+
+La planeación debe incluir:
+
+1. Indicador de desempeño (redactado en infinitivo)
+2. Temas de la clase
+3. Actividades principales de la clase (claras, concretas y aplicables)
+4. Metodología breve
+5. Recursos necesarios
+6. Observación para familias (tono cercano, claro y profesional)
+
+Condiciones:
+- Lenguaje claro, organizado y de alto nivel institucional
+- Sin redundancias
+- Coherente con el estilo del colegio
+- Actividades aplicables en aula real
+
+Entrega todo estructurado y listo para copiar en formato institucional.
+`
   },
+
+  {
+    titulo:"Planeación rápida (clase puntual)",
+    desc:"Planeación breve y directa para una sola clase",
+    categoria:"Planeaciones",
+    texto:`
+Diseña una planeación de clase para:
+
+Grado: [grado]  
+Asignatura: [asignatura]  
+Tema: [tema]
+
+Incluye:
+- Indicador de desempeño (en infinitivo)
+- Actividad inicial
+- Desarrollo de la clase
+- Actividad de cierre
+- Recursos
+
+Condiciones:
+- Claro, breve y aplicable
+- Enfoque práctico
+- Sin teoría innecesaria
+`
+  },
+
   {
     titulo:"Correo institucional a familias",
-    desc:"Comunicación clara, humana y formal",
+    desc:"Mensaje claro, humano y profesional",
     categoria:"Correos",
-    texto:"Redacta un correo institucional dirigido a familias, con tono cercano, claro, sin redundancias, bien estructurado..."
+    texto:`
+Redacta un correo institucional dirigido a familias del colegio.
+
+Contexto: [situacion]
+
+El correo debe:
+- Tener saludo formal cercano
+- Ser claro, organizado y sin redundancias
+- Mantener tono humano y respetuoso
+- No usar lenguaje robótico
+- Transmitir seguridad institucional
+
+Debe incluir:
+- Introducción clara
+- Desarrollo del mensaje
+- Cierre adecuado
+
+Firma como:
+Instituto Parroquial Nuestra Señora de la Presentación
+`
+  },
+
+  {
+    titulo:"Mensaje corto tipo WhatsApp institucional",
+    desc:"Comunicación breve pero bien estructurada",
+    categoria:"Correos",
+    texto:`
+Redacta un mensaje corto institucional para WhatsApp.
+
+Tema: [tema]
+
+Condiciones:
+- Claro y directo
+- Tono cercano pero respetuoso
+- Bien redactado
+- Sin emojis innecesarios
+- Máximo 5 líneas
+
+Debe sentirse humano y no como texto generado por IA.
+`
+  },
+
+  {
+    titulo:"Observación para boletín académico",
+    desc:"Comentario profesional para estudiantes",
+    categoria:"Evaluaciones",
+    texto:`
+Redacta una observación académica para boletín.
+
+Estudiante: [nombre]  
+Situación: [situacion]
+
+Debe:
+- Mantener tono profesional
+- Ser claro y respetuoso
+- Evidenciar fortalezas y aspectos a mejorar
+- No ser negativo ni juzgante
+
+Formato:
+Un solo párrafo bien redactado.
+`
+  },
+
+  {
+    titulo:"Actividad de clase creativa",
+    desc:"Diseño de actividad dinámica",
+    categoria:"Actividades",
+    texto:`
+Diseña una actividad para clase.
+
+Grado: [grado]  
+Tema: [tema]
+
+Debe incluir:
+- Objetivo
+- Descripción de la actividad
+- Materiales
+- Resultado esperado
+
+Condiciones:
+- Dinámica
+- Participativa
+- Aplicable en aula real
+`
   }
+
 ];
 
 let categoriaActiva = "Todos";
@@ -202,9 +373,27 @@ function copiar(i){
 }
 
 function ver(i){
-  actual = prompts[i].texto;
-  document.getElementById('modal-texto').innerText = actual;
+  const prompt = prompts[i].texto;
+
+  const campos = [...prompt.matchAll(/\[(.*?)\]/g)].map(m => m[1]);
+
+  let html = `<div style="font-weight:600;margin-bottom:10px">Completa el prompt</div>`;
+
+  campos.forEach(c=>{
+    html += `
+      <input class="input-dinamico" placeholder="${c}" data-key="${c}">
+    `;
+  });
+
+  html += `
+    <button class="btn copy" onclick="copiarDinamico()">Copiar completo</button>
+    <div class="preview" id="preview"></div>
+  `;
+
+  document.getElementById('modal-texto').innerHTML = html;
   document.getElementById('modal').style.display='flex';
+
+  window.promptBase = prompt;
 }
 
 function copiarActual(){
@@ -251,6 +440,24 @@ function aplicarFiltros(texto=""){
 
   renderPrompts(lista);
 }
+
+function copiarDinamico(){
+
+  let resultado = window.promptBase;
+
+  const inputs = document.querySelectorAll('.input-dinamico');
+
+  inputs.forEach(inp=>{
+    const key = inp.getAttribute('data-key');
+    const val = inp.value || `[${key}]`;
+    resultado = resultado.replace(`[${key}]`, val);
+  });
+
+  navigator.clipboard.writeText(resultado);
+
+  document.getElementById('preview').innerText = resultado;
+}
+
 
 </script>
 
