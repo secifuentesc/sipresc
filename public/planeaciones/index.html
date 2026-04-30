@@ -807,6 +807,34 @@ body{
   font-size:13px;
   color:#7a8fb0;
 }
+
+.loader-mini{
+  display:inline-block;
+  width:12px;
+  height:12px;
+  border:2px solid rgba(255,255,255,.2);
+  border-top:2px solid var(--gold);
+  border-radius:50%;
+  margin-left:6px;
+  animation:spinMini .6s linear infinite;
+}
+
+@keyframes spinMini{
+  to{ transform:rotate(360deg); }
+}.loader-mini{
+  display:inline-block;
+  width:12px;
+  height:12px;
+  border:2px solid rgba(255,255,255,.2);
+  border-top:2px solid var(--gold);
+  border-radius:50%;
+  margin-left:6px;
+  animation:spinMini .6s linear infinite;
+}
+
+@keyframes spinMini{
+  to{ transform:rotate(360deg); }
+}
   
 </style>
 </head>
@@ -1373,13 +1401,10 @@ async function cargarMaterias(){
   const display = document.getElementById("materiaText");
 
 // 🔥 FEEDBACK INMEDIATO
-display.textContent = "Cargando materias...";
-  // 🔥 EVITA QUE SE VEA VACÍO MUCHO TIEMPO
-setTimeout(()=>{
-  if(!ST.data){
-    display.textContent = "Seleccionar materia...";
-  }
-}, 200);
+display.innerHTML = `
+  <span style="opacity:.7;">Cargando materias</span>
+  <span class="loader-mini"></span>
+`;
 
   if(!correo){
     display.textContent = "Sesión no válida";
@@ -1401,20 +1426,24 @@ setTimeout(()=>{
   // 🔥 2. FETCH EN SEGUNDO PLANO (SIN BLOQUEAR)
   setTimeout(()=>{
   fetch(`${API}?accion=cargaDocente&correo=${correo}`)
-    .then(res => res.json())
-    .then(json => {
+  .then(res => res.json())
+  .then(json => {
 
-      if(json.ok && json.materias){
-        ST.data = json.materias;
-        pintarMaterias(json.materias);
+    if(json.ok && json.materias){
+      ST.data = json.materias;
+      pintarMaterias(json.materias);
 
-        localStorage.setItem(CACHE_KEY, JSON.stringify(json.materias));
-        localStorage.setItem(CACHE_TIME, String(Date.now()));
-        // 🔥 GUARDAR TODO PARA CARGA INMEDIATA FUTURA
-        localStorage.setItem("lp_user_data", JSON.stringify(json.materias));
-      }
+      // 🔥 AQUÍ VA
+      display.textContent = "Seleccionar materia...";
 
-    })
+      localStorage.setItem(CACHE_KEY, JSON.stringify(json.materias));
+      localStorage.setItem(CACHE_TIME, String(Date.now()));
+      localStorage.setItem("lp_user_data", JSON.stringify(json.materias));
+    } else {
+      display.textContent = "Sin materias asignadas";
+    }
+
+  })
 
 .catch(err => console.error(err));
 
