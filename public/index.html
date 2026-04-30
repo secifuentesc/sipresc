@@ -738,6 +738,18 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
+const esPreview = window.location.hostname.includes("git-dev");
+
+if(esPreview){
+  const clave = prompt("Acceso de pruebas:");
+
+  if(clave !== "SIPRESC2026"){
+    document.body.innerHTML = "<h2 style='color:white;text-align:center;margin-top:40px;'>Acceso restringido</h2>";
+    throw new Error("Bloqueado");
+  }
+}
+</script>
+<script>
 // ════════════════════════════════════════════════════════════
 // CÓDIGO ORIGINAL — sin cambios
 // ════════════════════════════════════════════════════════════
