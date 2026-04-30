@@ -317,6 +317,7 @@ body{
   -webkit-line-clamp:8;
   -webkit-box-orient:vertical;
   overflow:hidden;
+  white-space: pre-line;
 }
 
 .prompt-preview.expandido{
@@ -362,6 +363,12 @@ body{
   opacity:0.4;
   cursor:not-allowed;
   pointer-events:none;
+}
+
+.no-edit{
+  color:#8aa0c8;
+  opacity:0.6;
+  cursor:default;
 }
 
 </style>
@@ -691,8 +698,16 @@ function copiarPreview(){
 
 function formatearPrompt(texto){
 
+  const editables = ["semana","grado","asignatura","numero de clases","tema"];
+
   return texto.replace(/\[(.*?)\]/g, (match, p1)=>{
-    return `<span class="var" onclick="editarVariable(this,'${p1}')">[${p1}]</span>`;
+
+    if(editables.includes(p1.trim())){
+      return `<span class="var" onclick="editarVariable(this,'${p1}')">[${p1}]</span>`;
+    }else{
+      return `<span class="no-edit">[${p1}]</span>`;
+    }
+
   });
 
 }
