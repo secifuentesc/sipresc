@@ -702,12 +702,17 @@ function formatearPrompt(texto){
 
   const editables = ["semana","grado","asignatura","numero de clases","tema"];
 
+  // 🔥 ELIMINA espacios y saltos de línea al inicio y final
+  texto = texto.trim();
+
   return texto.replace(/\[(.*?)\]/g, (match, p1)=>{
 
-    if(editables.includes(p1.trim())){
-      return `<span class="var" onclick="editarVariable(this,'${p1}')">[${p1}]</span>`;
+    const key = p1.trim();
+
+    if(editables.includes(key)){
+      return `<span class="var" onclick="editarVariable(this,'${key}')">[${key}]</span>`;
     }else{
-      return `<span class="no-edit">[${p1}]</span>`;
+      return `<span class="no-edit">[${key}]</span>`;
     }
 
   });
