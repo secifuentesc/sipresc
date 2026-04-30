@@ -2924,17 +2924,25 @@ cacheFamilia = texto;
 function evaluarErroresGlobal(){
 
   const hayErrores =
-    document.querySelectorAll(".coach-error").length > 0;
+
+    document.querySelectorAll(".coach-error").length > 0 ||
+
+    document.querySelectorAll(".coach-warning").length > 0; // 🔥 NUEVO
 
   const btn = document.getElementById("btnCorregir");
 
   if(!btn) return;
 
   if(hayErrores){
+
     btn.classList.add("activo");
+
   }else{
+
     btn.classList.remove("activo");
+
   }
+
 }
 
 function fileToBase64(file){
