@@ -1164,6 +1164,11 @@ let cacheIndicador = "";
 let cacheObservacion = "";
 let cacheComp = "";
 let cacheFamilia = "";
+let archivoCompBase64 = null;
+let archivoCompNombre = null;
+
+let archivoFamBase64 = null;
+let archivoFamNombre = null;
 
 async function corregirTodo(){
 
@@ -1941,59 +1946,67 @@ async function enviarPlaneacion(){
 
   const payload = {
 
-    accion: "guardarFinal",
-    correo,
+  accion: "guardarFinal",
+  correo,
 
-    asignatura: ST.materia || "",
-    grado: ST.grado || "",
-    gruposDestino: (ST.grupos || []).join(","),
+  asignatura: ST.materia || "",
+  grado: ST.grado || "",
+  gruposDestino: (ST.grupos || []).join(","),
 
-    semana: (ST.semana || "").toUpperCase(),
+  semana: (ST.semana || "").toUpperCase(),
 
-    indicador: document.getElementById("indicadorInput")?.value || "",
+  indicador: document.getElementById("indicadorInput")?.value || "",
 
-    d1_tema: document.getElementById("tema_1")?.value || "",
-    d1_act: document.getElementById("act_1")?.value || "",
+  d1_tema: document.getElementById("tema_1")?.value || "",
+  d1_act: document.getElementById("act_1")?.value || "",
 
-    d2_tema: document.getElementById("tema_2")?.value || "",
-    d2_act: document.getElementById("act_2")?.value || "",
+  d2_tema: document.getElementById("tema_2")?.value || "",
+  d2_act: document.getElementById("act_2")?.value || "",
 
-    d3_tema: document.getElementById("tema_3")?.value || "",
-    d3_act: document.getElementById("act_3")?.value || "",
+  d3_tema: document.getElementById("tema_3")?.value || "",
+  d3_act: document.getElementById("act_3")?.value || "",
 
-    d4_tema: document.getElementById("tema_4")?.value || "",
-    d4_act: document.getElementById("act_4")?.value || "",
+  d4_tema: document.getElementById("tema_4")?.value || "",
+  d4_act: document.getElementById("act_4")?.value || "",
 
-    d5_tema: document.getElementById("tema_5")?.value || "",
-    d5_act: document.getElementById("act_5")?.value || "",
+  d5_tema: document.getElementById("tema_5")?.value || "",
+  d5_act: document.getElementById("act_5")?.value || "",
 
-    intensidad: ST.intensidad || 1,
+  intensidad: ST.intensidad || 1,
 
-    observacion:
-      ST.observacionActiva === "si"
-        ? document.getElementById("observacionInput")?.value || ""
-        : "",
+  observacion:
+    ST.observacionActiva === "si"
+      ? document.getElementById("observacionInput")?.value || ""
+      : "",
 
-    comp_obligatoria:
-      ST.compActiva === "si"
-        ? document.getElementById("compObligatoria")?.value || ""
-        : "",
+  comp_obligatoria:
+    ST.compActiva === "si"
+      ? document.getElementById("compObligatoria")?.value || ""
+      : "",
 
-    fam_obs:
-      ST.famActiva === "si"
-        ? document.getElementById("famObs")?.value || ""
-        : "",
+  // 🔥 AQUÍ ESTÁ LO NUEVO (ARCHIVO COMPLEMENTARIO)
+  comp_anexo: archivoCompBase64 || null,
+  comp_nombre: archivoCompNombre || "",
 
-    disp_clases:
-      ST.dispActivo === "si"
-        ? (ST.dispClases || []).join(",")
-        : "",
+  fam_obs:
+    ST.famActiva === "si"
+      ? document.getElementById("famObs")?.value || ""
+      : "",
 
-    disp_desc:
-      ST.dispActivo === "si"
-        ? document.getElementById("dispDescripcion")?.value || ""
-        : ""
-  };
+  // 🔥 AQUÍ ESTÁ LO NUEVO (ARCHIVO FAMILIAS)
+  fam_anexo: archivoFamBase64 || null,
+  fam_nombre: archivoFamNombre || "",
+
+  disp_clases:
+    ST.dispActivo === "si"
+      ? (ST.dispClases || []).join(",")
+      : "",
+
+  disp_desc:
+    ST.dispActivo === "si"
+      ? document.getElementById("dispDescripcion")?.value || ""
+      : ""
+};
 
   // 🚀 ENVÍO EN BACKGROUND (SIN ESPERAR)
   fetch(API,{
@@ -2933,7 +2946,15 @@ function fileToBase64(file){
   });
 }
 
-document.getElementById("compArchivo").addEventListener("change", function(){
+document.getElementById("compArchivo").addEventListener("change", async function(){
+
+  const file = this.files[0];
+  if(!file) return;
+
+  archivoCompNombre = file.name;
+  archivoCompBase64 = await fileToBase64(file);
+
+});
 
   const file = this.files[0];
   if(file && file.size > 3 * 1024 * 1024){
@@ -2969,7 +2990,15 @@ document.getElementById("btnQuitarComp").style.display = "inline-block";
 
 });
 
-document.getElementById("famArchivo").addEventListener("change", function(){
+document.getElementById("famArchivo").addEventListener("change", async function(){
+
+  const file = this.files[0];
+  if(!file) return;
+
+  archivoFamNombre = file.name;
+  archivoFamBase64 = await fileToBase64(file);
+
+});
 
   const file = this.files[0];
   if(file && file.size > 3 * 1024 * 1024){
