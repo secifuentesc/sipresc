@@ -1435,8 +1435,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  cargarBorrador();
-
 });
 
 // 🔥 CARGAR MATERIAS
@@ -1605,6 +1603,10 @@ mostrarIntensidad();
     `${ST.materia} · ${ST.grado}`;
 
   actualizarProgreso();
+
+  setTimeout(() => {
+  cargarBorrador();
+}, 500);
 }
 
 // 🔥 MOSTRAR BLOQUES
@@ -1733,6 +1735,10 @@ setTimeout(() => {
 
 }, 100);
 
+  setTimeout(() => {
+  cargarBorrador();
+}, 300);
+
 }
 
 let timer;
@@ -1796,8 +1802,11 @@ function guardarAuto(){
 
       };
 
+      const correo = obtenerCorreo() || "anon";
+      const key = `planeacion_${correo}_${ST.materia}_${ST.grado}_${ST.semana}`;
+
       // 🔥 GUARDADO LOCAL
-      localStorage.setItem("planeacion_borrador", JSON.stringify(data));
+      localStorage.setItem(key, JSON.stringify(data));
 
       document.getElementById("estadoGuardado").textContent = "Guardado local ✔";
 
@@ -2021,9 +2030,6 @@ async function enviarPlaneacion(){
 
   estado.textContent = "Enviando...";
 
-  // 🔥 CONSTRUIR PAYLOAD (SIN BLOQUEAR)
-  const correo = obtenerCorreo();
-
   if(!correo){
     alert("No se encontró el correo");
     return;
@@ -2140,7 +2146,10 @@ async function enviarPlaneacion(){
 
   estado.textContent = "Planeación enviada ✔";
 
-  localStorage.removeItem("planeacion_borrador");
+  const correo = obtenerCorreo() || "anon";
+const key = `planeacion_${correo}_${ST.materia}_${ST.grado}_${ST.semana}`;
+
+localStorage.removeItem(key);
 
   // 🔥 cerrar rápido
   setTimeout(() => {
@@ -2154,7 +2163,10 @@ function cargarBorrador(){
 
   try {
 
-    const data = localStorage.getItem("planeacion_borrador");
+    const correo = obtenerCorreo() || "anon";
+    const key = `planeacion_${correo}_${ST.materia}_${ST.grado}_${ST.semana}`;
+    
+    const data = localStorage.getItem(key);
     if(!data) return;
 
     const d = JSON.parse(data);
