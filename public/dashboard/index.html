@@ -680,16 +680,7 @@ let ST={rol:null,correo:null,nombre:null};
 let DATA={citas:[],planeaciones:[],docentes:[],sesiones:[]};
 let calDate=new Date(), chartsInit=false, pollingTimer=null;
 
-// ══ API ══
-){
-  const body={action,...payload};
-  if(ST.correo)body.correo=ST.correo;
-  return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json());
-}
-){
-  const qs=new URLSearchParams({accion,correo:ST.correo||'',...params});
-  return fetch(`${API_PLN}?${qs}`).then(r=>r.json());
-}
+// API y helpers vienen de /js/core.js
 
 // ══ TRADUCIR planeaciones ══
 function normalizarPlanes(raw,semFiltro){
