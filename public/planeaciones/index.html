@@ -2037,6 +2037,16 @@ function setFam(valor, el){
 
 async function enviarPlaneacion(){
 
+  const correo = ST.correo || obtenerCorreo();
+
+  if(!correo){
+
+    alert("No se encontró el correo");
+
+    return;
+
+  }
+
   const btn = document.getElementById("btnEnviar");
   const icon = document.getElementById("iconEnviar");
   const estado = document.getElementById("estadoGuardado");
