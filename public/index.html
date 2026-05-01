@@ -32,133 +32,182 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 
 /* ── LOGIN ── */
 #s-login{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:40px 20px;min-height:100%;gap:0
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:40px 20px;min-height:100%;gap:0;
+  position:relative
 }
 
-/* Logo */
-.lp-logo{
-  width:76px;height:76px;border-radius:22px;
-  background:linear-gradient(145deg,#1c3f7a,#2557c7);
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:22px;
-  box-shadow:0 12px 40px rgba(20,60,180,.4),0 2px 8px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.15);
-  overflow:hidden;position:relative
+/* partículas sutiles de fondo solo en login */
+#s-login::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 55% 40% at 20% 10%,rgba(26,63,143,.45) 0%,transparent 65%),
+    radial-gradient(ellipse 40% 35% at 80% 85%,rgba(37,99,235,.2) 0%,transparent 60%);
+  pointer-events:none
 }
-.logo-img{width:46px;filter:brightness(10)}
+
+/* Logo — icono app premium */
+.lp-logo{
+  width:80px;height:80px;
+  border-radius:22px;
+  background:linear-gradient(145deg,#1c3f7a 0%,#2046a0 50%,#1a3890 100%);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;position:relative;z-index:1;
+  box-shadow:
+    0 20px 50px rgba(20,50,160,.5),
+    0 4px 12px rgba(0,0,0,.4),
+    inset 0 1px 0 rgba(255,255,255,.2),
+    inset 0 -1px 0 rgba(0,0,0,.2);
+  overflow:hidden
+}
+.lp-logo::after{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.12) 0%,transparent 100%);
+  border-radius:22px 22px 0 0
+}
+.logo-img{width:48px;filter:brightness(10);position:relative;z-index:1}
 
 /* Títulos */
 .lp-title{
   font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
-  font-size:24px;font-weight:700;letter-spacing:-.5px;
-  color:#ffffff;margin-bottom:6px;text-align:center
+  font-size:26px;font-weight:700;letter-spacing:-.6px;
+  color:#ffffff;margin-bottom:5px;text-align:center;
+  position:relative;z-index:1
 }
 .lp-sub{
-  font-size:13px;color:rgba(255,255,255,.3);
-  margin-bottom:40px;text-align:center;font-weight:400;letter-spacing:.1px
+  font-size:13px;color:rgba(255,255,255,.28);
+  margin-bottom:38px;text-align:center;
+  font-family:-apple-system,'Helvetica Neue',sans-serif;
+  position:relative;z-index:1;letter-spacing:.2px
 }
 
-/* Card — sin borde visible, solo glassmorphism sutil */
+/* Card glassmorphism */
 .lp-card{
   width:100%;max-width:320px;
-  background:rgba(255,255,255,.055);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:22px;
-  padding:22px 20px 20px;
-  backdrop-filter:blur(30px);
-  -webkit-backdrop-filter:blur(30px)
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:24px;
+  padding:24px 22px;
+  position:relative;z-index:1;
+  box-shadow:
+    0 32px 64px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.08)
 }
 
-/* Label sutil */
+/* Label */
 .lp-info{
-  font-size:12px;color:rgba(255,255,255,.35);
-  text-align:center;margin-bottom:14px;
+  font-size:12px;color:rgba(255,255,255,.3);
+  text-align:center;margin-bottom:16px;
   font-family:-apple-system,'Helvetica Neue',sans-serif;
-  letter-spacing:.1px
+  line-height:1.5
 }
 
 /* Error */
 .lp-err{
-  font-size:12px;color:#ff6b6b;text-align:center;margin-bottom:12px;
-  background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.15);
+  font-size:12px;color:#ff7b7b;text-align:center;margin-bottom:12px;
+  background:rgba(255,80,80,.07);border:1px solid rgba(255,80,80,.15);
   border-radius:10px;padding:9px 12px;display:none
 }
 .lp-err.on{display:block}
 
-/* Input estilo Apple — sin borde en reposo, fondo muy sutil */
+/* Inputs */
 #s-login .fi{
   width:100%;
-  background:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.07);
   border:1px solid rgba(255,255,255,.1);
   border-radius:12px;
   color:#ffffff;
-  padding:13px 14px;
+  padding:14px 15px;
   font-family:-apple-system,'Helvetica Neue',sans-serif;
   font-size:15px;font-weight:400;
   outline:none;
-  transition:border-color .18s,background .18s;
   -webkit-appearance:none;
+  transition:border-color .2s,background .2s;
   margin-bottom:10px
 }
-#s-login .fi::placeholder{
-  color:rgba(255,255,255,.2);
-  font-size:15px;font-weight:400
-}
+#s-login .fi::placeholder{color:rgba(255,255,255,.2);font-size:15px}
 #s-login .fi:focus{
-  border-color:rgba(80,140,255,.5);
-  background:rgba(255,255,255,.11)
+  border-color:rgba(100,150,255,.45);
+  background:rgba(255,255,255,.09);
+  box-shadow:0 0 0 3px rgba(60,120,255,.12)
 }
 
-/* Input código — grande, centrado, espaciado */
+/* Input código OTP */
 #inputCodigo{
-  letter-spacing:10px !important;
-  font-size:26px !important;
+  letter-spacing:12px !important;
+  font-size:28px !important;
   text-align:center !important;
-  font-family:-apple-system,monospace !important;
   font-weight:300 !important;
-  padding:14px !important
+  padding:14px 10px !important
 }
 #inputCodigo::placeholder{
   letter-spacing:0 !important;
-  font-size:13px !important;
-  font-weight:400 !important
+  font-size:14px !important;
+  font-weight:400 !important;
+  color:rgba(255,255,255,.2) !important
 }
 
-/* Botón Continuar — azul institucional, no blanco */
+/* Botón principal — mate oscuro con shimmer sutil */
 .btn-google{
-  width:100%;padding:13px;border-radius:12px;border:none;
-  background:linear-gradient(135deg,#1a3f8f,#2563eb);
+  width:100%;padding:13px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.14);
   color:#fff;
   font-family:-apple-system,'Helvetica Neue',sans-serif;
-  font-size:15px;font-weight:600;letter-spacing:-.1px;
+  font-size:15px;font-weight:500;letter-spacing:-.1px;
   cursor:pointer;
   display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:opacity .15s,transform .1s;
-  box-shadow:0 2px 16px rgba(37,99,235,.4),inset 0 1px 0 rgba(255,255,255,.12)
+  transition:background .15s,transform .1s;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)
 }
-.btn-google:hover{opacity:.9}
-.btn-google:active{transform:scale(.98);opacity:.85}
+.btn-google::after{
+  content:'→';
+  font-size:16px;opacity:.5;
+  transition:transform .2s,opacity .2s
+}
+.btn-google:hover{
+  background:rgba(255,255,255,.17);
+  border-color:rgba(255,255,255,.25);
+  color:#fff
+}
+.btn-google:hover::after{transform:translateX(3px);opacity:.8}
+.btn-google:active{transform:scale(.98);background:rgba(255,255,255,.1)}
 .btn-google:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.btn-google:disabled::after{display:none}
 
-/* Botón Verificar — igual pero ligeramente distinto */
+/* Botón verificar */
 #btnVerificar{
-  width:100%;padding:13px;border-radius:12px;border:none;
-  background:linear-gradient(135deg,#1a3f8f,#2563eb);
+  width:100%;padding:13px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.14);
   color:#fff;
   font-family:-apple-system,'Helvetica Neue',sans-serif;
-  font-size:15px;font-weight:600;letter-spacing:-.1px;
+  font-size:15px;font-weight:500;letter-spacing:-.1px;
   cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  transition:opacity .15s,transform .1s;
-  box-shadow:0 2px 16px rgba(37,99,235,.4),inset 0 1px 0 rgba(255,255,255,.12)
+  transition:background .15s,transform .1s;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)
 }
-#btnVerificar:active{transform:scale(.98);opacity:.85}
+#btnVerificar:hover{background:rgba(255,255,255,.17);color:#fff}
+#btnVerificar:active{transform:scale(.98)}
 #btnVerificar:disabled{opacity:.3;cursor:not-allowed;transform:none}
 
-#bloqueCodigo{margin-top:10px}
+/* Step 2 animado */
+#bloqueCodigo{
+  margin-top:10px;
+  animation:slideDown .25s cubic-bezier(.34,1.56,.64,1)
+}
+@keyframes slideDown{
+  from{opacity:0;transform:translateY(-8px)}
+  to{opacity:1;transform:translateY(0)}
+}
 
-.lp-link{margin-top:16px;text-align:center;font-size:12px;color:rgba(255,255,255,.25)}
-.lp-link a{color:rgba(255,255,255,.45)}
+.lp-link{margin-top:16px;text-align:center;font-size:12px;
+  color:rgba(255,255,255,.22);position:relative;z-index:1}
+.lp-link a{color:rgba(255,255,255,.4)}
 
 /* ── APP ── */
 #s-app{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px) + 8px)}
@@ -551,16 +600,20 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 
 <!-- LOGIN -->
 <div id="s-login" class="screen">
-  <div class="lp-logo"><img src="/logo.png" class="logo-img" onerror="this.style.display='none';this.parentNode.innerHTML='<span style=color:#fff;font-size:28px;font-weight:700>S</span>'"></div>
+  <div class="lp-logo">
+    <img src="/logo.png" class="logo-img"
+      onerror="this.style.display='none';this.parentNode.innerHTML='<span style=&quot;color:#fff;font-size:30px;font-weight:700;font-family:-apple-system,sans-serif&quot;>S</span>'">
+  </div>
   <div class="lp-title">SIPRESC</div>
   <div class="lp-sub">La Presentación · Girardota</div>
+
   <div class="lp-card">
-    <div class="lp-info">Ingresa con tu usuario institucional</div>
+    <div class="lp-info">Acceso institucional</div>
     <div class="lp-err" id="lerr"></div>
 
     <!-- Step 1: usuario -->
     <input type="email" id="correoCodigo"
-      placeholder="Usuario institucional (ej: secifuentes)"
+      placeholder="usuario@lapresentacion..."
       class="fi"
       autocomplete="username"
       autocorrect="off"
@@ -570,17 +623,20 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
       Continuar
     </button>
 
-    <!-- Step 2: código -->
-    <div id="bloqueCodigo" style="display:none;margin-top:10px;">
+    <!-- Step 2: código OTP -->
+    <div id="bloqueCodigo" style="display:none;">
+      <div style="text-align:center;font-size:12px;color:rgba(255,255,255,.3);
+        margin-bottom:12px;font-family:-apple-system,sans-serif;line-height:1.5">
+        Código enviado a tu correo institucional
+      </div>
       <input type="text" id="inputCodigo"
-        placeholder="Código de 6 dígitos"
+        placeholder="· · · · · ·"
         class="fi"
         inputmode="numeric"
         autocomplete="one-time-code"
-        maxlength="6"
-        style="letter-spacing:6px;font-size:22px;text-align:center;font-family:var(--mono)">
-      <button class="btn btn-g" id="btnVerificar" onclick="verificarCodigoLogin()">
-        Verificar
+        maxlength="6">
+      <button id="btnVerificar" onclick="verificarCodigoLogin()">
+        Verificar acceso
       </button>
     </div>
   </div>
