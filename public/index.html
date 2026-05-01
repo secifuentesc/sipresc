@@ -215,48 +215,64 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 /* ── TOPBAR ── */
 .topbar{
   position:sticky;top:0;z-index:20;
-  background:rgba(5,14,29,.85);
-  border-bottom:1px solid rgba(255,255,255,.06);
-  padding:11px 18px;display:flex;align-items:center;gap:10px;
-  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)
+  background:rgba(5,14,29,.75);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding:10px 18px;
+  padding-top:calc(10px + env(safe-area-inset-top,0));
+  display:flex;align-items:center;gap:10px;
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)
 }
 .topbar h1{
   font-family:-apple-system,'Helvetica Neue',sans-serif;
-  font-size:14px;font-weight:500;flex:1;
-  color:rgba(255,255,255,.7);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  letter-spacing:-.1px
+  font-size:15px;font-weight:600;letter-spacing:-.2px;
+  flex:1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
 }
-.topbar-rol{display:none}
+.topbar-rol{
+  font-size:10px;color:rgba(255,255,255,.5);
+  font-family:-apple-system,sans-serif;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);
+  padding:3px 10px;border-radius:20px;
+  flex-shrink:0;letter-spacing:.2px
+}
 .logout-btn{
   background:none;border:none;
-  color:rgba(255,255,255,.3);
+  color:rgba(255,255,255,.35);
   font-size:12px;cursor:pointer;
-  padding:5px 8px;
+  padding:4px 6px;
   font-family:-apple-system,sans-serif;
-  flex-shrink:0;
-  transition:color .15s
+  flex-shrink:0;transition:color .15s
 }
-.logout-btn:hover{color:rgba(255,255,255,.6)}
+.logout-btn:hover{color:rgba(255,255,255,.7)}
 .topbar-logo{
-  width:28px;height:28px;border-radius:9px;
-  background:linear-gradient(140deg,#1a3a6b,#2563eb);
+  width:30px;height:30px;border-radius:9px;
+  background:linear-gradient(140deg,#1c3f7a,#2557c7);
   display:flex;align-items:center;justify-content:center;
   overflow:hidden;flex-shrink:0;
-  box-shadow:0 2px 8px rgba(37,99,235,.4)
+  box-shadow:0 2px 8px rgba(20,60,180,.4)
 }
 .logo-img-top{width:18px;filter:brightness(10)}
 
 /* ── BOTTOM NAV ── */
-.bnav{position:fixed;bottom:0;left:0;right:0;z-index:20;
-  background:rgba(5,14,29,.97);border-top:1px solid var(--br);
-  display:flex;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
-  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 2px)}
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:9px 2px;cursor:pointer;border:none;background:none;
-  color:var(--mt);font-size:9px;font-family:var(--mono);gap:3px;transition:color .15s}
-.ni svg{width:19px;height:19px;stroke:currentColor;stroke-width:1.5;fill:none}
-.ni.on{color:var(--gold)}
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  background:rgba(5,14,29,.8);
+  border-top:1px solid rgba(255,255,255,.07);
+  display:flex;
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 4px)
+}
+.ni{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:10px 2px;cursor:pointer;border:none;background:none;
+  color:rgba(255,255,255,.3);font-size:9px;
+  font-family:-apple-system,sans-serif;
+  gap:4px;transition:color .15s;letter-spacing:.2px
+}
+.ni svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.5;fill:none}
+.ni.on{color:rgba(255,255,255,.9)}
+.ni.on svg{stroke-width:2}
 
 /* ── TABS ── */
 .tab{display:none;padding:14px 13px 18px}
@@ -604,6 +620,47 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
   display:flex;align-items:center;gap:12px}
 
 
+
+/* ── HOME CARDS ── */
+.home-card{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:20px;padding:18px 16px 16px;
+  cursor:pointer;
+  transition:background .18s,transform .15s,border-color .18s;
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  display:flex;flex-direction:column;align-items:flex-start
+}
+.home-card:hover{
+  background:rgba(255,255,255,.1);
+  border-color:rgba(255,255,255,.16);
+  transform:translateY(-2px)
+}
+.home-card:active{transform:scale(.96)}
+.home-card-main{
+  background:rgba(180,220,255,.09);
+  border-color:rgba(148,196,255,.18)
+}
+.home-card-main:hover{
+  background:rgba(180,220,255,.14);
+  border-color:rgba(148,196,255,.3)
+}
+.home-ico{
+  width:40px;height:40px;border-radius:12px;
+  border:1px solid transparent;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;flex-shrink:0
+}
+.home-name{
+  font-size:14px;font-weight:600;color:#fff;
+  margin-bottom:3px;
+  font-family:-apple-system,'Helvetica Neue',sans-serif;
+  letter-spacing:-.1px
+}
+.home-sub{
+  font-size:11px;color:rgba(255,255,255,.35);
+  font-family:-apple-system,sans-serif;line-height:1.4
+}
 </style>
 </head>
 <body>
@@ -671,70 +728,52 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 
   <!-- HOME (docente) -->
   <div class="tab" id="t-home">
-    <div style="min-height:calc(100vh - 130px);display:flex;flex-direction:column;justify-content:center;padding:32px 24px 20px">
+    <div style="min-height:calc(100svh - 130px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px 24px">
 
-      <!-- Saludo premium -->
-      <div style="margin-bottom:36px">
-        <div id="home-fecha" style="font-size:12px;color:rgba(255,255,255,.3);font-family:-apple-system,sans-serif;letter-spacing:.3px;margin-bottom:10px;text-transform:capitalize">—</div>
-        <div style="font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;line-height:1.2">
-          <span style="font-size:33px;font-weight:300;color:rgba(255,255,255,.55)">Hola, </span><span id="nombre-docente" style="font-size:33px;font-weight:700;color:#fff;letter-spacing:-.5px">Docente</span>
-        </div>
-        <div style="font-size:13px;color:rgba(255,255,255,.22);margin-top:8px;font-family:-apple-system,sans-serif">¿Con qué trabajamos hoy?</div>
+      <!-- Saludo centrado -->
+      <div style="text-align:center;margin-bottom:36px;width:100%;max-width:340px">
+        <div style="font-size:12px;color:rgba(255,255,255,.3);font-family:-apple-system,sans-serif;margin-bottom:8px;letter-spacing:.3px;text-transform:capitalize" id="home-fecha">—</div>
+        <div style="font-size:32px;font-weight:700;letter-spacing:-.6px;line-height:1.1;font-family:-apple-system,sans-serif;margin-bottom:6px">Hola, <span id="nombre-docente" style="color:#fff">Docente</span></div>
+        <div style="font-size:14px;color:rgba(255,255,255,.3);font-family:-apple-system,sans-serif;font-weight:400">¿Con qué trabajamos hoy?</div>
       </div>
 
       <!-- Grid 2x2 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%;max-width:340px">
 
-        <!-- Planeaciones — destacada con tono azul -->
-        <div onclick="abrirModulo('planeaciones')" style="background:linear-gradient(145deg,rgba(37,99,235,.4),rgba(29,78,216,.22));border:1px solid rgba(99,150,255,.3);border-radius:22px;padding:24px 16px 22px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden"
-          onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">
-          <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(147,197,253,.5),transparent)"></div>
-          <div style="width:46px;height:46px;border-radius:14px;background:rgba(147,197,253,.15);border:1px solid rgba(147,197,253,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(147,210,255,.95)" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <!-- Planeaciones — destacada sutilmente -->
+        <div class="home-card home-card-main" onclick="abrirModulo('planeaciones')">
+          <div class="home-ico" style="background:rgba(148,196,255,.15);border-color:rgba(148,196,255,.2)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(180,220,255,.9)" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
           </div>
-          <div style="text-align:center">
-            <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;font-family:-apple-system,sans-serif">Planeaciones</div>
-            <div style="font-size:11px;color:rgba(147,210,255,.55);font-family:-apple-system,sans-serif">Planeación semanal</div>
-          </div>
+          <div class="home-name">Planeaciones</div>
+          <div class="home-sub">Planeación semanal</div>
         </div>
 
         <!-- Prompts IA -->
-        <div onclick="abrirModulo('prompts')" style="background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:24px 16px 22px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden"
-          onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">
-          <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent)"></div>
-          <div style="width:46px;height:46px;border-radius:14px;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.18);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(196,181,253,.9)" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <div class="home-card" onclick="abrirModulo('prompts')">
+          <div class="home-ico" style="background:rgba(167,139,250,.15);border-color:rgba(167,139,250,.2)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(196,181,253,.9)" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           </div>
-          <div style="text-align:center">
-            <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;font-family:-apple-system,sans-serif">Prompts IA</div>
-            <div style="font-size:11px;color:rgba(255,255,255,.28);font-family:-apple-system,sans-serif">Biblioteca de prompts</div>
-          </div>
+          <div class="home-name">Prompts IA</div>
+          <div class="home-sub">Biblioteca de prompts</div>
         </div>
 
         <!-- Citas -->
-        <div onclick="abrirModulo('citas')" style="background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:24px 16px 22px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden"
-          onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">
-          <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent)"></div>
-          <div style="width:46px;height:46px;border-radius:14px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.18);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(110,231,183,.85)" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <div class="home-card" onclick="abrirModulo('citas')">
+          <div class="home-ico" style="background:rgba(52,211,153,.15);border-color:rgba(52,211,153,.2)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(110,231,183,.9)" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
           </div>
-          <div style="text-align:center">
-            <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;font-family:-apple-system,sans-serif">Citas</div>
-            <div style="font-size:11px;color:rgba(255,255,255,.28);font-family:-apple-system,sans-serif">Atención a padres</div>
-          </div>
+          <div class="home-name">Citas</div>
+          <div class="home-sub">Atención a padres</div>
         </div>
 
         <!-- Evaluaciones -->
-        <div onclick="abrirModulo('evaluaciones')" style="background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:24px 16px 22px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden"
-          onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">
-          <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent)"></div>
-          <div style="width:46px;height:46px;border-radius:14px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.16);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(253,224,71,.85)" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        <div class="home-card" onclick="abrirModulo('evaluaciones')">
+          <div class="home-ico" style="background:rgba(251,191,36,.15);border-color:rgba(251,191,36,.2)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(253,224,71,.9)" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
           </div>
-          <div style="text-align:center">
-            <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;font-family:-apple-system,sans-serif">Evaluaciones</div>
-            <div style="font-size:11px;color:rgba(255,255,255,.28);font-family:-apple-system,sans-serif">Evaluaciones de período</div>
-          </div>
+          <div class="home-name">Evaluaciones</div>
+          <div class="home-sub">Evaluaciones de período</div>
         </div>
 
       </div>
