@@ -654,16 +654,78 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 
   <!-- HOME (docente) -->
   <div class="tab" id="t-home">
-    <div style="min-height:calc(100vh - 60px);padding-top:20px;display:flex;align-items:center;justify-content:center;padding:20px;">
-      <div style="width:100%;max-width:420px;text-align:center;">
-        <div style="font-size:26px;font-weight:600;margin-bottom:6px;">Hola, <span id="nombre-docente">Docente</span> 👋</div>
-        <div style="font-size:14px;color:var(--mt);margin-bottom:30px;">¿Qué deseas hacer hoy?</div>
-        <button class="btn btn-g" style="margin-bottom:12px;font-size:13px;" onclick="abrirModulo('planeaciones')">Planeaciones</button>
-        <button class="btn btn-p" style="font-size:13px;" onclick="abrirModulo('citas')">Citas</button>
-        <button class="btn btn-o" style="font-size:13px;" onclick="abrirModulo('evaluaciones')">Evaluaciones finales</button>
-        <button class="btn btn-o" onclick="abrirModulo('prompts')">
-  Prompts IA
-</button>
+    <div style="min-height:calc(100vh - 130px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;">
+
+      <!-- Saludo -->
+      <div style="text-align:left;width:100%;max-width:360px;margin-bottom:32px">
+        <div style="font-size:13px;color:rgba(255,255,255,.35);font-family:-apple-system,sans-serif;margin-bottom:5px" id="home-fecha">—</div>
+        <div style="font-size:28px;font-weight:700;letter-spacing:-.5px;line-height:1.1;font-family:-apple-system,sans-serif">Hola,<br><span id="nombre-docente" style="color:#fff">Docente</span></div>
+      </div>
+
+      <!-- Grid 2x2 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:360px">
+
+        <!-- Planeaciones -->
+        <div onclick="abrirModulo('planeaciones')" style="
+          background:rgba(255,255,255,.07);
+          border:1px solid rgba(255,255,255,.1);
+          border-radius:20px;padding:20px 16px;
+          cursor:pointer;transition:all .15s;
+          -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+          active:transform:scale(.97)
+        " onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">
+          <div style="width:40px;height:40px;border-radius:12px;background:rgba(99,179,237,.18);border:1px solid rgba(99,179,237,.25);display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(147,210,255,.9)" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:4px;font-family:-apple-system,sans-serif">Planeaciones</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);font-family:-apple-system,sans-serif;line-height:1.4">Planeación semanal</div>
+        </div>
+
+        <!-- Prompts IA -->
+        <div onclick="abrirModulo('prompts')" style="
+          background:rgba(255,255,255,.07);
+          border:1px solid rgba(255,255,255,.1);
+          border-radius:20px;padding:20px 16px;
+          cursor:pointer;transition:all .15s;
+          -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)
+        " onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">
+          <div style="width:40px;height:40px;border-radius:12px;background:rgba(167,139,250,.18);border:1px solid rgba(167,139,250,.25);display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(196,181,253,.9)" stroke-width="1.8"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2z"/><path d="M12 16v-4M12 8h.01"/></svg>
+          </div>
+          <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:4px;font-family:-apple-system,sans-serif">Prompts IA</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);font-family:-apple-system,sans-serif;line-height:1.4">Biblioteca de prompts</div>
+        </div>
+
+        <!-- Citas -->
+        <div onclick="abrirModulo('citas')" style="
+          background:rgba(255,255,255,.07);
+          border:1px solid rgba(255,255,255,.1);
+          border-radius:20px;padding:20px 16px;
+          cursor:pointer;transition:all .15s;
+          -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)
+        " onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">
+          <div style="width:40px;height:40px;border-radius:12px;background:rgba(52,211,153,.18);border:1px solid rgba(52,211,153,.25);display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(110,231,183,.9)" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </div>
+          <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:4px;font-family:-apple-system,sans-serif">Citas</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);font-family:-apple-system,sans-serif;line-height:1.4">Atención a padres</div>
+        </div>
+
+        <!-- Evaluaciones -->
+        <div onclick="abrirModulo('evaluaciones')" style="
+          background:rgba(255,255,255,.07);
+          border:1px solid rgba(255,255,255,.1);
+          border-radius:20px;padding:20px 16px;
+          cursor:pointer;transition:all .15s;
+          -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)
+        " onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.97)'" ontouchend="this.style.transform=''">
+          <div style="width:40px;height:40px;border-radius:12px;background:rgba(251,191,36,.18);border:1px solid rgba(251,191,36,.25);display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(253,224,71,.9)" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:4px;font-family:-apple-system,sans-serif">Evaluaciones</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);font-family:-apple-system,sans-serif;line-height:1.4">Evaluaciones de período</div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -810,6 +872,9 @@ function iniciarApp(){
   const nombre=(ST.nombre||'').split(' ')[0];
   const nd=document.getElementById('nombre-docente');
   if(nd)nd.textContent=nombre||'Docente';
+  // fecha en el saludo
+  const hf=document.getElementById('home-fecha');
+  if(hf){const d=new Date();hf.textContent=d.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});}
 
   let navs=[];
   if(ST.rol==='docente'){
