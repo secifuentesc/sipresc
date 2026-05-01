@@ -2167,67 +2167,57 @@ if(key){
 
 function cargarBorrador(){
 
-  try {
+  if(!ST.materia || !ST.grado || !ST.semana) return;
 
-    const correo = obtenerCorreo() || "anon";
-    const key = `planeacion_${correo}`;
+  const key = getClavePlaneacion();
+  if(!key) return;
 
-    const data = localStorage.getItem(key);
+  const data = localStorage.getItem(key);
+  if(!data) return;
 
-    if(!data) return;
+  let d;
 
-    const d = JSON.parse(data);
-
-    // 🔥 RESTAURAR ESTADO
-    ST.materia = d.materia;
-    ST.grado = d.grado;
-    ST.semana = d.semana;
-    ST.intensidad = d.intensidad;
-
-    // 🔥 INPUTS
-    setTimeout(() => {
-
-      if(document.getElementById("indicadorInput")){
-        document.getElementById("indicadorInput").value = d.indicador || "";
-      }
-
-      if(document.getElementById("observacionInput")){
-        document.getElementById("observacionInput").value = d.observacion || "";
-      }
-
-      if(document.getElementById("compObligatoria")){
-        document.getElementById("compObligatoria").value = d.comp || "";
-      }
-
-      if(document.getElementById("famObs")){
-        document.getElementById("famObs").value = d.fam || "";
-      }
-
-      // 🔥 CLASES
-      if(d.clases){
-        d.clases.forEach((c, i) => {
-          const n = i + 1;
-
-          if(document.getElementById("tema_"+n)){
-            document.getElementById("tema_"+n).value = c.tema || "";
-          }
-
-          if(document.getElementById("act_"+n)){
-            document.getElementById("act_"+n).value = c.act || "";
-          }
-        });
-      }
-
-      document.querySelectorAll("textarea").forEach(t => {
-        t.dispatchEvent(new Event("input"));
-      });
-
-    }, 400);
-
-  } catch (error){
-    console.error("Error cargando borrador:", error);
+  try{
+    d = JSON.parse(data);
+  }catch(e){
+    console.error("Error parseando borrador", e);
+    return;
   }
 
+  // 🔥 EVITA DOBLE RESTAURACIÓN
+  if(ST._restaurado) return;
+  ST._restaurado = true;
+
+  // 🔥 RESTAURAR
+  setTimeout(() => {
+
+    document.getElementById("indicadorInput").value = d.indicador || "";
+
+    if(d.clases){
+      d.clases.forEach((c, i) => {
+        const n = i + 1;
+
+        if(document.getElementById("tema_"+n)){
+          document.getElementById("tema_"+n).value = c.tema || "";
+        }
+
+        if(document.getElementById("act_"+n)){
+          document.getElementById("act_"+n).value = c.act || "";
+        }
+      });
+    }
+
+    document.getElementById("observacionInput").value = d.observacion || "";
+    document.getElementById("compObligatoria").value = d.comp || "";
+    document.getElementById("famObs").value = d.fam || "";
+
+    document.querySelectorAll("textarea").forEach(t => {
+      t.dispatchEvent(new Event("input"));
+    });
+
+    document.getElementById("estadoGuardado").textContent = "Borrador restaurado ✔";
+
+  }, 200);
 }
 
 function restaurarBorradorCompleto(){
@@ -2527,7 +2517,12 @@ function mostrarExito(){
 }
 
 function nuevaPlaneacion(){
-  localStorage.removeItem("planeacion_borrador");
+
+  const key = getClavePlaneacion();
+  if(key){
+    localStorage.removeItem(key);
+  }
+
   location.reload();
 }
 
