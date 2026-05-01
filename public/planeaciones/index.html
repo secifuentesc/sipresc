@@ -1248,6 +1248,7 @@ let archivoCompNombre = null;
 let archivoFamBase64 = null;
 let archivoFamNombre = null;
 
+
 async function corregirTodo(){
 
   const btn = document.getElementById("btnCorregir");
@@ -3268,20 +3269,19 @@ function confirmarEnvioExitoso(){
   estado.textContent = "Guardado en sistema ✔";
 
 }
-function toggleCopia(el){
+function toggleCopia(el) {
 
-  ST.enviarCopia = !ST.enviarCopia;
+  ST.enviarCopia = !ST.enviarCopia; // 🔥 USA EL STATE REAL
 
   const bola = document.getElementById("bolaCopia");
 
-  if(ST.enviarCopia){
-    el.style.background = "linear-gradient(135deg,var(--gold),var(--gold2))";
+  if (ST.enviarCopia) {
+    el.style.background = "#1A428A";
     bola.style.left = "22px";
-  }else{
+  } else {
     el.style.background = "rgba(255,255,255,0.15)";
     bola.style.left = "2px";
   }
-
 }
 </script>
 
