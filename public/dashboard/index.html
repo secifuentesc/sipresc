@@ -4,14 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#080808" id="meta-theme">
-<title>SIPRESC · Panel de Control</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="/logo.png">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="manifest" href="/manifest.json">
+<title>SIPRESC · Panel de Control</title>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
   /* ── Paleta oscura premium: negro + azul navy + blanco ── */
   --bg:#080808;
@@ -48,7 +47,7 @@
 }
 
 html,body{min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;-webkit-font-smoothing:antialiased}
-button,a{font-family:var(--sans)}
+
 a{text-decoration:none;color:inherit}
 
 /* ══ LAYOUT ══ */
@@ -80,10 +79,7 @@ a{text-decoration:none;color:inherit}
 .sb-sys{font-size:9px;color:var(--blue2);font-family:var(--mono);letter-spacing:1px;margin-top:1px}
 
 /* live indicator */
-.live-pill{display:flex;align-items:center;gap:5px;margin-top:10px;
-  font-size:9px;font-family:var(--mono);color:var(--green);letter-spacing:.5px}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);
-  animation:pulse 2s infinite;flex-shrink:0}
+
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
 
 .sb-nav{flex:1;overflow-y:auto;padding:8px 8px;scrollbar-width:none}
@@ -140,7 +136,7 @@ a{text-decoration:none;color:inherit}
 .main{margin-left:220px;min-height:100vh;padding:24px 22px 60px}
 .page{display:none}
 .page.on{display:block;animation:fadeUp .18s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+to{opacity:1;transform:translateY(0)}}
 
 /* ══ PAGE HEADER ══ */
 .ph{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
@@ -150,13 +146,6 @@ a{text-decoration:none;color:inherit}
 .ph-right{display:flex;align-items:center;gap:7px;flex-shrink:0}
 
 /* ══ BOTONES ══ */
-.btn{padding:6px 13px;border-radius:var(--r2);font-size:11px;font-weight:500;
-  border:1px solid var(--border2);background:var(--s3);color:var(--ink2);
-  cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
-.btn:hover{background:var(--s4);color:var(--ink)}
-.btn svg{width:12px;height:12px;stroke:currentColor;stroke-width:2;fill:none}
-.btn-p{background:var(--blue);color:#fff;border-color:var(--blue)}
-.btn-p:hover{background:var(--blue2);border-color:var(--blue2)}
 
 /* ══ GRIDS ══ */
 .g6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
@@ -229,46 +218,12 @@ a{text-decoration:none;color:inherit}
 .live-empty{text-align:center;padding:18px 0;font-size:11px;color:var(--ink4);font-family:var(--mono)}
 
 /* ══ LISTA ROWS ══ */
-.lrow{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border)}
-.lrow:last-child{border-bottom:none}
-.lav{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
-.lav.b{background:var(--blue-t);color:var(--blue2)}
-.lav.g{background:var(--green-t);color:var(--green)}
-.lav.a{background:var(--amber-t);color:var(--amber)}
-.lav.r{background:var(--red-t);color:var(--red)}
-.lav.p{background:var(--purple-t);color:var(--purple)}
-.lav.t{background:var(--teal-t);color:var(--teal)}
-.li{flex:1;min-width:0}
-.ln{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lm{font-size:10px;color:var(--ink4);margin-top:1px}
-.lr{flex-shrink:0;text-align:right}
 
 /* ══ BADGE ══ */
-.bdg{display:inline-block;font-size:8px;font-family:var(--mono);padding:2px 6px;border-radius:10px;font-weight:500;white-space:nowrap}
-.bdg-g{background:var(--green-t);color:var(--green)}
-.bdg-a{background:var(--amber-t);color:var(--amber)}
-.bdg-r{background:var(--red-t);color:var(--red)}
-.bdg-b{background:var(--blue-t);color:var(--blue2)}
-.bdg-p{background:var(--purple-t);color:var(--purple)}
-.bdg-x{background:var(--white-t);color:var(--ink4)}
 
 /* ══ PROGRESS ══ */
-.pr{margin-bottom:11px}
-.pr:last-child{margin-bottom:0}
-.pr-l{display:flex;justify-content:space-between;font-size:10px;margin-bottom:4px}
-.pr-l span:first-child{color:var(--ink3)}
-.pr-l span:last-child{font-family:var(--mono);color:var(--ink4)}
-.pr-b{height:3px;background:var(--s4);border-radius:2px;overflow:hidden}
-.pr-f{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1)}
 
 /* ══ ALERTAS ══ */
-.al-item{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
-.al-item:last-child{border-bottom:none}
-.al-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px}
-.al-b{flex:1;min-width:0}
-.al-t{font-size:11px;font-weight:500;margin-bottom:1px}
-.al-m{font-size:10px;color:var(--ink4)}
-.al-time{font-size:8px;font-family:var(--mono);color:var(--ink4);flex-shrink:0;margin-top:2px}
 
 /* ══ MINI CAL ══ */
 .mcal-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 15px 8px}
@@ -282,7 +237,7 @@ a{text-decoration:none;color:inherit}
 .mcal-day.today{background:var(--blue);color:#fff;font-weight:600}
 .mcal-day.has::after{content:'';width:3px;height:3px;background:var(--amber);border-radius:50%;position:absolute;bottom:0px;left:50%;transform:translateX(-50%)}
 .mcal-day.today.has::after{background:rgba(255,255,255,.6)}
-.mcal-day.empty{visibility:hidden}
+.mcal-day
 .cal-evs{border-top:1px solid var(--border);padding:8px 15px}
 .cal-ev{display:flex;gap:7px;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--border)}
 .cal-ev:last-child{border-bottom:none}
@@ -304,33 +259,14 @@ a{text-decoration:none;color:inherit}
 .log-ts{font-family:var(--mono);font-size:8px;color:var(--ink4);flex-shrink:0}
 
 /* ══ ROADMAP ══ */
-.dev-item{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
-.dev-item:last-child{border-bottom:none}
-.dev-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.dev-ico svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none}
-.dev-in{flex:1;min-width:0}
-.dev-n{font-size:11px;font-weight:500;margin-bottom:1px}
-.dev-d{font-size:9px;color:var(--ink4)}
-.dev-p{margin-top:4px;height:2px;background:var(--s4);border-radius:1px;overflow:hidden}
-.dev-pf{height:100%;border-radius:1px}
-.dev-eta{font-size:8px;font-family:var(--mono);color:var(--ink4);flex-shrink:0;text-align:right}
 
 /* ══ CHARTS ══ */
-.chart-wrap{position:relative;width:100%}
 
 /* ══ EMPTY ══ */
-.empty{text-align:center;padding:20px 0;font-size:11px;color:var(--ink4);font-family:var(--mono)}
 
 /* ══ CHIPS ══ */
-.chip{display:inline-flex;align-items:center;font-size:9px;font-family:var(--mono);background:var(--white-t);border:1px solid var(--border);padding:2px 7px;border-radius:10px;color:var(--ink4);margin:2px}
-.chip.a{border-color:var(--amber-t);color:var(--amber)}
-.chip.r{border-color:var(--red-t);color:var(--red)}
 
 /* ══ STAT MINI INLINE ══ */
-.mini-stats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.mstat{background:var(--s3);border:1px solid var(--border);border-radius:var(--r2);padding:8px 12px;flex:1;min-width:80px}
-.mstat-n{font-family:var(--mono);font-size:18px;font-weight:600;line-height:1;margin-bottom:2px}
-.mstat-l{font-size:9px;color:var(--ink4)}
 
 /* ══ OVERLAY SIDEBAR ══ */
 .sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:49;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
@@ -738,20 +674,19 @@ a{text-decoration:none;color:inherit}
 </nav>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="/js/core.js"></script>
 <script>
-const API='/api/proxy', API_PLN='/api/planeaciones';
-const $=id=>document.getElementById(id);
 let ST={rol:null,correo:null,nombre:null};
 let DATA={citas:[],planeaciones:[],docentes:[],sesiones:[]};
 let calDate=new Date(), chartsInit=false, pollingTimer=null;
 
 // ══ API ══
-function api(action,payload={}){
+){
   const body={action,...payload};
   if(ST.correo)body.correo=ST.correo;
   return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json());
 }
-function apiPlaneaciones(accion,params={}){
+){
   const qs=new URLSearchParams({accion,correo:ST.correo||'',...params});
   return fetch(`${API_PLN}?${qs}`).then(r=>r.json());
 }
@@ -958,12 +893,6 @@ function renderSesiones(){
       </div>`).join('')
     :'<div class="empty">Sin datos</div>';
   $('lp-mods').innerHTML=modsHtml;
-}
-
-function formatHace(seg){
-  if(seg<60)return`hace ${seg}s`;
-  if(seg<3600)return`hace ${Math.floor(seg/60)}min`;
-  return`hace ${Math.floor(seg/3600)}h`;
 }
 
 // ══ RENDER PLANEACIONES ══
@@ -1216,15 +1145,8 @@ function gp(id,el){
   if(id==='log')cargarLog();
 }
 function bnavOn(el){document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
-function toggleSB(){$('sidebar').classList.toggle('open');$('sb-ov').classList.toggle('on');}
-function closeSB(){$('sidebar').classList.remove('open');$('sb-ov').classList.remove('on');}
-function doLogout(){clearInterval(pollingTimer);localStorage.removeItem('lp_user');window.location.href='/';}
 
 // ══ HELPERS ══
-function fmtISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function fmtFecha(f){if(!f)return'';const[y,m,d]=f.split('-');return`${d}/${m}/${y}`;}
-function setBar(li,fi,v,t){$(li).textContent=v+'/'+t;setTimeout(()=>{$(fi).style.width=(t>0?Math.round(v/t*100):0)+'%';},120);}
-function exportarCSV(){api('exportarCSV',{filtros:{}}).then(r=>{if(r.ok){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([r.csv],{type:'text/csv;charset=utf-8;'}));a.download='citas_lapresentacion.csv';a.click();}}).catch(()=>{});}
 </script>
 </body>
 </html>
