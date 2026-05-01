@@ -9,6 +9,19 @@
 <link rel="icon" type="image/png" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>
+
+const AUTO_GUARD = false;
+const AUTO_RESTORE = false; // 🔥 NUEVO
+
+function setMateriaText(texto){
+  const display = document.getElementById("materiaText");
+
+  // 🔴 SI YA HAY MATERIA → NO TOCAR
+  if(ST.materia) return;
+
+  display.textContent = texto;
+}
+  
 (function(){
   try{
     const s = localStorage.getItem("lp_user");
@@ -884,7 +897,7 @@ body{
 </div>
 
 <div class="subtitle-main">
-  Todo se guarda automáticamente
+  La Presentación
 </div>
 
 
@@ -1097,6 +1110,51 @@ Quitar archivo ✕
 
 </div>
 
+
+<div class="bloque" id="b-copia" style="margin-top:20px;">
+
+  <div style="
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--br);
+    padding:14px;
+    border-radius:12px;
+  ">
+
+    <div style="text-align:left;">
+      <div style="font-size:14px;">Enviar copia a mi correo</div>
+      <div style="font-size:11px; color:var(--mt);">
+        Recibirás esta planeación al finalizar
+      </div>
+    </div>
+
+    <div id="toggleCopia" onclick="toggleCopia(this)" style="
+      width:42px;
+      height:22px;
+      border-radius:20px;
+      background:rgba(255,255,255,0.15);
+      position:relative;
+      cursor:pointer;
+      transition:.3s;
+    ">
+      <div id="bolaCopia" style="
+        width:18px;
+        height:18px;
+        background:#fff;
+        border-radius:50%;
+        position:absolute;
+        top:2px;
+        left:2px;
+        transition:.3s;
+      "></div>
+    </div>
+
+  </div>
+
+</div>
+
     <!-- ESTADO -->
     <div id="estadoGuardado" class="estado">
       Guardado automático
@@ -1178,16 +1236,6 @@ transition:all .3s ease;
 
   </div>
 </div>
-
-<div id="toastIA">
-  <div class="toast-box">
-    <div class="toast-icon">✦</div>
-    <div class="toast-text">
-      Detectamos detalles en la redacción.<br>
-      <span>Usa el Asistente inteligente para mejorarlo.</span>
-    </div>
-  </div>
-</div>
   
 <script>
 
@@ -1202,6 +1250,7 @@ let archivoCompNombre = null;
 
 let archivoFamBase64 = null;
 let archivoFamNombre = null;
+
 
 async function corregirTodo(){
 
@@ -1355,12 +1404,12 @@ let ST = {
   grado: null,
   dispActivo: "no",
   compActiva: "no",
-  famActiva: "no"
-
+  famActiva: "no",
+  enviarCopia: false
 };
 
 
-const API = "/api/planeaciones"; // ⚠️ ajusta si tu ruta es otra
+const API = "/api/planeaciones";
 
 // 🔥 INICIO
 window.addEventListener("DOMContentLoaded", () => {
@@ -1388,8 +1437,6 @@ window.addEventListener("DOMContentLoaded", () => {
       console.error(e);
     }
   }
-
-  cargarBorrador();
 
 });
 
@@ -1421,9 +1468,9 @@ display.innerHTML = `
   if(cache && cacheTime && (Date.now() - cacheTime < CACHE_MAX_AGE)){
     ST.data = JSON.parse(cache);
     pintarMaterias(ST.data);
-    display.textContent = "Seleccionar materia...";
+    setMateriaText("Seleccionar materia...");
   } else {
-    display.textContent = "Seleccionar materia...";
+    setMateriaText("Seleccionar materia...");
   }
 
   // 🔥 2. FETCH EN SEGUNDO PLANO (SIN BLOQUEAR)
@@ -1437,7 +1484,7 @@ display.innerHTML = `
       pintarMaterias(json.materias);
 
       // 🔥 AQUÍ VA
-      display.textContent = "Seleccionar materia...";
+      setMateriaText("Seleccionar materia...");
 
       localStorage.setItem(CACHE_KEY, JSON.stringify(json.materias));
       localStorage.setItem(CACHE_TIME, String(Date.now()));
@@ -1456,6 +1503,8 @@ display.innerHTML = `
 function pintarMaterias(materias){
 
   const box = document.getElementById("materiaOptions");
+  const display = document.getElementById("materiaText");
+
   box.innerHTML = "";
 
   materias.forEach(m => {
@@ -1464,18 +1513,35 @@ function pintarMaterias(materias){
     div.textContent = m.asignatura;
 
     div.onclick = () => {
-      document.getElementById("materiaText").textContent = m.asignatura;
+
+      // 🔥 1. ESTADO
       ST.materia = m.asignatura;
+
+      // 🔥 2. UI
+      display.textContent = m.asignatura;
+
+      // 🔥 3. CERRAR
       box.style.display = "none";
+
+      // 🔥 4. FLUJO
       onMateria();
     };
 
     box.appendChild(div);
   });
+
+  // 🔥 🔥 🔥 CLAVE (AL FINAL)
+  if(ST.materia){
+    display.textContent = ST.materia;
+  }else{
+    display.textContent = "Seleccionar materia...";
+  }
 }
 
 // 🔥 CUANDO SELECCIONA MATERIA
 function onMateria(){
+
+  ST._restaurado = false; // 🔥 RESET
 
   const materia = ST.materia;
   if(!materia) return;
@@ -1528,6 +1594,14 @@ function onMateria(){
 // 🔥 CUANDO SELECCIONA GRADO
 function onGrado(){
 
+  // 🔥 RESET TOTAL DE ESTADO
+  ST._restaurado = false;
+  ST.semana = null;
+  ST.intensidad = null;
+
+  // 🔥 LIMPIAR UI RELACIONADA
+  document.getElementById("semanaText").textContent = "Seleccionar semana...";
+
   const grado = ST.grado;
   if(!grado) return;
 
@@ -1539,26 +1613,38 @@ function onGrado(){
     ST.grupos = ["A","B"];
   }else{
     ST.grupos = [];
+    ocultar("b-grupos"); // 🔥 por si venía de uno anterior
   }
 
- // 🔥 SEMANA
-generarSemanas();
-mostrar("b-semana");
-activarBloque("b-semana");
+  // 🔥 SEMANA
+  generarSemanas();
+  mostrar("b-semana");
+  activarBloque("b-semana");
 
-// 🔥 OBSERVACIÓN
-mostrar("b-observacion");
-activarBloque("b-observacion");
+  // 🔥 OBSERVACIÓN
+  mostrar("b-observacion");
+  activarBloque("b-observacion");
 
-// 🔥 INTENSIDAD
-mostrar("b-intensidad");
-activarBloque("b-intensidad");
-mostrarIntensidad();
+  // 🔥 INTENSIDAD
+  mostrar("b-intensidad");
+  activarBloque("b-intensidad");
+  mostrarIntensidad();
 
+  // 🔥 RESETEAR PASO 2 COMPLETAMENTE
+  document.getElementById("paso2").classList.add("oculto");
+  document.getElementById("paso1").classList.remove("oculto");
+
+  const boxPlaneacion = document.getElementById("planeacionBox");
+  if(boxPlaneacion) boxPlaneacion.innerHTML = "";
+
+  // 🔥 ESTADO VISUAL
   document.getElementById("estadoGuardado").textContent =
     `${ST.materia} · ${ST.grado}`;
 
   actualizarProgreso();
+
+  // ❌ IMPORTANTE: SIN RESTAURAR
+  // (QUITAMOS COMPLETAMENTE EL AUTORESTORE)
 }
 
 // 🔥 MOSTRAR BLOQUES
@@ -1590,14 +1676,21 @@ function calcularSemana(){
   return `Semana ${semana}`;
 }
 
-// 🔥 AUTOGUARDADO (SIMULADO)
-["semanaInput","indicadorInput","actividadesInput"].forEach(id => {
 
-  document.addEventListener("input", e => {
-    if(e.target.id === id){
-      guardarAuto();
-    }
-  });
+document.addEventListener("input", function(e){
+
+  const id = e.target.id;
+
+  if(
+    id === "indicadorInput" ||
+    id === "observacionInput" ||
+    id === "compObligatoria" ||
+    id === "famObs" ||
+    (id && id.startsWith("tema_")) ||
+    (id && id.startsWith("act_"))
+  ){
+    guardarAuto();
+  }
 
 });
 
@@ -1678,6 +1771,7 @@ bloque.classList.add("bloque", "activo");
   mostrar("b-planeacion");
 mostrar("b-complementaria");
 mostrar("b-familias");
+mostrar("b-copia"); // 🔥 ESTA LÍNEA ES LA CLAVE
 
 setTimeout(() => {
 
@@ -1690,80 +1784,50 @@ setTimeout(() => {
 
 let timer;
 
+
 function guardarAuto(){
+
+  if(!AUTO_GUARD) return; // 🔥 APAGADO TOTAL
 
   clearTimeout(timer);
 
   timer = setTimeout(() => {
 
-    document.getElementById("estadoGuardado").textContent = "Guardando...";
-
     try {
 
       const data = {
-
-        asignatura: ST.materia || "",
-        grado: ST.grado || "",
-        semana: ST.semana || "",
-
+        materia: ST.materia,
+        grado: ST.grado,
+        semana: ST.semana,
+        intensidad: ST.intensidad,
         indicador: document.getElementById("indicadorInput")?.value || "",
-
-        d1_tema: document.getElementById("tema_1")?.value || "",
-        d1_act: document.getElementById("act_1")?.value || "",
-
-        d2_tema: document.getElementById("tema_2")?.value || "",
-        d2_act: document.getElementById("act_2")?.value || "",
-
-        d3_tema: document.getElementById("tema_3")?.value || "",
-        d3_act: document.getElementById("act_3")?.value || "",
-
-        d4_tema: document.getElementById("tema_4")?.value || "",
-        d4_act: document.getElementById("act_4")?.value || "",
-
-        d5_tema: document.getElementById("tema_5")?.value || "",
-        d5_act: document.getElementById("act_5")?.value || "",
-
-        intensidad: ST.intensidad || 1,
-
-        observacion: ST.observacionActiva === "si"
-          ? document.getElementById("observacionInput")?.value || ""
-          : "",
-
-        comp_obligatoria: ST.compActiva === "si"
-          ? document.getElementById("compObligatoria")?.value || ""
-          : "",
-
-        // ❌ IMPORTANTE: NO guardar archivos en localStorage
-
-        fam_obs: ST.famActiva === "si"
-          ? document.getElementById("famObs")?.value || ""
-          : "",
-
-        disp_clases: ST.dispActivo === "si"
-          ? (ST.dispClases || []).join(",")
-          : "",
-
-        disp_desc: ST.dispActivo === "si"
-          ? document.getElementById("dispDescripcion")?.value || ""
-          : ""
-
+        clases: [],
+        observacion: document.getElementById("observacionInput")?.value || "",
+        comp: document.getElementById("compObligatoria")?.value || "",
+        fam: document.getElementById("famObs")?.value || ""
       };
 
-      // 🔥 GUARDADO LOCAL
-      localStorage.setItem("planeacion_borrador", JSON.stringify(data));
+      for(let i = 1; i <= 5; i++){
+        data.clases.push({
+          tema: document.getElementById("tema_"+i)?.value || "",
+          act: document.getElementById("act_"+i)?.value || ""
+        });
+      }
 
-      document.getElementById("estadoGuardado").textContent = "Guardado local ✔";
+      const key = getClavePlaneacion();
+      if(!key) return;
+
+      localStorage.setItem(key, JSON.stringify(data));
+
+      //document.getElementById("estadoGuardado").textContent = "Guardado automático ✔";
 
     } catch (error) {
       console.error(error);
-      document.getElementById("estadoGuardado").textContent = "Error guardando";
     }
 
-  }, 200);
-
-  actualizarProgreso();
+  }, 300);
 }
-
+  
 function calcularSemanaActual(){
 
   // 🔥 Semana 5 inicia el 25 abril 2026 a las 12:00 (hora Colombia)
@@ -1797,26 +1861,59 @@ function generarSemanas(){
     const div = document.createElement("div");
     div.textContent = "Semana " + i;
 
+    // 🔒 Bloquear semanas pasadas
     if(i < actual){
       div.style.opacity = "0.4";
       div.style.pointerEvents = "none";
     }
 
+    // 🔥 AUTOSELECCIÓN INTELIGENTE
     if(i === actual){
-      document.getElementById("semanaText").textContent = "Semana " + i;
-      ST.semana = "Semana " + i;
+
+      const texto = "Semana " + i;
+
+      document.getElementById("semanaText").textContent = texto;
+      ST.semana = texto;
+
+      // 🔥 GUARDAR CONTEXTO
+      if(ST.materia && ST.grado){
+        guardarAuto();
+      }
+
+      // 🔥 RESTAURAR AUTOMÁTICO (CLAVE)
+      setTimeout(() => {
+        if(ST.materia && ST.grado && ST.semana){
+          restaurarBorradorCompleto();
+        }
+      }, 300);
     }
 
+    // 🖱️ SELECCIÓN MANUAL
     div.onclick = () => {
-  document.getElementById("semanaText").textContent = "Semana " + i;
-  ST.semana = "Semana " + i;
-  box.style.display = "none";
 
-  activarBloque("b-observacion"); // 🔥 CLAVE
-  actualizarProgreso();
+      ST._restaurado = false; // 🔥 RESET CONTROLADO
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
-};
+      const texto = "Semana " + i;
+
+      document.getElementById("semanaText").textContent = texto;
+      ST.semana = texto;
+
+      box.style.display = "none";
+
+      guardarAuto();
+
+      activarBloque("b-observacion");
+      actualizarProgreso();
+
+      // 🔥 RESTAURAR DESPUÉS DE SELECCIÓN
+      setTimeout(() => {
+        if(ST.materia && ST.grado && ST.semana){
+          restaurarBorradorCompleto();
+        }
+      }, 300);
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
 
     box.appendChild(div);
   }
@@ -1865,6 +1962,7 @@ function irPaso2(){
   // document.getElementById("b-dispositivo").classList.add("activo");
   document.getElementById("b-complementaria").classList.add("activo");
   document.getElementById("b-familias").classList.add("activo");
+  document.getElementById("b-copia").classList.add("activo");
   
 
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1929,6 +2027,16 @@ function setFam(valor, el){
 
 async function enviarPlaneacion(){
 
+  const correo = ST.correo || obtenerCorreo();
+
+  if(!correo){
+
+    alert("No se encontró el correo");
+
+    return;
+
+  }
+
   const btn = document.getElementById("btnEnviar");
   const icon = document.getElementById("iconEnviar");
   const estado = document.getElementById("estadoGuardado");
@@ -1950,12 +2058,6 @@ async function enviarPlaneacion(){
     return;
   }
 
-  // ⚠️ aviso IA (no bloquea)
-  hayErroresOrtograficos().then(hayErrores => {
-    if(hayErrores){
-      mostrarAvisoIA();
-    }
-  });
 
   // 🔥 FEEDBACK INMEDIATO (ULTRA CLAVE)
   btn.classList.add("loading");
@@ -1972,9 +2074,6 @@ async function enviarPlaneacion(){
   loaderSuccess.style.opacity = "0";
 
   estado.textContent = "Enviando...";
-
-  // 🔥 CONSTRUIR PAYLOAD (SIN BLOQUEAR)
-  const correo = obtenerCorreo();
 
   if(!correo){
     alert("No se encontró el correo");
@@ -2042,7 +2141,9 @@ async function enviarPlaneacion(){
   disp_desc:
     ST.dispActivo === "si"
       ? document.getElementById("dispDescripcion")?.value || ""
-      : ""
+      : "",
+
+  enviar_copia: ST.enviarCopia,
 };
 
   // 🚀 ENVÍO EN BACKGROUND (SIN ESPERAR)
@@ -2090,7 +2191,10 @@ async function enviarPlaneacion(){
 
   estado.textContent = "Planeación enviada ✔";
 
-  localStorage.removeItem("planeacion_borrador");
+  const key = getClavePlaneacion();
+if(key){
+  localStorage.removeItem(key);
+}
 
   // 🔥 cerrar rápido
   setTimeout(() => {
@@ -2102,68 +2206,156 @@ async function enviarPlaneacion(){
 
 function cargarBorrador(){
 
-  try {
+  if(!ST.materia || !ST.grado || !ST.semana) return;
 
-    const data = localStorage.getItem("planeacion_borrador");
-    if(!data) return;
+  const key = getClavePlaneacion();
+  if(!key) return;
 
-    const d = JSON.parse(data);
+  const data = localStorage.getItem(key);
+  if(!data) return;
 
-    // 🔥 SEMANA
-    if(d.semana){
-      const semanaEl = document.getElementById("semanaText");
-      if(semanaEl){
-        semanaEl.textContent = d.semana;
-        ST.semana = d.semana;
-      }
-    }
+  let d;
 
-    setTimeout(() => {
-
-      // 🔥 INDICADOR
-      if(document.getElementById("indicadorInput")){
-        document.getElementById("indicadorInput").value = d.indicador || "";
-      }
-
-      // 🔥 CLASES
-      for(let i = 1; i <= 5; i++){
-        const tema = document.getElementById("tema_"+i);
-        const act = document.getElementById("act_"+i);
-
-        if(tema) tema.value = d["d"+i+"_tema"] || "";
-        if(act) act.value = d["d"+i+"_act"] || "";
-      }
-
-      // 🔥 ACTIVIDAD COMPLEMENTARIA
-      if(document.getElementById("compObligatoria")){
-        document.getElementById("compObligatoria").value = d.comp_obligatoria || "";
-      }
-
-      // ❌ ELIMINADO: compArchivo (no se puede restaurar)
-
-      // 🔥 FAMILIAS
-      if(document.getElementById("famObs")){
-        document.getElementById("famObs").value = d.fam_obs || "";
-      }
-
-      // ❌ ELIMINADO: famArchivo (no se puede restaurar)
-
-      // 🔥 DISPARAR VALIDACIONES
-      document.querySelectorAll("textarea").forEach(t => {
-        t.dispatchEvent(new Event("input"));
-      });
-
-    }, 800);
-
-  } catch (error){
-    console.error("Error cargando borrador:", error);
+  try{
+    d = JSON.parse(data);
+  }catch(e){
+    console.error("Error parseando borrador", e);
+    return;
   }
 
+  // 🔥 EVITA DOBLE RESTAURACIÓN
+  if(ST._restaurado) return;
+  ST._restaurado = true;
+
+  // 🔥 RESTAURAR
+  setTimeout(() => {
+
+    document.getElementById("indicadorInput").value = d.indicador || "";
+
+    if(d.clases){
+      d.clases.forEach((c, i) => {
+        const n = i + 1;
+
+        if(document.getElementById("tema_"+n)){
+          document.getElementById("tema_"+n).value = c.tema || "";
+        }
+
+        if(document.getElementById("act_"+n)){
+          document.getElementById("act_"+n).value = c.act || "";
+        }
+      });
+    }
+
+    document.getElementById("observacionInput").value = d.observacion || "";
+    document.getElementById("compObligatoria").value = d.comp || "";
+    document.getElementById("famObs").value = d.fam || "";
+
+    document.querySelectorAll("textarea").forEach(t => {
+      t.dispatchEvent(new Event("input"));
+    });
+
+    document.getElementById("estadoGuardado").textContent = "Borrador restaurado ✔";
+
+  }, 200);
 }
 
+function restaurarBorradorCompleto(){
 
+  if(!AUTO_RESTORE) return; // 🔥 APAGADO TOTAL
 
+  // 🔴 BLOQUEO: sin contexto NO hace nada
+  if(!ST.materia || !ST.grado || !ST.semana){
+    return;
+  }
 
+  const key = getClavePlaneacion();
+  if(!key) return;
+  const data = localStorage.getItem(key);
+
+  if(!data) return;
+
+  let d;
+
+  try{
+    d = JSON.parse(data);
+  }catch(e){
+    console.error("Error parseando borrador", e);
+    return;
+  }
+
+  // 🔴 CLAVE: SOLO RESTAURA SI COINCIDE EL CONTEXTO
+  if(
+    d.materia !== ST.materia ||
+    d.grado !== ST.grado ||
+    d.semana !== ST.semana
+  ){
+    return;
+  }
+
+  // 🔴 EVITA DOBLE RESTAURACIÓN
+  if(ST._restaurado) return;
+  ST._restaurado = true;
+
+  // 🔥 INTENSIDAD
+  ST.intensidad = d.intensidad || 1;
+
+  // 🔥 GENERAR FORMULARIO (SIN CAMBIAR PASO AUTOMÁTICO)
+  generarPlaneacion();
+  irPaso2();
+
+  // 🔥 ESPERAR QUE EL DOM EXISTA
+  setTimeout(() => {
+
+    // 🔹 INDICADOR
+    const indicador = document.getElementById("indicadorInput");
+    if(indicador){
+      indicador.value = d.indicador || "";
+    }
+
+    // 🔹 CLASES
+    if(d.clases){
+      d.clases.forEach((c, index) => {
+        const i = index + 1;
+
+        const tema = document.getElementById("tema_" + i);
+        const act = document.getElementById("act_" + i);
+
+        if(tema) tema.value = c.tema || "";
+        if(act) act.value = c.act || "";
+      });
+    }
+
+    // 🔹 OBSERVACIÓN
+    const obs = document.getElementById("observacionInput");
+    if(obs){
+      obs.value = d.observacion || "";
+    }
+
+    // 🔹 COMPLEMENTARIA
+    const comp = document.getElementById("compObligatoria");
+    if(comp){
+      comp.value = d.comp || "";
+    }
+
+    // 🔹 FAMILIAS
+    const fam = document.getElementById("famObs");
+    if(fam){
+      fam.value = d.fam || "";
+    }
+
+    // 🔥 DISPARAR EVENTOS (IMPORTANTE PARA VALIDACIONES Y COACH)
+    document.querySelectorAll("textarea").forEach(t => {
+      t.dispatchEvent(new Event("input"));
+    });
+
+    // 🔥 ESTADO
+    document.getElementById("estadoGuardado").textContent = "Borrador restaurado ✔";
+
+    validarBotonEnviar();
+
+  }, 200);
+}
+  
 function validarBotonEnviar(){
 
   const indicador = document.getElementById("indicadorInput")?.value.trim() || "";
@@ -2366,7 +2558,12 @@ function mostrarExito(){
 }
 
 function nuevaPlaneacion(){
-  localStorage.removeItem("planeacion_borrador");
+
+  const key = getClavePlaneacion();
+  if(key){
+    localStorage.removeItem(key);
+  }
+
   location.reload();
 }
 
@@ -3219,7 +3416,35 @@ function confirmarEnvioExitoso(){
   estado.textContent = "Guardado en sistema ✔";
 
 }
+function toggleCopia(el) {
 
+  ST.enviarCopia = !ST.enviarCopia; // 🔥 USA EL STATE REAL
+
+  const bola = document.getElementById("bolaCopia");
+
+  if (ST.enviarCopia) {
+    el.style.background = "#1A428A";
+    bola.style.left = "22px";
+  } else {
+    el.style.background = "rgba(255,255,255,0.15)";
+    bola.style.left = "2px";
+  }
+}
+
+function getClavePlaneacion(){
+
+  const correo = obtenerCorreo() || "anon";
+
+  if(!ST.materia || !ST.grado || !ST.semana){
+    return null; // 🔴 no hay contexto aún
+  }
+
+  const materia = ST.materia.replace(/\s+/g,"_");
+  const grado = ST.grado.replace(/\s+/g,"_");
+  const semana = ST.semana.replace(/\s+/g,"_");
+
+  return `planeacion_${correo}_${materia}_${grado}_${semana}`;
+}
 </script>
 
 
