@@ -938,7 +938,7 @@ function guardarAuto(){
 }
 
 function calcularSemanaActual(){
-  const inicioBase = new Date("2026-04-25T12:00:00-05:00");
+  const inicioBase = new Date("2026-04-25T00:30:00-05:00");
   const ahora = new Date();
   const unaSemana = 7 * 24 * 60 * 60 * 1000;
   const diffSemanas = Math.floor((ahora.getTime() - inicioBase.getTime()) / unaSemana);
