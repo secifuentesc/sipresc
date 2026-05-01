@@ -1810,7 +1810,7 @@ function guardarAuto(){
       };
 
       const correo = obtenerCorreo() || "anon";
-      const key = `planeacion_${correo}_${ST.materia}_${ST.grado}_${ST.semana}`;
+      const key = `planeacion_${correo}_${ST.materia}_${ST.grado}`;
 
       // 🔥 GUARDADO LOCAL
       localStorage.setItem(key, JSON.stringify(data));
@@ -2172,7 +2172,7 @@ async function enviarPlaneacion(){
   estado.textContent = "Planeación enviada ✔";
 
   const correo = obtenerCorreo() || "anon";
-const key = `planeacion_${correo}_${ST.materia}_${ST.grado}_${ST.semana}`;
+const key = `planeacion_${correo}_${ST.materia}_${ST.grado}`;
 
 localStorage.removeItem(key);
 
@@ -2189,31 +2189,42 @@ function cargarBorrador(){
   try {
 
     const correo = obtenerCorreo() || "anon";
-    const key = `planeacion_${correo}_${ST.materia}_${ST.grado}_${ST.semana}`;
-    
-    const data = localStorage.getItem(key);
+
+    // 🔥 1. intentar cargar con semana actual
+    let key = `planeacion_${correo}_${ST.materia}_${ST.grado}_${ST.semana}`;
+    let data = localStorage.getItem(key);
+
+    // 🔥 2. si NO hay, buscar cualquier borrador de esa materia/grado
+    if(!data){
+
+      const base = `planeacion_${correo}_${ST.materia}_${ST.grado}`;
+
+      for(let i = 0; i < localStorage.length; i++){
+        const k = localStorage.key(i);
+
+        if(k && k.startsWith(base)){
+          data = localStorage.getItem(k);
+          break;
+        }
+      }
+    }
+
+    // 🔥 3. si no hay nada, salir
     if(!data) return;
 
     const d = JSON.parse(data);
 
-    // 🔥 SEMANA
-    if(d.semana){
-      const semanaEl = document.getElementById("semanaText");
-      if(semanaEl){
-        semanaEl.textContent = d.semana;
-        ST.semana = d.semana;
-      }
-    }
-
+    // 🔥 4. esperar que se renderice el DOM
     setTimeout(() => {
 
-      // 🔥 INDICADOR
+      // INDICADOR
       if(document.getElementById("indicadorInput")){
         document.getElementById("indicadorInput").value = d.indicador || "";
       }
 
-      // 🔥 CLASES
+      // CLASES
       for(let i = 1; i <= 5; i++){
+
         const tema = document.getElementById("tema_"+i);
         const act = document.getElementById("act_"+i);
 
@@ -2221,34 +2232,33 @@ function cargarBorrador(){
         if(act) act.value = d["d"+i+"_act"] || "";
       }
 
-      // 🔥 ACTIVIDAD COMPLEMENTARIA
+      // ACTIVIDAD COMPLEMENTARIA
       if(document.getElementById("compObligatoria")){
         document.getElementById("compObligatoria").value = d.comp_obligatoria || "";
       }
 
-      // ❌ ELIMINADO: compArchivo (no se puede restaurar)
-
-      // 🔥 FAMILIAS
+      // FAMILIAS
       if(document.getElementById("famObs")){
         document.getElementById("famObs").value = d.fam_obs || "";
       }
 
-      // ❌ ELIMINADO: famArchivo (no se puede restaurar)
+      // OBSERVACIÓN
+      if(document.getElementById("observacionInput")){
+        document.getElementById("observacionInput").value = d.observacion || "";
+      }
 
       // 🔥 DISPARAR VALIDACIONES
       document.querySelectorAll("textarea").forEach(t => {
         t.dispatchEvent(new Event("input"));
       });
 
-    }, 800);
+    }, 500);
 
   } catch (error){
     console.error("Error cargando borrador:", error);
   }
 
 }
-
-
 
 
 function validarBotonEnviar(){
