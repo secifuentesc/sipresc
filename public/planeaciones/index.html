@@ -93,8 +93,10 @@ body{
 
 /* ── BARRA PROGRESO ── */
 .progress-bar{
+  position:fixed;top:53px;left:0;right:0;
   width:100%;height:3px;
-  background:rgba(255,255,255,.05)
+  background:rgba(255,255,255,.05);
+  z-index:19
 }
 #progressFill{
   height:100%;width:0%;
@@ -188,11 +190,11 @@ body{
   background:rgba(255,255,255,.08)
 }
 .select-options{
-  position:absolute;top:110%;left:0;width:100%;
+  position:fixed;top:auto;left:0;width:100%;
   background:rgba(13,31,60,.97);
   border:1px solid rgba(255,255,255,.1);
   border-radius:14px;
-  max-height:220px;overflow:auto;
+  max-height:50vh;overflow:auto;
   display:none;z-index:9999;
   -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
   box-shadow:0 20px 60px rgba(0,0,0,.5)
@@ -296,14 +298,13 @@ body{
 #btnCorregir{
   position:fixed;bottom:90px;right:20px;
   width:52px;height:52px;border-radius:50%;
-  background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.2);
-  color:#fff;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#4ade80,#22c55e);
+  border:none;
+  color:#000;display:flex;align-items:center;justify-content:center;
   font-size:20px;cursor:pointer;
-  box-shadow:0 6px 18px rgba(0,0,0,.3);
+  box-shadow:0 6px 18px rgba(74,222,128,.4);
   z-index:50;opacity:0;transform:scale(.8);pointer-events:none;
-  transition:all .3s ease;
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)
+  transition:all .3s ease
 }
 #btnCorregir.activo{opacity:1;transform:scale(1);pointer-events:auto}
 #btnCorregir.cargando{animation:girar .8s linear infinite}
@@ -607,7 +608,7 @@ body{
         <div id="coachComp" class="coach-box"></div>
         <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
         <div class="file-upload" onclick="document.getElementById('compArchivo').click()">
-          <span id="compLabel">Seleccionar archivo</span>
+          <span id="compLabel">Seleccionar archivo (máx 10MB)</span>
           <strong id="compNombre">Ningún archivo</strong>
           <button id="btnQuitarComp" onclick="quitarArchivoComp(event)" style="margin-top:8px;font-size:11px;background:transparent;border:1px solid var(--br);color:var(--mt);padding:6px 10px;border-radius:8px;cursor:pointer;display:none;">Quitar archivo ✕</button>
           <div class="file-bar"><div class="file-progress" id="compProgress"></div></div>
@@ -630,7 +631,7 @@ body{
         <div id="coachFamilia" class="coach-box"></div>
         <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
         <div class="file-upload" id="famUpload" onclick="document.getElementById('famArchivo').click()">
-          <span>Seleccionar archivo</span>
+          <span>Seleccionar archivo (máx 10MB)</span>
           <strong id="famNombre">Ningún archivo</strong>
           <button id="btnQuitarFam" onclick="quitarArchivoFam(event)" style="margin-top:8px;font-size:11px;background:transparent;border:1px solid var(--br);color:var(--mt);padding:6px 10px;border-radius:8px;cursor:pointer;display:none;">Quitar archivo ✕</button>
           <div class="file-bar"><div class="file-progress" id="famProgress"></div></div>
@@ -666,7 +667,7 @@ body{
 <!-- MODAL ÉXITO -->
 <div id="modalExito" style="position:fixed;inset:0;background:rgba(5,14,29,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:all .3s ease;">
   <div class="modal-card">
-    <div class="modal-title">Planeación enviada ✔</div>
+    <div class="modal-title">Planeación enviada</div>
     <div class="modal-sub">Todo se guardó correctamente</div>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <button onclick="nuevaPlaneacion()" class="btn">Nueva planeación</button>
@@ -1381,7 +1382,11 @@ function fileToBase64(file){ return new Promise((resolve,reject)=>{ const reader
 
 document.getElementById("compArchivo").addEventListener("change", async function(){
   const file=this.files[0]; if(!file) return;
-  if(file.size>3*1024*1024){ alert("El archivo supera el tamaño permitido (máx 3MB)"); this.value=""; return; }
+  if(file.size > 10 * 1024 * 1024){
+    toast("El archivo supera el límite permitido (máx 10MB)", "er");
+    this.value = "";
+    return;
+  }
   archivoCompNombre=file.name; archivoCompBase64=await fileToBase64(file);
   document.getElementById("compNombre").textContent=file.name; document.getElementById("compLabel").textContent="Archivo cargado ✔";
   const bar=document.getElementById("compProgress"); const box=document.getElementById("compBox").querySelector(".file-upload");
@@ -1392,6 +1397,11 @@ document.getElementById("compArchivo").addEventListener("change", async function
 
 document.getElementById("famArchivo").addEventListener("change", async function(){
   const file=this.files[0]; if(!file) return;
+  if(file.size > 10 * 1024 * 1024){
+    toast("El archivo supera el límite permitido (máx 10MB)", "er");
+    this.value = "";
+    return;
+  }
   archivoFamNombre=file.name; archivoFamBase64=await fileToBase64(file);
   document.getElementById("famNombre").textContent=file.name;
   const bar=document.getElementById("famProgress"); const box=document.getElementById("famUpload");
@@ -1399,7 +1409,6 @@ document.getElementById("famArchivo").addEventListener("change", async function(
   setTimeout(()=>{ box.style.borderColor="#4ade80"; box.style.boxShadow="0 0 0 1px #4ade80 inset"; },350);
   document.getElementById("btnQuitarFam").style.display="inline-block";
 });
-
 function quitarArchivoComp(e){
   e.stopPropagation(); const input=document.getElementById("compArchivo"); input.value="";
   document.getElementById("compNombre").textContent="Ningún archivo"; document.getElementById("compLabel").textContent="Seleccionar archivo";
