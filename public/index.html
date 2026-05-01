@@ -708,7 +708,8 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
         class="fi"
         inputmode="numeric"
         autocomplete="one-time-code"
-        maxlength="6">
+        maxlength="6"
+        oninput="this.value=this.value.replace(/\D/g,'').slice(0,6);if(this.value.length===6){activarVerificando();clearTimeout(timeoutVerificacion);timeoutVerificacion=setTimeout(()=>verificarCodigoLogin(),400);}">
       <button id="btnVerificar" onclick="verificarCodigoLogin()">
         Verificar acceso
       </button>
