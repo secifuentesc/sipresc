@@ -629,7 +629,7 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
   cursor:pointer;
   transition:background .18s,transform .15s,border-color .18s;
   -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
-  display:flex;flex-direction:column;align-items:flex-start
+  display:flex;flex-direction:column;align-items:center;text-align:center
 }
 .home-card:hover{
   background:rgba(255,255,255,.1);
@@ -649,7 +649,7 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
   width:40px;height:40px;border-radius:12px;
   border:1px solid transparent;
   display:flex;align-items:center;justify-content:center;
-  margin-bottom:14px;flex-shrink:0
+  margin-bottom:14px;flex-shrink:0;align-self:center
 }
 .home-name{
   font-size:14px;font-weight:600;color:#fff;
@@ -731,14 +731,14 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
     <div style="min-height:calc(100svh - 130px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px 24px">
 
       <!-- Saludo centrado -->
-      <div style="text-align:center;margin-bottom:36px;width:100%;max-width:340px">
+      <div style="text-align:center;margin-bottom:36px;width:100%;max-width:420px">
         <div style="font-size:12px;color:rgba(255,255,255,.3);font-family:-apple-system,sans-serif;margin-bottom:8px;letter-spacing:.3px;text-transform:capitalize" id="home-fecha">—</div>
         <div style="font-size:32px;font-weight:700;letter-spacing:-.6px;line-height:1.1;font-family:-apple-system,sans-serif;margin-bottom:6px">Hola, <span id="nombre-docente" style="color:#fff">Docente</span></div>
-        <div style="font-size:14px;color:rgba(255,255,255,.3);font-family:-apple-system,sans-serif;font-weight:400">¿Con qué trabajamos hoy?</div>
+        <div style="font-size:14px;color:rgba(255,255,255,.28);font-family:-apple-system,sans-serif;font-weight:400;line-height:1.5">Tu asistente institucional<br>está listo para ti</div>
       </div>
 
       <!-- Grid 2x2 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%;max-width:340px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:420px">
 
         <!-- Planeaciones — destacada sutilmente -->
         <div class="home-card home-card-main" onclick="abrirModulo('planeaciones')">
@@ -921,7 +921,7 @@ function iniciarApp(){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   const nombre=(ST.nombre||'').split(' ')[0];
   const nd=document.getElementById('nombre-docente');
-  if(nd)nd.textContent=nombre||'Docente';
+  if(nd)nd.textContent=(nombre||'Docente').charAt(0).toUpperCase()+(nombre||'Docente').slice(1).toLowerCase();
   // fecha en el saludo
   const hf=document.getElementById('home-fecha');
   if(hf){const d=new Date();hf.textContent=d.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});}
