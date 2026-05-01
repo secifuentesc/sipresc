@@ -1435,6 +1435,8 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  setTimeout(restaurarBorradorCompleto, 800);
+
 });
 
 // 🔥 CARGAR MATERIAS
@@ -2213,6 +2215,84 @@ function cargarBorrador(){
     console.error("Error cargando borrador:", error);
   }
 
+}
+
+function restaurarBorradorCompleto(){
+
+  const correo = obtenerCorreo() || "anon";
+  const key = `planeacion_${correo}`;
+  const data = localStorage.getItem(key);
+
+  if(!data) return;
+
+  const d = JSON.parse(data);
+
+  if(!ST.data){
+    setTimeout(restaurarBorradorCompleto, 500);
+    return;
+  }
+
+  ST.materia = d.materia;
+  ST.grado = d.grado;
+  ST.semana = d.semana;
+  ST.intensidad = d.intensidad || 1;
+
+  document.getElementById("materiaText").textContent = ST.materia || "Seleccionar materia...";
+  onMateria();
+
+  setTimeout(() => {
+
+    document.getElementById("gradoText").textContent = ST.grado || "Seleccionar grado...";
+    onGrado();
+
+    document.getElementById("semanaText").textContent = ST.semana || "Seleccionar semana...";
+
+    setTimeout(() => {
+
+      ST.intensidad = d.intensidad || 1;
+
+      generarPlaneacion();
+      irPaso2();
+
+      setTimeout(() => {
+
+        document.getElementById("indicadorInput").value = d.indicador || "";
+
+        if(d.clases){
+          d.clases.forEach((c, index) => {
+            const i = index + 1;
+
+            if(document.getElementById("tema_" + i)){
+              document.getElementById("tema_" + i).value = c.tema || "";
+            }
+
+            if(document.getElementById("act_" + i)){
+              document.getElementById("act_" + i).value = c.act || "";
+            }
+          });
+        }
+
+        if(document.getElementById("observacionInput")){
+          document.getElementById("observacionInput").value = d.observacion || "";
+        }
+
+        if(document.getElementById("compObligatoria")){
+          document.getElementById("compObligatoria").value = d.comp || "";
+        }
+
+        if(document.getElementById("famObs")){
+          document.getElementById("famObs").value = d.fam || "";
+        }
+
+        document.getElementById("estadoGuardado").textContent = "Borrador restaurado ✔";
+
+        validarBotonEnviar();
+
+      }, 400);
+
+    }, 300);
+
+  }, 300);
 }
 
 function validarBotonEnviar(){
