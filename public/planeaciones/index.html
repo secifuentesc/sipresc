@@ -9,6 +9,9 @@
 <link rel="icon" type="image/png" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>
+
+const AUTO_GUARD = false;
+  
 (function(){
   try{
     const s = localStorage.getItem("lp_user");
@@ -884,7 +887,7 @@ body{
 </div>
 
 <div class="subtitle-main">
-  Todo se guarda automáticamente
+  La Presentació
 </div>
 
 
@@ -1761,7 +1764,10 @@ setTimeout(() => {
 
 let timer;
 
+
 function guardarAuto(){
+
+  if(!AUTO_GUARD) return; // 🔥 APAGADO TOTAL
 
   clearTimeout(timer);
 
@@ -1770,23 +1776,17 @@ function guardarAuto(){
     try {
 
       const data = {
-
         materia: ST.materia,
         grado: ST.grado,
         semana: ST.semana,
         intensidad: ST.intensidad,
-
         indicador: document.getElementById("indicadorInput")?.value || "",
-
         clases: [],
-
         observacion: document.getElementById("observacionInput")?.value || "",
         comp: document.getElementById("compObligatoria")?.value || "",
         fam: document.getElementById("famObs")?.value || ""
-
       };
 
-      // 🔥 CLASES DINÁMICAS
       for(let i = 1; i <= 5; i++){
         data.clases.push({
           tema: document.getElementById("tema_"+i)?.value || "",
@@ -1799,15 +1799,15 @@ function guardarAuto(){
 
       localStorage.setItem(key, JSON.stringify(data));
 
-      document.getElementById("estadoGuardado").textContent = "Guardado automático ✔";
+      //document.getElementById("estadoGuardado").textContent = "Guardado automático ✔";
 
     } catch (error) {
       console.error(error);
     }
 
   }, 300);
-
 }
+  
 function calcularSemanaActual(){
 
   // 🔥 Semana 5 inicia el 25 abril 2026 a las 12:00 (hora Colombia)
