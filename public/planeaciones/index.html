@@ -5,45 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a1628">
 <title>Planeaciones — La Presentación</title>
-
 <link rel="icon" type="image/png" href="/logo.png">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- fuentes Apple system -->
 <script>
-
 const AUTO_GUARD = false;
-const AUTO_RESTORE = false; // 🔥 NUEVO
+const AUTO_RESTORE = false;
 
 function setMateriaText(texto){
   const display = document.getElementById("materiaText");
-
-  // 🔴 SI YA HAY MATERIA → NO TOCAR
   if(ST.materia) return;
-
   display.textContent = texto;
 }
   
 (function(){
   try{
     const s = localStorage.getItem("lp_user");
-    if(!s){
-      window.location.replace("/");
-      return;
-    }
-
+    if(!s){ window.location.replace("/"); return; }
     const json = JSON.parse(s);
-
-    if(!json || !json.correo){
-      window.location.replace("/");
-    }
-
-  }catch(e){
-    window.location.replace("/");
-  }
+    if(!json || !json.correo){ window.location.replace("/"); }
+  }catch(e){ window.location.replace("/"); }
 })();
 </script>
-  <style>
+<style>
+/* ═══════════════════════════════════════════
+   DISEÑO APPLE — planeaciones/index.html
+   Fuentes, topbar, inputs, cards
+   ═══════════════════════════════════════════ */
 
-/* 🔥 EXACTAMENTE EL MISMO ESTILO */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
   --ink:#0a1628;--blue:#1a3a6b;--royal:#0f2657;--cobalt:#1e4db7;
@@ -51,8 +39,9 @@ function setMateriaText(texto){
   --s0:#050e1d;--s1:#0d1f3c;--s2:#122449;--s3:#182e58;
   --br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.13);
   --tx:#e8edf8;--mt:#7a8fb0;
-  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
   --green:#4ade80;
+  --mono:-apple-system,\'SF Mono\',\'Helvetica Neue\',monospace;
+  --sans:-apple-system,\'SF Pro\',\'Helvetica Neue\',sans-serif;
 }
 
 body{
@@ -60,143 +49,108 @@ body{
   color:var(--tx);
   font-family:var(--sans);
   background-image:
-  radial-gradient(ellipse 60% 50% at 15% 0%,rgba(26,58,107,.5) 0%,transparent 70%),
-  radial-gradient(ellipse 50% 40% at 85% 100%,rgba(30,77,183,.25) 0%,transparent 70%);
+    radial-gradient(ellipse 60% 50% at 15% 0%,rgba(26,58,107,.5) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 100%,rgba(30,77,183,.25) 0%,transparent 70%);
 }
 
-/* 🔥 TOPBAR ORIGINAL */
+/* ── TOPBAR estilo Apple glass ── */
 .topbar{
-  position:sticky;
-  top:0;
-  z-index:20;
-  background:rgba(5,14,29,.96);
-  border-bottom:1px solid var(--br);
-  padding:10px 14px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  backdrop-filter:blur(14px);
+  position:sticky;top:0;z-index:20;
+  background:rgba(5,14,29,.75);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding:10px 18px;
+  padding-top:calc(10px + env(safe-area-inset-top,0));
+  display:flex;align-items:center;gap:10px;
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)
 }
-
 .topbar-logo{
-  width:32px;height:32px;border-radius:10px;
-  background:linear-gradient(140deg,var(--royal),var(--cobalt));
+  width:30px;height:30px;border-radius:9px;
+  background:linear-gradient(140deg,#1c3f7a,#2557c7);
   display:flex;align-items:center;justify-content:center;
+  overflow:hidden;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(20,60,180,.4);
+  text-decoration:none
 }
-
-.logo-img-top{width:20px}
-
+.logo-img-top{width:18px;filter:brightness(10)}
 .topbar h1{
-  font-family:var(--mono);
-  font-size:12px;
-  flex:1;
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif;
+  font-size:15px;font-weight:600;letter-spacing:-.2px;
+  flex:1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
 }
-
 .topbar-rol{
-  font-size:9px;
-  color:var(--gold);
-  background:var(--gold3);
-  padding:3px 8px;
-  border-radius:20px;
+  font-size:10px;color:rgba(255,255,255,.5);
+  font-family:-apple-system,sans-serif;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);
+  padding:3px 10px;border-radius:20px;flex-shrink:0;letter-spacing:.2px
 }
-
 .logout-btn{
-  background:none;
-  border:none;
-  color:var(--mt);
-  font-size:11px;
+  background:none;border:none;color:rgba(255,255,255,.35);
+  font-size:12px;cursor:pointer;padding:4px 6px;
+  font-family:-apple-system,sans-serif;transition:color .15s
+}
+.logout-btn:hover{color:rgba(255,255,255,.7)}
+
+/* ── BARRA PROGRESO ── */
+.progress-bar{
+  width:100%;height:3px;
+  background:rgba(255,255,255,.05)
+}
+#progressFill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--gold),var(--gold2));
+  transition:width .4s ease
 }
 
-/* 🔥 CONTENIDO */
+/* ── CONTENEDOR ── */
 .container{
-  padding:20px;
-  min-height:calc(100vh - 60px);
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-}
-
-/* 🔥 CARD ORIGINAL */
-.card{
-  width:100%;
-  max-width:520px;
-  background:var(--s2);
-  border:1px solid var(--br);
-  border-radius:14px;
-  padding:18px;
-}
-
-/* 🔥 FORM ORIGINAL */
-.fg{margin-bottom:14px}
-
-.fl{
-  font-family:var(--mono);
-  font-size:9px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--mt);
-  margin-bottom:6px;
-}
-
-.fi,.fta{
-  width:100%;
-  background:var(--s1);
-  border:1px solid var(--br);
-  border-radius:9px;
-  color:var(--tx);
-  padding:12px;
-  font-size:15px;
-}
-
-.fta{min-height:80px}
-
-/* 🔥 BOTÓN ORIGINAL */
-.btn{
-  width:100%;
-  padding:14px;
-  border-radius:11px;
-  border:none;
-  font-family:var(--mono);
-  font-size:11px;
-  text-transform:uppercase;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
-  color:#000;
-  cursor:pointer;
+  display:flex;justify-content:center;align-items:center;
+  min-height:calc(100vh - 53px);padding:20px;overflow:visible
 }
 
 .form-app{
-  width:100%;
-  max-width:520px;
+  width:100%;max-width:580px;text-align:center
 }
 
-.title{
-  font-size:24px;
-  font-weight:600;
-  margin-bottom:6px;
+/* ── TÍTULO — limpio sin gradiente ── */
+.title-main{
+  font-size:30px;font-weight:700;letter-spacing:-.5px;
+  color:#fff;margin-bottom:8px;
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif
+}
+.subtitle-main{
+  font-size:14px;color:rgba(255,255,255,.35);
+  margin-bottom:40px;
+  font-family:-apple-system,sans-serif
 }
 
-.subtitle{
-  font-size:13px;
-  color:var(--mt);
-  margin-bottom:30px;
-}
-
+/* ── BLOQUES ── */
 .bloque{
-  margin-bottom:26px;
+  margin-bottom:40px;
+  transform:translateY(0);
   transition:all .4s ease;
+  display:none;position:relative;z-index:1;overflow:visible
 }
-
-.oculto{
-  display:none !important;
+.bloque.activo{
+  display:block;
+  animation:fadeIn .4s ease
 }
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.oculto{display:none !important}
 
+/* ── PREGUNTA ── */
 .pregunta{
   display:block;
-  font-size:14px;
-  margin-bottom:6px;
-  color:var(--mt);
+  font-size:17px;font-weight:500;
+  margin-bottom:14px;color:var(--tx);
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif;
+  letter-spacing:-.2px
 }
 
+/* ── INPUTS ── */
 .input{
   width:100%;
   background:transparent;
@@ -204,1041 +158,535 @@ body{
   border-bottom:1px solid var(--br2);
   color:var(--tx);
   font-size:18px;
-  padding:10px 0;
+  padding:12px 0;
   outline:none;
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif;
+  transition:border-color .2s
 }
-
-.input:focus{
-  border-bottom:1px solid var(--gold);
-}
-
+.input:focus{border-bottom:1px solid var(--gold)}
 .textarea{
-  min-height:70px;
+  min-height:70px;text-align:left;
+  line-height:1.6;padding-left:0;
+  caret-color:var(--gold)
 }
 
-.estado{
-  margin-top:20px;
-  font-size:12px;
-  color:var(--green);
-  opacity:.7;
+/* ── SELECT CUSTOM ── */
+.custom-select{position:relative;z-index:1000}
+.select-display{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;
+  padding:16px 18px;
+  font-size:16px;cursor:pointer;
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif;
+  color:var(--tx);
+  transition:border-color .2s,background .2s;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)
 }
-.intensidad-item{
-  flex:1;
-  text-align:center;
-  padding:14px;
-  border-radius:10px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid var(--br);
-  font-size:18px;
-  font-weight:600;
-  cursor:pointer;
+.select-display:hover{
+  border-color:rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08)
+}
+.select-options{
+  position:absolute;top:110%;left:0;width:100%;
+  background:rgba(13,31,60,.97);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;
+  max-height:220px;overflow:auto;
+  display:none;z-index:9999;
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  box-shadow:0 20px 60px rgba(0,0,0,.5)
+}
+.select-options div{
+  padding:14px 18px;cursor:pointer;
+  font-size:15px;
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif;
+  transition:background .15s;color:var(--tx);
+  border-bottom:1px solid rgba(255,255,255,.05)
+}
+.select-options div:last-child{border-bottom:none}
+.select-options div:hover{
+  background:rgba(255,255,255,.07);color:var(--gold)
+}
 
-  transition: all .2s ease;
-}
-
-/* 🔥 EFECTO HOVER */
-.intensidad-item:hover{
-  transform: translateY(-3px);
-  background: rgba(255,255,255,0.08);
-  border-color: var(--gold);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-}
-
-.intensidad-item.activa{
-  background: linear-gradient(135deg, var(--gold), var(--gold2));
-  color:#000;
-  border: none;
-}
-  
-.intensidad-item:active{
-  transform: scale(0.95);
-}
-
+/* ── BOTONES OPCIÓN (Sí/No, grupos, intensidad) ── */
 .btn-opcion{
-  flex:1;
-  text-align:center;
-  padding:12px;
-  border-radius:10px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid var(--br);
+  flex:1;text-align:center;
+  padding:14px 18px;
+  border-radius:12px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.09);
   cursor:pointer;
-  transition: all .2s ease;
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif;
+  font-size:15px;font-weight:500;color:var(--tx);
+  transition:all .18s;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)
 }
-
 .btn-opcion:hover{
-  transform: translateY(-2px);
-  border-color: var(--gold);
+  background:rgba(255,255,255,.1);
+  border-color:rgba(255,255,255,.18);
+  transform:translateY(-1px)
 }
-
 .btn-opcion.activa{
-  background: linear-gradient(135deg, var(--gold), var(--gold2));
-  color:#000;
-  border:none;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;border:none;font-weight:600
 }
 
+/* ── INTENSIDAD ── */
+.intensidad-item{
+  flex:1;text-align:center;
+  padding:16px;border-radius:12px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.09);
+  font-size:20px;font-weight:600;cursor:pointer;
+  transition:all .18s;
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif
+}
+.intensidad-item:hover{
+  transform:translateY(-3px);
+  background:rgba(255,255,255,.1);
+  border-color:rgba(255,255,255,.2);
+  box-shadow:0 6px 16px rgba(0,0,0,.25)
+}
+.intensidad-item.activa{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;border:none
+}
+.intensidad-item:active{transform:scale(.95)}
+
+/* ── BOTÓN PRINCIPAL (enviar) — dorado ── */
+.btn{
+  width:100%;padding:15px;border-radius:12px;border:none;
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif;
+  font-size:15px;font-weight:600;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;cursor:pointer;
+  transition:opacity .15s,transform .1s
+}
+.btn:active{transform:scale(.97)}
+
+/* ── BOTONES FAB (back, enviar, corregir) ── */
 #btnBack{
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold), var(--gold2));
-  color:#000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  cursor:pointer;
-  box-shadow: 0 6px 18px rgba(0,0,0,.4);
-  z-index:50;
-
-  opacity:0;
-  pointer-events:none;
-  transition: all .3s ease;
+  position:fixed;bottom:20px;left:20px;
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:20px;cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.3);
+  z-index:50;opacity:0;pointer-events:none;
+  transition:all .3s ease;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)
 }
-
-#btnBack.activo{
-  opacity:1;
-  pointer-events:auto;
-}
+#btnBack.activo{opacity:1;pointer-events:auto}
 
 #btnEnviar{
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold), var(--gold2));
-  color:#000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:22px;
-  font-weight:bold;
-  cursor:pointer;
-  box-shadow: 0 6px 18px rgba(0,0,0,.4);
-  z-index:50;
-
-  opacity:0;
-  transform: scale(.8);
-  pointer-events:none;
+  position:fixed;bottom:20px;right:20px;
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:bold;cursor:pointer;
+  box-shadow:0 6px 18px rgba(201,150,42,.4);
+  z-index:50;opacity:0;transform:scale(.8);pointer-events:none
 }
+#btnEnviar.activo{opacity:1;transform:scale(1);pointer-events:auto}
+#btnEnviar.success{background:linear-gradient(135deg,#4ade80,#22c55e)}
+#btnEnviar.loading{pointer-events:none;opacity:.9}
 
 #btnCorregir{
-  position: fixed;
-  bottom: 90px; /* arriba del enviar */
-  right: 20px;
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #4ade80, #22c55e);
-  color:#000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  cursor:pointer;
-  box-shadow: 0 6px 18px rgba(0,0,0,.4);
-  z-index:50;
+  position:fixed;bottom:90px;right:20px;
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:20px;cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.3);
+  z-index:50;opacity:0;transform:scale(.8);pointer-events:none;
+  transition:all .3s ease;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)
+}
+#btnCorregir.activo{opacity:1;transform:scale(1);pointer-events:auto}
+#btnCorregir.cargando{animation:girar .8s linear infinite}
+@keyframes girar{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
-  opacity:0;
-  transform: scale(.8);
-  pointer-events:none;
-  transition: all .3s ease;
+/* ── ESTADO GUARDADO ── */
+.estado{
+  margin-top:20px;font-size:12px;
+  color:var(--green);opacity:.7;
+  font-family:-apple-system,sans-serif
 }
 
-#btnCorregir.activo{
-  opacity:1;
-  transform: scale(1);
-  pointer-events:auto;
-}
-
-#btnEnviar.activo{
-  opacity:1;
-  transform: scale(1);
-  pointer-events:auto;
-}
-
-.custom-select{
-  position:relative;
-  z-index:1000;
-
-}
-
-.select-display{
-  background:var(--s1);
-  border:1px solid var(--br);
-  border-radius:12px;
-  padding:14px;
-  font-size:15px;
-  cursor:pointer;
-  transition: all .2s ease;
-}
-
-.select-display:hover{
-  border-color: var(--gold);
-}
-
-.select-options{
-  position:fixed;
-  top:110%;
-  left:0;
-  width:100%;
-  background:var(--s2);
-  border:1px solid var(--br);
-  border-radius:12px;
-  max-height:200px;
-  overflow:auto;
-  display:none;
-  z-index:99999;
-}
-
-.select-options div{
-  padding:12px;
-  cursor:pointer;
-  transition: all .2s ease;
-}
-
-.select-options div:hover{
-  background:rgba(255,255,255,0.05);
-  color:var(--gold);
-}
-
-.container{
-  overflow:visible;
-}
-
-/* 🔥 TYPEFORM STYLE */
-
-.container{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
-}
-
-/* CENTRADO TOTAL */
-.form-app{
-  width:100%;
-  max-width:600px;
-  text-align:center;
-}
-
-/* TITULO PRO */
-.title-main{
-  font-size:32px;
-  font-weight:700;
-  margin-bottom:10px;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-.subtitle-main{
-  font-size:14px;
-  color:var(--mt);
-  margin-bottom:40px;
-}
-
-/* BLOQUES MÁS LIMPIOS */
-.bloque{
-  margin-bottom:40px;
-  transform:translateY(0);
-  transition:all .4s ease;
-}
-
-/* PREGUNTA MÁS GRANDE */
-.pregunta{
-  font-size:18px;
-  font-weight:500;
-  margin-bottom:14px;
-  color:var(--tx);
-}
-
-/* SELECT MÁS PRO */
-.select-display{
-  padding:18px;
-  font-size:17px;
-  border-radius:14px;
-  background:rgba(255,255,255,0.04);
-  backdrop-filter:blur(8px);
-}
-
-/* OPCIONES MÁS BONITAS */
-.select-options div{
-  padding:14px;
-  font-size:15px;
-}
-
-/* BOTONES MÁS ELEGANTES */
-.btn-opcion{
-  padding:14px;
-  font-size:15px;
-}
-
-/* INPUT MÁS LIMPIO */
-.input{
-  font-size:20px;
-  text-align:center;
-}
-
-/* 🔥 SOLO TEXTAREAS A LA IZQUIERDA */
-.textarea{
-  text-align:left;
-  line-height:1.6;
-  padding-left:14px;
-  caret-color: var(--gold);
-}
-
-
-.progress-bar{
-  width:100%;
-  height:4px;
-  background:rgba(255,255,255,0.05);
-}
-
-#progressFill{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,var(--gold),var(--gold2));
-  transition:width .4s ease;
-}
-
-.bloque{
-  display:none;
-}
-
-.bloque.activo{
-  display:block;
-  animation:fadeIn .4s ease;
-}
-
-.bloque.activo{
-  display:block;
-  opacity:1;
-  animation:fadeIn .4s ease;
-}
-
-@keyframes fadeIn{
-  from{
-    opacity:0;
-    transform:translateY(20px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-.select-options{
-  position:absolute;
-  top:110%;
-  left:0;
-  width:100%;
-  background:var(--s2);
-  border:1px solid var(--br);
-  border-radius:12px;
-  max-height:200px;
-  overflow:auto;
-
-  display:none;
-  z-index:9999; /* 🔥 CLAVE */
-}
-
-#paso1{
-  position:relative;
-  z-index:1;
-  overflow:visible;
-}
-
-.bloque{
-  position:relative;
-  z-index:1;
-  overflow:visible;
-}
-
-#dispClases .btn-opcion.activa{
-  background: linear-gradient(135deg, var(--gold), var(--gold2));
-  color:#000;
-  transform: scale(1.05);
-}
-
+/* ── COACH BOX ── */
 .coach-box{
-  margin-top:10px;
-  font-size:12px;
-  line-height:1.5;
-  text-align:left;
-  background:rgba(255,255,255,0.035);
-  border:1px solid var(--br);
-  border-radius:10px;
-  padding:10px;
-  display:none;
+  margin-top:10px;font-size:12px;line-height:1.5;text-align:left;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;padding:10px 12px;display:none;
+  transition:all .2s ease;
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif
 }
-
-.coach-ok{
-  color:#4ade80;
-}
-
-.coach-warning{
-  color:#facc15;
-}
-
-.coach-error{
-  color:#f06b6b;
-}
-
+.coach-ok{color:#4ade80}
+.coach-warning{color:#facc15}
+.coach-error{color:#f06b6b}
 .marca-error{
-  background: rgba(240,107,107,.12);
-  border-bottom:2px solid #f06b6b !important;
-  border-radius:4px;
+  background:rgba(240,107,107,.08);
+  border-bottom:2px solid #f06b6b !important;border-radius:4px
 }
 .marca-warning{
-  background: rgba(250,204,21,.12);
-  border-bottom:2px solid #facc15 !important;
-  border-radius:4px;
+  background:rgba(250,204,21,.08);
+  border-bottom:2px solid #facc15 !important;border-radius:4px
 }
-
 .sugerencia{
-  color:#4ade80;
-  font-weight:600;
-  cursor:pointer;
-  padding:2px 4px;
-  border-radius:4px;
+  color:#4ade80;font-weight:600;cursor:pointer;
+  padding:2px 4px;border-radius:4px
 }
+.sugerencia:hover{background:rgba(74,222,128,.15)}
 
-.sugerencia:hover{
-  background:rgba(74,222,128,.15);
-}
-
-.coach-box{
-  transition: all .2s ease;
-}
-
-#btnCorregir.cargando{
-  animation: girar 0.8s linear infinite;
-}
-
-@keyframes girar{
-  from{ transform: rotate(0deg); }
-  to{ transform: rotate(360deg); }
-}
-
+/* ── FILE UPLOAD ── */
 .file-upload{
-  border:1px dashed var(--br2);
-  border-radius:12px;
-  padding:16px;
-  text-align:center;
-  cursor:pointer;
-  transition: all .3s ease;
-  background:rgba(255,255,255,0.02);
+  border:1px dashed rgba(255,255,255,.15);
+  border-radius:12px;padding:16px;text-align:center;
+  cursor:pointer;transition:all .3s ease;
+  background:rgba(255,255,255,.03);
+  font-family:-apple-system,sans-serif
 }
-
 .file-upload:hover{
-  border-color: var(--gold);
-  background:rgba(255,255,255,0.04);
+  border-color:var(--gold);
+  background:rgba(255,255,255,.05)
 }
-
-.file-upload span{
-  display:block;
-  font-size:13px;
-  color:var(--mt);
-}
-
-.file-upload strong{
-  display:block;
-  margin-top:6px;
-  font-size:14px;
-}
-
+.file-upload span{display:block;font-size:13px;color:var(--mt)}
+.file-upload strong{display:block;margin-top:6px;font-size:14px}
 .file-bar{
-  width:100%;
-  height:4px;
-  background:rgba(255,255,255,0.05);
-  border-radius:4px;
-  margin-top:10px;
-  overflow:hidden;
+  width:100%;height:3px;background:rgba(255,255,255,.05);
+  border-radius:4px;margin-top:10px;overflow:hidden
 }
-
 .file-progress{
-  height:100%;
-  width:0%;
+  height:100%;width:0%;
   background:linear-gradient(90deg,var(--gold),var(--gold2));
-  transition: width .3s ease;
+  transition:width .3s ease
 }
 
-#btnEnviar.loading{
-  pointer-events:none;
-  opacity:.9;
-}
-
-#btnEnviar.loading #iconEnviar{
-  width:22px;
-  height:22px;
-  border:2px solid rgba(0,0,0,.3);
-  border-top:2px solid #000;
-  border-radius:50%;
-  display:inline-block;
-  animation:spin .7s linear infinite;
-}
-
-#btnEnviar.success{
-  background:linear-gradient(135deg,#4ade80,#22c55e);
-}
-
-@keyframes spin{
-  to{ transform:rotate(360deg); }
-}
-
-/* 🔥 BLUR GLOBAL */
-.blur{
-  filter:blur(3px);
-  transform:scale(.98);
-  transition:all .3s ease;
-}
-
-/* 🔥 OVERLAY PRO */
+/* ── OVERLAY ENVÍO ── */
 #overlayEnviar{
-  position:fixed;
-  inset:0;
-  background:rgba(5,14,29,.75);
-  backdrop-filter:blur(14px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-
-  opacity:0;
-  pointer-events:none;
-  transition:all .4s ease;
+  position:fixed;inset:0;
+  background:rgba(5,14,29,.8);
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;opacity:0;pointer-events:none;transition:all .4s ease
 }
-
-#overlayEnviar.activo{
-  opacity:1;
-  pointer-events:auto;
-}
-
-/* 🔥 CAJA CENTRAL */
+#overlayEnviar.activo{opacity:1;pointer-events:auto}
 .loader-box{
-  text-align:center;
-  transform:scale(.8);
-  opacity:0;
-  transition:all .4s ease;
+  text-align:center;transform:scale(.8);opacity:0;transition:all .4s ease
 }
-
-#overlayEnviar.activo .loader-box{
-  transform:scale(1);
-  opacity:1;
-}
-
-/* 🔥 LOADER RING */
+#overlayEnviar.activo .loader-box{transform:scale(1);opacity:1}
 .loader-ring{
-  width:70px;
-  height:70px;
-  border-radius:50%;
-  border:4px solid rgba(255,255,255,.08);
-  border-top:4px solid var(--gold);
-  animation:spin 1s linear infinite;
-  margin:auto;
+  width:70px;height:70px;border-radius:50%;
+  border:3px solid rgba(255,255,255,.07);
+  border-top:3px solid var(--gold);
+  animation:spin 1s linear infinite;margin:auto
 }
-
-/* 🔥 TEXTO */
 #loaderText{
-  margin-top:18px;
-  font-size:14px;
-  color:var(--mt);
+  margin-top:18px;font-size:14px;color:var(--mt);
+  font-family:-apple-system,sans-serif
 }
-
-/* 🔥 CHECK FINAL */
 #loaderSuccess{
-  margin-top:10px;
-  font-size:40px;
-  color:#4ade80;
-  opacity:0;
-  transform:scale(.6);
-  transition:all .4s ease;
+  margin-top:10px;font-size:40px;color:#4ade80;
+  opacity:0;transform:scale(.6);transition:all .4s ease
 }
 
-/* 🔥 ANIMACIONES */
-@keyframes spin{
-  from{ transform:rotate(0deg); }
-  to{ transform:rotate(360deg); }
+/* ── MODAL ÉXITO ── */
+#modalExito{
+  position:fixed;inset:0;
+  background:rgba(5,14,29,.85);
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  display:flex;align-items:center;justify-content:center;
+  z-index:999;opacity:0;pointer-events:none;transition:all .3s ease
 }
+.modal-card{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:22px;padding:28px;text-align:center;
+  width:90%;max-width:320px;
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  box-shadow:0 32px 64px rgba(0,0,0,.4)
+}
+.modal-title{
+  font-size:18px;font-weight:600;margin-bottom:8px;color:#fff;
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif
+}
+.modal-sub{
+  font-size:13px;color:rgba(255,255,255,.4);margin-bottom:22px;
+  font-family:-apple-system,sans-serif
+}
+.btn-modal-sec{
+  width:100%;padding:13px;border-radius:11px;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.7);
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif;
+  font-size:14px;cursor:pointer;transition:all .15s
+}
+.btn-modal-sec:hover{background:rgba(255,255,255,.1)}
 
+/* ── TOAST IA ── */
 #toastIA{
-  position: fixed;
-  inset: 0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  pointer-events:none;
-  z-index:99999;
+  position:fixed;inset:0;display:flex;align-items:center;
+  justify-content:center;pointer-events:none;z-index:99999
 }
-
 .toast-box{
-  background: rgba(15,22,40,.95);
+  background:rgba(13,31,60,.96);
   border:1px solid rgba(255,255,255,.08);
-  border-radius:16px;
-  padding:18px 22px;
-  display:flex;
-  align-items:center;
-  gap:14px;
-
-  backdrop-filter: blur(14px);
-
-  transform: translateY(20px) scale(.95);
-  opacity:0;
-  transition: all .35s ease;
-
-  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  border-radius:16px;padding:16px 20px;
+  display:flex;align-items:center;gap:12px;
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  transform:translateY(20px) scale(.95);opacity:0;
+  transition:all .35s ease;
+  box-shadow:0 20px 60px rgba(0,0,0,.4)
 }
-
-#toastIA.activo .toast-box{
-  transform: translateY(0) scale(1);
-  opacity:1;
-}
-
+#toastIA.activo .toast-box{transform:translateY(0) scale(1);opacity:1}
 .toast-icon{
-  width:40px;
-  height:40px;
-  border-radius:10px;
-  background: linear-gradient(135deg, #4ade80, #22c55e);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:18px;
-  color:#000;
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,#4ade80,#22c55e);
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;color:#000
 }
-
 .toast-text{
-  font-size:14px;
-  color:#e8edf8;
+  font-size:14px;color:#e8edf8;
+  font-family:-apple-system,\'Helvetica Neue\',sans-serif
 }
+.toast-text span{font-size:13px;color:#7a8fb0}
 
-.toast-text span{
-  font-size:13px;
-  color:#7a8fb0;
-}
-
+/* ── SPINNER ── */
+.blur{filter:blur(3px);transform:scale(.98);transition:all .3s ease}
 .loader-mini{
-  display:inline-block;
-  width:12px;
-  height:12px;
+  display:inline-block;width:12px;height:12px;
   border:2px solid rgba(255,255,255,.2);
   border-top:2px solid var(--gold);
-  border-radius:50%;
-  margin-left:6px;
-  animation:spinMini .6s linear infinite;
+  border-radius:50%;margin-left:6px;
+  animation:spinMini .6s linear infinite
+}
+@keyframes spinMini{to{transform:rotate(360deg)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+#dispClases .btn-opcion.activa{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;transform:scale(1.05)
 }
 
-@keyframes spinMini{
-  to{ transform:rotate(360deg); }
-}.loader-mini{
-  display:inline-block;
-  width:12px;
-  height:12px;
-  border:2px solid rgba(255,255,255,.2);
-  border-top:2px solid var(--gold);
-  border-radius:50%;
-  margin-left:6px;
-  animation:spinMini .6s linear infinite;
-}
-
-@keyframes spinMini{
-  to{ transform:rotate(360deg); }
-}
-  
+#paso1{position:relative;z-index:1;overflow:visible}
 </style>
 </head>
-
 <body>
 
 <div id="overlayEnviar">
   <div class="loader-box">
-    
     <div class="loader-ring"></div>
-
     <div id="loaderText">Enviando planeación</div>
-
     <div id="loaderSuccess">✔</div>
-
   </div>
 </div>
 
-
-<!-- 🔥 TOPBAR ORIGINAL EXACTA -->
+<!-- TOPBAR Apple glass -->
 <div class="topbar">
   <a href="/" class="topbar-logo">
-  <img src="/logo.png" class="logo-img-top">
-</a>
-
-  <h1>SIPRESC - Planeaciones</h1>
+    <img src="/logo.png" class="logo-img-top" onerror="this.style.display='none'">
+  </a>
+  <h1>SIPRESC — Planeaciones</h1>
   <span class="topbar-rol">DOCENTE</span>
   <button class="logout-btn" onclick="cerrarSesion()">Salir</button>
 </div>
 
-  <div class="progress-bar">
-
+<div class="progress-bar">
   <div id="progressFill"></div>
-
 </div>
 
-<!-- 🔥 CONTENIDO -->
+<!-- CONTENIDO -->
 <div class="container">
-
   <div class="form-app">
 
-  <!-- 🔵 PASO 1 -->
+  <!-- PASO 1 -->
   <div id="paso1">
-
-    <div class="title-main">
-  Diseña tu Planeación
-</div>
-
-<div class="subtitle-main">
-  La Presentación
-</div>
-
+    <div class="title-main">Diseña tu Planeación</div>
+    <div class="subtitle-main">La Presentación · Girardota</div>
 
     <!-- MATERIA -->
     <div class="bloque activo">
       <label class="pregunta">Materia</label>
       <div class="custom-select" id="materiaBox">
-  <div class="select-display" onclick="toggleSelect('materia')">
-    <span id="materiaText">Seleccionar materia...</span>
-  </div>
-  <div class="select-options" id="materiaOptions"></div>
-</div>
+        <div class="select-display" onclick="toggleSelect('materia')">
+          <span id="materiaText">Seleccionar materia...</span>
+        </div>
+        <div class="select-options" id="materiaOptions"></div>
+      </div>
     </div>
 
     <!-- GRADO -->
     <div class="bloque" id="b-grado">
       <label class="pregunta">Grado</label>
       <div class="custom-select" id="gradoBox">
-  <div class="select-display" onclick="toggleSelect('grado')">
-    <span id="gradoText">Seleccionar grado...</span>
-  </div>
-  <div class="select-options" id="gradoOptions"></div>
-</div>
+        <div class="select-display" onclick="toggleSelect('grado')">
+          <span id="gradoText">Seleccionar grado...</span>
+        </div>
+        <div class="select-options" id="gradoOptions"></div>
+      </div>
     </div>
 
     <!-- GRUPOS -->
-<div class="bloque" id="b-grupos">
-  <label class="pregunta">Grupo(s)</label>
-
-  <div style="display:flex; gap:10px; margin-top:10px;">
-    <div class="btn-opcion activa" onclick="toggleGrupo('A', this)">A</div>
-    <div class="btn-opcion activa" onclick="toggleGrupo('B', this)">B</div>
-  </div>
-</div>
+    <div class="bloque" id="b-grupos">
+      <label class="pregunta">Grupo(s)</label>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <div class="btn-opcion activa" onclick="toggleGrupo('A',this)">A</div>
+        <div class="btn-opcion activa" onclick="toggleGrupo('B',this)">B</div>
+      </div>
+    </div>
 
     <!-- SEMANA -->
     <div class="bloque" id="b-semana">
       <label class="pregunta">Semana</label>
       <div class="custom-select" id="semanaBox">
-  <div class="select-display" onclick="toggleSelect('semana')">
-    <span id="semanaText">Seleccionar semana...</span>
-  </div>
-  <div class="select-options" id="semanaOptions"></div>
-</div>
-    </div>
-
-    <!-- OBSERVACIÓN -->
-<div class="bloque" id="b-observacion">
-  <label class="pregunta">¿La clase anterior tuvo alguna novedad?</label>
-
-  <div style="display:flex; gap:10px; margin-top:10px;">
-    <div class="btn-opcion activa" onclick="setObs('no', this)">No</div>
-    <div class="btn-opcion" onclick="setObs('si', this)">Sí</div>
-  </div>
-
-  <div id="obsInputBox" class="oculto" style="margin-top:15px;">
-    <textarea
-  class="input textarea" 
-  id="observacionInput"
-  placeholder="Describe brevemente la novedad.">
-</textarea>
-  <button onclick="importarPlaneacion()" style="
-  margin-top:10px;
-  display: none;
-  font-size:12px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid var(--br);
-  color:var(--tx);
-  padding:8px 12px;
-  border-radius:8px;
-  cursor:pointer;
-">
-  Importar planeación anterior ⬇️
-</button>
-
-<div id="coachObservacion" class="coach-box"></div>
-  </div>
-</div>
-
-<!-- INTENSIDAD -->
-<div class="bloque" id="b-intensidad">
-  <label class="pregunta">Clases en la semana</label>
-  <div id="intensidadBox" style="display:flex; gap:10px;"></div>
-</div>
-
-    </div> <!-- 🔴 CIERRA PASO 1 -->
-
-<!-- 🔵 PASO 2 -->
-<div id="paso2" class="oculto">
-
-    <div class="bloque" id="b-planeacion">
-  <div id="planeacionBox"></div>
-</div>
-
-<!-- 🔵 DISPOSITIVOS -->
-<div class="bloque" id="b-dispositivo">
-
-  <label class="pregunta">¿Requiere algún dispositivo para el desarrollo de la clase?</label>
-
-  <div style="display:flex; gap:10px; margin-top:10px;">
-    <div class="btn-opcion activa" onclick="setDisp('no', this)">No</div>
-    <div class="btn-opcion" onclick="setDisp('si', this)">Sí</div>
-  </div>
-
-  <!-- CLASES -->
-  <div id="dispClasesBox" class="oculto" style="margin-top:15px;">
-
-    <label class="pregunta">Seleccione las clases</label>
-    <div id="dispClasesOpciones" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
-
-    <!-- DESCRIPCIÓN -->
-    <label class="pregunta" style="margin-top:14px;">¿Para qué se utilizará?</label>
-    <textarea class="input textarea" id="dispDescripcion"></textarea>
-
-  </div>
-
-</div>
-
-<!-- 🔵 ACTIVIDADES COMPLEMENTARIAS -->
-<div class="bloque" id="b-complementaria">
-
-  <label class="pregunta">¿Actividades complementarias?</label>
-
-  <div style="display:flex; gap:10px; margin-top:10px;">
-    <div class="btn-opcion activa" onclick="setComp('no', this)">No</div>
-    <div class="btn-opcion" onclick="setComp('si', this)">Sí</div>
-  </div>
-
-  <div id="compBox" class="oculto" style="margin-top:15px;">
-
-    <label class="pregunta">Actividad obligatoria</label>
-    <textarea class="input textarea" id="compObligatoria"></textarea>
-    <div id="coachComp" class="coach-box"></div>
-
-    <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
-    <div class="file-upload" onclick="document.getElementById('compArchivo').click()">
-  <span id="compLabel">Seleccionar archivo</span>
-  <strong id="compNombre">Ningún archivo</strong>
-      <button id="btnQuitarComp" onclick="quitarArchivoComp(event)" style="
-margin-top:8px;
-font-size:11px;
-background:transparent;
-border:1px solid var(--br);
-color:var(--mt);
-padding:6px 10px;
-border-radius:8px;
-cursor:pointer;
-display:none;
-">
-Quitar archivo ✕
-</button>
-
-  <div class="file-bar">
-    <div class="file-progress" id="compProgress"></div>
-  </div>
-</div>
-
-<input type="file" id="compArchivo" style="display:none;">
-
-    <div style="font-size:11px; color:var(--mt); margin-top:6px;">
-      Carpeta institucional de anexos
-    </div>
-
-  </div>
-
-</div>
-
-  <!-- 🔵 COMUNICACIÓN A FAMILIAS -->
-<div class="bloque" id="b-familias">
-
-  <label class="pregunta">¿Comunicación a las familias?</label>
-
-  <div style="display:flex; gap:10px; margin-top:10px;">
-    <div class="btn-opcion activa" onclick="setFam('no', this)">No</div>
-    <div class="btn-opcion" onclick="setFam('si', this)">Sí</div>
-  </div>
-
-  <div id="famBox" class="oculto" style="margin-top:15px;">
-
-    <label class="pregunta">Observación para las familias</label>
-    <textarea class="input textarea" id="famObs"></textarea>
-    <div id="coachFamilia" class="coach-box"></div>
-
-    <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
-    <div class="file-upload" id="famUpload" onclick="document.getElementById('famArchivo').click()">
-  <span>Seleccionar archivo</span>
-  <strong id="famNombre">Ningún archivo</strong>
-      <button id="btnQuitarFam" onclick="quitarArchivoFam(event)" style="
-margin-top:8px;
-font-size:11px;
-background:transparent;
-border:1px solid var(--br);
-color:var(--mt);
-padding:6px 10px;
-border-radius:8px;
-cursor:pointer;
-display:none;
-">
-Quitar archivo ✕
-</button>
-
-  <div class="file-bar">
-    <div class="file-progress" id="famProgress"></div>
-  </div>
-</div>
-
-<input type="file" id="famArchivo" style="display:none;">
-
-  </div>
-
-</div>
-
-
-<div class="bloque" id="b-copia" style="margin-top:20px;">
-
-  <div style="
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    background:rgba(255,255,255,0.03);
-    border:1px solid var(--br);
-    padding:14px;
-    border-radius:12px;
-  ">
-
-    <div style="text-align:left;">
-      <div style="font-size:14px;">Enviar copia a mi correo</div>
-      <div style="font-size:11px; color:var(--mt);">
-        Recibirás esta planeación al finalizar
+        <div class="select-display" onclick="toggleSelect('semana')">
+          <span id="semanaText">Seleccionar semana...</span>
+        </div>
+        <div class="select-options" id="semanaOptions"></div>
       </div>
     </div>
 
-    <div id="toggleCopia" onclick="toggleCopia(this)" style="
-      width:42px;
-      height:22px;
-      border-radius:20px;
-      background:rgba(255,255,255,0.15);
-      position:relative;
-      cursor:pointer;
-      transition:.3s;
-    ">
-      <div id="bolaCopia" style="
-        width:18px;
-        height:18px;
-        background:#fff;
-        border-radius:50%;
-        position:absolute;
-        top:2px;
-        left:2px;
-        transition:.3s;
-      "></div>
+    <!-- OBSERVACIÓN -->
+    <div class="bloque" id="b-observacion">
+      <label class="pregunta">¿La clase anterior tuvo alguna novedad?</label>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <div class="btn-opcion activa" onclick="setObs('no',this)">No</div>
+        <div class="btn-opcion" onclick="setObs('si',this)">Sí</div>
+      </div>
+      <div id="obsInputBox" class="oculto" style="margin-top:15px;">
+        <textarea class="input textarea" id="observacionInput" placeholder="Describe brevemente la novedad."></textarea>
+        <div id="coachObservacion" class="coach-box"></div>
+      </div>
     </div>
 
-  </div>
-
-</div>
-
-    <!-- ESTADO -->
-    <div id="estadoGuardado" class="estado">
-      Guardado automático
+    <!-- INTENSIDAD -->
+    <div class="bloque" id="b-intensidad">
+      <label class="pregunta">Clases en la semana</label>
+      <div id="intensidadBox" style="display:flex;gap:10px;"></div>
     </div>
 
-  </div>
+  </div><!-- /paso1 -->
 
-</div>
+  <!-- PASO 2 -->
+  <div id="paso2" class="oculto">
+
+    <div class="bloque" id="b-planeacion">
+      <div id="planeacionBox"></div>
+    </div>
+
+    <!-- DISPOSITIVOS -->
+    <div class="bloque" id="b-dispositivo">
+      <label class="pregunta">¿Requiere algún dispositivo para el desarrollo de la clase?</label>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <div class="btn-opcion activa" onclick="setDisp('no',this)">No</div>
+        <div class="btn-opcion" onclick="setDisp('si',this)">Sí</div>
+      </div>
+      <div id="dispClasesBox" class="oculto" style="margin-top:15px;">
+        <label class="pregunta">Seleccione las clases</label>
+        <div id="dispClasesOpciones" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+        <label class="pregunta" style="margin-top:14px;">¿Para qué se utilizará?</label>
+        <textarea class="input textarea" id="dispDescripcion"></textarea>
+      </div>
+    </div>
+
+    <!-- ACTIVIDADES COMPLEMENTARIAS -->
+    <div class="bloque" id="b-complementaria">
+      <label class="pregunta">¿Actividades complementarias?</label>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <div class="btn-opcion activa" onclick="setComp('no',this)">No</div>
+        <div class="btn-opcion" onclick="setComp('si',this)">Sí</div>
+      </div>
+      <div id="compBox" class="oculto" style="margin-top:15px;">
+        <label class="pregunta">Actividad obligatoria</label>
+        <textarea class="input textarea" id="compObligatoria"></textarea>
+        <div id="coachComp" class="coach-box"></div>
+        <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
+        <div class="file-upload" onclick="document.getElementById('compArchivo').click()">
+          <span id="compLabel">Seleccionar archivo</span>
+          <strong id="compNombre">Ningún archivo</strong>
+          <button id="btnQuitarComp" onclick="quitarArchivoComp(event)" style="margin-top:8px;font-size:11px;background:transparent;border:1px solid var(--br);color:var(--mt);padding:6px 10px;border-radius:8px;cursor:pointer;display:none;">Quitar archivo ✕</button>
+          <div class="file-bar"><div class="file-progress" id="compProgress"></div></div>
+        </div>
+        <input type="file" id="compArchivo" style="display:none;">
+        <div style="font-size:11px;color:var(--mt);margin-top:6px;">Carpeta institucional de anexos</div>
+      </div>
+    </div>
+
+    <!-- COMUNICACIÓN A FAMILIAS -->
+    <div class="bloque" id="b-familias">
+      <label class="pregunta">¿Comunicación a las familias?</label>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <div class="btn-opcion activa" onclick="setFam('no',this)">No</div>
+        <div class="btn-opcion" onclick="setFam('si',this)">Sí</div>
+      </div>
+      <div id="famBox" class="oculto" style="margin-top:15px;">
+        <label class="pregunta">Observación para las familias</label>
+        <textarea class="input textarea" id="famObs"></textarea>
+        <div id="coachFamilia" class="coach-box"></div>
+        <label class="pregunta" style="margin-top:14px;">Anexo (opcional)</label>
+        <div class="file-upload" id="famUpload" onclick="document.getElementById('famArchivo').click()">
+          <span>Seleccionar archivo</span>
+          <strong id="famNombre">Ningún archivo</strong>
+          <button id="btnQuitarFam" onclick="quitarArchivoFam(event)" style="margin-top:8px;font-size:11px;background:transparent;border:1px solid var(--br);color:var(--mt);padding:6px 10px;border-radius:8px;cursor:pointer;display:none;">Quitar archivo ✕</button>
+          <div class="file-bar"><div class="file-progress" id="famProgress"></div></div>
+        </div>
+        <input type="file" id="famArchivo" style="display:none;">
+      </div>
+    </div>
+
+    <!-- COPIA CORREO -->
+    <div class="bloque" id="b-copia" style="margin-top:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:16px;border-radius:14px;">
+        <div style="text-align:left;">
+          <div style="font-size:15px;font-weight:500;font-family:-apple-system,sans-serif;">Enviar copia a mi correo</div>
+          <div style="font-size:12px;color:var(--mt);margin-top:2px;font-family:-apple-system,sans-serif;">Recibirás esta planeación al finalizar</div>
+        </div>
+        <div id="toggleCopia" onclick="toggleCopia(this)" style="width:42px;height:24px;border-radius:20px;background:rgba(255,255,255,.15);position:relative;cursor:pointer;transition:.3s;">
+          <div id="bolaCopia" style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:.3s;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="estadoGuardado" class="estado">Guardado automático</div>
+
+  </div><!-- /paso2 -->
+
+  </div><!-- /form-app -->
+</div><!-- /container -->
 
 <div id="btnBack" onclick="volverPaso1()">←</div>
-
-<div id="btnEnviar" onclick="enviarPlaneacion()">
-  <span id="iconEnviar">✓</span>
-</div>
+<div id="btnEnviar" onclick="enviarPlaneacion()"><span id="iconEnviar">✓</span></div>
 <div id="btnCorregir" onclick="corregirTodo()">✦</div>
 
-<div id="modalExito" style="
-position:fixed;
-inset:0;
-background:rgba(5,14,29,.85);
-backdrop-filter:blur(8px);
-display:flex;
-align-items:center;
-justify-content:center;
-z-index:999;
-opacity:0;
-pointer-events:none;
-transition:all .3s ease;
-">
-
-  <div style="
-  background:var(--s2);
-  border:1px solid var(--br);
-  border-radius:14px;
-  padding:28px;
-  text-align:center;
-  width:90%;
-  max-width:320px;
-  ">
-
-    <div style="
-    font-size:18px;
-    font-weight:600;
-    margin-bottom:10px;
-    ">
-      Planeación enviada
+<!-- MODAL ÉXITO -->
+<div id="modalExito" style="position:fixed;inset:0;background:rgba(5,14,29,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:all .3s ease;">
+  <div class="modal-card">
+    <div class="modal-title">Planeación enviada ✔</div>
+    <div class="modal-sub">Todo se guardó correctamente</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button onclick="nuevaPlaneacion()" class="btn">Nueva planeación</button>
+      <button onclick="volverInicio()" class="btn-modal-sec">Volver al inicio</button>
     </div>
-
-    <div style="
-    font-size:13px;
-    color:var(--mt);
-    margin-bottom:22px;
-    ">
-      Todo se guardó correctamente
-    </div>
-
-    <!-- BOTONES -->
-    <div style="display:flex; flex-direction:column; gap:10px;">
-
-      <button onclick="nuevaPlaneacion()" class="btn">
-        Nueva planeación
-      </button>
-
-      <button onclick="volverInicio()" style="
-      padding:12px;
-      border-radius:10px;
-      border:1px solid var(--br);
-      background:transparent;
-      color:var(--tx);
-      font-family:var(--mono);
-      font-size:11px;
-      text-transform:uppercase;
-      cursor:pointer;
-      ">
-        Volver al inicio
-      </button>
-
-    </div>
-
   </div>
 </div>
-  
-<script>
 
+<!-- TOAST IA -->
+<div id="toastIA">
+  <div class="toast-box">
+    <div class="toast-icon">✦</div>
+    <div class="toast-text">
+      <b>Correcciones aplicadas</b><br>
+      <span>Texto mejorado automáticamente</span>
+    </div>
+  </div>
+</div>
+
+<script>
 let timersClases = {};
 let timerIA;
 let cacheIndicador = "";
@@ -1247,151 +695,68 @@ let cacheComp = "";
 let cacheFamilia = "";
 let archivoCompBase64 = null;
 let archivoCompNombre = null;
-
 let archivoFamBase64 = null;
 let archivoFamNombre = null;
 
-
 async function corregirTodo(){
-
   const btn = document.getElementById("btnCorregir");
-
-  // 🔥 ACTIVAR ANIMACIÓN
   btn.classList.add("cargando");
-
-  // 🔥 PEQUEÑO DELAY VISUAL (para que se note)
   await new Promise(r => setTimeout(r, 200));
-
   const campos = document.querySelectorAll("textarea");
-
   for(const campo of campos){
-
     let texto = campo.value;
-
     if(!texto || texto.trim().length < 3) continue;
-
     try{
-
       const errores = await revisarOrtografia(texto);
-
       errores.sort((a,b) => b.offset - a.offset);
-
       errores.forEach(e => {
-
         const sugerencia = e.replacements[0]?.value;
         if(!sugerencia) return;
-
         const antes = texto.substring(0, e.offset);
         const despues = texto.substring(e.offset + e.length);
-
         texto = antes + sugerencia + despues;
-
       });
-
       texto = texto.trim();
-
-      if(texto && !texto.endsWith(".")){
-        texto += ".";
-      }
-
+      if(texto && !texto.endsWith(".")) texto += ".";
       campo.value = texto;
-
       campo.dispatchEvent(new Event("input"));
-
-    }catch(err){
-      console.error("Error corrigiendo:", err);
-    }
+    }catch(err){ console.error("Error corrigiendo:", err); }
   }
-
-  // 🔥 ACTUALIZAR TODO
   revisarIndicadorCoach();
   revisarObservacionCoach();
   revisarCompCoach();
   revisarFamiliaCoach();
-
   const total = ST.intensidad || 1;
-  for(let i = 1; i <= total; i++){
-    revisarClaseCoach(i);
-  }
-
+  for(let i = 1; i <= total; i++) revisarClaseCoach(i);
   evaluarErroresGlobal();
-
-  // 🔥 DESACTIVAR ANIMACIÓN
   btn.classList.remove("cargando");
 }
+
 async function importarPlaneacion(){
-
   const correo = obtenerCorreo();
-
-  if(!correo){
-    alert("No se pudo identificar el docente");
-    return;
-  }
-
+  if(!correo){ alert("No se pudo identificar el docente"); return; }
   try{
-
     const res = await fetch(API + "?accion=ultimaPlaneacion&correo=" + correo);
     const json = await res.json();
-
-    if(!json.ok || !json.data){
-      alert("No hay planeación anterior disponible");
-      return;
-    }
-
+    if(!json.ok || !json.data){ alert("No hay planeación anterior disponible"); return; }
     const d = json.data;
-
-    // 🔥 INDICADOR
-    if(document.getElementById("indicadorInput")){
-      document.getElementById("indicadorInput").value = d.indicador || "";
-    }
-
-    // 🔥 CLASES
+    if(document.getElementById("indicadorInput")) document.getElementById("indicadorInput").value = d.indicador || "";
     for(let i = 1; i <= 5; i++){
-
       const tema = document.getElementById("tema_"+i);
       const act = document.getElementById("act_"+i);
-
-      if(tema && d["d"+i+"_tema"]){
-        tema.value = d["d"+i+"_tema"];
-      }
-
-      if(act && d["d"+i+"_act"]){
-        act.value = d["d"+i+"_act"];
-      }
-
+      if(tema && d["d"+i+"_tema"]) tema.value = d["d"+i+"_tema"];
+      if(act && d["d"+i+"_act"]) act.value = d["d"+i+"_act"];
     }
-
-    // 🔥 OBSERVACIÓN
-    if(document.getElementById("observacionInput")){
-      document.getElementById("observacionInput").value = d.observacion || "";
-    }
-
-    // 🔥 DISPARAR VALIDACIONES
-    document.querySelectorAll("textarea").forEach(t => {
-      t.dispatchEvent(new Event("input"));
-    });
-
-    // 🔥 MENSAJE
+    if(document.getElementById("observacionInput")) document.getElementById("observacionInput").value = d.observacion || "";
+    document.querySelectorAll("textarea").forEach(t => t.dispatchEvent(new Event("input")));
     document.getElementById("estadoGuardado").textContent = "Planeación importada ✔";
-
-  }catch(err){
-    console.error(err);
-    alert("Error cargando la planeación");
-  }
-
+  }catch(err){ console.error(err); alert("Error cargando la planeación"); }
 }
-  
+
 function obtenerSesion(){
-
   const data = localStorage.getItem("lp_user");
-
   if(!data) return null;
-
-  try{
-    return JSON.parse(data);
-  }catch{
-    return null;
-  }
+  try{ return JSON.parse(data); }catch{ return null; }
 }
 
 function obtenerCorreo(){
@@ -1399,2055 +764,688 @@ function obtenerCorreo(){
   return sesion?.correo || null;
 }
 
-let ST = {
-  materia: null,
-  grado: null,
-  dispActivo: "no",
-  compActiva: "no",
-  famActiva: "no",
-  enviarCopia: false
-};
-
-
+let ST = { materia:null, grado:null, dispActivo:"no", compActiva:"no", famActiva:"no", enviarCopia:false };
 const API = "/api/planeaciones";
 
-// 🔥 INICIO
 window.addEventListener("DOMContentLoaded", () => {
-
   const correo = obtenerCorreo();
-
-  if(!correo){
-    window.location.href = "/";
-    return;
-  }
-
+  if(!correo){ window.location.href = "/"; return; }
   ST.correo = correo;
-
-  // 🔥 AÑADE ESTA LÍNEA
   cargarMaterias();
-
-  // 🔥 CACHE (esto ya lo tienes)
   const cache = localStorage.getItem("lp_user_data");
-
-  if(cache){
-    try{
-      ST.data = JSON.parse(cache);
-      pintarMaterias(ST.data);
-    }catch(e){
-      console.error(e);
-    }
-  }
-
+  if(cache){ try{ ST.data = JSON.parse(cache); pintarMaterias(ST.data); }catch(e){ console.error(e); } }
 });
 
-// 🔥 CARGAR MATERIAS
 const CACHE_KEY = "materias_cache_v1";
 const CACHE_TIME = "materias_cache_time";
-const CACHE_MAX_AGE = 1000 * 60 * 60 * 6; // 6 horas
+const CACHE_MAX_AGE = 1000 * 60 * 60 * 6;
 
 async function cargarMaterias(){
-
   const correo = obtenerCorreo();
   const display = document.getElementById("materiaText");
-
-// 🔥 FEEDBACK INMEDIATO
-display.innerHTML = `
-  <span style="opacity:.7;">Cargando materias</span>
-  <span class="loader-mini"></span>
-`;
-
-  if(!correo){
-    display.textContent = "Sesión no válida";
-    return;
-  }
-
-  // 🔥 1. CARGA INMEDIATA DESDE CACHE
+  display.innerHTML = `<span style="opacity:.7;">Cargando materias</span><span class="loader-mini"></span>`;
+  if(!correo){ display.textContent = "Sesión no válida"; return; }
   const cache = localStorage.getItem(CACHE_KEY);
   const cacheTime = localStorage.getItem(CACHE_TIME);
-
   if(cache && cacheTime && (Date.now() - cacheTime < CACHE_MAX_AGE)){
     ST.data = JSON.parse(cache);
     pintarMaterias(ST.data);
     setMateriaText("Seleccionar materia...");
-  } else {
-    setMateriaText("Seleccionar materia...");
-  }
-
-  // 🔥 2. FETCH EN SEGUNDO PLANO (SIN BLOQUEAR)
+  } else { setMateriaText("Seleccionar materia..."); }
   setTimeout(()=>{
-  fetch(`${API}?accion=cargaDocente&correo=${correo}`)
-  .then(res => res.json())
-  .then(json => {
-
-    if(json.ok && json.materias){
-      ST.data = json.materias;
-      pintarMaterias(json.materias);
-
-      // 🔥 AQUÍ VA
-      setMateriaText("Seleccionar materia...");
-
-      localStorage.setItem(CACHE_KEY, JSON.stringify(json.materias));
-      localStorage.setItem(CACHE_TIME, String(Date.now()));
-      localStorage.setItem("lp_user_data", JSON.stringify(json.materias));
-    } else {
-      display.textContent = "Sin materias asignadas";
-    }
-
-  })
-
-.catch(err => console.error(err));
-
-}, 0);
+    fetch(`${API}?accion=cargaDocente&correo=${correo}`)
+    .then(res => res.json())
+    .then(json => {
+      if(json.ok && json.materias){
+        ST.data = json.materias;
+        pintarMaterias(json.materias);
+        setMateriaText("Seleccionar materia...");
+        localStorage.setItem(CACHE_KEY, JSON.stringify(json.materias));
+        localStorage.setItem(CACHE_TIME, String(Date.now()));
+        localStorage.setItem("lp_user_data", JSON.stringify(json.materias));
+      } else { display.textContent = "Sin materias asignadas"; }
+    }).catch(err => console.error(err));
+  }, 0);
 }
-  
-function pintarMaterias(materias){
 
+function pintarMaterias(materias){
   const box = document.getElementById("materiaOptions");
   const display = document.getElementById("materiaText");
-
   box.innerHTML = "";
-
   materias.forEach(m => {
-
     const div = document.createElement("div");
     div.textContent = m.asignatura;
-
-    div.onclick = () => {
-
-      // 🔥 1. ESTADO
-      ST.materia = m.asignatura;
-
-      // 🔥 2. UI
-      display.textContent = m.asignatura;
-
-      // 🔥 3. CERRAR
-      box.style.display = "none";
-
-      // 🔥 4. FLUJO
-      onMateria();
-    };
-
+    div.onclick = () => { ST.materia = m.asignatura; display.textContent = m.asignatura; box.style.display = "none"; onMateria(); };
     box.appendChild(div);
   });
-
-  // 🔥 🔥 🔥 CLAVE (AL FINAL)
-  if(ST.materia){
-    display.textContent = ST.materia;
-  }else{
-    display.textContent = "Seleccionar materia...";
-  }
+  if(ST.materia) display.textContent = ST.materia;
+  else display.textContent = "Seleccionar materia...";
 }
 
-// 🔥 CUANDO SELECCIONA MATERIA
 function onMateria(){
-
-  ST._restaurado = false; // 🔥 RESET
-
+  ST._restaurado = false;
   const materia = ST.materia;
   if(!materia) return;
-
-  const bloque = document.getElementById("b-grado");
-
-  ocultar("b-semana");
-  ocultar("b-planeacion");
-
-  if (!ST.data) {
-    console.warn("No hay datos cargados aún");
-    return;
-  }
-
+  ocultar("b-semana"); ocultar("b-planeacion");
+  if(!ST.data){ console.warn("No hay datos cargados aún"); return; }
   const data = ST.data.find(m => m.asignatura === materia);
-
-  if (!data || !data.grados) {
-    bloque.classList.add("oculto");
-    return;
-  }
-
-  // 🔥 PRIMERO calculamos
-  const gradosUnicos = [...new Set(
-    data.grados.map(g => g.replace(/\s+[A-B]$/, "").trim())
-  )];
-
-  // 🔥 LUEGO pintamos
+  const bloque = document.getElementById("b-grado");
+  if(!data || !data.grados){ bloque.classList.add("oculto"); return; }
+  const gradosUnicos = [...new Set(data.grados.map(g => g.replace(/\s+[A-B]$/, "").trim()))];
   const box = document.getElementById("gradoOptions");
   box.innerHTML = "";
-
   gradosUnicos.forEach(g => {
-
     const div = document.createElement("div");
     div.textContent = g;
-
-    div.onclick = () => {
-      document.getElementById("gradoText").textContent = g;
-      ST.grado = g;
-      box.style.display = "none";
-      onGrado();
-    };
-
+    div.onclick = () => { document.getElementById("gradoText").textContent = g; ST.grado = g; box.style.display = "none"; onGrado(); };
     box.appendChild(div);
   });
-
   activarBloque("b-grado");
-
   actualizarProgreso();
 }
-// 🔥 CUANDO SELECCIONA GRADO
+
 function onGrado(){
-
-  // 🔥 RESET TOTAL DE ESTADO
-  ST._restaurado = false;
-  ST.semana = null;
-  ST.intensidad = null;
-
-  // 🔥 LIMPIAR UI RELACIONADA
+  ST._restaurado = false; ST.semana = null; ST.intensidad = null;
   document.getElementById("semanaText").textContent = "Seleccionar semana...";
-
   const grado = ST.grado;
   if(!grado) return;
-
-  // 🔥 GRUPOS
   const gradosAB = ["TRANSICIÓN","PRIMERO","SEGUNDO","TERCERO","CUARTO","QUINTO","SEXTO"];
-
-  if(gradosAB.includes(grado.toUpperCase())){
-    activarBloque("b-grupos");
-    ST.grupos = ["A","B"];
-  }else{
-    ST.grupos = [];
-    ocultar("b-grupos"); // 🔥 por si venía de uno anterior
-  }
-
-  // 🔥 SEMANA
-  generarSemanas();
-  mostrar("b-semana");
-  activarBloque("b-semana");
-
-  // 🔥 OBSERVACIÓN
-  mostrar("b-observacion");
-  activarBloque("b-observacion");
-
-  // 🔥 INTENSIDAD
-  mostrar("b-intensidad");
-  activarBloque("b-intensidad");
-  mostrarIntensidad();
-
-  // 🔥 RESETEAR PASO 2 COMPLETAMENTE
+  if(gradosAB.includes(grado.toUpperCase())){ activarBloque("b-grupos"); ST.grupos = ["A","B"]; }
+  else { ST.grupos = []; ocultar("b-grupos"); }
+  generarSemanas(); mostrar("b-semana"); activarBloque("b-semana");
+  mostrar("b-observacion"); activarBloque("b-observacion");
+  mostrar("b-intensidad"); activarBloque("b-intensidad"); mostrarIntensidad();
   document.getElementById("paso2").classList.add("oculto");
   document.getElementById("paso1").classList.remove("oculto");
-
   const boxPlaneacion = document.getElementById("planeacionBox");
   if(boxPlaneacion) boxPlaneacion.innerHTML = "";
-
-  // 🔥 ESTADO VISUAL
-  document.getElementById("estadoGuardado").textContent =
-    `${ST.materia} · ${ST.grado}`;
-
+  document.getElementById("estadoGuardado").textContent = `${ST.materia} · ${ST.grado}`;
   actualizarProgreso();
-
-  // ❌ IMPORTANTE: SIN RESTAURAR
-  // (QUITAMOS COMPLETAMENTE EL AUTORESTORE)
 }
 
-// 🔥 MOSTRAR BLOQUES
-function mostrar(id){
-  document.getElementById(id).classList.remove("oculto");
-}
+function mostrar(id){ document.getElementById(id).classList.remove("oculto"); }
+function ocultar(id){ document.getElementById(id).classList.add("oculto"); }
 
 function actualizarProgreso(){
-
   let progreso = 0;
-
   if(ST.materia) progreso += 20;
   if(ST.grado) progreso += 20;
   if(ST.semana) progreso += 20;
   if(ST.intensidad) progreso += 20;
-
   const indicador = document.getElementById("indicadorInput")?.value || "";
   if(indicador.length > 5) progreso += 20;
-
   document.getElementById("progressFill").style.width = progreso + "%";
-
 }
-
-// 🔥 SEMANA AUTOMÁTICA
-function calcularSemana(){
-  const hoy = new Date();
-  const inicio = new Date(hoy.getFullYear(), 0, 1);
-  const semana = Math.ceil((((hoy - inicio) / 86400000) + inicio.getDay()+1)/7);
-  return `Semana ${semana}`;
-}
-
 
 document.addEventListener("input", function(e){
-
   const id = e.target.id;
-
-  if(
-    id === "indicadorInput" ||
-    id === "observacionInput" ||
-    id === "compObligatoria" ||
-    id === "famObs" ||
-    (id && id.startsWith("tema_")) ||
-    (id && id.startsWith("act_"))
-  ){
-    guardarAuto();
-  }
-
+  if(id === "indicadorInput" || id === "observacionInput" || id === "compObligatoria" || id === "famObs" || (id && id.startsWith("tema_")) || (id && id.startsWith("act_"))){ guardarAuto(); }
 });
 
-
-function ocultar(id){
-  document.getElementById(id).classList.add("oculto");
-}
 function mostrarIntensidad(){
-
   const box = document.getElementById("intensidadBox");
-
   box.innerHTML = "";
-
   for(let i = 1; i <= 5; i++){
     const div = document.createElement("div");
     div.className = "intensidad-item";
     div.textContent = i;
-
-    // 🔥 CLICK PARA SELECCIONAR
     div.onclick = () => {
-  document.querySelectorAll(".intensidad-item").forEach(el => el.classList.remove("activa"));
-  div.classList.add("activa");
-
-  ST.intensidad = i;
-
-generarPlaneacion();
-
-irPaso2();
-
-guardarAuto();
-
-validarBotonEnviar(); // 🔥 fuerza primera validación
-};
-
+      document.querySelectorAll(".intensidad-item").forEach(el => el.classList.remove("activa"));
+      div.classList.add("activa");
+      ST.intensidad = i;
+      generarPlaneacion();
+      irPaso2();
+      guardarAuto();
+      validarBotonEnviar();
+    };
     box.appendChild(div);
   }
-
 }
 
 function generarPlaneacion(){
-
   const box = document.getElementById("planeacionBox");
   box.innerHTML = "";
-
   const indicador = document.createElement("div");
-indicador.innerHTML = `
-  <label class="pregunta">Indicador de desempeño</label>
-  <textarea class="input textarea" id="indicadorInput" spellcheck="true"></textarea>
-  <div id="coachIndicador" class="coach-box"></div>
-`;
+  indicador.innerHTML = `<label class="pregunta">Indicador de desempeño</label><textarea class="input textarea" id="indicadorInput" spellcheck="true"></textarea><div id="coachIndicador" class="coach-box"></div>`;
   box.appendChild(indicador);
-
   const total = ST.intensidad || 1;
-
   for(let i = 1; i <= total; i++){
-
     const bloque = document.createElement("div");
-bloque.classList.add("bloque", "activo");
+    bloque.classList.add("bloque","activo");
     bloque.style.marginTop = "28px";
-
-    bloque.innerHTML = `
-  <div style="font-family:var(--mono); font-size:11px; color:var(--gold); margin-bottom:12px;">
-    CLASE ${i}
-  </div>
-
-  <label class="pregunta">Tema(s) de la clase ${i}</label>
-  <textarea class="input textarea" id="tema_${i}"></textarea>
-  <div id="coachTema_${i}" class="coach-box"></div>
-
-  <label class="pregunta" style="margin-top:14px;">Actividades principales de la clase ${i}</label>
-  <textarea class="input textarea" id="act_${i}"></textarea>
-  <div id="coachAct_${i}" class="coach-box"></div>
-`;
-
+    bloque.innerHTML = `<div style="font-family:var(--mono);font-size:11px;color:var(--gold);margin-bottom:12px;letter-spacing:2px;">CLASE ${i}</div><label class="pregunta">Tema(s) de la clase ${i}</label><textarea class="input textarea" id="tema_${i}"></textarea><div id="coachTema_${i}" class="coach-box"></div><label class="pregunta" style="margin-top:14px;">Actividades principales de la clase ${i}</label><textarea class="input textarea" id="act_${i}"></textarea><div id="coachAct_${i}" class="coach-box"></div>`;
     box.appendChild(bloque);
   }
-
-  mostrar("b-planeacion");
-mostrar("b-complementaria");
-mostrar("b-familias");
-mostrar("b-copia"); // 🔥 ESTA LÍNEA ES LA CLAVE
-
-setTimeout(() => {
-
-  activarValidacionInputs();
-  validarBotonEnviar();
-
-}, 100);
-
+  mostrar("b-planeacion"); mostrar("b-complementaria"); mostrar("b-familias"); mostrar("b-copia");
+  setTimeout(() => { activarValidacionInputs(); validarBotonEnviar(); }, 100);
 }
 
 let timer;
-
-
 function guardarAuto(){
-
-  if(!AUTO_GUARD) return; // 🔥 APAGADO TOTAL
-
+  if(!AUTO_GUARD) return;
   clearTimeout(timer);
-
   timer = setTimeout(() => {
-
-    try {
-
-      const data = {
-        materia: ST.materia,
-        grado: ST.grado,
-        semana: ST.semana,
-        intensidad: ST.intensidad,
-        indicador: document.getElementById("indicadorInput")?.value || "",
-        clases: [],
-        observacion: document.getElementById("observacionInput")?.value || "",
-        comp: document.getElementById("compObligatoria")?.value || "",
-        fam: document.getElementById("famObs")?.value || ""
-      };
-
-      for(let i = 1; i <= 5; i++){
-        data.clases.push({
-          tema: document.getElementById("tema_"+i)?.value || "",
-          act: document.getElementById("act_"+i)?.value || ""
-        });
-      }
-
+    try{
+      const data = { materia:ST.materia, grado:ST.grado, semana:ST.semana, intensidad:ST.intensidad, indicador:document.getElementById("indicadorInput")?.value||"", clases:[], observacion:document.getElementById("observacionInput")?.value||"", comp:document.getElementById("compObligatoria")?.value||"", fam:document.getElementById("famObs")?.value||"" };
+      for(let i=1;i<=5;i++) data.clases.push({tema:document.getElementById("tema_"+i)?.value||"",act:document.getElementById("act_"+i)?.value||""});
       const key = getClavePlaneacion();
       if(!key) return;
-
       localStorage.setItem(key, JSON.stringify(data));
-
-      //document.getElementById("estadoGuardado").textContent = "Guardado automático ✔";
-
-    } catch (error) {
-      console.error(error);
-    }
-
+    }catch(error){ console.error(error); }
   }, 300);
 }
-  
+
 function calcularSemanaActual(){
-
-  // 🔥 Semana 5 inicia el 25 abril 2026 a las 12:00 (hora Colombia)
   const inicioBase = new Date("2026-04-25T12:00:00-05:00");
-
   const ahora = new Date();
-
   const unaSemana = 7 * 24 * 60 * 60 * 1000;
-
-  // 🔢 Diferencia en semanas desde la base
   const diffSemanas = Math.floor((ahora.getTime() - inicioBase.getTime()) / unaSemana);
-
-  // 🔥 Ciclo de 10 semanas
   let semana = 5 + diffSemanas;
-
-  // 🔁 Convertir a ciclo 1–10
   semana = ((semana - 1) % 10 + 10) % 10 + 1;
-
   return semana;
 }
 
 function generarSemanas(){
-
   const box = document.getElementById("semanaOptions");
   const actual = calcularSemanaActual();
-
   box.innerHTML = "";
-
   for(let i = 1; i <= 10; i++){
-
     const div = document.createElement("div");
     div.textContent = "Semana " + i;
-
-    // 🔒 Bloquear semanas pasadas
-    if(i < actual){
-      div.style.opacity = "0.4";
-      div.style.pointerEvents = "none";
-    }
-
-    // 🔥 AUTOSELECCIÓN INTELIGENTE
+    if(i < actual){ div.style.opacity = "0.4"; div.style.pointerEvents = "none"; }
     if(i === actual){
-
       const texto = "Semana " + i;
-
       document.getElementById("semanaText").textContent = texto;
       ST.semana = texto;
-
-      // 🔥 GUARDAR CONTEXTO
-      if(ST.materia && ST.grado){
-        guardarAuto();
-      }
-
-      // 🔥 RESTAURAR AUTOMÁTICO (CLAVE)
-      setTimeout(() => {
-        if(ST.materia && ST.grado && ST.semana){
-          restaurarBorradorCompleto();
-        }
-      }, 300);
+      if(ST.materia && ST.grado) guardarAuto();
+      setTimeout(() => { if(ST.materia && ST.grado && ST.semana) restaurarBorradorCompleto(); }, 300);
     }
-
-    // 🖱️ SELECCIÓN MANUAL
     div.onclick = () => {
-
-      ST._restaurado = false; // 🔥 RESET CONTROLADO
-
+      ST._restaurado = false;
       const texto = "Semana " + i;
-
       document.getElementById("semanaText").textContent = texto;
       ST.semana = texto;
-
       box.style.display = "none";
-
       guardarAuto();
-
       activarBloque("b-observacion");
       actualizarProgreso();
-
-      // 🔥 RESTAURAR DESPUÉS DE SELECCIÓN
-      setTimeout(() => {
-        if(ST.materia && ST.grado && ST.semana){
-          restaurarBorradorCompleto();
-        }
-      }, 300);
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      setTimeout(() => { if(ST.materia && ST.grado && ST.semana) restaurarBorradorCompleto(); }, 300);
+      window.scrollTo({ top:0, behavior:"smooth" });
     };
-
     box.appendChild(div);
   }
 }
-  
+
 function setObs(valor, el){
-
   ST.observacionActiva = valor;
-
-  document.querySelectorAll("#b-observacion .btn-opcion")
-    .forEach(b => b.classList.remove("activa"));
-
+  document.querySelectorAll("#b-observacion .btn-opcion").forEach(b => b.classList.remove("activa"));
   el.classList.add("activa");
-
   const box = document.getElementById("obsInputBox");
-
-if(valor === "si"){
-  box.classList.remove("oculto");
-
-  // 🔥 ENFOQUE AUTOMÁTICO
-  setTimeout(() => {
-    document.getElementById("observacionInput").focus();
-  }, 200);
-
-} else {
-  box.classList.add("oculto");
-  document.getElementById("observacionInput").value = "";
-  document.getElementById("coachObservacion").style.display = "none"; // 🔥 LIMPIA EL COACH
-}
-
+  if(valor === "si"){
+    box.classList.remove("oculto");
+    setTimeout(() => document.getElementById("observacionInput").focus(), 200);
+  } else {
+    box.classList.add("oculto");
+    document.getElementById("observacionInput").value = "";
+    document.getElementById("coachObservacion").style.display = "none";
+  }
   guardarAuto();
 }
 
 function irPaso2(){
-
-  const p1 = document.getElementById("paso1");
-  const p2 = document.getElementById("paso2");
-
-  p1.classList.add("oculto");
-  p2.classList.remove("oculto");
-
+  document.getElementById("paso1").classList.add("oculto");
+  document.getElementById("paso2").classList.remove("oculto");
   document.getElementById("btnBack").classList.add("activo");
-
-  // 🔥 ACTIVAR CONTENIDO REAL
   document.getElementById("b-planeacion").classList.add("activo");
-  // document.getElementById("b-dispositivo").classList.add("activo");
   document.getElementById("b-complementaria").classList.add("activo");
   document.getElementById("b-familias").classList.add("activo");
   document.getElementById("b-copia").classList.add("activo");
-  
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top:0, behavior:"smooth" });
 }
 
 function volverPaso1(){
-
   document.getElementById("paso1").classList.remove("oculto");
   document.getElementById("paso2").classList.add("oculto");
-
   document.getElementById("btnBack").classList.remove("activo");
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top:0, behavior:"smooth" });
 }
 
 function setComp(valor, el){
-
   ST.compActiva = valor;
-
-  document.querySelectorAll("#b-complementaria .btn-opcion")
-    .forEach(b => b.classList.remove("activa"));
-
+  document.querySelectorAll("#b-complementaria .btn-opcion").forEach(b => b.classList.remove("activa"));
   el.classList.add("activa");
-
   const box = document.getElementById("compBox");
-
-  if(valor === "si"){
-    box.classList.remove("oculto");
-  } else {
-    box.classList.add("oculto");
-    document.getElementById("compObligatoria").value = "";
-    document.getElementById("compArchivo").value = "";
-  }
-
-  // 🔥 AQUÍ está la magia
+  if(valor === "si"){ box.classList.remove("oculto"); }
+  else { box.classList.add("oculto"); document.getElementById("compObligatoria").value = ""; document.getElementById("compArchivo").value = ""; }
   mostrar("b-familias");
-
   guardarAuto();
 }
 
 function setFam(valor, el){
-
   ST.famActiva = valor;
-
-  document.querySelectorAll("#b-familias .btn-opcion")
-    .forEach(b => b.classList.remove("activa"));
-
+  document.querySelectorAll("#b-familias .btn-opcion").forEach(b => b.classList.remove("activa"));
   el.classList.add("activa");
-
   const box = document.getElementById("famBox");
-
-  if(valor === "si"){
-    box.classList.remove("oculto");
-  } else {
-    box.classList.add("oculto");
-    document.getElementById("famObs").value = "";
-    document.getElementById("famArchivo").value = "";
-  }
-
+  if(valor === "si"){ box.classList.remove("oculto"); }
+  else { box.classList.add("oculto"); document.getElementById("famObs").value = ""; document.getElementById("famArchivo").value = ""; }
   guardarAuto();
 }
 
 async function enviarPlaneacion(){
-
   const correo = ST.correo || obtenerCorreo();
-
-  if(!correo){
-
-    alert("No se encontró el correo");
-
-    return;
-
-  }
-
+  if(!correo){ alert("No se encontró el correo"); return; }
   const btn = document.getElementById("btnEnviar");
   const icon = document.getElementById("iconEnviar");
   const estado = document.getElementById("estadoGuardado");
-
   const overlay = document.getElementById("overlayEnviar");
   const loaderText = document.getElementById("loaderText");
   const loaderSuccess = document.getElementById("loaderSuccess");
-
-  // 🔒 evitar doble click
   if(btn.classList.contains("loading")) return;
-
-  // ✅ VALIDACIÓN
   const valido = validarBotonEnviar();
-
-  if(!valido){
-    const mensaje = obtenerMensajeError();
-    alert(mensaje || "Completa todos los campos obligatorios");
-    irAlPrimerError();
-    return;
-  }
-
-
-  // 🔥 FEEDBACK INMEDIATO (ULTRA CLAVE)
-  btn.classList.add("loading");
-  icon.textContent = "";
-
-  // micro animación táctil
+  if(!valido){ const mensaje = obtenerMensajeError(); alert(mensaje || "Completa todos los campos obligatorios"); irAlPrimerError(); return; }
+  btn.classList.add("loading"); icon.textContent = "";
   btn.style.transform = "scale(0.9)";
   setTimeout(()=> btn.style.transform = "scale(1)", 120);
-
   document.querySelector(".form-app").classList.add("blur");
   overlay.classList.add("activo");
-
   loaderText.textContent = "Enviando...";
   loaderSuccess.style.opacity = "0";
-
   estado.textContent = "Enviando...";
-
-  if(!correo){
-    alert("No se encontró el correo");
-    return;
-  }
-
   const payload = {
-
-  accion: "guardarFinal",
-  correo,
-
-  asignatura: ST.materia || "",
-  grado: ST.grado || "",
-  gruposDestino: (ST.grupos || []).join(","),
-
-  semana: (ST.semana || "").toUpperCase(),
-
-  indicador: document.getElementById("indicadorInput")?.value || "",
-
-  d1_tema: document.getElementById("tema_1")?.value || "",
-  d1_act: document.getElementById("act_1")?.value || "",
-
-  d2_tema: document.getElementById("tema_2")?.value || "",
-  d2_act: document.getElementById("act_2")?.value || "",
-
-  d3_tema: document.getElementById("tema_3")?.value || "",
-  d3_act: document.getElementById("act_3")?.value || "",
-
-  d4_tema: document.getElementById("tema_4")?.value || "",
-  d4_act: document.getElementById("act_4")?.value || "",
-
-  d5_tema: document.getElementById("tema_5")?.value || "",
-  d5_act: document.getElementById("act_5")?.value || "",
-
-  intensidad: ST.intensidad || 1,
-
-  observacion:
-    ST.observacionActiva === "si"
-      ? document.getElementById("observacionInput")?.value || ""
-      : "",
-
-  comp_obligatoria:
-    ST.compActiva === "si"
-      ? document.getElementById("compObligatoria")?.value || ""
-      : "",
-
-  // 🔥 AQUÍ ESTÁ LO NUEVO (ARCHIVO COMPLEMENTARIO)
-  comp_anexo: archivoCompBase64 || null,
-  comp_nombre: archivoCompNombre || "",
-
-  fam_obs:
-    ST.famActiva === "si"
-      ? document.getElementById("famObs")?.value || ""
-      : "",
-
-  // 🔥 AQUÍ ESTÁ LO NUEVO (ARCHIVO FAMILIAS)
-  fam_anexo: archivoFamBase64 || null,
-  fam_nombre: archivoFamNombre || "",
-
-  disp_clases:
-    ST.dispActivo === "si"
-      ? (ST.dispClases || []).join(",")
-      : "",
-
-  disp_desc:
-    ST.dispActivo === "si"
-      ? document.getElementById("dispDescripcion")?.value || ""
-      : "",
-
-  enviar_copia: ST.enviarCopia,
-};
-
-  // 🚀 ENVÍO EN BACKGROUND (SIN ESPERAR)
-  fetch(API,{
-  method:"POST",
-  headers:{
-    "Content-Type":"application/json",
-    "x-correo": correo
-  },
-  body: JSON.stringify(payload)
-})
-.then(res => res.json())
-.then(json => {
-
-  if(!json || !json.ok){
-
-    console.error("Error backend:", json);
-
-    mostrarErrorEnvio("No se pudo guardar la planeación. Posible archivo muy pesado.");
-
-    return;
-  }
-
-  // 🔥 CONFIRMACIÓN REAL
-  confirmarEnvioExitoso();
-
-})
-.catch(err => {
-
-  console.error("Error envío:", err);
-
-  mostrarErrorEnvio("Error de conexión. La planeación no se guardó.");
-
-});
-
-  // 🔥 ÉXITO INMEDIATO (UX PREMIUM)
+    accion:"guardarFinal", correo,
+    asignatura:ST.materia||"", grado:ST.grado||"",
+    gruposDestino:(ST.grupos||[]).join(","),
+    semana:(ST.semana||"").toUpperCase(),
+    indicador:document.getElementById("indicadorInput")?.value||"",
+    d1_tema:document.getElementById("tema_1")?.value||"", d1_act:document.getElementById("act_1")?.value||"",
+    d2_tema:document.getElementById("tema_2")?.value||"", d2_act:document.getElementById("act_2")?.value||"",
+    d3_tema:document.getElementById("tema_3")?.value||"", d3_act:document.getElementById("act_3")?.value||"",
+    d4_tema:document.getElementById("tema_4")?.value||"", d4_act:document.getElementById("act_4")?.value||"",
+    d5_tema:document.getElementById("tema_5")?.value||"", d5_act:document.getElementById("act_5")?.value||"",
+    intensidad:ST.intensidad||1,
+    observacion:ST.observacionActiva==="si"?document.getElementById("observacionInput")?.value||"":"",
+    comp_obligatoria:ST.compActiva==="si"?document.getElementById("compObligatoria")?.value||"":"",
+    comp_anexo:archivoCompBase64||null, comp_nombre:archivoCompNombre||"",
+    fam_obs:ST.famActiva==="si"?document.getElementById("famObs")?.value||"":"",
+    fam_anexo:archivoFamBase64||null, fam_nombre:archivoFamNombre||"",
+    disp_clases:ST.dispActivo==="si"?(ST.dispClases||[]).join(","):"",
+    disp_desc:ST.dispActivo==="si"?document.getElementById("dispDescripcion")?.value||"":"",
+    enviar_copia:ST.enviarCopia
+  };
+  fetch(API,{ method:"POST", headers:{"Content-Type":"application/json","x-correo":correo}, body:JSON.stringify(payload) })
+  .then(res => res.json())
+  .then(json => { if(!json||!json.ok){ console.error("Error backend:",json); mostrarErrorEnvio("No se pudo guardar la planeación."); return; } confirmarEnvioExitoso(); })
+  .catch(err => { console.error("Error envío:",err); mostrarErrorEnvio("Error de conexión."); });
   loaderText.textContent = "Enviado";
   loaderSuccess.style.opacity = "1";
   loaderSuccess.style.transform = "scale(1.2)";
   loaderSuccess.textContent = "✔";
-
-  btn.classList.remove("loading");
-  btn.classList.add("success");
-  icon.textContent = "✔";
-
+  btn.classList.remove("loading"); btn.classList.add("success"); icon.textContent = "✔";
   estado.textContent = "Planeación enviada ✔";
-
   const key = getClavePlaneacion();
-if(key){
-  localStorage.removeItem(key);
-}
-
-  // 🔥 cerrar rápido
-  setTimeout(() => {
-    overlay.classList.remove("activo");
-    document.querySelector(".form-app").classList.remove("blur");
-    mostrarExito();
-  }, 180);
-}
-
-function cargarBorrador(){
-
-  if(!ST.materia || !ST.grado || !ST.semana) return;
-
-  const key = getClavePlaneacion();
-  if(!key) return;
-
-  const data = localStorage.getItem(key);
-  if(!data) return;
-
-  let d;
-
-  try{
-    d = JSON.parse(data);
-  }catch(e){
-    console.error("Error parseando borrador", e);
-    return;
-  }
-
-  // 🔥 EVITA DOBLE RESTAURACIÓN
-  if(ST._restaurado) return;
-  ST._restaurado = true;
-
-  // 🔥 RESTAURAR
-  setTimeout(() => {
-
-    document.getElementById("indicadorInput").value = d.indicador || "";
-
-    if(d.clases){
-      d.clases.forEach((c, i) => {
-        const n = i + 1;
-
-        if(document.getElementById("tema_"+n)){
-          document.getElementById("tema_"+n).value = c.tema || "";
-        }
-
-        if(document.getElementById("act_"+n)){
-          document.getElementById("act_"+n).value = c.act || "";
-        }
-      });
-    }
-
-    document.getElementById("observacionInput").value = d.observacion || "";
-    document.getElementById("compObligatoria").value = d.comp || "";
-    document.getElementById("famObs").value = d.fam || "";
-
-    document.querySelectorAll("textarea").forEach(t => {
-      t.dispatchEvent(new Event("input"));
-    });
-
-    document.getElementById("estadoGuardado").textContent = "Borrador restaurado ✔";
-
-  }, 200);
+  if(key) localStorage.removeItem(key);
+  setTimeout(() => { overlay.classList.remove("activo"); document.querySelector(".form-app").classList.remove("blur"); mostrarExito(); }, 180);
 }
 
 function restaurarBorradorCompleto(){
-
-  if(!AUTO_RESTORE) return; // 🔥 APAGADO TOTAL
-
-  // 🔴 BLOQUEO: sin contexto NO hace nada
-  if(!ST.materia || !ST.grado || !ST.semana){
-    return;
-  }
-
+  if(!AUTO_RESTORE) return;
+  if(!ST.materia||!ST.grado||!ST.semana) return;
   const key = getClavePlaneacion();
   if(!key) return;
   const data = localStorage.getItem(key);
-
   if(!data) return;
-
   let d;
-
-  try{
-    d = JSON.parse(data);
-  }catch(e){
-    console.error("Error parseando borrador", e);
-    return;
-  }
-
-  // 🔴 CLAVE: SOLO RESTAURA SI COINCIDE EL CONTEXTO
-  if(
-    d.materia !== ST.materia ||
-    d.grado !== ST.grado ||
-    d.semana !== ST.semana
-  ){
-    return;
-  }
-
-  // 🔴 EVITA DOBLE RESTAURACIÓN
+  try{ d = JSON.parse(data); }catch(e){ console.error(e); return; }
+  if(d.materia!==ST.materia||d.grado!==ST.grado||d.semana!==ST.semana) return;
   if(ST._restaurado) return;
   ST._restaurado = true;
-
-  // 🔥 INTENSIDAD
   ST.intensidad = d.intensidad || 1;
-
-  // 🔥 GENERAR FORMULARIO (SIN CAMBIAR PASO AUTOMÁTICO)
-  generarPlaneacion();
-  irPaso2();
-
-  // 🔥 ESPERAR QUE EL DOM EXISTA
+  generarPlaneacion(); irPaso2();
   setTimeout(() => {
-
-    // 🔹 INDICADOR
     const indicador = document.getElementById("indicadorInput");
-    if(indicador){
-      indicador.value = d.indicador || "";
-    }
-
-    // 🔹 CLASES
-    if(d.clases){
-      d.clases.forEach((c, index) => {
-        const i = index + 1;
-
-        const tema = document.getElementById("tema_" + i);
-        const act = document.getElementById("act_" + i);
-
-        if(tema) tema.value = c.tema || "";
-        if(act) act.value = c.act || "";
-      });
-    }
-
-    // 🔹 OBSERVACIÓN
-    const obs = document.getElementById("observacionInput");
-    if(obs){
-      obs.value = d.observacion || "";
-    }
-
-    // 🔹 COMPLEMENTARIA
-    const comp = document.getElementById("compObligatoria");
-    if(comp){
-      comp.value = d.comp || "";
-    }
-
-    // 🔹 FAMILIAS
-    const fam = document.getElementById("famObs");
-    if(fam){
-      fam.value = d.fam || "";
-    }
-
-    // 🔥 DISPARAR EVENTOS (IMPORTANTE PARA VALIDACIONES Y COACH)
-    document.querySelectorAll("textarea").forEach(t => {
-      t.dispatchEvent(new Event("input"));
-    });
-
-    // 🔥 ESTADO
+    if(indicador) indicador.value = d.indicador || "";
+    if(d.clases) d.clases.forEach((c,index) => { const i=index+1; const tema=document.getElementById("tema_"+i); const act=document.getElementById("act_"+i); if(tema)tema.value=c.tema||""; if(act)act.value=c.act||""; });
+    const obs = document.getElementById("observacionInput"); if(obs) obs.value = d.observacion||"";
+    const comp = document.getElementById("compObligatoria"); if(comp) comp.value = d.comp||"";
+    const fam = document.getElementById("famObs"); if(fam) fam.value = d.fam||"";
+    document.querySelectorAll("textarea").forEach(t => t.dispatchEvent(new Event("input")));
     document.getElementById("estadoGuardado").textContent = "Borrador restaurado ✔";
-
     validarBotonEnviar();
-
   }, 200);
 }
-  
+
 function validarBotonEnviar(){
-
   const indicador = document.getElementById("indicadorInput")?.value.trim() || "";
-  // 🔥 EVITAR VALIDACIÓN PREMATURA
-if(indicador.length === 0){
-  const btn = document.getElementById("btnEnviar");
-  btn.classList.remove("activo");
-  return false;
-}
+  if(indicador.length === 0){ const btn=document.getElementById("btnEnviar"); btn.classList.remove("activo"); return false; }
   const total = ST.intensidad || 1;
-
   let valido = true;
-
-  // 🔴 INDICADOR
   const campoIndicador = document.getElementById("indicadorInput");
-  campoIndicador?.classList.remove("marca-error");
-  campoIndicador?.classList.remove("marca-warning");
-
-  if(indicador.length < 5){
-  campoIndicador?.classList.add("marca-warning");
-}
-
-  // 🔴 CLASES SEGÚN INTENSIDAD
+  campoIndicador?.classList.remove("marca-error","marca-warning");
+  if(indicador.length < 5) campoIndicador?.classList.add("marca-warning");
   for(let i = 1; i <= total; i++){
-
     const campoTema = document.getElementById("tema_"+i);
     const campoAct = document.getElementById("act_"+i);
-
     const tema = campoTema?.value.trim() || "";
     const act = campoAct?.value.trim() || "";
-
-    // LIMPIAR ERRORES PREVIOS
-    campoTema?.classList.remove("marca-error");
-    campoAct?.classList.remove("marca-error");
-
-    // VALIDAR TEMA
-    // 🔴 VALIDAR TEMA (OBLIGATORIO)
-if(tema.length < 5){
-  valido = false;
-  campoTema?.classList.add("marca-error");
-}
-
-// 🔴 VALIDAR ACTIVIDADES (OBLIGATORIO)
-if(act.length < 10){
-  valido = false;
-  campoAct?.classList.add("marca-error");
-}
-
+    campoTema?.classList.remove("marca-error"); campoAct?.classList.remove("marca-error");
+    if(tema.length < 5){ valido=false; campoTema?.classList.add("marca-error"); }
+    if(act.length < 10){ valido=false; campoAct?.classList.add("marca-error"); }
   }
-
-  // 🔴 BOTÓN ENVIAR
   const btn = document.getElementById("btnEnviar");
-
-  if(valido){
-    btn.classList.add("activo");
-  }else{
-    btn.classList.remove("activo");
-  }
-
-  // 🔥 RETORNO CLAVE (para usar en otras funciones)
+  if(valido) btn.classList.add("activo"); else btn.classList.remove("activo");
   return valido;
 }
 
 function irAlPrimerError(){
-
   const error = document.querySelector(".marca-error");
-
-  if(error){
-    error.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
-
-    error.focus();
-  }
-
+  if(error){ error.scrollIntoView({behavior:"smooth",block:"center"}); error.focus(); }
 }
 
 function obtenerMensajeError(){
-
   const indicador = document.getElementById("indicadorInput")?.value.trim() || "";
+  if(indicador.length < 5) return "Falta completar el indicador de desempeño";
   const total = ST.intensidad || 1;
-
-  if(indicador.length < 5){
-    return "Falta completar el indicador de desempeño";
+  for(let i=1;i<=total;i++){
+    const tema = document.getElementById("tema_"+i)?.value.trim()||"";
+    const act = document.getElementById("act_"+i)?.value.trim()||"";
+    if(tema.length < 5) return "Falta completar el tema de la clase " + i;
+    if(act.length < 10) return "Falta completar las actividades de la clase " + i;
   }
-
-  for(let i = 1; i <= total; i++){
-
-    const tema = document.getElementById("tema_"+i)?.value.trim() || "";
-    const act = document.getElementById("act_"+i)?.value.trim() || "";
-
-    if(tema.length < 5){
-      return "Falta completar el tema de la clase " + i;
-    }
-
-    if(act.length < 10){
-      return "Falta completar las actividades de la clase " + i;
-    }
-  }
-
   return "";
 }
 
 function activarRevisionClase(i){
   clearTimeout(timersClases[i]);
-
-  timersClases[i] = setTimeout(() => {
-    revisarClaseCoach(i);
-  }, 1200); // 🔥 más suave
+  timersClases[i] = setTimeout(() => revisarClaseCoach(i), 1200);
 }
 
 document.addEventListener("input", function(e){
-
   const campo = e.target;
-
-  // 🔥 ACTIVIDADES COMPLEMENTARIAS
-  if(campo.id === "compObligatoria"){
-    clearTimeout(timerIA);
-    timerIA = setTimeout(() => {
-      revisarCompCoach();
-    }, 400); // ⚡ más rápido
-  }
-
-  // 🔥 COMUNICACIÓN A FAMILIAS
-  if(campo.id === "famObs"){
-    clearTimeout(timerIA);
-    timerIA = setTimeout(() => {
-      revisarFamiliaCoach();
-    }, 400);
-  }
-
-  // 🔥 INDICADOR
-  if(campo.id === "indicadorInput"){
-    clearTimeout(timerIA);
-    timerIA = setTimeout(() => {
-      revisarIndicadorCoach();
-    }, 400);
-  }
-
-  // 🔥 OBSERVACIÓN
-  if(campo.id === "observacionInput"){
-    clearTimeout(timerIA);
-    timerIA = setTimeout(() => {
-      revisarObservacionCoach();
-    }, 400);
-  }
-
-  // 🔥 REVISIÓN DE CLASES
-  if(campo.id && campo.id.startsWith("tema_")){
-    const i = campo.id.split("_")[1];
-    activarRevisionClase(i);
-  }
-
-  if(campo.id && campo.id.startsWith("act_")){
-    const i = campo.id.split("_")[1];
-    activarRevisionClase(i);
-  }
-
-  // 🔥 VALIDAR BOTÓN ENVIAR
-  if(
-    campo.id === "indicadorInput" ||
-    (campo.id && campo.id.startsWith("tema_")) ||
-    (campo.id && campo.id.startsWith("act_"))
-  ){
-    validarBotonEnviar();
-  }
-
-  // 🔥 EVALUAR ERRORES GLOBAL (INMEDIATO)
+  if(campo.id==="compObligatoria"){ clearTimeout(timerIA); timerIA=setTimeout(()=>revisarCompCoach(),400); }
+  if(campo.id==="famObs"){ clearTimeout(timerIA); timerIA=setTimeout(()=>revisarFamiliaCoach(),400); }
+  if(campo.id==="indicadorInput"){ clearTimeout(timerIA); timerIA=setTimeout(()=>revisarIndicadorCoach(),400); }
+  if(campo.id==="observacionInput"){ clearTimeout(timerIA); timerIA=setTimeout(()=>revisarObservacionCoach(),400); }
+  if(campo.id&&campo.id.startsWith("tema_")){ const i=campo.id.split("_")[1]; activarRevisionClase(i); }
+  if(campo.id&&campo.id.startsWith("act_")){ const i=campo.id.split("_")[1]; activarRevisionClase(i); }
+  if(campo.id==="indicadorInput"||(campo.id&&campo.id.startsWith("tema_"))||(campo.id&&campo.id.startsWith("act_"))){ validarBotonEnviar(); }
   evaluarErroresGlobal();
-
 });
 
 function activarValidacionInputs(){
-
   const inputs = document.querySelectorAll("#planeacionBox textarea");
-
-  inputs.forEach(input => {
-
-    input.addEventListener("input", () => {
-      validarBotonEnviar();
-    });
-
-    input.addEventListener("keyup", () => {
-      validarBotonEnviar();
-    });
-
-  });
-
+  inputs.forEach(input => { input.addEventListener("input",()=>validarBotonEnviar()); input.addEventListener("keyup",()=>validarBotonEnviar()); });
 }
 
-function volverInicio(){
-  window.location.href = "/index.html"; // ⚠️ cambia la ruta si es necesario
-}
-
-function mostrarExito(){
-  const modal = document.getElementById("modalExito");
-  modal.style.opacity = "1";
-  modal.style.pointerEvents = "auto";
-}
-
-function nuevaPlaneacion(){
-
-  const key = getClavePlaneacion();
-  if(key){
-    localStorage.removeItem(key);
-  }
-
-  location.reload();
-}
+function volverInicio(){ window.location.href = "/"; }
+function mostrarExito(){ const modal=document.getElementById("modalExito"); modal.style.opacity="1"; modal.style.pointerEvents="auto"; }
+function nuevaPlaneacion(){ const key=getClavePlaneacion(); if(key)localStorage.removeItem(key); location.reload(); }
 
 function toggleGrupo(grupo, el){
-
   if(!ST.grupos) ST.grupos = ["A","B"];
-
-  if(ST.grupos.includes(grupo)){
-    ST.grupos = ST.grupos.filter(g => g !== grupo);
-    el.classList.remove("activa");
-  } else {
-    ST.grupos.push(grupo);
-    el.classList.add("activa");
-  }
-
+  if(ST.grupos.includes(grupo)){ ST.grupos=ST.grupos.filter(g=>g!==grupo); el.classList.remove("activa"); }
+  else { ST.grupos.push(grupo); el.classList.add("activa"); }
   guardarAuto();
 }
 
-function cerrarSesion(){
-  localStorage.removeItem("lp_user");
-  window.location.href = "/";
-}
+function cerrarSesion(){ localStorage.removeItem("lp_user"); window.location.href = "/"; }
 
 function toggleSelect(tipo){
-  // 🔥 CARGA SOLO CUANDO EL USUARIO ABRE
-if(tipo === "materia"){
-  if(!ST.data){
-    cargarMaterias(); // 🔥 solo si no hay cache
-  }
-}
-
-  const box = document.getElementById(tipo + "Options");
-  const trigger = document.getElementById(tipo + "Box");
-
+  if(tipo==="materia"&&!ST.data) cargarMaterias();
+  const box = document.getElementById(tipo+"Options");
+  const trigger = document.getElementById(tipo+"Box");
   const rect = trigger.getBoundingClientRect();
-
-  // 🔥 MOVER AL BODY
   document.body.appendChild(box);
-
-  box.style.position = "fixed";
-  box.style.top = rect.bottom + "px";
-  box.style.left = rect.left + "px";
-  box.style.width = rect.width + "px";
-  box.style.display = box.style.display === "block" ? "none" : "block";
+  box.style.position="fixed"; box.style.top=rect.bottom+"px"; box.style.left=rect.left+"px"; box.style.width=rect.width+"px";
+  box.style.display = box.style.display==="block" ? "none" : "block";
   box.style.zIndex = 999999;
-
-  // 🔥 NUEVO: SCROLL A LA OPCIÓN ACTIVA
-  if(tipo === "semana" && ST.semana){
-
-    setTimeout(() => {
-
-      const opciones = box.querySelectorAll("div");
-
-      opciones.forEach(op => {
-
-        if(op.textContent === ST.semana){
-
-          op.scrollIntoView({
-            block: "center",
-            behavior: "smooth"
-          });
-
-        }
-
-      });
-
-    }, 50); // pequeño delay para render
-
+  if(tipo==="semana"&&ST.semana){
+    setTimeout(()=>{ const opciones=box.querySelectorAll("div"); opciones.forEach(op=>{ if(op.textContent===ST.semana) op.scrollIntoView({block:"center",behavior:"smooth"}); }); },50);
   }
 }
 
 function activarBloque(id){
-
   const el = document.getElementById(id);
-
   el.classList.add("activo");
-
-  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  el.scrollIntoView({ behavior:"smooth", block:"center" });
 }
 
 function setDisp(valor, el){
-
   ST.dispActivo = valor;
-
-  document.querySelectorAll("#b-dispositivo .btn-opcion")
-    .forEach(b => b.classList.remove("activa"));
-
+  document.querySelectorAll("#b-dispositivo .btn-opcion").forEach(b=>b.classList.remove("activa"));
   el.classList.add("activa");
-
   const box = document.getElementById("dispClasesBox");
-
-  if(valor === "si"){
-
-    box.classList.remove("oculto");
-    generarClasesDispositivo();
-
-  }else{
-
-    box.classList.add("oculto");
-    ST.dispClases = [];
-    document.getElementById("dispDescripcion").value = "";
-
-  }
-
+  if(valor==="si"){ box.classList.remove("oculto"); generarClasesDispositivo(); }
+  else { box.classList.add("oculto"); ST.dispClases=[]; document.getElementById("dispDescripcion").value=""; }
   guardarAuto();
 }
 
 function generarClasesDispositivo(){
-
   const cont = document.getElementById("dispClasesOpciones");
   cont.innerHTML = "";
-
   const total = ST.intensidad || 1;
-
   ST.dispClases = [];
-
-  for(let i = 1; i <= total; i++){
-
+  for(let i=1;i<=total;i++){
     const div = document.createElement("div");
-
-    div.className = "btn-opcion";
-    div.textContent = "Clase " + i;
-
+    div.className = "btn-opcion"; div.textContent = "Clase " + i;
     div.onclick = () => {
-
-      if(ST.dispClases.includes(i)){
-
-        ST.dispClases = ST.dispClases.filter(n => n !== i);
-        div.classList.remove("activa");
-
-      }else{
-
-        ST.dispClases.push(i);
-        div.classList.add("activa");
-
-      }
-
+      if(ST.dispClases.includes(i)){ ST.dispClases=ST.dispClases.filter(n=>n!==i); div.classList.remove("activa"); }
+      else { ST.dispClases.push(i); div.classList.add("activa"); }
       guardarAuto();
     };
-
     cont.appendChild(div);
   }
 }
 
-
-
 function esIndicadorValido(texto){
-
   const t = texto.trim().toLowerCase();
   if(!t) return false;
-
   const primera = t.split(/\s+/)[0];
-
-  // ❌ infinitivo
   if(/(ar|er|ir)$/.test(primera)) return false;
-
-  // ❌ tercera persona tipo "el estudiante..."
   if(/^el estudiante\s+/.test(t)) return false;
-
-  // ✅ presente (aproximación funcional)
-  const esPresente = (
-    primera.endsWith("a") ||
-    primera.endsWith("e") ||
-    primera.endsWith("iza") ||
-    primera.endsWith("ece") ||
-    primera.endsWith("ye")
-  );
-
+  const esPresente = (primera.endsWith("a")||primera.endsWith("e")||primera.endsWith("iza")||primera.endsWith("ece")||primera.endsWith("ye"));
   if(!esPresente) return false;
-
-  // ✅ estructura mínima (contenido + contexto)
-  const tieneContexto = t.includes(" mediante ") || 
-                        t.includes(" en ") || 
-                        t.includes(" a través de ") ||
-                        t.includes(" usando ");
-
+  const tieneContexto = t.includes(" mediante ")||t.includes(" en ")||t.includes(" a través de ")||t.includes(" usando ");
   return tieneContexto;
 }
 
 async function revisarIndicadorCoach(){
-
   const campo = document.getElementById("indicadorInput");
   const box = document.getElementById("coachIndicador");
-
-  if(!campo || !box) return;
-
+  if(!campo||!box) return;
   const texto = campo.value.trim();
-
-  // 🔥 1. vacío → oculta y sale
-  if(!texto){
-    box.style.display = "none";
-    return;
-  }
-
-  // 🔥 2. evitar repetir
-  if(texto === cacheIndicador){
-    return;
-  }
-
+  if(!texto){ box.style.display="none"; return; }
+  if(texto===cacheIndicador) return;
   cacheIndicador = texto;
-
   let mensajes = [];
-
-  // 🔹 VALIDACIÓN PEDAGÓGICA
-  if(esIndicadorValido(texto)){
-    mensajes.push(`<div class="coach-ok">✔ Indicador correctamente redactado en presente y con estructura adecuada.</div>`);
-  }else{
-    mensajes.push(`<div class="coach-warning">⚠ El indicador debe estar en presente y tener estructura clara (contenido + contexto).</div>`);
-  }
-
-  if(!texto.endsWith(".")){
-    mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
-  }
-
-  // 🔥 ORTOGRAFÍA
+  if(esIndicadorValido(texto)) mensajes.push(`<div class="coach-ok">✔ Indicador correctamente redactado.</div>`);
+  else mensajes.push(`<div class="coach-warning">⚠ El indicador debe estar en presente con estructura clara.</div>`);
+  if(!texto.endsWith(".")) mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
   const errores = await revisarOrtografia(texto);
-
-  if(errores.length > 0){
-
-    mensajes.push(`<div class="coach-error" style="margin-top:8px;"><b>Errores detectados:</b></div>`);
-
-    errores.forEach(e => {
-
-      const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
-      const offset = e.offset;
-      const length = e.length;
-
-      mensajes.push(`
-        <div class="coach-error">
-          🔴 "${e.context.text}" → 
-          <span class="sugerencia"
-            onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'indicadorInput')">
-            ${sugerencia}
-          </span>
-        </div>
-      `);
-    });
-
-  }else{
-    mensajes.push(`<div class="coach-ok">✔ Sin errores ortográficos.</div>`);
-  }
-
-  box.innerHTML = mensajes.join("");
-  box.style.display = "block";
+  if(errores.length>0){
+    mensajes.push(`<div class="coach-error"><b>Errores detectados:</b></div>`);
+    errores.forEach(e=>{ const sugerencia=e.replacements[0]?.value||"Sin sugerencia"; mensajes.push(`<div class="coach-error">🔴 "${e.context.text}" → <span class="sugerencia" onclick="aplicarCorreccion(${e.offset},${e.length},\'${sugerencia}\',\'indicadorInput\')">${sugerencia}</span></div>`); });
+  } else { mensajes.push(`<div class="coach-ok">✔ Sin errores ortográficos.</div>`); }
+  box.innerHTML = mensajes.join(""); box.style.display = "block";
 }
 
 async function revisarOrtografia(texto){
-
-  if(!texto || texto.length < 5) return [];
-
-  // 🔥 textos muy cortos → revisión básica
+  if(!texto||texto.length<5) return [];
   const esCorto = texto.length < 20;
-
   try{
-    const res = await fetch("https://api.languagetool.org/v2/check", {
-      method:"POST",
-      body:new URLSearchParams({
-        text: texto,
-        language:"es-ES"
-      })
-    });
-
+    const res = await fetch("https://api.languagetool.org/v2/check",{ method:"POST", body:new URLSearchParams({text:texto,language:"es-ES"}) });
     const data = await res.json();
-
     let errores = data.matches || [];
-
-    // 🔥 si es corto → solo errores graves
-    if(esCorto){
-      errores = errores.filter(e => e.rule.issueType === "misspelling");
-    }
-
+    if(esCorto) errores = errores.filter(e=>e.rule.issueType==="misspelling");
     return errores;
-
-  }catch{
-    return [];
-  }
+  }catch{ return []; }
 }
 
 async function revisarClaseCoach(i){
-
-  const tema = document.getElementById("tema_"+i)?.value.trim() || "";
-  const act = document.getElementById("act_"+i)?.value.trim() || "";
-
+  const tema = document.getElementById("tema_"+i)?.value.trim()||"";
+  const act = document.getElementById("act_"+i)?.value.trim()||"";
   const boxTema = document.getElementById("coachTema_"+i);
   const boxAct = document.getElementById("coachAct_"+i);
-
-  if(!boxTema || !boxAct) return;
-
-
-  let mensajesTema = [];
-  let mensajesAct = [];
-
-  // 🔹 VALIDACIÓN TEMA
+  if(!boxTema||!boxAct) return;
+  let mensajesTema = [], mensajesAct = [];
   if(tema){
-
-    if(tema.length < 5){
-      mensajesTema.push(`<div class="coach-warning">⚠ El tema es muy corto o poco claro.</div>`);
-    }
-
-    if(!tema.endsWith(".")){
-  mensajesTema.push(`<div class="coach-warning">⚠ El tema debe finalizar con punto.</div>`);
-}
-
+    if(tema.length<5) mensajesTema.push(`<div class="coach-warning">⚠ El tema es muy corto.</div>`);
+    if(!tema.endsWith(".")) mensajesTema.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
     const erroresTema = await revisarOrtografia(tema);
-
-    if(erroresTema.length > 0){
-
-      mensajesTema.push(`<div class="coach-error"><b>Errores en el tema:</b></div>`);
-
-      erroresTema.slice(0,3).forEach(e => {
-
-        const sugerencia = (e.replacements[0]?.value || "").replace(/'/g, "\\'");
-        const offset = e.offset;
-        const length = e.length;
-
-        mensajesTema.push(`
-          <div class="coach-error">
-            🔴 "${e.context.text}" → 
-            <span class="sugerencia"
-              onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'tema_${i}')">
-              ${sugerencia}
-            </span>
-          </div>
-        `);
-
-      });
-
-    } else {
-      mensajesTema.push(`<div class="coach-ok">✔ Tema sin errores.</div>`);
-    }
-
+    if(erroresTema.length>0){ mensajesTema.push(`<div class="coach-error"><b>Errores en el tema:</b></div>`); erroresTema.slice(0,3).forEach(e=>{ const sugerencia=(e.replacements[0]?.value||"").replace(/'/g,"\'"); mensajesTema.push(`<div class="coach-error">🔴 "${e.context.text}" → <span class="sugerencia" onclick="aplicarCorreccion(${e.offset},${e.length},\'${sugerencia}\',\'tema_${i}\')">${sugerencia}</span></div>`); }); }
+    else mensajesTema.push(`<div class="coach-ok">✔ Tema sin errores.</div>`);
     boxTema.style.display = mensajesTema.length ? "block" : "none";
     boxTema.innerHTML = mensajesTema.join("");
-
-  } else {
-    boxTema.style.display = "none";
-    boxTema.innerHTML = "";
-  }
-
-  // 🔹 VALIDACIÓN ACTIVIDADES
+  } else { boxTema.style.display="none"; boxTema.innerHTML=""; }
   if(act){
-
-    if(act.length < 10){
-      mensajesAct.push(`<div class="coach-warning">⚠ Las actividades deben ser más claras y completas.</div>`);
-    }
-
-    if(!/\d+\./.test(act)){
-      mensajesAct.push(`<div class="coach-warning">⚠ Organiza en pasos (1., 2., 3.).</div>`);
-    }
-
-    if(!act.endsWith(".")){
-      mensajesAct.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
-    }
-
+    if(act.length<10) mensajesAct.push(`<div class="coach-warning">⚠ Las actividades deben ser más completas.</div>`);
+    if(!/\d+\./.test(act)) mensajesAct.push(`<div class="coach-warning">⚠ Organiza en pasos (1., 2., 3.).</div>`);
+    if(!act.endsWith(".")) mensajesAct.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
     let erroresAct = [];
-if(act.length > 15){
-  erroresAct = await revisarOrtografia(act);
+    if(act.length>15) erroresAct = await revisarOrtografia(act);
+    if(erroresAct.length>0){ mensajesAct.push(`<div class="coach-error"><b>Errores en actividades:</b></div>`); erroresAct.slice(0,3).forEach(e=>{ const sugerencia=(e.replacements[0]?.value||"").replace(/'/g,"\'"); mensajesAct.push(`<div class="coach-error">🔴 "${e.context.text}" → <span class="sugerencia" onclick="aplicarCorreccion(${e.offset},${e.length},\'${sugerencia}\',\'act_${i}\')">${sugerencia}</span></div>`); }); }
+    else mensajesAct.push(`<div class="coach-ok">✔ Actividades sin errores.</div>`);
+    boxAct.style.display = "block"; boxAct.innerHTML = mensajesAct.join("");
+  } else { boxAct.style.display="none"; boxAct.innerHTML=""; }
 }
 
-    if(erroresAct.length > 0){
-
-      mensajesAct.push(`<div class="coach-error"><b>Errores en actividades:</b></div>`);
-
-      erroresAct.slice(0,3).forEach(e => {
-
-        const sugerencia = (e.replacements[0]?.value || "").replace(/'/g, "\\'");
-        const offset = e.offset;
-        const length = e.length;
-
-        mensajesAct.push(`
-          <div class="coach-error">
-            🔴 "${e.context.text}" → 
-            <span class="sugerencia"
-              onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'act_${i}')">
-              ${sugerencia}
-            </span>
-          </div>
-        `);
-
-      });
-
-    } else {
-      mensajesAct.push(`<div class="coach-ok">✔ Actividades sin errores.</div>`);
-    }
-
-    boxAct.style.display = "block";
-    boxAct.innerHTML = mensajesAct.join("");
-
-  } else {
-    boxAct.style.display = "none";
-    boxAct.innerHTML = "";
-  }
-
-}
-
-function aplicarCorreccion(offset, length, sugerencia, campoId){
-
+function aplicarCorreccion(offset,length,sugerencia,campoId){
   const campo = document.getElementById(campoId);
   if(!campo) return;
-
   let texto = campo.value;
-
-  if(offset < 0 || offset > texto.length) return;
-
-  const antes = texto.substring(0, offset);
-  const despues = texto.substring(offset + length);
-
-  campo.value = antes + sugerencia + despues;
-
-  campo.focus();
-
-  // 🔥 DISPARA EVENTO PARA QUE TODO SE ACTUALICE
-  campo.dispatchEvent(new Event("input"));
-
-  // 🔥 FORZAR REVISIÓN INMEDIATA SEGÚN CAMPO
-  if(campoId === "indicadorInput"){
-
-    revisarIndicadorCoach();
-
-  } else if(campoId.startsWith("tema_") || campoId.startsWith("act_")){
-
-    const i = campoId.split("_")[1];
-    revisarClaseCoach(i);
-
-  } else if(campoId === "observacionInput"){
-
-    revisarObservacionCoach();
-
-  } else if(campoId === "compObligatoria"){
-
-    revisarCompCoach();
-
-  } else if(campoId === "famObs"){
-
-    revisarFamiliaCoach();
-
-  }
-
-  // 🔥 VALIDACIÓN GENERAL (ACTIVA BOTÓN ENVIAR SI APLICA)
+  if(offset<0||offset>texto.length) return;
+  const antes=texto.substring(0,offset); const despues=texto.substring(offset+length);
+  campo.value = antes+sugerencia+despues;
+  campo.focus(); campo.dispatchEvent(new Event("input"));
+  if(campoId==="indicadorInput") revisarIndicadorCoach();
+  else if(campoId.startsWith("tema_")||campoId.startsWith("act_")){ const i=campoId.split("_")[1]; revisarClaseCoach(i); }
+  else if(campoId==="observacionInput") revisarObservacionCoach();
+  else if(campoId==="compObligatoria") revisarCompCoach();
+  else if(campoId==="famObs") revisarFamiliaCoach();
   validarBotonEnviar();
 }
 
 async function revisarObservacionCoach(){
-
-  const campo = document.getElementById("observacionInput");
-  const box = document.getElementById("coachObservacion");
-
-  if(!campo || !box) return;
-
-  const texto = campo.value.trim();
-
-  // 🔥 vacío
-  if(!texto){
-  box.style.display = "none";
-  box.innerHTML = "";
-  return;
-}
-
-  // 🔥 evitar repetir
-  if(texto === cacheObservacion){
-    return;
-  }
-
-  cacheObservacion = texto;
-
-  let mensajes = [];
-
-  // 🔹 VALIDACIÓN
-  if(texto.length < 10){
-    mensajes.push(`<div class="coach-warning">⚠ La observación es muy corta.</div>`);
-  }
-
-  if(!texto.endsWith(".")){
-    mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
-  }
-
-  // 🔥 ORTOGRAFÍA
-  const errores = await revisarOrtografia(texto);
-
-  if(errores.length > 0){
-
-    mensajes.push(`<div class="coach-error"><b>Errores detectados:</b></div>`);
-
-    errores.slice(0,4).forEach(e => {
-
-      const sugerencia = e.replacements[0]?.value || "Sin sugerencia";
-      const offset = e.offset;
-      const length = e.length;
-
-      mensajes.push(`
-        <div class="coach-error">
-          🔴 "${e.context.text}" → 
-          <span class="sugerencia"
-            onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'observacionInput')">
-            ${sugerencia}
-          </span>
-        </div>
-      `);
-    });
-
-  } else {
-    mensajes.push(`<div class="coach-ok">✔ Sin errores ortográficos.</div>`);
-  }
-
-  box.innerHTML = mensajes.join("");
-  box.style.display = "block";
+  const campo=document.getElementById("observacionInput"); const box=document.getElementById("coachObservacion");
+  if(!campo||!box) return;
+  const texto=campo.value.trim();
+  if(!texto){ box.style.display="none"; box.innerHTML=""; return; }
+  if(texto===cacheObservacion) return;
+  cacheObservacion=texto;
+  let mensajes=[];
+  if(texto.length<10) mensajes.push(`<div class="coach-warning">⚠ La observación es muy corta.</div>`);
+  if(!texto.endsWith(".")) mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
+  const errores=await revisarOrtografia(texto);
+  if(errores.length>0){ mensajes.push(`<div class="coach-error"><b>Errores detectados:</b></div>`); errores.slice(0,4).forEach(e=>{ const sugerencia=e.replacements[0]?.value||"Sin sugerencia"; mensajes.push(`<div class="coach-error">🔴 "${e.context.text}" → <span class="sugerencia" onclick="aplicarCorreccion(${e.offset},${e.length},\'${sugerencia}\',\'observacionInput\')">${sugerencia}</span></div>`); }); }
+  else mensajes.push(`<div class="coach-ok">✔ Sin errores ortográficos.</div>`);
+  box.innerHTML=mensajes.join(""); box.style.display="block";
 }
 
 async function revisarCompCoach(){
-
-  const campo = document.getElementById("compObligatoria");
-  const box = document.getElementById("coachComp");
-
-  if(!campo || !box) return;
-
-  const texto = campo.value.trim();
-
-  if(texto === cacheComp) return;
-cacheComp = texto;
-
-  if(!texto){
-  box.style.display = "none";
-  box.innerHTML = "";
-  return;
-}
-
-  let mensajes = [];
-
-  if(texto.length < 10){
-    mensajes.push(`<div class="coach-warning">⚠ Describe mejor la actividad.</div>`);
-  }
-
-  if(!texto.endsWith(".")){
-    mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
-  }
-
-  const errores = await revisarOrtografia(texto);
-
-  if(errores.length > 0){
-
-    mensajes.push(`<div class="coach-error"><b>Errores detectados:</b></div>`);
-
-    errores.slice(0,3).forEach(e => {
-
-      const sugerencia = (e.replacements[0]?.value || "").replace(/'/g, "\'");
-      const offset = e.offset;
-      const length = e.length;
-
-      mensajes.push(`
-        <div class="coach-error">
-          🔴 "${e.context.text}" →
-          <span class="sugerencia"
-            onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'compObligatoria')">
-            ${sugerencia}
-          </span>
-        </div>
-      `);
-    });
-
-  } else {
-    mensajes.push(`<div class="coach-ok">✔ Redacción correcta.</div>`);
-  }
-
-  box.innerHTML = mensajes.join("");
-  box.style.display = "block";
+  const campo=document.getElementById("compObligatoria"); const box=document.getElementById("coachComp");
+  if(!campo||!box) return;
+  const texto=campo.value.trim();
+  if(texto===cacheComp) return; cacheComp=texto;
+  if(!texto){ box.style.display="none"; box.innerHTML=""; return; }
+  let mensajes=[];
+  if(texto.length<10) mensajes.push(`<div class="coach-warning">⚠ Describe mejor la actividad.</div>`);
+  if(!texto.endsWith(".")) mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
+  const errores=await revisarOrtografia(texto);
+  if(errores.length>0){ mensajes.push(`<div class="coach-error"><b>Errores detectados:</b></div>`); errores.slice(0,3).forEach(e=>{ const sugerencia=(e.replacements[0]?.value||"").replace(/'/g,"\'"); mensajes.push(`<div class="coach-error">🔴 "${e.context.text}" → <span class="sugerencia" onclick="aplicarCorreccion(${e.offset},${e.length},\'${sugerencia}\',\'compObligatoria\')">${sugerencia}</span></div>`); }); }
+  else mensajes.push(`<div class="coach-ok">✔ Redacción correcta.</div>`);
+  box.innerHTML=mensajes.join(""); box.style.display="block";
 }
 
 async function revisarFamiliaCoach(){
-
-  const campo = document.getElementById("famObs");
-  const box = document.getElementById("coachFamilia");
-
-  if(!campo || !box) return;
-
-  const texto = campo.value.trim();
-
-  if(texto === cacheFamilia) return;
-cacheFamilia = texto;
-
-  if(!texto){
-    box.style.display = "none";
-    return;
-  }
-
-  let mensajes = [];
-
-  if(texto.length < 15){
-    mensajes.push(`<div class="coach-warning">⚠ El mensaje es muy corto.</div>`);
-  }
-
-  if(!texto.endsWith(".")){
-    mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
-  }
-
-  const errores = await revisarOrtografia(texto);
-
-  if(errores.length > 0){
-
-    mensajes.push(`<div class="coach-error"><b>Errores detectados:</b></div>`);
-
-    errores.slice(0,4).forEach(e => {
-
-      const sugerencia = (e.replacements[0]?.value || "").replace(/'/g, "\'");
-      const offset = e.offset;
-      const length = e.length;
-
-      mensajes.push(`
-        <div class="coach-error">
-          🔴 "${e.context.text}" →
-          <span class="sugerencia"
-            onclick="aplicarCorreccion(${offset}, ${length}, '${sugerencia}', 'famObs')">
-            ${sugerencia}
-          </span>
-        </div>
-      `);
-    });
-
-  } else {
-    mensajes.push(`<div class="coach-ok">✔ Mensaje claro y correcto.</div>`);
-  }
-
-  box.innerHTML = mensajes.join("");
-  box.style.display = "block";
+  const campo=document.getElementById("famObs"); const box=document.getElementById("coachFamilia");
+  if(!campo||!box) return;
+  const texto=campo.value.trim();
+  if(texto===cacheFamilia) return; cacheFamilia=texto;
+  if(!texto){ box.style.display="none"; return; }
+  let mensajes=[];
+  if(texto.length<15) mensajes.push(`<div class="coach-warning">⚠ El mensaje es muy corto.</div>`);
+  if(!texto.endsWith(".")) mensajes.push(`<div class="coach-warning">⚠ Debe finalizar con punto.</div>`);
+  const errores=await revisarOrtografia(texto);
+  if(errores.length>0){ mensajes.push(`<div class="coach-error"><b>Errores detectados:</b></div>`); errores.slice(0,4).forEach(e=>{ const sugerencia=(e.replacements[0]?.value||"").replace(/'/g,"\'"); mensajes.push(`<div class="coach-error">🔴 "${e.context.text}" → <span class="sugerencia" onclick="aplicarCorreccion(${e.offset},${e.length},\'${sugerencia}\',\'famObs\')">${sugerencia}</span></div>`); }); }
+  else mensajes.push(`<div class="coach-ok">✔ Mensaje claro y correcto.</div>`);
+  box.innerHTML=mensajes.join(""); box.style.display="block";
 }
 
 function evaluarErroresGlobal(){
-
-  const hayErrores =
-
-    document.querySelectorAll(".coach-error").length > 0 ||
-
-    document.querySelectorAll(".coach-warning").length > 0; // 🔥 NUEVO
-
+  const hayErrores = document.querySelectorAll(".coach-error").length>0||document.querySelectorAll(".coach-warning").length>0;
   const btn = document.getElementById("btnCorregir");
-
   if(!btn) return;
-
-  if(hayErrores){
-
-    btn.classList.add("activo");
-
-  }else{
-
-    btn.classList.remove("activo");
-
-  }
-
+  if(hayErrores) btn.classList.add("activo"); else btn.classList.remove("activo");
 }
 
-function fileToBase64(file){
-  return new Promise((resolve, reject)=>{
-    const reader = new FileReader();
-    reader.onload = ()=> resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
+function fileToBase64(file){ return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onload=()=>resolve(reader.result); reader.onerror=reject; reader.readAsDataURL(file); }); }
 
 document.getElementById("compArchivo").addEventListener("change", async function(){
-
-  const file = this.files[0];
-
-  if(!file) return;
-
-  if(file.size > 3 * 1024 * 1024){
-    alert("El archivo supera el tamaño permitido (máx 3MB)");
-    this.value = "";
-    return;
-  }
-
-  archivoCompNombre = file.name;
-  archivoCompBase64 = await fileToBase64(file);
-
-  document.getElementById("compNombre").textContent = file.name;
-  document.getElementById("compLabel").textContent = "Archivo cargado ✔";
-
-  const bar = document.getElementById("compProgress");
-  const box = document.getElementById("compBox").querySelector(".file-upload");
-
-  bar.style.width = "0%";
-
-  setTimeout(()=>{ bar.style.width = "35%"; }, 80);
-  setTimeout(()=>{ bar.style.width = "70%"; }, 180);
-  setTimeout(()=>{ bar.style.width = "100%"; }, 320);
-
-  setTimeout(()=>{
-    box.style.borderColor = "#4ade80";
-    box.style.boxShadow = "0 0 0 1px #4ade80 inset";
-  }, 350);
-
-  document.getElementById("btnQuitarComp").style.display = "inline-block";
-
+  const file=this.files[0]; if(!file) return;
+  if(file.size>3*1024*1024){ alert("El archivo supera el tamaño permitido (máx 3MB)"); this.value=""; return; }
+  archivoCompNombre=file.name; archivoCompBase64=await fileToBase64(file);
+  document.getElementById("compNombre").textContent=file.name; document.getElementById("compLabel").textContent="Archivo cargado ✔";
+  const bar=document.getElementById("compProgress"); const box=document.getElementById("compBox").querySelector(".file-upload");
+  bar.style.width="0%"; setTimeout(()=>{bar.style.width="35%"},80); setTimeout(()=>{bar.style.width="70%"},180); setTimeout(()=>{bar.style.width="100%"},320);
+  setTimeout(()=>{ box.style.borderColor="#4ade80"; box.style.boxShadow="0 0 0 1px #4ade80 inset"; },350);
+  document.getElementById("btnQuitarComp").style.display="inline-block";
 });
 
 document.getElementById("famArchivo").addEventListener("change", async function(){
-
-  const file = this.files[0];
-  if(!file) return;
-
-  archivoFamNombre = file.name;
-  archivoFamBase64 = await fileToBase64(file);
-
-  document.getElementById("famNombre").textContent = file.name;
-
-  const bar = document.getElementById("famProgress");
-  const box = document.getElementById("famUpload");
-
-  bar.style.width = "0%";
-
-  setTimeout(()=>{ bar.style.width = "35%"; }, 80);
-  setTimeout(()=>{ bar.style.width = "70%"; }, 180);
-  setTimeout(()=>{ bar.style.width = "100%"; }, 320);
-
-  setTimeout(()=>{
-    box.style.borderColor = "#4ade80";
-    box.style.boxShadow = "0 0 0 1px #4ade80 inset";
-  }, 350);
-
-  document.getElementById("btnQuitarFam").style.display = "inline-block";
-
+  const file=this.files[0]; if(!file) return;
+  archivoFamNombre=file.name; archivoFamBase64=await fileToBase64(file);
+  document.getElementById("famNombre").textContent=file.name;
+  const bar=document.getElementById("famProgress"); const box=document.getElementById("famUpload");
+  bar.style.width="0%"; setTimeout(()=>{bar.style.width="35%"},80); setTimeout(()=>{bar.style.width="70%"},180); setTimeout(()=>{bar.style.width="100%"},320);
+  setTimeout(()=>{ box.style.borderColor="#4ade80"; box.style.boxShadow="0 0 0 1px #4ade80 inset"; },350);
+  document.getElementById("btnQuitarFam").style.display="inline-block";
 });
 
-async function hayErroresOrtograficos(){
-
-  const campos = document.querySelectorAll("textarea");
-
-  for(const campo of campos){
-
-    const texto = campo.value.trim();
-
-    if(!texto || texto.length < 10) continue;
-
-    // 🔴 validar punto final (esto sí es obligatorio)
-    if(!texto.endsWith(".")){
-      return true;
-    }
-
-    // 🔥 SOLO errores graves (máximo 2)
-    const errores = await revisarOrtografia(texto);
-
-    const erroresReales = errores.filter(e => 
-      e.rule.issueType === "misspelling" // SOLO ortografía real
-    );
-
-    if(erroresReales.length > 0){
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function mostrarAvisoIA(){
-
-  const toast = document.getElementById("toastIA");
-  const btnIA = document.getElementById("btnCorregir");
-
-  // 🔥 Mostrar toast
-  toast.classList.add("activo");
-
-  // 🔥 Animar botón ✦
-  btnIA.classList.add("activo");
-
-  btnIA.animate([
-    { transform: "scale(1)" },
-    { transform: "scale(1.2)" },
-    { transform: "scale(1)" }
-  ], {
-    duration: 600,
-    iterations: 2
-  });
-
-  // 🔥 Auto cerrar
-  setTimeout(() => {
-    toast.classList.remove("activo");
-  }, 2800);
-
-}
-
 function quitarArchivoComp(e){
-
-  // 🔥 CLAVE: evita que se abra el explorador
-  e.stopPropagation();
-
-  const input = document.getElementById("compArchivo");
-
-  // limpiar archivo
-  input.value = "";
-
-  // limpiar texto
-  document.getElementById("compNombre").textContent = "Ningún archivo";
-  document.getElementById("compLabel").textContent = "Seleccionar archivo";
-
-  // reset barra
-  document.getElementById("compProgress").style.width = "0%";
-
-  // reset estilos
-  const box = input.closest(".file-upload");
-  box.style.borderColor = "";
-  box.style.boxShadow = "";
-
-  // ocultar botón
-  document.getElementById("btnQuitarComp").style.display = "none";
-
+  e.stopPropagation(); const input=document.getElementById("compArchivo"); input.value="";
+  document.getElementById("compNombre").textContent="Ningún archivo"; document.getElementById("compLabel").textContent="Seleccionar archivo";
+  document.getElementById("compProgress").style.width="0%";
+  const box=input.closest(".file-upload"); box.style.borderColor=""; box.style.boxShadow="";
+  document.getElementById("btnQuitarComp").style.display="none";
 }
 
 function quitarArchivoFam(e){
-
-  // 🔥 CLAVE: evita que suba el click
-  e.stopPropagation();
-
-  const input = document.getElementById("famArchivo");
-
-  input.value = "";
-
-  document.getElementById("famNombre").textContent = "Ningún archivo";
-
-  const bar = document.getElementById("famProgress");
-  bar.style.width = "0%";
-
-  const box = document.getElementById("famUpload");
-  box.style.borderColor = "";
-  box.style.boxShadow = "";
-
-  document.getElementById("btnQuitarFam").style.display = "none";
-
+  e.stopPropagation(); const input=document.getElementById("famArchivo"); input.value="";
+  document.getElementById("famNombre").textContent="Ningún archivo";
+  document.getElementById("famProgress").style.width="0%";
+  const box=document.getElementById("famUpload"); box.style.borderColor=""; box.style.boxShadow="";
+  document.getElementById("btnQuitarFam").style.display="none";
 }
 
 function mostrarErrorEnvio(mensaje){
-
-  const toast = document.getElementById("toastIA");
-
-  toast.querySelector(".toast-text").innerHTML = `
-    <b>No se pudo guardar</b><br>
-    <span>${mensaje}</span>
-  `;
-
+  const toast=document.getElementById("toastIA");
+  toast.querySelector(".toast-text").innerHTML=`<b>No se pudo guardar</b><br><span>${mensaje}</span>`;
   toast.classList.add("activo");
-
-  setTimeout(()=>{
-    toast.classList.remove("activo");
-  }, 3500);
-
+  setTimeout(()=>toast.classList.remove("activo"),3500);
 }
 
-function confirmarEnvioExitoso(){
+function confirmarEnvioExitoso(){ document.getElementById("estadoGuardado").textContent="Guardado en sistema ✔"; }
 
-  const estado = document.getElementById("estadoGuardado");
-
-  estado.textContent = "Guardado en sistema ✔";
-
-}
-function toggleCopia(el) {
-
-  ST.enviarCopia = !ST.enviarCopia; // 🔥 USA EL STATE REAL
-
-  const bola = document.getElementById("bolaCopia");
-
-  if (ST.enviarCopia) {
-    el.style.background = "#1A428A";
-    bola.style.left = "22px";
-  } else {
-    el.style.background = "rgba(255,255,255,0.15)";
-    bola.style.left = "2px";
-  }
+function toggleCopia(el){
+  ST.enviarCopia = !ST.enviarCopia;
+  const bola=document.getElementById("bolaCopia");
+  if(ST.enviarCopia){ el.style.background="#1A428A"; bola.style.left="22px"; }
+  else { el.style.background="rgba(255,255,255,0.15)"; bola.style.left="3px"; }
 }
 
 function getClavePlaneacion(){
-
-  const correo = obtenerCorreo() || "anon";
-
-  if(!ST.materia || !ST.grado || !ST.semana){
-    return null; // 🔴 no hay contexto aún
-  }
-
-  const materia = ST.materia.replace(/\s+/g,"_");
-  const grado = ST.grado.replace(/\s+/g,"_");
-  const semana = ST.semana.replace(/\s+/g,"_");
-
+  const correo=obtenerCorreo()||"anon";
+  if(!ST.materia||!ST.grado||!ST.semana) return null;
+  const materia=ST.materia.replace(/\s+/g,"_"); const grado=ST.grado.replace(/\s+/g,"_"); const semana=ST.semana.replace(/\s+/g,"_");
   return `planeacion_${correo}_${materia}_${grado}_${semana}`;
 }
+
+function mostrarAvisoIA(){
+  const toast=document.getElementById("toastIA"); const btnIA=document.getElementById("btnCorregir");
+  toast.classList.add("activo");
+  btnIA.classList.add("activo");
+  btnIA.animate([{transform:"scale(1)"},{transform:"scale(1.2)"},{transform:"scale(1)"}],{duration:600,iterations:2});
+  setTimeout(()=>toast.classList.remove("activo"),2800);
+}
 </script>
-
-
-
 </body>
 </html>
