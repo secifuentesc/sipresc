@@ -1197,9 +1197,26 @@ function toggleSelect(tipo){
   const trigger = document.getElementById(tipo+"Box");
   const rect = trigger.getBoundingClientRect();
   document.body.appendChild(box);
-  box.style.position="fixed"; box.style.top=rect.bottom+"px"; box.style.left=rect.left+"px"; box.style.width=rect.width+"px";
+  box.style.position="fixed";
+  box.style.left=rect.left+"px";
+  box.style.width=rect.width+"px";
+  box.style.zIndex="999999";
+
+  // Calcular si abre hacia arriba o hacia abajo
+  const alturaDropdown = Math.min(window.innerHeight * 0.4, 300);
+  const espacioAbajo = window.innerHeight - rect.bottom;
+  if(espacioAbajo < alturaDropdown && rect.top > espacioAbajo){
+    // Abrir hacia arriba
+    box.style.bottom = (window.innerHeight - rect.top + 8) + "px";
+    box.style.top = "auto";
+  } else {
+    // Abrir hacia abajo
+    box.style.top = (rect.bottom + 8) + "px";
+    box.style.bottom = "auto";
+  }
+
   box.style.display = box.style.display==="block" ? "none" : "block";
-  box.style.zIndex = 999999;
+
   if(tipo==="semana"&&ST.semana){
     setTimeout(()=>{ const opciones=box.querySelectorAll("div"); opciones.forEach(op=>{ if(op.textContent===ST.semana) op.scrollIntoView({block:"center",behavior:"smooth"}); }); },50);
   }
