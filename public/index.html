@@ -845,7 +845,7 @@ function iniciarApp(){
     </button>`).join('');
 
   // 🆕 Admin → redirige directo al dashboard completo
-  if(ST.rol==='admin') { window.location.href = '/dashboard/'; return; }
+  if(ST.rol==='admin' || ST.rol==='coordinador') { window.location.href = '/dashboard/'; return; }
   if(ST.rol==='docente') goTab('home',document.getElementById('ni-home'));
   else goTab('dash',document.getElementById('ni-dash'));
 
