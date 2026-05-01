@@ -1236,16 +1236,6 @@ transition:all .3s ease;
 
   </div>
 </div>
-
-<div id="toastIA">
-  <div class="toast-box">
-    <div class="toast-icon">✦</div>
-    <div class="toast-text">
-      Detectamos detalles en la redacción.<br>
-      <span>Usa el Asistente inteligente para mejorarlo.</span>
-    </div>
-  </div>
-</div>
   
 <script>
 
@@ -2068,12 +2058,6 @@ async function enviarPlaneacion(){
     return;
   }
 
-  // ⚠️ aviso IA (no bloquea)
-  hayErroresOrtograficos().then(hayErrores => {
-    if(hayErrores){
-      mostrarAvisoIA();
-    }
-  });
 
   // 🔥 FEEDBACK INMEDIATO (ULTRA CLAVE)
   btn.classList.add("loading");
