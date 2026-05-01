@@ -1727,26 +1727,16 @@ const btnVerificar = document.getElementById("btnVerificar");
 
 let timeoutVerificacion;
 
-inputCodigo.addEventListener("input", () => {
-
-  const codigo = inputCodigo.value.trim();
-
-  // Solo números y máximo 6
-  inputCodigo.value = codigo.replace(/\D/g, "").slice(0,6);
-
-  if(inputCodigo.value.length === 6){
-
-    // 🔥 Estado visual inmediato
+document.addEventListener("input", (e) => {
+  if(e.target.id !== "inputCodigo") return;
+  e.target.value = e.target.value.replace(/\D/g, "").slice(0, 6);
+  if(e.target.value.length === 6){
     activarVerificando();
-
-    // 🔥 pequeño delay tipo app pro
     clearTimeout(timeoutVerificacion);
     timeoutVerificacion = setTimeout(() => {
       verificarCodigoLogin();
-    }, 400); // se siente natural
-
+    }, 400);
   }
-
 });
 
 function activarVerificando(){
