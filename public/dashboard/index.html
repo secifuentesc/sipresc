@@ -743,7 +743,7 @@ function renderUI(){
   $('top-chip').textContent=ST.rol==='admin'?'Admin':'Coord';
   $('sb-sys').textContent=ST.rol==='admin'?'ADMIN · SIPRESC':'COORDINACIÓN';
   if(ST.rol==='admin'){
-    $('doc-admin-btn').innerHTML='<a href="/" class="btn btn-p">+ Agregar docente</a>';
+    $('doc-admin-btn').innerHTML = '<a href="/" class="btn btn-primary btn-sm">+ Agregar docente</a>';
   }
   if(ST.rol!=='admin'){
     const cfg=$('ni-config');if(cfg)cfg.style.display='none';
