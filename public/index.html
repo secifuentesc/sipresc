@@ -33,119 +33,132 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 /* ── LOGIN ── */
 #s-login{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:32px 20px;min-height:100%;gap:0
+  padding:40px 20px;min-height:100%;gap:0
 }
 
 /* Logo */
 .lp-logo{
-  width:72px;height:72px;border-radius:20px;
-  background:linear-gradient(145deg,#1a3a6b,#2557c7);
+  width:76px;height:76px;border-radius:22px;
+  background:linear-gradient(145deg,#1c3f7a,#2557c7);
   display:flex;align-items:center;justify-content:center;
-  margin-bottom:20px;
-  box-shadow:0 8px 32px rgba(30,77,183,.35),0 2px 8px rgba(0,0,0,.3);
-  overflow:hidden;
-  position:relative
+  margin-bottom:22px;
+  box-shadow:0 12px 40px rgba(20,60,180,.4),0 2px 8px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.15);
+  overflow:hidden;position:relative
 }
-.lp-logo::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(145deg,rgba(255,255,255,.15) 0%,transparent 60%);
-  border-radius:20px
-}
-.logo-img{width:44px;filter:brightness(10)}
+.logo-img{width:46px;filter:brightness(10)}
 
 /* Títulos */
 .lp-title{
-  font-family:-apple-system,'Helvetica Neue',sans-serif;
-  font-size:22px;font-weight:600;letter-spacing:-.4px;
-  color:#f0f0f5;margin-bottom:5px;text-align:center
+  font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
+  font-size:24px;font-weight:700;letter-spacing:-.5px;
+  color:#ffffff;margin-bottom:6px;text-align:center
 }
 .lp-sub{
-  font-size:13px;color:rgba(255,255,255,.35);
-  margin-bottom:36px;text-align:center;letter-spacing:.2px
+  font-size:13px;color:rgba(255,255,255,.3);
+  margin-bottom:40px;text-align:center;font-weight:400;letter-spacing:.1px
 }
 
-/* Card */
+/* Card — sin borde visible, solo glassmorphism sutil */
 .lp-card{
-  width:100%;max-width:340px;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:20px;
-  padding:24px;
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px)
+  width:100%;max-width:320px;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:22px;
+  padding:22px 20px 20px;
+  backdrop-filter:blur(30px);
+  -webkit-backdrop-filter:blur(30px)
 }
+
+/* Label sutil */
 .lp-info{
-  font-size:13px;color:rgba(255,255,255,.4);
-  text-align:center;line-height:1.6;margin-bottom:20px
+  font-size:12px;color:rgba(255,255,255,.35);
+  text-align:center;margin-bottom:14px;
+  font-family:-apple-system,'Helvetica Neue',sans-serif;
+  letter-spacing:.1px
 }
 
 /* Error */
 .lp-err{
-  font-size:12px;color:#ff6b6b;text-align:center;margin-bottom:14px;
-  background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.18);
-  border-radius:10px;padding:10px 12px;display:none
+  font-size:12px;color:#ff6b6b;text-align:center;margin-bottom:12px;
+  background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.15);
+  border-radius:10px;padding:9px 12px;display:none
 }
 .lp-err.on{display:block}
 
-/* Input rediseñado */
+/* Input estilo Apple — sin borde en reposo, fondo muy sutil */
 #s-login .fi{
   width:100%;
-  background:rgba(255,255,255,.07);
-  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);
   border-radius:12px;
-  color:#f0f0f5;
-  padding:14px 16px;
+  color:#ffffff;
+  padding:13px 14px;
   font-family:-apple-system,'Helvetica Neue',sans-serif;
-  font-size:15px;
+  font-size:15px;font-weight:400;
   outline:none;
-  transition:border-color .2s,background .2s;
+  transition:border-color .18s,background .18s;
   -webkit-appearance:none;
   margin-bottom:10px
 }
-#s-login .fi::placeholder{color:rgba(255,255,255,.25)}
+#s-login .fi::placeholder{
+  color:rgba(255,255,255,.2);
+  font-size:15px;font-weight:400
+}
 #s-login .fi:focus{
-  border-color:rgba(100,160,255,.6);
-  background:rgba(255,255,255,.1)
+  border-color:rgba(80,140,255,.5);
+  background:rgba(255,255,255,.11)
 }
 
-/* Botón principal — estilo Apple */
+/* Input código — grande, centrado, espaciado */
+#inputCodigo{
+  letter-spacing:10px !important;
+  font-size:26px !important;
+  text-align:center !important;
+  font-family:-apple-system,monospace !important;
+  font-weight:300 !important;
+  padding:14px !important
+}
+#inputCodigo::placeholder{
+  letter-spacing:0 !important;
+  font-size:13px !important;
+  font-weight:400 !important
+}
+
+/* Botón Continuar — azul institucional, no blanco */
 .btn-google{
-  width:100%;padding:14px;border-radius:12px;border:none;
-  background:rgba(255,255,255,.95);
-  color:#0a1628;
-  font-family:-apple-system,'Helvetica Neue',sans-serif;
-  font-size:15px;font-weight:600;
-  letter-spacing:-.2px;
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:all .15s;
-  box-shadow:0 2px 12px rgba(0,0,0,.2)
-}
-.btn-google:hover{background:#fff;transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,.25)}
-.btn-google:active{transform:scale(.98);background:rgba(255,255,255,.88)}
-.btn-google:disabled{opacity:.35;cursor:not-allowed;transform:none}
-
-/* Botón verificar código — azul Apple */
-#btnVerificar{
-  width:100%;padding:14px;border-radius:12px;border:none;
-  background:linear-gradient(135deg,#1a4db7,#2563eb);
+  width:100%;padding:13px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,#1a3f8f,#2563eb);
   color:#fff;
   font-family:-apple-system,'Helvetica Neue',sans-serif;
-  font-size:15px;font-weight:600;letter-spacing:-.2px;
+  font-size:15px;font-weight:600;letter-spacing:-.1px;
   cursor:pointer;
   display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:all .15s;
-  box-shadow:0 2px 12px rgba(37,99,235,.35)
+  transition:opacity .15s,transform .1s;
+  box-shadow:0 2px 16px rgba(37,99,235,.4),inset 0 1px 0 rgba(255,255,255,.12)
 }
-#btnVerificar:hover{background:linear-gradient(135deg,#1e4db7,#3b82f6)}
-#btnVerificar:active{transform:scale(.98)}
-#btnVerificar:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-google:hover{opacity:.9}
+.btn-google:active{transform:scale(.98);opacity:.85}
+.btn-google:disabled{opacity:.3;cursor:not-allowed;transform:none}
 
-/* Separador entre steps */
-#bloqueCodigo{margin-top:12px}
+/* Botón Verificar — igual pero ligeramente distinto */
+#btnVerificar{
+  width:100%;padding:13px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,#1a3f8f,#2563eb);
+  color:#fff;
+  font-family:-apple-system,'Helvetica Neue',sans-serif;
+  font-size:15px;font-weight:600;letter-spacing:-.1px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .15s,transform .1s;
+  box-shadow:0 2px 16px rgba(37,99,235,.4),inset 0 1px 0 rgba(255,255,255,.12)
+}
+#btnVerificar:active{transform:scale(.98);opacity:.85}
+#btnVerificar:disabled{opacity:.3;cursor:not-allowed;transform:none}
 
-.lp-link{margin-top:16px;text-align:center;font-size:12px;color:rgba(255,255,255,.3)}
-.lp-link a{color:rgba(255,255,255,.55);text-decoration:none}
+#bloqueCodigo{margin-top:10px}
+
+.lp-link{margin-top:16px;text-align:center;font-size:12px;color:rgba(255,255,255,.25)}
+.lp-link a{color:rgba(255,255,255,.45)}
 
 /* ── APP ── */
 #s-app{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px) + 8px)}
