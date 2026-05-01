@@ -1756,77 +1756,47 @@ function guardarAuto(){
 
   timer = setTimeout(() => {
 
-    document.getElementById("estadoGuardado").textContent = "Guardando...";
-
     try {
 
       const data = {
 
-        asignatura: ST.materia || "",
-        grado: ST.grado || "",
-        semana: ST.semana || "",
+        materia: ST.materia,
+        grado: ST.grado,
+        semana: ST.semana,
+        intensidad: ST.intensidad,
 
         indicador: document.getElementById("indicadorInput")?.value || "",
 
-        d1_tema: document.getElementById("tema_1")?.value || "",
-        d1_act: document.getElementById("act_1")?.value || "",
+        clases: [],
 
-        d2_tema: document.getElementById("tema_2")?.value || "",
-        d2_act: document.getElementById("act_2")?.value || "",
-
-        d3_tema: document.getElementById("tema_3")?.value || "",
-        d3_act: document.getElementById("act_3")?.value || "",
-
-        d4_tema: document.getElementById("tema_4")?.value || "",
-        d4_act: document.getElementById("act_4")?.value || "",
-
-        d5_tema: document.getElementById("tema_5")?.value || "",
-        d5_act: document.getElementById("act_5")?.value || "",
-
-        intensidad: ST.intensidad || 1,
-
-        observacion: ST.observacionActiva === "si"
-          ? document.getElementById("observacionInput")?.value || ""
-          : "",
-
-        comp_obligatoria: ST.compActiva === "si"
-          ? document.getElementById("compObligatoria")?.value || ""
-          : "",
-
-        // ❌ IMPORTANTE: NO guardar archivos en localStorage
-
-        fam_obs: ST.famActiva === "si"
-          ? document.getElementById("famObs")?.value || ""
-          : "",
-
-        disp_clases: ST.dispActivo === "si"
-          ? (ST.dispClases || []).join(",")
-          : "",
-
-        disp_desc: ST.dispActivo === "si"
-          ? document.getElementById("dispDescripcion")?.value || ""
-          : ""
+        observacion: document.getElementById("observacionInput")?.value || "",
+        comp: document.getElementById("compObligatoria")?.value || "",
+        fam: document.getElementById("famObs")?.value || ""
 
       };
 
-      const correo = obtenerCorreo() || "anon";
-      const key = `planeacion_${correo}_${ST.materia}_${ST.grado}`;
+      // 🔥 CLASES DINÁMICAS
+      for(let i = 1; i <= 5; i++){
+        data.clases.push({
+          tema: document.getElementById("tema_"+i)?.value || "",
+          act: document.getElementById("act_"+i)?.value || ""
+        });
+      }
 
-      // 🔥 GUARDADO LOCAL
+      const correo = obtenerCorreo() || "anon";
+      const key = `planeacion_${correo}`;
+
       localStorage.setItem(key, JSON.stringify(data));
 
-      document.getElementById("estadoGuardado").textContent = "Guardado local ✔";
+      document.getElementById("estadoGuardado").textContent = "Guardado automático ✔";
 
     } catch (error) {
       console.error(error);
-      document.getElementById("estadoGuardado").textContent = "Error guardando";
     }
 
-  }, 200);
+  }, 300);
 
-  actualizarProgreso();
 }
-
 function calcularSemanaActual(){
 
   // 🔥 Semana 5 inicia el 25 abril 2026 a las 12:00 (hora Colombia)
@@ -2172,7 +2142,7 @@ async function enviarPlaneacion(){
   estado.textContent = "Planeación enviada ✔";
 
   const correo = obtenerCorreo() || "anon";
-const key = `planeacion_${correo}_${ST.materia}_${ST.grado}`;
+const key = `planeacion_${correo}`;
 
 localStorage.removeItem(key);
 
@@ -2189,77 +2159,65 @@ function cargarBorrador(){
   try {
 
     const correo = obtenerCorreo() || "anon";
+    const key = `planeacion_${correo}`;
 
-    // 🔥 1. intentar cargar con semana actual
-    let key = `planeacion_${correo}_${ST.materia}_${ST.grado}_${ST.semana}`;
-    let data = localStorage.getItem(key);
+    const data = localStorage.getItem(key);
 
-    // 🔥 2. si NO hay, buscar cualquier borrador de esa materia/grado
-    if(!data){
-
-      const base = `planeacion_${correo}_${ST.materia}_${ST.grado}`;
-
-      for(let i = 0; i < localStorage.length; i++){
-        const k = localStorage.key(i);
-
-        if(k && k.startsWith(base)){
-          data = localStorage.getItem(k);
-          break;
-        }
-      }
-    }
-
-    // 🔥 3. si no hay nada, salir
     if(!data) return;
 
     const d = JSON.parse(data);
 
-    // 🔥 4. esperar que se renderice el DOM
+    // 🔥 RESTAURAR ESTADO
+    ST.materia = d.materia;
+    ST.grado = d.grado;
+    ST.semana = d.semana;
+    ST.intensidad = d.intensidad;
+
+    // 🔥 INPUTS
     setTimeout(() => {
 
-      // INDICADOR
       if(document.getElementById("indicadorInput")){
         document.getElementById("indicadorInput").value = d.indicador || "";
       }
 
-      // CLASES
-      for(let i = 1; i <= 5; i++){
-
-        const tema = document.getElementById("tema_"+i);
-        const act = document.getElementById("act_"+i);
-
-        if(tema) tema.value = d["d"+i+"_tema"] || "";
-        if(act) act.value = d["d"+i+"_act"] || "";
-      }
-
-      // ACTIVIDAD COMPLEMENTARIA
-      if(document.getElementById("compObligatoria")){
-        document.getElementById("compObligatoria").value = d.comp_obligatoria || "";
-      }
-
-      // FAMILIAS
-      if(document.getElementById("famObs")){
-        document.getElementById("famObs").value = d.fam_obs || "";
-      }
-
-      // OBSERVACIÓN
       if(document.getElementById("observacionInput")){
         document.getElementById("observacionInput").value = d.observacion || "";
       }
 
-      // 🔥 DISPARAR VALIDACIONES
+      if(document.getElementById("compObligatoria")){
+        document.getElementById("compObligatoria").value = d.comp || "";
+      }
+
+      if(document.getElementById("famObs")){
+        document.getElementById("famObs").value = d.fam || "";
+      }
+
+      // 🔥 CLASES
+      if(d.clases){
+        d.clases.forEach((c, i) => {
+          const n = i + 1;
+
+          if(document.getElementById("tema_"+n)){
+            document.getElementById("tema_"+n).value = c.tema || "";
+          }
+
+          if(document.getElementById("act_"+n)){
+            document.getElementById("act_"+n).value = c.act || "";
+          }
+        });
+      }
+
       document.querySelectorAll("textarea").forEach(t => {
         t.dispatchEvent(new Event("input"));
       });
 
-    }, 500);
+    }, 400);
 
   } catch (error){
     console.error("Error cargando borrador:", error);
   }
 
 }
-
 
 function validarBotonEnviar(){
 
