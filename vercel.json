@@ -1,0 +1,15 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "sipresc.vercel.app"
+        }
+      ],
+      "destination": "https://sipresc.co/$1",
+      "permanent": true
+    }
+  ]
+}
