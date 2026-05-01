@@ -12,6 +12,15 @@
 
 const AUTO_GUARD = false;
 const AUTO_RESTORE = false; // 🔥 NUEVO
+
+function setMateriaText(texto){
+  const display = document.getElementById("materiaText");
+
+  // 🔴 SI YA HAY MATERIA → NO TOCAR
+  if(ST.materia) return;
+
+  display.textContent = texto;
+}
   
 (function(){
   try{
@@ -1469,9 +1478,9 @@ display.innerHTML = `
   if(cache && cacheTime && (Date.now() - cacheTime < CACHE_MAX_AGE)){
     ST.data = JSON.parse(cache);
     pintarMaterias(ST.data);
-    display.textContent = "Seleccionar materia...";
+    setMateriaText("Seleccionar materia...");
   } else {
-    display.textContent = "Seleccionar materia...";
+    setMateriaText("Seleccionar materia...");
   }
 
   // 🔥 2. FETCH EN SEGUNDO PLANO (SIN BLOQUEAR)
@@ -1485,7 +1494,7 @@ display.innerHTML = `
       pintarMaterias(json.materias);
 
       // 🔥 AQUÍ VA
-      display.textContent = "Seleccionar materia...";
+      setMateriaText("Seleccionar materia...");
 
       localStorage.setItem(CACHE_KEY, JSON.stringify(json.materias));
       localStorage.setItem(CACHE_TIME, String(Date.now()));
@@ -1504,6 +1513,8 @@ display.innerHTML = `
 function pintarMaterias(materias){
 
   const box = document.getElementById("materiaOptions");
+  const display = document.getElementById("materiaText");
+
   box.innerHTML = "";
 
   materias.forEach(m => {
@@ -1512,14 +1523,29 @@ function pintarMaterias(materias){
     div.textContent = m.asignatura;
 
     div.onclick = () => {
-      document.getElementById("materiaText").textContent = m.asignatura;
+
+      // 🔥 1. ESTADO
       ST.materia = m.asignatura;
+
+      // 🔥 2. UI
+      display.textContent = m.asignatura;
+
+      // 🔥 3. CERRAR
       box.style.display = "none";
+
+      // 🔥 4. FLUJO
       onMateria();
     };
 
     box.appendChild(div);
   });
+
+  // 🔥 🔥 🔥 CLAVE (AL FINAL)
+  if(ST.materia){
+    display.textContent = ST.materia;
+  }else{
+    display.textContent = "Seleccionar materia...";
+  }
 }
 
 // 🔥 CUANDO SELECCIONA MATERIA
