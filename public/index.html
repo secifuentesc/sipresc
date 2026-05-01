@@ -1603,7 +1603,7 @@ function plnVerPendientes(){
         <div style="font-size:11px;color:var(--mt)">${d.asignatura||''} · ${d.grado||''}</div>
       </div></div>`;}).join('');}
   plnGoView('pendientes');}
-document.getElementById('pln-pend-banner').onclick = plnVerPendientes;
+
 
 // ── sheet detalle ──
 function plnAbrirDocente(pid){
@@ -1725,7 +1725,6 @@ function plnEnviarAjustes(){
 
 const inputCodigo = document.getElementById("inputCodigo");
 const btnVerificar = document.getElementById("btnVerificar");
-
 let timeoutVerificacion;
 
 document.addEventListener("input", (e) => {
@@ -1741,12 +1740,9 @@ document.addEventListener("input", (e) => {
 });
 
 function activarVerificando(){
-
   const btn = document.getElementById("btnVerificar");
-
   btn.innerHTML = '<span class="spin"></span> Verificando...';
   btn.disabled = true;
-
 }
 </script>
 </body>
