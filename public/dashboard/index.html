@@ -641,11 +641,12 @@ let DATA = { citas: [], planeaciones: [], docentes: [], estadisticas: {} };
 let calDate = new Date();
 let chartsInit = false;
 
-const API = '/api/proxy';
+const API      = '/api/proxy';
+const API_PLN  = '/api/planeaciones';
 const $ = id => document.getElementById(id);
 
 // ════════════════════════════════════════════
-// API
+// API — citas / admin
 // ════════════════════════════════════════════
 function api(action, payload = {}) {
   const body = { action, ...payload };
@@ -655,6 +656,74 @@ function api(action, payload = {}) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   }).then(r => r.json());
+}
+
+// ════════════════════════════════════════════
+// API — planeaciones (GET a GAS planeaciones)
+// ════════════════════════════════════════════
+function apiPlaneaciones(accion, params = {}) {
+  const qs = new URLSearchParams({ accion, correo: ST.correo || '', ...params });
+  return fetch(`${API_PLN}?${qs}`).then(r => r.json());
+}
+
+// ════════════════════════════════════════════
+// TRADUCIR datos GAS planeaciones → formato dashboard
+// GAS devuelve: { periodos: { "1": { "SEMANA 15": { "Docente": [...] } } } }
+// Dashboard espera: [ { nombreDocente, asignatura, grado, estadoRevision, ... } ]
+// ════════════════════════════════════════════
+function normalizarPlaneaciones(raw, semanaFiltro) {
+  // semanaFiltro: ej "SEMANA 15" o null para todas
+  const resultado = [];
+  if (!raw || !raw.periodos) return resultado;
+
+  const ESTADO = {
+    'Aprobada':    'aprobada',
+    'Con ajustes': 'ajustes',
+    'Pendiente':   'pendiente',
+    'Recibida':    'enviada',
+  };
+
+  Object.values(raw.periodos).forEach(semanas => {
+    Object.entries(semanas).forEach(([semana, docentes]) => {
+      if (semanaFiltro && semana.toUpperCase() !== semanaFiltro.toUpperCase()) return;
+      Object.entries(docentes).forEach(([nombreDoc, planes]) => {
+        planes.forEach(p => {
+          resultado.push({
+            planeacionId:   p.id || '',
+            nombreDocente:  p.NOMBRE_DOCENTE || nombreDoc || '—',
+            asignatura:     p.ASIGNATURA || '—',
+            grado:          p.GRADO || '—',
+            semana:         p.SEMANA || semana,
+            estadoRevision: ESTADO[p.REVISION_COORD] || 'pendiente',
+            estadoPub:      p.ESTADO_PUBLICACION || '',
+            // contenido completo para detalle
+            indicador:      p.INDICADOR_SEMANAL || '',
+            d1Tema:         p.D1_TEMA || '',
+            d1Act:          p.D1_ACTIVIDADES || '',
+            d2Tema:         p.D2_TEMA || '',
+            d2Act:          p.D2_ACTIVIDADES || '',
+            d3Tema:         p.D3_TEMA || '',
+            d3Act:          p.D3_ACTIVIDADES || '',
+            obsFamilias:    p.OBS_FAMILIAS || '',
+            actComp:        p.ACT_COMP_DESCRIPCION || '',
+            grupos:         p.GRUPOS_DESTINO || '',
+          });
+        });
+      });
+    });
+  });
+  return resultado;
+}
+
+// ════════════════════════════════════════════
+// OBTENER ETIQUETA DE SEMANA ACTIVA para GAS
+// GAS usa "SEMANA 15", no "2026-S15"
+// ════════════════════════════════════════════
+function getSemanaActualLabel() {
+  const base = new Date('2026-04-25T12:00:00-05:00');
+  const diff = Math.floor((Date.now() - base.getTime()) / (7 * 24 * 60 * 60 * 1000));
+  let n = ((5 + diff - 1) % 10 + 10) % 10 + 1;
+  return `SEMANA ${n}`;
 }
 
 // ════════════════════════════════════════════
@@ -758,13 +827,23 @@ function cargarTodo() {
     renderCalendario();
   }).catch(() => {});
 
-  // planeaciones semana activa
-  const semanaId = getSemanaActual();
-  api('planeaciones', { semanaId }).then(docs => {
-    DATA.planeaciones = docs || [];
-    renderPlaneacionesOverview();
-    renderPlaneacionesPage();
-  }).catch(() => {});
+  // planeaciones semana activa — usa GAS planeaciones (endpoint separado)
+  const semanaLabel = getSemanaActualLabel();
+  apiPlaneaciones('planeacionesUI')
+    .then(res => {
+      if (res.ok && res.data) {
+        DATA.planeaciones = normalizarPlaneaciones(res.data, semanaLabel);
+      } else {
+        DATA.planeaciones = [];
+      }
+      renderPlaneacionesOverview();
+      renderPlaneacionesPage();
+    })
+    .catch(() => {
+      DATA.planeaciones = [];
+      renderPlaneacionesOverview();
+      renderPlaneacionesPage();
+    });
 
   // docentes
   api('docentes').then(docs => {
@@ -815,8 +894,8 @@ function renderPlaneacionesOverview() {
   const pe = docs.filter(d => !d.estadoRevision || d.estadoRevision === 'pendiente').length;
   const T  = docs.length || 14;
 
-  const semId = getSemanaActual();
-  $('ov-semana-lbl').textContent = getSemanaLabel(semId);
+  const semId = getSemanaActualLabel();
+  $('ov-semana-lbl').textContent = semId;
   $('ov-pln-total').textContent = ap + en + aj;
   $('ov-pln-ok').textContent = ap;
   $('ov-pln-pct').textContent = Math.round(ap / T * 100) + '% del total';
