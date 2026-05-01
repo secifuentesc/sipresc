@@ -1589,7 +1589,7 @@ function onGrado(){
     ST.grupos = [];
   }
 
-  // 🔥 SEMANA (SOLO PREPARA, NO RESTAURA NADA)
+  // 🔥 SEMANA
   generarSemanas();
   mostrar("b-semana");
   activarBloque("b-semana");
@@ -1603,7 +1603,7 @@ function onGrado(){
   activarBloque("b-intensidad");
   mostrarIntensidad();
 
-  // 🔥 LIMPIAR CUALQUIER RESTO VISUAL DE PASO 2
+  // 🔥 LIMPIAR PASO 2
   document.getElementById("paso2").classList.add("oculto");
   document.getElementById("paso1").classList.remove("oculto");
 
@@ -1612,6 +1612,16 @@ function onGrado(){
     `${ST.materia} · ${ST.grado}`;
 
   actualizarProgreso();
+
+  // 🔥 🔥 🔥 CLAVE: RESTAURAR CUANDO YA TODO ESTÉ LISTO
+  setTimeout(() => {
+
+    if(ST.materia && ST.grado && ST.semana){
+      restaurarBorradorCompleto();
+    }
+
+  }, 400); // pequeño delay para asegurar DOM + semana
+
 }
 
 // 🔥 MOSTRAR BLOQUES
@@ -1747,10 +1757,6 @@ setTimeout(() => {
 
 }, 100);
 
-  setTimeout(() => {
-  cargarBorrador();
-}, 300);
-
 }
 
 let timer;
@@ -1841,7 +1847,7 @@ function generarSemanas(){
       div.style.pointerEvents = "none";
     }
 
-    // 🔥 AUTOSELECCIÓN PRO
+    // 🔥 AUTOSELECCIÓN INTELIGENTE
     if(i === actual){
 
       const texto = "Semana " + i;
@@ -1849,36 +1855,45 @@ function generarSemanas(){
       document.getElementById("semanaText").textContent = texto;
       ST.semana = texto;
 
-      // 🔥 SOLO guarda si ya hay materia y grado (evita errores)
+      // 🔥 GUARDAR CONTEXTO
       if(ST.materia && ST.grado){
         guardarAuto();
       }
+
+      // 🔥 RESTAURAR AUTOMÁTICO (CLAVE)
+      setTimeout(() => {
+        if(ST.materia && ST.grado && ST.semana){
+          restaurarBorradorCompleto();
+        }
+      }, 300);
     }
 
     // 🖱️ SELECCIÓN MANUAL
     div.onclick = () => {
 
-      ST._restaurado = false; // 🔥 RESET AQUÍ
+      ST._restaurado = false; // 🔥 RESET CONTROLADO
 
-  const texto = "Semana " + i;
+      const texto = "Semana " + i;
 
-  document.getElementById("semanaText").textContent = texto;
-  ST.semana = texto;
+      document.getElementById("semanaText").textContent = texto;
+      ST.semana = texto;
 
-  box.style.display = "none";
+      box.style.display = "none";
 
-  guardarAuto();
+      guardarAuto();
 
-  activarBloque("b-observacion");
-  actualizarProgreso();
+      activarBloque("b-observacion");
+      actualizarProgreso();
 
-  // 🔥 SOLO AQUÍ RESTAURAMOS (YA HAY CONTEXTO COMPLETO)
-  if(ST.materia && ST.grado && ST.semana){
-    restaurarBorradorCompleto();
-  }
+      // 🔥 RESTAURAR DESPUÉS DE SELECCIÓN
+      setTimeout(() => {
+        if(ST.materia && ST.grado && ST.semana){
+          restaurarBorradorCompleto();
+        }
+      }, 300);
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
-};
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
 
     box.appendChild(div);
   }
