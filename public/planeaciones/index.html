@@ -1435,8 +1435,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  setTimeout(restaurarBorradorCompleto, 800);
-
 });
 
 // 🔥 CARGAR MATERIAS
@@ -1587,20 +1585,25 @@ function onGrado(){
     ST.grupos = [];
   }
 
- // 🔥 SEMANA
-generarSemanas();
-mostrar("b-semana");
-activarBloque("b-semana");
+  // 🔥 SEMANA (SOLO PREPARA, NO RESTAURA NADA)
+  generarSemanas();
+  mostrar("b-semana");
+  activarBloque("b-semana");
 
-// 🔥 OBSERVACIÓN
-mostrar("b-observacion");
-activarBloque("b-observacion");
+  // 🔥 OBSERVACIÓN
+  mostrar("b-observacion");
+  activarBloque("b-observacion");
 
-// 🔥 INTENSIDAD
-mostrar("b-intensidad");
-activarBloque("b-intensidad");
-mostrarIntensidad();
+  // 🔥 INTENSIDAD
+  mostrar("b-intensidad");
+  activarBloque("b-intensidad");
+  mostrarIntensidad();
 
+  // 🔥 LIMPIAR CUALQUIER RESTO VISUAL DE PASO 2
+  document.getElementById("paso2").classList.add("oculto");
+  document.getElementById("paso1").classList.remove("oculto");
+
+  // 🔥 ESTADO
   document.getElementById("estadoGuardado").textContent =
     `${ST.materia} · ${ST.grado}`;
 
@@ -1851,21 +1854,25 @@ function generarSemanas(){
     // 🖱️ SELECCIÓN MANUAL
     div.onclick = () => {
 
-      const texto = "Semana " + i;
+  const texto = "Semana " + i;
 
-      document.getElementById("semanaText").textContent = texto;
-      ST.semana = texto;
+  document.getElementById("semanaText").textContent = texto;
+  ST.semana = texto;
 
-      box.style.display = "none";
+  box.style.display = "none";
 
-      // 🔥 GUARDADO INMEDIATO
-      guardarAuto();
+  guardarAuto();
 
-      activarBloque("b-observacion");
-      actualizarProgreso();
+  activarBloque("b-observacion");
+  actualizarProgreso();
 
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    };
+  // 🔥 SOLO AQUÍ RESTAURAMOS (YA HAY CONTEXTO COMPLETO)
+  if(ST.materia && ST.grado && ST.semana){
+    restaurarBorradorCompleto();
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
     box.appendChild(div);
   }
@@ -2219,82 +2226,99 @@ function cargarBorrador(){
 
 function restaurarBorradorCompleto(){
 
+  // 🔴 BLOQUEO: sin contexto NO hace nada
+  if(!ST.materia || !ST.grado || !ST.semana){
+    return;
+  }
+
   const correo = obtenerCorreo() || "anon";
   const key = `planeacion_${correo}`;
   const data = localStorage.getItem(key);
 
   if(!data) return;
 
-  const d = JSON.parse(data);
+  let d;
 
-  if(!ST.data){
-    setTimeout(restaurarBorradorCompleto, 500);
+  try{
+    d = JSON.parse(data);
+  }catch(e){
+    console.error("Error parseando borrador", e);
     return;
   }
 
-  ST.materia = d.materia;
-  ST.grado = d.grado;
-  ST.semana = d.semana;
+  // 🔴 CLAVE: SOLO RESTAURA SI COINCIDE EL CONTEXTO
+  if(
+    d.materia !== ST.materia ||
+    d.grado !== ST.grado ||
+    d.semana !== ST.semana
+  ){
+    return;
+  }
+
+  // 🔴 EVITA DOBLE RESTAURACIÓN
+  if(ST._restaurado) return;
+  ST._restaurado = true;
+
+  // 🔥 INTENSIDAD
   ST.intensidad = d.intensidad || 1;
 
-  document.getElementById("materiaText").textContent = ST.materia || "Seleccionar materia...";
-  onMateria();
+  // 🔥 GENERAR FORMULARIO (SIN CAMBIAR PASO AUTOMÁTICO)
+  generarPlaneacion();
+  irPaso2();
 
+  // 🔥 ESPERAR QUE EL DOM EXISTA
   setTimeout(() => {
 
-    document.getElementById("gradoText").textContent = ST.grado || "Seleccionar grado...";
-    onGrado();
+    // 🔹 INDICADOR
+    const indicador = document.getElementById("indicadorInput");
+    if(indicador){
+      indicador.value = d.indicador || "";
+    }
 
-    document.getElementById("semanaText").textContent = ST.semana || "Seleccionar semana...";
+    // 🔹 CLASES
+    if(d.clases){
+      d.clases.forEach((c, index) => {
+        const i = index + 1;
 
-    setTimeout(() => {
+        const tema = document.getElementById("tema_" + i);
+        const act = document.getElementById("act_" + i);
 
-      ST.intensidad = d.intensidad || 1;
+        if(tema) tema.value = c.tema || "";
+        if(act) act.value = c.act || "";
+      });
+    }
 
-      generarPlaneacion();
-      irPaso2();
+    // 🔹 OBSERVACIÓN
+    const obs = document.getElementById("observacionInput");
+    if(obs){
+      obs.value = d.observacion || "";
+    }
 
-      setTimeout(() => {
+    // 🔹 COMPLEMENTARIA
+    const comp = document.getElementById("compObligatoria");
+    if(comp){
+      comp.value = d.comp || "";
+    }
 
-        document.getElementById("indicadorInput").value = d.indicador || "";
+    // 🔹 FAMILIAS
+    const fam = document.getElementById("famObs");
+    if(fam){
+      fam.value = d.fam || "";
+    }
 
-        if(d.clases){
-          d.clases.forEach((c, index) => {
-            const i = index + 1;
+    // 🔥 DISPARAR EVENTOS (IMPORTANTE PARA VALIDACIONES Y COACH)
+    document.querySelectorAll("textarea").forEach(t => {
+      t.dispatchEvent(new Event("input"));
+    });
 
-            if(document.getElementById("tema_" + i)){
-              document.getElementById("tema_" + i).value = c.tema || "";
-            }
+    // 🔥 ESTADO
+    document.getElementById("estadoGuardado").textContent = "Borrador restaurado ✔";
 
-            if(document.getElementById("act_" + i)){
-              document.getElementById("act_" + i).value = c.act || "";
-            }
-          });
-        }
+    validarBotonEnviar();
 
-        if(document.getElementById("observacionInput")){
-          document.getElementById("observacionInput").value = d.observacion || "";
-        }
-
-        if(document.getElementById("compObligatoria")){
-          document.getElementById("compObligatoria").value = d.comp || "";
-        }
-
-        if(document.getElementById("famObs")){
-          document.getElementById("famObs").value = d.fam || "";
-        }
-
-        document.getElementById("estadoGuardado").textContent = "Borrador restaurado ✔";
-
-        validarBotonEnviar();
-
-      }, 400);
-
-    }, 300);
-
-  }, 300);
+  }, 200);
 }
-
+  
 function validarBotonEnviar(){
 
   const indicador = document.getElementById("indicadorInput")?.value.trim() || "";
