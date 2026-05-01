@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" href="/logo.png">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icon-192.png">
-<!-- fuentes del sistema Apple / SF Pro -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
@@ -18,7 +18,7 @@
   --br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.13);
   --tx:#e8edf8;--mt:#7a8fb0;
   --green:#2dd4a0;--red:#f06b6b;--purple:#8b84f8;
-  --mono:-apple-system,'SF Mono','Helvetica Neue',monospace;--sans:-apple-system,'SF Pro','Helvetica Neue',sans-serif;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
   --r:12px;
 }
 html{width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
@@ -267,7 +267,7 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
   align-items:center;justify-content:center;
   padding:10px 2px;cursor:pointer;border:none;background:none;
   color:rgba(255,255,255,.3);font-size:9px;
-  font-family:-apple-system,'Helvetica Neue',sans-serif;
+  font-family:-apple-system,sans-serif;
   gap:4px;transition:color .15s;letter-spacing:.2px
 }
 .ni svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.5;fill:none}
@@ -731,14 +731,14 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
     <div style="min-height:calc(100svh - 130px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px 24px">
 
       <!-- Saludo centrado -->
-      <div style="text-align:center;margin-bottom:36px;width:100%;max-width:480px">
+      <div style="text-align:center;margin-bottom:36px;width:100%;max-width:420px">
         <div style="font-size:12px;color:rgba(255,255,255,.3);font-family:-apple-system,sans-serif;margin-bottom:8px;letter-spacing:.3px;text-transform:capitalize" id="home-fecha">—</div>
-        <span style="color:rgba(255,255,255,.4);font-weight:600">Hola,</span> <span id="nombre-docente" style="color:#fff;font-weight:700;font-size:36px">Docente</span>
+        <div style="font-size:32px;font-weight:700;letter-spacing:-.6px;line-height:1.1;font-family:-apple-system,sans-serif;margin-bottom:6px"><span style="color:rgba(255,255,255,.4);font-weight:600">Hola,</span> <span id="nombre-docente" style="color:#fff;font-weight:700">Docente</span></div>
         <div style="font-size:14px;color:rgba(255,255,255,.28);font-family:-apple-system,sans-serif;font-weight:400;line-height:1.5">¿Con qué trabajamos hoy?</div>
       </div>
 
       <!-- Grid 2x2 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:480px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:420px">
 
         <!-- Planeaciones — destacada sutilmente -->
         <div class="home-card home-card-main" onclick="abrirModulo('planeaciones')">
