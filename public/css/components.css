@@ -195,3 +195,21 @@
 
 /* ── CHART WRAP ── */
 .chart-wrap{position:relative;width:100%}
+
+/* ── MINI STATS (dashboard planeaciones) ── */
+.mini-stats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.mstat{background:var(--s2,#161618);border:1px solid var(--border,rgba(255,255,255,.07));border-radius:var(--r2,8px);padding:8px 12px;flex:1;min-width:80px}
+.mstat-n{font-family:var(--mono);font-size:18px;font-weight:600;line-height:1;margin-bottom:2px}
+.mstat-l{font-size:9px;color:var(--ink4,#50505e)}
+
+/* ── DEV ITEMS (roadmap) ── */
+.dev-item{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border,rgba(255,255,255,.07))}
+.dev-item:last-child{border-bottom:none}
+.dev-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dev-ico svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none}
+.dev-in{flex:1;min-width:0}
+.dev-n{font-size:11px;font-weight:500;margin-bottom:1px}
+.dev-d{font-size:9px;color:var(--ink4,#50505e)}
+.dev-p{margin-top:4px;height:2px;background:var(--s4,#26262c);border-radius:1px;overflow:hidden}
+.dev-pf{height:100%;border-radius:1px}
+.dev-eta{font-size:8px;font-family:var(--mono);color:var(--ink4,#50505e);flex-shrink:0;text-align:right;white-space:nowrap}
