@@ -11,6 +11,7 @@
 <script>
 
 const AUTO_GUARD = false;
+const AUTO_RESTORE = false; // 🔥 NUEVO
   
 (function(){
   try{
@@ -1577,7 +1578,13 @@ function onMateria(){
 // 🔥 CUANDO SELECCIONA GRADO
 function onGrado(){
 
-  ST._restaurado = false; // 🔥 RESET
+  // 🔥 RESET TOTAL DE ESTADO
+  ST._restaurado = false;
+  ST.semana = null;
+  ST.intensidad = null;
+
+  // 🔥 LIMPIAR UI RELACIONADA
+  document.getElementById("semanaText").textContent = "Seleccionar semana...";
 
   const grado = ST.grado;
   if(!grado) return;
@@ -1590,6 +1597,7 @@ function onGrado(){
     ST.grupos = ["A","B"];
   }else{
     ST.grupos = [];
+    ocultar("b-grupos"); // 🔥 por si venía de uno anterior
   }
 
   // 🔥 SEMANA
@@ -1606,25 +1614,21 @@ function onGrado(){
   activarBloque("b-intensidad");
   mostrarIntensidad();
 
-  // 🔥 LIMPIAR PASO 2
+  // 🔥 RESETEAR PASO 2 COMPLETAMENTE
   document.getElementById("paso2").classList.add("oculto");
   document.getElementById("paso1").classList.remove("oculto");
 
-  // 🔥 ESTADO
+  const boxPlaneacion = document.getElementById("planeacionBox");
+  if(boxPlaneacion) boxPlaneacion.innerHTML = "";
+
+  // 🔥 ESTADO VISUAL
   document.getElementById("estadoGuardado").textContent =
     `${ST.materia} · ${ST.grado}`;
 
   actualizarProgreso();
 
-  // 🔥 🔥 🔥 CLAVE: RESTAURAR CUANDO YA TODO ESTÉ LISTO
-  setTimeout(() => {
-
-    if(ST.materia && ST.grado && ST.semana){
-      restaurarBorradorCompleto();
-    }
-
-  }, 400); // pequeño delay para asegurar DOM + semana
-
+  // ❌ IMPORTANTE: SIN RESTAURAR
+  // (QUITAMOS COMPLETAMENTE EL AUTORESTORE)
 }
 
 // 🔥 MOSTRAR BLOQUES
@@ -2236,6 +2240,8 @@ function cargarBorrador(){
 }
 
 function restaurarBorradorCompleto(){
+
+  if(!AUTO_RESTORE) return; // 🔥 APAGADO TOTAL
 
   // 🔴 BLOQUEO: sin contexto NO hace nada
   if(!ST.materia || !ST.grado || !ST.semana){
