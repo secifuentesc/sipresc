@@ -1538,7 +1538,19 @@ function enviarSolCierre(){
 document.addEventListener('DOMContentLoaded',()=>{
   if(sessionStorage.getItem(DEV_KEY)==='1'){
     $('dev-gate').style.display='none';
-    boot();
+    $('splash').style.display='none';
+    $('app').classList.add('on');
+    const data=localStorage.getItem('lp_user');
+    if(data){
+      try{
+        const obj=JSON.parse(data);
+        ST.correo=obj.correo;
+        ST.nombre=obj.correo.split('@')[0];
+        ST.docenteId=obj.correo;
+        ST.rol='docente';
+      }catch{}
+    }
+    iniciar();
   } else {
     $('splash').style.display='none';
   }
