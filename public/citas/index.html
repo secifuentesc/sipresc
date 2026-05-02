@@ -497,106 +497,114 @@ html,body{
 }
 .avail-pill svg{width:14px;height:14px;stroke:var(--gold2);stroke-width:2;fill:none;flex-shrink:0}
 
-/* Sección días */
-.avail-section{
-  padding:0 20px;margin-bottom:8px;
-  background:rgba(255,255,255,.03);
-  border-radius:16px;overflow:hidden
-}
-
+/* Sección días — Calendly style */
+.avail-section{padding:0 20px;margin-bottom:16px}
 .avail-sec-title{
   font-size:13px;font-weight:600;color:var(--mt);
-  text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:0
+}
+.avail-days-wrap{
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--br);
+  border-radius:16px;overflow:hidden;margin-top:12px
 }
 
-/* Día row — estilo Calendly availability */
+/* Día row — lista plana estilo Calendly */
 .dia-row{
-  background:transparent;
-  border:none;
+  background:transparent;border:none;
   border-bottom:1px solid var(--br);
-  border-radius:0;margin-bottom:0;
-  overflow:hidden
+  border-radius:0;margin-bottom:0;overflow:hidden
 }
-.dia-row:first-child{border-top:1px solid var(--br)}
-.dia-row.active{border-bottom-color:var(--br)}
+.dia-row:last-child{border-bottom:none}
+.dia-row.active{background:transparent}
 .dia-row-header{
   display:flex;align-items:center;gap:14px;
-  padding:12px 16px;cursor:pointer;
-  min-height:52px;transition:background .15s
+  padding:14px 16px;transition:background .15s;
+  min-height:56px
 }
 .dia-row-header:active{background:rgba(255,255,255,.03)}
 
-/* Toggle iOS */
-.toggle-wrap{flex-shrink:0}
+/* Círculo letra del día — estilo Calendly */
+.dia-circle{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;letter-spacing:-.2px;
+  background:rgba(255,255,255,.07);color:var(--mt2);
+  transition:all .2s
+}
+.dia-row.active .dia-circle{
+  background:var(--green);color:#000
+}
+
+/* Toggle iOS — igual a Calendly */
 .toggle{
-  position:relative;width:44px;height:26px;
-  background:rgba(255,255,255,.12);border-radius:13px;
+  position:relative;width:40px;height:22px;
+  background:rgba(255,255,255,.15);border-radius:11px;
   cursor:pointer;transition:background .25s;flex-shrink:0
 }
-.toggle.on{background:var(--green)}
+.toggle.on{background:#1a73e8}
 .toggle-thumb{
-  position:absolute;top:3px;left:3px;
-  width:20px;height:20px;border-radius:50%;background:#fff;
-  transition:transform .25s cubic-bezier(.34,1.4,.64,1);
-  box-shadow:0 2px 6px rgba(0,0,0,.3)
+  position:absolute;top:2px;left:2px;
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  transition:transform .22s cubic-bezier(.34,1.3,.64,1);
+  box-shadow:0 1px 4px rgba(0,0,0,.3)
 }
 .toggle.on .toggle-thumb{transform:translateX(18px)}
 
-.dia-nombre{font-size:15px;font-weight:600;flex:1}
-.dia-resumen{font-size:12px;color:var(--mt2)}
+.dia-nombre{font-size:14px;font-weight:500;flex:1;color:var(--tx)}
+.dia-row.active .dia-nombre{font-weight:600}
+.dia-indisponible{font-size:13px;color:var(--mt)}
 
-/* Slots dentro del día */
+/* Slots — estilo Calendly con inputs inline */
 .dia-slots{
-  padding:0 16px 14px;
-  border-top:1px solid var(--br);
+  padding:0 16px 14px 62px;
   display:none
 }
 .dia-row.active .dia-slots{display:block}
-.dia-slots-inner{padding-top:12px}
 .slot-row{
   display:flex;align-items:center;gap:8px;margin-bottom:8px
 }
-.time-pill{
-  flex:1;background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.1);border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  padding:9px 10px;gap:6px
+.time-range{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;padding:8px 12px;flex:1
 }
-.time-pill input[type="time"]{
+.time-range input[type="time"]{
   background:none;border:none;color:#fff;
-  font-size:15px;font-weight:600;outline:none;
+  font-size:14px;font-weight:500;outline:none;
   -webkit-appearance:none;font-family:-apple-system,sans-serif;
-  width:70px;text-align:center
+  width:68px
 }
-.time-pill-sep{color:var(--mt);font-size:13px;font-weight:300}
-.slot-del{
-  width:28px;height:28px;border-radius:8px;
-  background:rgba(240,107,107,.1);border:1px solid rgba(240,107,107,.15);
-  color:var(--red);font-size:16px;cursor:pointer;
+.time-range-sep{color:var(--mt);font-size:13px;padding:0 2px}
+.slot-add{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,.08);border:1px solid var(--br2);
+  color:var(--mt2);font-size:18px;line-height:1;cursor:pointer;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
   transition:all .15s
 }
-.slot-del:hover{background:rgba(240,107,107,.2)}
-.add-slot-btn{
-  display:flex;align-items:center;gap:6px;
-  background:none;border:1px dashed rgba(255,255,255,.15);
-  border-radius:10px;padding:9px 14px;width:100%;
-  color:var(--mt2);font-size:13px;font-weight:500;cursor:pointer;
-  transition:all .15s;font-family:-apple-system,sans-serif;margin-top:4px
+.slot-add:hover{background:rgba(255,255,255,.14);color:#fff}
+.slot-del{
+  width:28px;height:28px;border-radius:50%;
+  background:none;border:1px solid var(--br);
+  color:var(--mt);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all .15s
 }
-.add-slot-btn:hover{border-color:rgba(201,150,42,.3);color:var(--gold2)}
-.add-slot-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.5;fill:none}
+.slot-del:hover{border-color:var(--red);color:var(--red)}
 
-/* Readonly slots (ya guardado) */
+/* Readonly slots */
 .slot-readonly{
-  display:flex;align-items:center;gap:8px;margin-bottom:6px
+  display:flex;align-items:center;gap:8px;margin-bottom:8px
 }
 .slot-readonly-time{
   background:rgba(255,255,255,.05);border:1px solid var(--br);
-  border-radius:10px;padding:8px 14px;
-  font-size:14px;font-weight:600;color:var(--gold2);
-  font-variant-numeric:tabular-nums;flex:1;text-align:center
+  border-radius:8px;padding:8px 14px;
+  font-size:14px;font-weight:500;color:var(--tx);
+  font-variant-numeric:tabular-nums
 }
+.slot-readonly-sep{color:var(--mt);font-size:13px}
 
 /* Botón guardar fijo */
 .save-fab{
@@ -865,7 +873,7 @@ html,body{
       <!-- Días -->
       <div class="avail-section" style="padding-top:16px">
         <div class="avail-sec-title">Horas semanales</div>
-        <div id="diasGrid"></div>
+        <div class="avail-days-wrap" id="diasGrid"></div>
       </div>
 
       <!-- Acciones -->
@@ -965,18 +973,20 @@ function checkGate(){
 // BOOT
 // ══════════════════════════════════════════════
 function boot(){
-  $('splash').style.display='none';
-  $('app').classList.add('on');
-  const data=localStorage.getItem('lp_user');
+  $('splash').style.display = 'flex';
+  const data = localStorage.getItem('lp_user');
   if(!data){ go('/'); return; }
   try{
-    const obj=JSON.parse(data);
-    if(Date.now()-obj.loginTime>14*864e5){ localStorage.removeItem('lp_user'); go('/'); return; }
-    ST.correo=obj.correo;
-    ST.nombre=obj.nombre||obj.correo.split('@')[0];
-    ST.docenteId=obj.docenteId||obj.correo;
-    ST.rol=obj.rol||'docente';
-    iniciar();
+    const obj = JSON.parse(data);
+    if(Date.now() - obj.loginTime > 14*864e5){ localStorage.removeItem('lp_user'); go('/'); return; }
+    ST.correo = obj.correo;
+    api('loginGoogle',{correo:obj.correo}).then(r=>{
+      if(!r.ok){ localStorage.removeItem('lp_user'); go('/'); return; }
+      ST.rol=r.rol; ST.nombre=r.nombre; ST.docenteId=r.docenteId;
+      $('splash').style.display='none';
+      $('app').classList.add('on');
+      iniciar();
+    }).catch(()=>{ $('splash').style.display='none'; go('/'); });
   }catch{ go('/'); }
 }
 
@@ -984,10 +994,15 @@ function go(url){ window.location.href = url; }
 function doLogout(){ localStorage.removeItem('lp_user'); sessionStorage.removeItem(DEV_KEY); go('/'); }
 
 function iniciar(){
+  const d = new Date();
+  const diasSemana=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  $('heroDate').textContent = `${diasSemana[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]}`;
+  $('heroViewTitle').textContent = 'Reuniones';
+
   // Disponibilidad profile
   const ini = (ST.nombre||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
-  if($('availAvatar')) $('availAvatar').textContent = ini||'—';
-  if($('availNombre')) $('availNombre').textContent = ST.nombre||'—';
+  $('availAvatar').textContent = ini||'—';
+  $('availNombre').textContent = ST.nombre||'—';
 
   cargarCitas();
   cargarHorarios();
@@ -1365,33 +1380,27 @@ function renderDisponibilidad(){
   $('actionSection').style.display = ya ? 'block' : 'none';
   $('saveFab').classList.toggle('on', !ya);
 
+  const iniciales = {'Lunes':'L','Martes':'M','Miércoles':'X','Jueves':'J','Viernes':'V','Sábado':'S'};
+
   let html='';
   DIAS.forEach(dia=>{
     const sid=dia.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
     const bloques=ST.horarios[dia]||[];
     const activo=bloques.length>0;
-    const resumen=activo?bloques.map(b=>`${b.ini}–${b.fin}`).join(', '):'Sin horario';
+    const ini=iniciales[dia]||dia[0];
 
     html+=`<div class="dia-row ${activo?'active':''}" id="dr-${sid}">
-      <div class="dia-row-header" onclick="${!ya?`toggleDia('${dia}','${sid}')`:''}" style="${ya?'cursor:default':''}">
+      <div class="dia-row-header" ${!ya?`onclick="toggleDia('${dia}','${sid}')"`:''} style="${ya?'cursor:default':'cursor:pointer'}">
+        <div class="dia-circle">${ini}</div>
+        <div class="dia-nombre">${dia}</div>
+        ${activo?'':'<span class="dia-indisponible">Indisponible</span>'}
         <div class="toggle ${activo?'on':''}" id="tog-${sid}" ${!ya?`onclick="event.stopPropagation();toggleDia('${dia}','${sid}')"`:''}>
           <div class="toggle-thumb"></div>
         </div>
-        <div class="dia-nombre">${dia}</div>
-        <div class="dia-resumen" id="dr-resumen-${sid}">${resumen}</div>
       </div>
-      <div class="dia-slots">
-        <div class="dia-slots-inner" id="ds-${sid}">
-          ${activo
-            ? bloques.map((b,i)=>ya?renderSlotReadonly(b):renderSlotEditable(dia,i,b)).join('')
-            : '<div style="font-size:12px;color:var(--mt);padding:4px 0">Toca el toggle para activar este día</div>'
-          }
-          ${(!ya&&activo)?`<button class="add-slot-btn" onclick="addSlot('${dia}','${sid}')">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Agregar horario
-          </button>`:''}
-        </div>
-      </div>
+      ${activo?`<div class="dia-slots">
+        ${bloques.map((b,i)=>ya?renderSlotReadonly(b):renderSlotEditable(dia,i,b,i===bloques.length-1)).join('')}
+      </div>`:''}
     </div>`;
   });
 
@@ -1400,22 +1409,21 @@ function renderDisponibilidad(){
 
 function renderSlotReadonly(b){
   return `<div class="slot-readonly">
-    <div class="slot-readonly-time">${b.ini}</div>
-    <div style="color:var(--mt);font-size:13px">→</div>
-    <div class="slot-readonly-time">${b.fin}</div>
+    <span class="slot-readonly-time">${b.ini}</span>
+    <span class="slot-readonly-sep">–</span>
+    <span class="slot-readonly-time">${b.fin}</span>
   </div>`;
 }
 
-function renderSlotEditable(dia,idx,b){
-  return `<div class="slot-row" id="sr-${dia}-${idx}">
-    <div class="time-pill">
-      <input type="time" value="${b.ini||'07:00'}" onchange="updSlot('${dia}',${idx},'ini',this.value)">
-    </div>
-    <span style="color:var(--mt);font-size:13px">–</span>
-    <div class="time-pill">
+function renderSlotEditable(dia,idx,b,esUltimo){
+  return `<div class="slot-row">
+    <div class="time-range">
+      <input type="time" value="${b.ini||'09:00'}" onchange="updSlot('${dia}',${idx},'ini',this.value)">
+      <span class="time-range-sep">–</span>
       <input type="time" value="${b.fin||'17:00'}" onchange="updSlot('${dia}',${idx},'fin',this.value)">
     </div>
     <button class="slot-del" onclick="delSlot('${dia}',${idx})">×</button>
+    ${esUltimo?`<button class="slot-add" onclick="addSlot('${dia}')">+</button>`:'<div style="width:28px"></div>'}
   </div>`;
 }
 
@@ -1530,24 +1538,11 @@ function enviarSolCierre(){
 document.addEventListener('DOMContentLoaded',()=>{
   if(sessionStorage.getItem(DEV_KEY)==='1'){
     $('dev-gate').style.display='none';
-    $('splash').style.display='none';
-    $('app').classList.add('on');
-    const data=localStorage.getItem('lp_user');
-    if(data){
-      try{
-        const obj=JSON.parse(data);
-        ST.correo=obj.correo;
-        ST.nombre=obj.nombre||obj.correo.split('@')[0];
-        ST.docenteId=obj.docenteId||obj.correo;
-        ST.rol=obj.rol||'docente';
-      }catch{}
-    }
-    iniciar();
+    boot();
   } else {
     $('splash').style.display='none';
   }
 });
-
 </script>
 </body>
 </html>
