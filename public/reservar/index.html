@@ -3,298 +3,459 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#0a1628">
-<title>Reservar Cita — La Presentación Girardota</title>
+<meta name="theme-color" content="#ffffff">
+<title>Reservar Cita — La Presentación</title>
 <link rel="icon" type="image/png" href="/logo.png">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
 :root{
-  --s0:#050e1d;--s1:#0d1f3c;--s2:#122449;--s3:#182e58;
-  --br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.13);
-  --tx:#e8edf8;--mt:#7a8fb0;
-  --gold:#c9962a;--gold2:#e8b84b;--gold3:rgba(201,150,42,.12);
-  --green:#2dd4a0;--red:#f06b6b;
-  --royal:#0f2657;--cobalt:#1e4db7;
-}
-html,body{
-  min-height:100%;font-size:15px;
-  font-family:-apple-system,'Helvetica Neue',sans-serif;
-  background:var(--s0);color:var(--tx);
-  background-image:
-    radial-gradient(ellipse 70% 50% at 10% 0%,rgba(26,58,107,.6) 0%,transparent 65%),
-    radial-gradient(ellipse 50% 40% at 90% 100%,rgba(30,77,183,.3) 0%,transparent 65%)
+  --blue:#1e4db7;
+  --blue2:#2557d6;
+  --blue3:#e8effe;
+  --blue4:#f0f4ff;
+  --navy:#0f2657;
+  --tx:#111827;
+  --mt:#6b7280;
+  --mt2:#9ca3af;
+  --br:#e5e7eb;
+  --br2:#d1d5db;
+  --white:#ffffff;
+  --bg:#f9fafb;
+  --red:#dc2626;
+  --red2:#fef2f2;
 }
 
-/* ── TOPBAR ── */
+html,body{
+  font-family:-apple-system,'SF Pro Text','Helvetica Neue',sans-serif;
+  background:var(--white);color:var(--tx);
+  min-height:100%;-webkit-text-size-adjust:100%;
+  font-size:15px
+}
+
+/* ══ TOPBAR ══ */
 .topbar{
-  position:sticky;top:0;z-index:30;
-  background:rgba(5,14,29,.85);
-  border-bottom:1px solid rgba(255,255,255,.07);
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,.92);
+  border-bottom:1px solid var(--br);
   padding:12px 20px;
   padding-top:calc(12px + env(safe-area-inset-top,0));
   display:flex;align-items:center;gap:12px;
-  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)
-}
-.topbar-logo{
-  width:34px;height:34px;border-radius:10px;
-  background:linear-gradient(140deg,#1c3f7a,#2557c7);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;box-shadow:0 2px 10px rgba(20,60,180,.4)
-}
-.topbar-logo img{width:20px;filter:brightness(10)}
-.topbar-logo span{color:#fff;font-size:15px;font-weight:700}
-.topbar-info{flex:1}
-.topbar-title{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.2px}
-.topbar-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
-
-/* ── PROGRESS BAR ── */
-.progress-wrap{
-  position:sticky;top:calc(58px + env(safe-area-inset-top,0));z-index:29;
-  background:rgba(5,14,29,.9);
-  padding:0 20px 12px;
   -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)
 }
-.progress-steps{display:flex;align-items:center;gap:0}
-.ps{
-  flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+.topbar-logo{
+  width:32px;height:32px;border-radius:9px;
+  background:linear-gradient(140deg,#1c3f7a,var(--blue2));
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(30,77,183,.25)
+}
+.topbar-logo img{width:19px;filter:brightness(10)}
+.topbar-logo span{color:#fff;font-size:13px;font-weight:700}
+.topbar-info{flex:1;min-width:0}
+.topbar-title{font-size:14px;font-weight:700;color:var(--tx);letter-spacing:-.2px}
+.topbar-sub{font-size:11px;color:var(--mt);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ══ VISTAS ══ */
+.view{display:none}
+.view.on{display:block;animation:fadeUp .22s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════════
+   VISTA 1 — LISTA DOCENTES
+══════════════════════════════ */
+.hero{
+  padding:28px 20px 20px;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);
+  position:relative;overflow:hidden
+}
+.hero::after{
+  content:'';position:absolute;
+  top:-40px;right:-40px;
+  width:200px;height:200px;border-radius:50%;
+  background:rgba(255,255,255,.05);pointer-events:none
+}
+.hero-school{
+  font-size:11px;font-weight:600;color:rgba(255,255,255,.6);
+  letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px
+}
+.hero-title{
+  font-size:24px;font-weight:700;color:#fff;
+  letter-spacing:-.5px;line-height:1.2;margin-bottom:6px
+}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.5}
+
+/* Buscador */
+.search-wrap{padding:16px 20px 8px;background:var(--white)}
+.search-box{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg);border:1.5px solid var(--br);
+  border-radius:12px;padding:11px 14px;
+  transition:border-color .2s,box-shadow .2s
+}
+.search-box:focus-within{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(30,77,183,.1)
+}
+.search-box svg{width:16px;height:16px;stroke:var(--mt2);flex-shrink:0}
+.search-inp{
+  flex:1;background:none;border:none;outline:none;
+  font-size:15px;color:var(--tx);font-family:-apple-system,sans-serif
+}
+.search-inp::placeholder{color:var(--mt2)}
+
+/* Contador */
+.doc-count{
+  padding:4px 20px 10px;
+  font-size:12px;color:var(--mt)
+}
+
+/* Lista docentes */
+.doc-list{background:var(--white)}
+
+.doc-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 20px;
+  border-bottom:1px solid var(--br);
+  cursor:pointer;transition:background .12s;
   position:relative
 }
-.ps::after{
-  content:'';position:absolute;top:10px;left:calc(50% + 10px);
-  right:calc(-50% + 10px);height:1px;background:var(--br2)
-}
-.ps:last-child::after{display:none}
-.ps-dot{
-  width:20px;height:20px;border-radius:50%;
-  background:var(--s2);border:2px solid var(--br2);
-  display:flex;align-items:center;justify-content:center;
-  font-size:9px;font-weight:700;color:var(--mt);
-  transition:all .3s;position:relative;z-index:1
-}
-.ps.done .ps-dot{background:var(--green);border-color:var(--green);color:#000}
-.ps.active .ps-dot{background:var(--gold);border-color:var(--gold);color:#000}
-.ps-lbl{font-size:9px;color:var(--mt);letter-spacing:.3px;text-align:center}
-.ps.active .ps-lbl{color:var(--gold2)}
-.ps.done .ps-lbl{color:var(--green)}
+.doc-item:last-child{border-bottom:none}
+.doc-item:active{background:var(--bg)}
+.doc-item:hover{background:var(--bg)}
 
-/* ── MAIN ── */
-.main{padding:20px 20px calc(40px + env(safe-area-inset-bottom,0));max-width:480px;margin:0 auto}
-
-/* ── STEP HEADER ── */
-.step-header{margin-bottom:20px}
-.step-num{
-  font-size:10px;color:var(--mt);letter-spacing:2px;text-transform:uppercase;
-  font-family:'Courier New',monospace;margin-bottom:6px
-}
-.step-title{font-size:22px;font-weight:700;letter-spacing:-.4px;line-height:1.2}
-.step-sub{font-size:13px;color:rgba(255,255,255,.4);margin-top:5px;line-height:1.5}
-
-/* ── STEP VIEWS ── */
-.step-view{display:none;animation:fadeUp .25s ease both}
-.step-view.on{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── DOCENTE CARD ── */
-.doc-grid{display:flex;flex-direction:column;gap:10px}
-.doc-card{
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.09);
-  border-radius:16px;padding:14px 16px;
-  cursor:pointer;transition:all .18s;
-  display:flex;align-items:center;gap:14px;
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)
-}
-.doc-card:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.16);transform:translateY(-1px)}
-.doc-card:active{transform:scale(.98)}
-.doc-card.sel{border-color:var(--gold);background:var(--gold3)}
 .doc-avatar{
-  width:46px;height:46px;border-radius:14px;flex-shrink:0;
-  background:linear-gradient(135deg,var(--royal),var(--cobalt));
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
-  font-size:16px;font-weight:700;color:var(--gold2);
-  letter-spacing:-.5px
+  font-size:15px;font-weight:700;color:#fff;letter-spacing:-.5px
 }
-.doc-info{flex:1;min-width:0}
-.doc-nombre{font-size:15px;font-weight:600;margin-bottom:2px}
-.doc-area{font-size:12px;color:var(--mt)}
-.doc-check{
-  width:22px;height:22px;border-radius:50%;
-  background:var(--gold);display:none;
-  align-items:center;justify-content:center;flex-shrink:0
+.doc-body{flex:1;min-width:0}
+.doc-nombre{font-size:15px;font-weight:600;color:var(--tx);margin-bottom:2px;letter-spacing:-.1px}
+.doc-area{font-size:13px;color:var(--mt)}
+.doc-chevron{
+  color:var(--mt2);font-size:18px;font-weight:300;flex-shrink:0
 }
-.doc-card.sel .doc-check{display:flex}
-.doc-check svg{width:12px;height:12px;stroke:#000;stroke-width:3;fill:none}
 
-/* ── CALENDARIO ── */
-.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.cal-mes{font-size:17px;font-weight:700;letter-spacing:-.3px}
-.cal-nav-btns{display:flex;gap:6px}
-.cal-nav-btn{
-  width:34px;height:34px;border-radius:10px;
-  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
-  color:var(--tx);display:flex;align-items:center;justify-content:center;cursor:pointer;
-  transition:background .15s
+/* Empty docentes */
+.doc-empty{
+  text-align:center;padding:48px 32px;color:var(--mt)
 }
-.cal-nav-btn:hover{background:rgba(255,255,255,.12)}
-.cal-nav-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.5;fill:none}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-hd{text-align:center;font-size:10px;color:var(--mt);padding:4px 0;letter-spacing:.3px}
-.cal-day{
-  aspect-ratio:1;border-radius:10px;font-size:13px;font-weight:500;
+.doc-empty svg{width:32px;height:32px;stroke:var(--mt2);margin-bottom:10px}
+.doc-empty p{font-size:14px}
+
+/* ══════════════════════════════
+   VISTA 2 — CALENDARIO
+══════════════════════════════ */
+#v-cal{padding-bottom:40px}
+
+/* Info docente sidebar */
+.cal-layout{
+  display:flex;flex-direction:column;
+}
+@media(min-width:700px){
+  .cal-layout{flex-direction:row;align-items:flex-start;gap:0}
+  .cal-sidebar{width:280px;flex-shrink:0;border-right:1px solid var(--br);min-height:calc(100vh - 120px)}
+  .cal-main{flex:1}
+}
+
+.cal-sidebar{
+  padding:24px 20px;
+  border-bottom:1px solid var(--br)
+}
+@media(min-width:700px){
+  .cal-sidebar{border-bottom:none;position:sticky;top:65px}
+}
+
+.cal-back{
+  display:flex;align-items:center;gap:6px;
+  color:var(--blue);font-size:13px;font-weight:500;
+  cursor:pointer;margin-bottom:18px;background:none;border:none;
+  font-family:-apple-system,sans-serif;padding:0
+}
+.cal-back svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.5;fill:none}
+
+.cal-doc-avatar{
+  width:52px;height:52px;border-radius:50%;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
-  border:1px solid transparent;cursor:default;
-  transition:all .15s;position:relative
+  font-size:18px;font-weight:700;color:#fff;margin-bottom:14px
+}
+.cal-doc-school{font-size:11px;color:var(--mt);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.cal-doc-nombre{font-size:20px;font-weight:700;letter-spacing:-.4px;margin-bottom:12px;line-height:1.2}
+.cal-doc-pills{display:flex;flex-direction:column;gap:7px}
+.cal-doc-pill{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--mt)
+}
+.cal-doc-pill svg{width:14px;height:14px;stroke:var(--mt);stroke-width:1.8;fill:none;flex-shrink:0}
+
+/* Calendario principal */
+.cal-main{padding:20px}
+
+.cal-month-nav{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:16px
+}
+.cal-month-lbl{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.cal-nav-btns{display:flex;gap:4px}
+.cal-nav-btn{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--bg);border:1px solid var(--br);
+  color:var(--tx);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .15s
+}
+.cal-nav-btn:hover{background:var(--blue3);border-color:var(--blue)}
+.cal-nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.cal-nav-btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.5;fill:none}
+
+.cal-grid-hds{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  margin-bottom:6px
+}
+.cal-hd{
+  text-align:center;font-size:11px;font-weight:600;
+  color:var(--mt);padding:4px 0;letter-spacing:.3px
+}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-day{
+  aspect-ratio:1;border-radius:50%;font-size:13px;font-weight:500;
+  display:flex;align-items:center;justify-content:center;
+  cursor:default;transition:all .15s;color:var(--mt2);
+  position:relative
 }
 .cal-day.vacio{visibility:hidden}
-.cal-day.pasado{color:rgba(255,255,255,.2);cursor:not-allowed}
+.cal-day.pasado{color:var(--br2);cursor:not-allowed}
 .cal-day.disponible{
-  background:rgba(45,212,160,.08);border-color:rgba(45,212,160,.2);
-  color:#fff;cursor:pointer
+  color:var(--blue);font-weight:600;cursor:pointer;
+  background:var(--blue3)
 }
-.cal-day.disponible:hover{background:rgba(45,212,160,.18);border-color:rgba(45,212,160,.4);transform:scale(1.05)}
-.cal-day.hoy.disponible{border-color:var(--gold)!important}
+.cal-day.disponible:hover{background:var(--blue);color:#fff;transform:scale(1.1)}
+.cal-day.disponible:active{transform:scale(.95)}
+.cal-day.hoy{font-weight:700}
+.cal-day.hoy.disponible{border:2px solid var(--blue)}
 .cal-day.sel{
-  background:var(--gold)!important;border-color:var(--gold)!important;
-  color:#000!important;font-weight:700
+  background:var(--blue)!important;color:#fff!important;
+  font-weight:700;box-shadow:0 3px 12px rgba(30,77,183,.35);
+  transform:scale(1.1)
 }
-.cal-day.sin-slots{color:rgba(255,255,255,.3);cursor:not-allowed}
+.cal-day.sel:hover{transform:scale(1.1)}
 
-/* ── SLOTS ── */
-.slots-lbl{
-  font-size:12px;color:var(--mt);margin:16px 0 10px;
-  font-family:'Courier New',monospace;letter-spacing:1.5px;text-transform:uppercase
+/* Slots de hora */
+.slots-wrap{
+  margin-top:20px;border-top:1px solid var(--br);padding-top:20px
+}
+.slots-fecha-lbl{
+  font-size:14px;font-weight:700;color:var(--tx);margin-bottom:14px;letter-spacing:-.2px
 }
 .slots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.slot{
-  padding:11px 8px;border-radius:12px;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);
-  text-align:center;cursor:pointer;transition:all .18s;
-  font-size:13px;font-weight:500;color:var(--tx)
-}
-.slot:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);transform:translateY(-1px)}
-.slot:active{transform:scale(.97)}
-.slot.sel{background:var(--gold);border-color:var(--gold);color:#000;font-weight:700}
-.slot.ocupado{opacity:.3;cursor:not-allowed;text-decoration:line-through}
-.slot-hora{font-size:14px;font-weight:600}
-.slot-dur{font-size:10px;opacity:.6;margin-top:2px}
+@media(min-width:400px){.slots-grid{grid-template-columns:repeat(4,1fr)}}
 
-/* ── FORMULARIO ── */
-.form-section{margin-bottom:20px}
-.form-title{font-size:13px;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:12px;letter-spacing:.2px}
-.fg{margin-bottom:12px}
-.fl{display:block;font-size:10px;color:var(--mt);margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase;font-family:'Courier New',monospace}
-.fi,.fs,.fta{
-  width:100%;background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.1);border-radius:12px;
-  color:#fff;padding:13px 14px;font-size:15px;
-  font-family:-apple-system,sans-serif;outline:none;
-  transition:border-color .2s,background .2s;-webkit-appearance:none
+.slot{
+  padding:11px 6px;border-radius:10px;
+  border:1.5px solid var(--br);background:var(--white);
+  text-align:center;cursor:pointer;transition:all .18s;
+  font-size:13px;font-weight:600;color:var(--blue)
 }
-.fi::placeholder,.fta::placeholder{color:rgba(255,255,255,.2)}
+.slot:hover{border-color:var(--blue);background:var(--blue3);transform:translateY(-1px)}
+.slot:active{transform:scale(.97)}
+.slot.sel{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 3px 10px rgba(30,77,183,.3)}
+.slot.ocupado{color:var(--mt2);border-color:var(--br);cursor:not-allowed;font-weight:400;text-decoration:line-through;opacity:.5}
+
+.slots-empty{
+  text-align:center;padding:20px;color:var(--mt);font-size:13px
+}
+
+.cal-continue-btn{
+  margin-top:20px;width:100%;padding:14px;
+  background:var(--blue);color:#fff;
+  border:none;border-radius:12px;
+  font-size:15px;font-weight:600;cursor:pointer;
+  font-family:-apple-system,sans-serif;
+  transition:all .15s;display:none;
+  box-shadow:0 4px 16px rgba(30,77,183,.3)
+}
+.cal-continue-btn.on{display:block}
+.cal-continue-btn:hover{background:var(--blue2);transform:translateY(-1px)}
+.cal-continue-btn:active{transform:scale(.98)}
+
+/* ══════════════════════════════
+   VISTA 3 — FORMULARIO
+══════════════════════════════ */
+#v-form{padding-bottom:40px}
+
+.form-header{
+  padding:20px 20px 0;
+  border-bottom:1px solid var(--br);
+  margin-bottom:24px
+}
+.form-back{
+  display:flex;align-items:center;gap:6px;
+  color:var(--blue);font-size:13px;font-weight:500;
+  cursor:pointer;margin-bottom:16px;background:none;border:none;
+  font-family:-apple-system,sans-serif;padding:0
+}
+.form-back svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.5;fill:none}
+
+/* Resumen cita */
+.cita-resumen{
+  background:var(--blue4);border:1.5px solid var(--blue3);
+  border-radius:14px;padding:14px 16px;margin:0 20px 24px
+}
+.cr-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.cr-row:last-child{margin-bottom:0}
+.cr-row svg{width:15px;height:15px;stroke:var(--blue);stroke-width:2;fill:none;flex-shrink:0}
+.cr-lbl{font-size:13px;color:var(--blue);font-weight:500}
+
+/* Form fields */
+.form-body{padding:0 20px}
+.form-section-title{
+  font-size:12px;font-weight:700;color:var(--mt);
+  text-transform:uppercase;letter-spacing:.8px;
+  margin-bottom:14px;margin-top:24px
+}
+.form-section-title:first-child{margin-top:0}
+
+.fg{margin-bottom:14px}
+.fl{
+  display:block;font-size:12px;font-weight:600;color:var(--tx);
+  margin-bottom:6px;letter-spacing:-.1px
+}
+.fl span{color:var(--red);margin-left:2px}
+.fi,.fs,.fta{
+  width:100%;background:var(--white);
+  border:1.5px solid var(--br2);border-radius:11px;
+  color:var(--tx);padding:12px 14px;font-size:15px;
+  font-family:-apple-system,sans-serif;outline:none;
+  transition:border-color .2s,box-shadow .2s;-webkit-appearance:none
+}
+.fi::placeholder{color:var(--mt2)}
 .fi:focus,.fs:focus,.fta:focus{
-  border-color:rgba(100,150,255,.45);background:rgba(255,255,255,.09);
-  box-shadow:0 0 0 3px rgba(60,120,255,.1)
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(30,77,183,.1)
 }
 .fta{resize:none;min-height:80px;line-height:1.5}
 .fs{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%237a8fb0' stroke-width='2' fill='none'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 12px center;background-size:16px;
-  padding-right:36px
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%236b7280' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+  background-size:16px;padding-right:36px;cursor:pointer
 }
-.fs option{background:#0d1f3c;color:#fff}
+.fs option{background:#fff;color:var(--tx)}
 
-/* ── RESUMEN ── */
-.resumen-card{
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
-  border-radius:16px;padding:16px;margin-bottom:20px
+.form-err{
+  background:var(--red2);border:1px solid rgba(220,38,38,.2);
+  border-radius:10px;padding:10px 14px;font-size:13px;color:var(--red);
+  margin-bottom:14px;display:none
 }
-.res-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--br);font-size:13px}
-.res-row:last-child{border-bottom:none}
-.res-lb{color:var(--mt);width:90px;flex-shrink:0;font-size:12px}
-.res-val{font-weight:500;line-height:1.4}
+.form-err.on{display:block}
 
-/* ── BUTTONS ── */
-.btn{
-  width:100%;padding:15px;border-radius:13px;border:none;
-  font-family:-apple-system,sans-serif;font-size:15px;font-weight:600;
-  cursor:pointer;transition:all .15s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  -webkit-appearance:none;letter-spacing:-.1px
+/* Botón submit */
+.submit-btn{
+  width:100%;padding:15px;margin-top:8px;
+  background:var(--blue);color:#fff;border:none;
+  border-radius:13px;font-size:16px;font-weight:700;
+  cursor:pointer;font-family:-apple-system,sans-serif;
+  transition:all .15s;
+  box-shadow:0 6px 20px rgba(30,77,183,.3)
 }
-.btn:active{transform:scale(.98)}
-.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
-.btn-primary{
-  background:linear-gradient(135deg,#7a5a14,var(--gold));
-  color:#000;font-weight:700;
-  box-shadow:0 8px 24px rgba(201,150,42,.3)
-}
-.btn-primary:hover{box-shadow:0 12px 30px rgba(201,150,42,.4)}
-.btn-secondary{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--tx)}
-.btn-secondary:hover{background:rgba(255,255,255,.11)}
-.btn-success{
-  background:linear-gradient(135deg,#059669,var(--green));
-  color:#000;font-weight:700;
-  box-shadow:0 8px 24px rgba(45,212,160,.3)
-}
-.btn-stack{display:flex;flex-direction:column;gap:10px}
+.submit-btn:hover{background:var(--blue2);transform:translateY(-1px)}
+.submit-btn:active{transform:scale(.98)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-/* ── SPINNER ── */
-.spin{width:14px;height:14px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:rot .7s linear infinite}
-.spin-w{width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite}
-@keyframes rot{to{transform:rotate(360deg)}}
+/* ══════════════════════════════
+   VISTA 4 — ÉXITO
+══════════════════════════════ */
+#v-exito{
+  display:none;
+  padding:60px 24px 40px;
+  text-align:center;
+  min-height:calc(100vh - 65px);
+  flex-direction:column;align-items:center;justify-content:center
+}
+#v-exito.on{display:flex}
 
-/* ── SUCCESS ── */
-#s-success{display:none;padding:40px 20px;text-align:center;max-width:480px;margin:0 auto}
-#s-success.on{display:block;animation:fadeUp .4s ease both}
-.success-ico{
+.exito-check{
   width:80px;height:80px;border-radius:50%;
-  background:linear-gradient(135deg,#059669,var(--green));
+  background:var(--blue);
   display:flex;align-items:center;justify-content:center;
   margin:0 auto 24px;
-  box-shadow:0 16px 40px rgba(45,212,160,.35)
+  box-shadow:0 12px 32px rgba(30,77,183,.35);
+  animation:popIn .5s cubic-bezier(.34,1.6,.64,1) both
 }
-.success-ico svg{width:36px;height:36px;stroke:#000;stroke-width:2.5;fill:none}
-.success-title{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:10px}
-.success-sub{font-size:14px;color:rgba(255,255,255,.45);line-height:1.6;margin-bottom:28px}
-.success-card{
-  background:rgba(45,212,160,.06);border:1px solid rgba(45,212,160,.2);
-  border-radius:16px;padding:16px;margin-bottom:24px;text-align:left
-}
-.success-row{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid rgba(45,212,160,.1);font-size:13px}
-.success-row:last-child{border-bottom:none}
-.success-lb{color:rgba(45,212,160,.7);width:80px;flex-shrink:0;font-size:12px}
+@keyframes popIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+.exito-check svg{width:38px;height:38px;stroke:#fff;stroke-width:2.5;fill:none}
 
-/* ── LOADING ── */
-.loading-overlay{
-  position:fixed;inset:0;background:rgba(5,14,29,.85);
+.exito-title{
+  font-size:26px;font-weight:700;letter-spacing:-.5px;
+  color:var(--tx);margin-bottom:10px
+}
+.exito-sub{
+  font-size:15px;color:var(--mt);line-height:1.6;
+  margin-bottom:28px;max-width:300px
+}
+
+.exito-card{
+  background:var(--blue4);border:1.5px solid var(--blue3);
+  border-radius:16px;padding:16px 20px;
+  margin-bottom:28px;text-align:left;width:100%;max-width:360px
+}
+.exito-row{
+  display:flex;gap:10px;padding:8px 0;
+  border-bottom:1px solid var(--blue3);font-size:13px;
+  align-items:flex-start
+}
+.exito-row:last-child{border-bottom:none}
+.exito-lb{color:var(--blue);width:76px;flex-shrink:0;font-size:12px;font-weight:600;padding-top:1px}
+.exito-val{color:var(--tx);font-weight:500;flex:1}
+
+.nueva-btn{
+  background:var(--bg);border:1.5px solid var(--br2);
+  color:var(--tx);font-size:14px;font-weight:600;
+  padding:13px 28px;border-radius:12px;cursor:pointer;
+  font-family:-apple-system,sans-serif;transition:all .15s
+}
+.nueva-btn:hover{background:var(--br);border-color:var(--br2)}
+
+/* ══ SPINNER ══ */
+.spin{
+  width:18px;height:18px;
+  border:2.5px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;
+  animation:rot .7s linear infinite;display:inline-block
+}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ══ LOADING OVERLAY ══ */
+.loading{
+  position:fixed;inset:0;
+  background:rgba(255,255,255,.85);
   display:none;align-items:center;justify-content:center;
   z-index:100;flex-direction:column;gap:14px;
-  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)
 }
-.loading-overlay.on{display:flex}
-.loading-overlay p{font-size:13px;color:rgba(255,255,255,.5);letter-spacing:.3px}
+.loading.on{display:flex}
+.loading .spin{border-color:rgba(30,77,183,.2);border-top-color:var(--blue)}
+.loading p{font-size:13px;color:var(--mt);font-weight:500}
 
-/* ── EMPTY ── */
-.empty{text-align:center;padding:24px 0;color:var(--mt);font-size:13px;line-height:1.6}
+/* Colores avatar — variedad */
+.av-0{background:linear-gradient(135deg,#1e4db7,#2557d6)}
+.av-1{background:linear-gradient(135deg,#0f2657,#1e4db7)}
+.av-2{background:linear-gradient(135deg,#1d4ed8,#3b82f6)}
+.av-3{background:linear-gradient(135deg,#1e3a8a,#2563eb)}
+.av-4{background:linear-gradient(135deg,#172554,#1d4ed8)}
+.av-5{background:linear-gradient(135deg,#1e40af,#3b82f6)}
 
-/* ── ALERT ── */
-.alert-err{
-  background:rgba(240,107,107,.08);border:1px solid rgba(240,107,107,.2);
-  border-radius:10px;padding:11px 13px;font-size:13px;color:var(--red);
-  margin-bottom:12px;line-height:1.5;display:none
-}
-.alert-err.on{display:block}
+/* Divider */
+.div{height:1px;background:var(--br);margin:0 20px}
 
-/* ── LEYENDA ── */
-.leyenda{display:flex;gap:16px;margin-bottom:16px}
-.ley-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mt)}
-.ley-dot{width:10px;height:10px;border-radius:3px}
-.ley-dot.dis{background:rgba(45,212,160,.4);border:1px solid rgba(45,212,160,.5)}
-.ley-dot.ocu{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15)}
-
-@media(min-width:540px){
-  .slots-grid{grid-template-columns:repeat(4,1fr)}
-  .doc-grid{display:grid;grid-template-columns:1fr 1fr}
+@media(min-width:700px){
+  .hero{padding:40px 32px 32px}
+  .hero-title{font-size:30px}
+  .search-wrap{padding:20px 32px 10px}
+  .doc-item{padding:16px 32px}
+  .doc-list{
+    display:grid;grid-template-columns:1fr 1fr;
+    border-top:1px solid var(--br)
+  }
+  .doc-item{border-right:1px solid var(--br)}
+  .doc-item:nth-child(2n){border-right:none}
 }
 </style>
 </head>
@@ -306,238 +467,181 @@ html,body{
     <img src="/logo.png" onerror="this.style.display='none';this.parentNode.innerHTML='<span>S</span>'">
   </div>
   <div class="topbar-info">
-    <div class="topbar-title">Reservar Cita</div>
-    <div class="topbar-sub">La Presentación · Girardota</div>
+    <div class="topbar-title">La Presentación · Girardota</div>
+    <div class="topbar-sub">Instituto Parroquial Nuestra Señora de la Presentación</div>
   </div>
 </div>
 
-<!-- PROGRESS -->
-<div class="progress-wrap" id="progressWrap">
-  <div class="progress-steps">
-    <div class="ps active" id="ps1">
-      <div class="ps-dot">1</div>
-      <div class="ps-lbl">Docente</div>
+<!-- ══ VISTA 1 — DOCENTES ══ -->
+<div class="view on" id="v-docs">
+  <div class="hero">
+    <div class="hero-school">Atención a Padres de Familia</div>
+    <div class="hero-title">Reservar una cita</div>
+    <div class="hero-sub">Selecciona el docente con quien deseas hablar</div>
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35" stroke-width="2" stroke-linecap="round"/></svg>
+      <input type="search" class="search-inp" id="searchInp" placeholder="Buscar docente..." oninput="buscarDocentes(this.value)">
     </div>
-    <div class="ps" id="ps2">
-      <div class="ps-dot">2</div>
-      <div class="ps-lbl">Fecha</div>
-    </div>
-    <div class="ps" id="ps3">
-      <div class="ps-dot">3</div>
-      <div class="ps-lbl">Hora</div>
-    </div>
-    <div class="ps" id="ps4">
-      <div class="ps-dot">4</div>
-      <div class="ps-lbl">Datos</div>
-    </div>
-    <div class="ps" id="ps5">
-      <div class="ps-dot">5</div>
-      <div class="ps-lbl">Confirmar</div>
+  </div>
+  <div class="doc-count" id="docCount"></div>
+  <div class="doc-list" id="docList">
+    <div class="doc-empty">
+      <div class="spin" style="border-color:rgba(30,77,183,.15);border-top-color:var(--blue);margin:0 auto 12px"></div>
+      <p>Cargando docentes...</p>
     </div>
   </div>
 </div>
 
-<!-- MAIN -->
-<div class="main" id="mainContent">
+<!-- ══ VISTA 2 — CALENDARIO ══ -->
+<div class="view" id="v-cal">
+  <div class="cal-layout">
 
-  <!-- STEP 1: DOCENTE -->
-  <div class="step-view on" id="sv1">
-    <div class="step-header">
-      <div class="step-num">Paso 1 de 5</div>
-      <div class="step-title">¿Con qué docente deseas la cita?</div>
-      <div class="step-sub">Selecciona el docente de tu hijo/a</div>
-    </div>
-    <div class="doc-grid" id="docGrid">
-      <div class="empty">
-        <div class="spin-w" style="margin:0 auto 10px"></div>
-        Cargando docentes...
+    <!-- Sidebar info docente -->
+    <div class="cal-sidebar">
+      <button class="cal-back" onclick="irVista('docs')">
+        <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Todos los docentes
+      </button>
+      <div class="cal-doc-avatar" id="calDocAvatar"></div>
+      <div class="cal-doc-school">Instituto Parroquial</div>
+      <div class="cal-doc-nombre" id="calDocNombre">—</div>
+      <div class="cal-doc-pills">
+        <div class="cal-doc-pill">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          30 minutos
+        </div>
+        <div class="cal-doc-pill">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Nuestra Señora de la Presentación
+        </div>
       </div>
     </div>
-    <div style="margin-top:16px">
-      <button class="btn btn-primary" id="btnSiguiente1" onclick="irPaso2()" disabled>
-        Continuar
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+
+    <!-- Calendario -->
+    <div class="cal-main">
+      <div class="cal-month-nav">
+        <div class="cal-month-lbl" id="calMesLbl">—</div>
+        <div class="cal-nav-btns">
+          <button class="cal-nav-btn" id="calPrev" onclick="navCal(-1)">
+            <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button class="cal-nav-btn" onclick="navCal(1)">
+            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="cal-grid-hds">
+        <div class="cal-hd">Dom</div><div class="cal-hd">Lun</div>
+        <div class="cal-hd">Mar</div><div class="cal-hd">Mié</div>
+        <div class="cal-hd">Jue</div><div class="cal-hd">Vie</div>
+        <div class="cal-hd">Sáb</div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+
+      <!-- Slots hora -->
+      <div class="slots-wrap" id="slotsWrap" style="display:none">
+        <div class="slots-fecha-lbl" id="slotsFechaLbl">—</div>
+        <div class="slots-grid" id="slotsGrid"></div>
+      </div>
+
+      <button class="cal-continue-btn" id="calContinueBtn" onclick="irFormulario()">
+        Continuar →
       </button>
     </div>
   </div>
-
-  <!-- STEP 2: FECHA -->
-  <div class="step-view" id="sv2">
-    <div class="step-header">
-      <div class="step-num">Paso 2 de 5</div>
-      <div class="step-title">¿Qué día prefieres?</div>
-      <div class="step-sub" id="sv2Sub">Selecciona una fecha disponible</div>
-    </div>
-
-    <div class="leyenda">
-      <div class="ley-item"><div class="ley-dot dis"></div>Disponible</div>
-      <div class="ley-item"><div class="ley-dot ocu"></div>Sin disponibilidad</div>
-    </div>
-
-    <div class="cal-header">
-      <div class="cal-mes" id="calMes2">—</div>
-      <div class="cal-nav-btns">
-        <button class="cal-nav-btn" onclick="navCal2(-1)" id="calPrev2">
-          <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <button class="cal-nav-btn" onclick="navCal2(1)">
-          <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
-      </div>
-    </div>
-    <div class="cal-grid" id="calGrid2"></div>
-
-    <div style="margin-top:20px" class="btn-stack">
-      <button class="btn btn-primary" id="btnSiguiente2" onclick="irPaso3()" disabled>
-        Continuar
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </button>
-      <button class="btn btn-secondary" onclick="irPaso(1)">← Volver</button>
-    </div>
-  </div>
-
-  <!-- STEP 3: HORA -->
-  <div class="step-view" id="sv3">
-    <div class="step-header">
-      <div class="step-num">Paso 3 de 5</div>
-      <div class="step-title">¿A qué hora?</div>
-      <div class="step-sub" id="sv3Sub">Cada cita tiene duración de 30 minutos</div>
-    </div>
-
-    <div class="slots-lbl" id="slotsLbl">Horarios disponibles</div>
-    <div class="slots-grid" id="slotsGrid">
-      <div class="empty" style="grid-column:1/-1">Selecciona una fecha primero</div>
-    </div>
-
-    <div style="margin-top:20px" class="btn-stack">
-      <button class="btn btn-primary" id="btnSiguiente3" onclick="irPaso4()" disabled>
-        Continuar
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </button>
-      <button class="btn btn-secondary" onclick="irPaso(2)">← Volver</button>
-    </div>
-  </div>
-
-  <!-- STEP 4: DATOS -->
-  <div class="step-view" id="sv4">
-    <div class="step-header">
-      <div class="step-num">Paso 4 de 5</div>
-      <div class="step-title">Tus datos</div>
-      <div class="step-sub">Necesitamos estos datos para confirmar la cita</div>
-    </div>
-
-    <div class="alert-err" id="formErr"></div>
-
-    <div class="form-section">
-      <div class="form-title">Padre / Madre / Acudiente</div>
-      <div class="fg">
-        <label class="fl">Nombre</label>
-        <input type="text" class="fi" id="padreNombre" placeholder="Tu nombre" autocapitalize="words">
-      </div>
-      <div class="fg">
-        <label class="fl">Apellido</label>
-        <input type="text" class="fi" id="padreApellido" placeholder="Tu apellido" autocapitalize="words">
-      </div>
-      <div class="fg">
-        <label class="fl">Correo electrónico</label>
-        <input type="email" class="fi" id="padreCorreo" placeholder="tu@correo.com" inputmode="email" autocapitalize="none">
-      </div>
-    </div>
-
-    <div class="form-section">
-      <div class="form-title">Sobre el estudiante</div>
-      <div class="fg">
-        <label class="fl">Nombre del estudiante</label>
-        <input type="text" class="fi" id="estudianteNombre" placeholder="Nombre completo" autocapitalize="words">
-      </div>
-      <div class="fg">
-        <label class="fl">Grado</label>
-        <select class="fs" id="gradoSelect">
-          <option value="">Seleccionar grado...</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <div class="form-title">Motivo de la cita</div>
-      <div class="fg">
-        <label class="fl">¿Por qué solicitas esta cita?</label>
-        <select class="fs" id="motivoSelect">
-          <option value="">Seleccionar motivo...</option>
-          <option>Seguimiento académico</option>
-          <option>Comportamiento</option>
-          <option>Inasistencias</option>
-          <option>Resultados de evaluaciones</option>
-          <option>Situación familiar</option>
-          <option>Otro</option>
-        </select>
-      </div>
-      <div class="fg" id="motivoExtraWrap" style="display:none">
-        <label class="fl">Especifica el motivo</label>
-        <textarea class="fta" id="motivoExtra" placeholder="Describe brevemente..."></textarea>
-      </div>
-    </div>
-
-    <div class="btn-stack">
-      <button class="btn btn-primary" onclick="irPaso5()">
-        Revisar y confirmar
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </button>
-      <button class="btn btn-secondary" onclick="irPaso(3)">← Volver</button>
-    </div>
-  </div>
-
-  <!-- STEP 5: CONFIRMAR -->
-  <div class="step-view" id="sv5">
-    <div class="step-header">
-      <div class="step-num">Paso 5 de 5</div>
-      <div class="step-title">Confirma tu cita</div>
-      <div class="step-sub">Revisa los detalles antes de reservar</div>
-    </div>
-
-    <div class="resumen-card">
-      <div class="res-row"><span class="res-lb">Docente</span><span class="res-val" id="resDocente">—</span></div>
-      <div class="res-row"><span class="res-lb">Fecha</span><span class="res-val" id="resFecha">—</span></div>
-      <div class="res-row"><span class="res-lb">Hora</span><span class="res-val" id="resHora">—</span></div>
-      <div class="res-row"><span class="res-lb">Duración</span><span class="res-val">30 minutos</span></div>
-      <div class="res-row"><span class="res-lb">Padre/Madre</span><span class="res-val" id="resPadre">—</span></div>
-      <div class="res-row"><span class="res-lb">Estudiante</span><span class="res-val" id="resEstudiante">—</span></div>
-      <div class="res-row"><span class="res-lb">Grado</span><span class="res-val" id="resGrado">—</span></div>
-      <div class="res-row"><span class="res-lb">Motivo</span><span class="res-val" id="resMotivo">—</span></div>
-      <div class="res-row"><span class="res-lb">Correo</span><span class="res-val" id="resCorreo" style="font-size:12px">—</span></div>
-    </div>
-
-    <div style="background:rgba(45,212,160,.06);border:1px solid rgba(45,212,160,.15);border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:12px;color:rgba(255,255,255,.5);line-height:1.6">
-      📧 Recibirás una confirmación en tu correo electrónico con todos los detalles de la cita.
-    </div>
-
-    <div class="btn-stack">
-      <button class="btn btn-success" id="btnReservar" onclick="confirmarReserva()">
-        ✓ Reservar cita
-      </button>
-      <button class="btn btn-secondary" onclick="irPaso(4)">← Editar datos</button>
-    </div>
-  </div>
-
 </div>
 
-<!-- SUCCESS -->
-<div id="s-success">
-  <div class="success-ico">
+<!-- ══ VISTA 3 — FORMULARIO ══ -->
+<div class="view" id="v-form">
+  <div class="form-header">
+    <button class="form-back" onclick="irVista('cal')">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Cambiar horario
+    </button>
+  </div>
+
+  <!-- Resumen selección -->
+  <div class="cita-resumen" id="citaResumen"></div>
+
+  <div class="form-body">
+    <div class="form-err" id="formErr"></div>
+
+    <div class="form-section-title">Acudiente</div>
+
+    <div class="fg">
+      <label class="fl">Nombre <span>*</span></label>
+      <input type="text" class="fi" id="fNombre" placeholder="Tu nombre" autocapitalize="words">
+    </div>
+    <div class="fg">
+      <label class="fl">Apellido <span>*</span></label>
+      <input type="text" class="fi" id="fApellido" placeholder="Tu apellido" autocapitalize="words">
+    </div>
+    <div class="fg">
+      <label class="fl">Correo electrónico <span>*</span></label>
+      <input type="email" class="fi" id="fCorreo" placeholder="tu@correo.com" inputmode="email" autocapitalize="none">
+    </div>
+    <div class="fg">
+      <label class="fl">Teléfono <span>*</span></label>
+      <input type="tel" class="fi" id="fTelefono" placeholder="300 000 0000" inputmode="tel">
+    </div>
+
+    <div class="form-section-title">Estudiante</div>
+
+    <div class="fg">
+      <label class="fl">Nombre del estudiante <span>*</span></label>
+      <input type="text" class="fi" id="fEstudiante" placeholder="Nombre completo" autocapitalize="words">
+    </div>
+    <div class="fg">
+      <label class="fl">Grado <span>*</span></label>
+      <select class="fs" id="fGrado">
+        <option value="">Seleccionar grado...</option>
+      </select>
+    </div>
+
+    <div class="form-section-title">Motivo de la cita</div>
+
+    <div class="fg">
+      <label class="fl">¿Por qué solicitas esta cita? <span>*</span></label>
+      <select class="fs" id="fMotivo" onchange="toggleMotivoExtra()">
+        <option value="">Seleccionar motivo...</option>
+        <option value="Seguimiento académico">Seguimiento académico</option>
+        <option value="Comportamiento">Comportamiento</option>
+        <option value="Inasistencias">Inasistencias y puntualidad</option>
+        <option value="Resultados de evaluaciones">Resultados de evaluaciones</option>
+        <option value="Situación familiar">Situación familiar</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+    <div class="fg" id="motivoExtraWrap" style="display:none">
+      <label class="fl">Especifica el motivo</label>
+      <textarea class="fta" id="fMotivoExtra" placeholder="Describe brevemente..."></textarea>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="confirmarReserva()">
+      Confirmar reserva
+    </button>
+  </div>
+</div>
+
+<!-- ══ VISTA 4 — ÉXITO ══ -->
+<div id="v-exito">
+  <div class="exito-check">
     <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
   </div>
-  <div class="success-title">¡Cita reservada!</div>
-  <div class="success-sub" id="successSub">Te hemos enviado una confirmación a tu correo electrónico.</div>
-
-  <div class="success-card" id="successCard"></div>
-
-  <button class="btn btn-secondary" onclick="nuevaReserva()">Reservar otra cita</button>
+  <div class="exito-title">¡Cita reservada!</div>
+  <div class="exito-sub" id="exitoSub">Te hemos enviado la confirmación a tu correo.</div>
+  <div class="exito-card" id="exitoCard"></div>
+  <button class="nueva-btn" onclick="nuevaReserva()">Reservar otra cita</button>
 </div>
 
 <!-- LOADING -->
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="spin-w"></div>
-  <p id="loadingMsg">Procesando...</p>
+<div class="loading" id="loading">
+  <div class="spin"></div>
+  <p id="loadingMsg">Cargando...</p>
 </div>
 
 <script>
@@ -545,418 +649,370 @@ html,body{
 // CONFIG
 // ══════════════════════════════════════════════
 const API = '/api/proxy';
-
-let RES = {
-  docente: null,      // {id, nombre, apellido, area}
-  fecha: null,        // 'YYYY-MM-DD'
-  horaInicio: null,   // 'HH:MM'
-  horaFin: null,      // 'HH:MM'
-  padre: {},
-  estudiante: {},
-};
-
-let pasoActual = 1;
-let calFecha2 = new Date();
-let disponibilidad = {}; // fecha → [slots libres]
-let docentes = [];
-let grados = [];
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES_C = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const DIAS_S = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
 const $ = id => document.getElementById(id);
 const pad = n => String(n).padStart(2,'0');
 
+let STATE = {
+  docentes: [],
+  docentesSel: null,
+  disponibilidad: {},
+  calFecha: new Date(),
+  fechaSel: null,
+  horaSel: null,
+  horaFinSel: null,
+};
+
+// Colores avatar
+const AV_COLORS = ['av-0','av-1','av-2','av-3','av-4','av-5'];
+function avColor(idx){ return AV_COLORS[idx % AV_COLORS.length]; }
+
 function apiPublic(action, payload){
   return new Promise((res,rej)=>{
-    fetch(API,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action,...(payload||{})})
-    }).then(r=>r.json()).then(res).catch(rej);
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action,...(payload||{})})})
+      .then(r=>r.json()).then(res).catch(rej);
   });
+}
+
+function showLoading(msg){
+  $('loadingMsg').textContent = msg||'Cargando...';
+  $('loading').classList.add('on');
+}
+function hideLoading(){ $('loading').classList.remove('on'); }
+
+// ══════════════════════════════════════════════
+// NAVEGACIÓN
+// ══════════════════════════════════════════════
+function irVista(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  const v = $(('v-'+id));
+  if(v){ v.classList.add('on'); }
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded',()=>{
   cargarDocentes();
   cargarGrados();
-
-  $('motivoSelect').addEventListener('change', ()=>{
-    $('motivoExtraWrap').style.display =
-      $('motivoSelect').value === 'Otro' ? 'block' : 'none';
-  });
 });
 
 function cargarDocentes(){
   apiPublic('docentes',{}).then(docs=>{
-    docentes = (docs||[]).filter(d=>d.activo===true||String(d.activo)==='TRUE');
-    renderDocentes();
+    STATE.docentes = (docs||[]).filter(d=>d.activo===true||String(d.activo)==='TRUE');
+    renderDocentes(STATE.docentes);
   }).catch(()=>{
-    $('docGrid').innerHTML = '<div class="empty">Error cargando docentes. Intenta de nuevo.</div>';
+    $('docList').innerHTML=`<div class="doc-empty"><p>Error cargando docentes. Recarga la página.</p></div>`;
   });
 }
 
 function cargarGrados(){
   apiPublic('grados',{}).then(gs=>{
-    grados = gs||[];
-    const sel = $('gradoSelect');
-    grados.forEach(g=>{
-      const opt = document.createElement('option');
-      opt.value = g; opt.textContent = g;
-      sel.appendChild(opt);
+    const sel=$('fGrado');
+    (gs||[]).forEach(g=>{
+      const o=document.createElement('option');
+      o.value=g;o.textContent=g;sel.appendChild(o);
     });
   }).catch(()=>{});
 }
 
-function renderDocentes(){
-  if(!docentes.length){
-    $('docGrid').innerHTML = '<div class="empty">No hay docentes disponibles.</div>';
+// ══════════════════════════════════════════════
+// LISTA DOCENTES
+// ══════════════════════════════════════════════
+function renderDocentes(docs){
+  $('docCount').textContent = docs.length
+    ? `${docs.length} docente${docs.length>1?'s':''}` : '';
+
+  if(!docs.length){
+    $('docList').innerHTML=`<div class="doc-empty">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke-width="1.5"/><path d="M9 9h.01M15 9h.01M9 15s1 2 3 2 3-2 3-2" stroke-width="1.5"/></svg>
+      <p>No se encontraron docentes</p>
+    </div>`;
     return;
   }
-  $('docGrid').innerHTML = docentes.map(d=>{
+
+  $('docList').innerHTML = docs.map((d,i)=>{
     const ini = [(d.nombre||'').charAt(0),(d.apellido||'').charAt(0)].join('').toUpperCase();
-    return `<div class="doc-card" id="dc-${d.id}" onclick="selDocente('${d.id}')">
-      <div class="doc-avatar">${ini}</div>
-      <div class="doc-info">
+    return `<div class="doc-item" onclick="selDocente('${d.id}',${i})">
+      <div class="doc-avatar ${avColor(i)}">${ini}</div>
+      <div class="doc-body">
         <div class="doc-nombre">${d.nombre} ${d.apellido}</div>
         <div class="doc-area">${d.area||d.asignatura||'Docente'}</div>
       </div>
-      <div class="doc-check">
-        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-      </div>
+      <div class="doc-chevron">›</div>
     </div>`;
   }).join('');
 }
 
-function selDocente(id){
-  RES.docente = docentes.find(d=>d.id===id);
-  document.querySelectorAll('.doc-card').forEach(c=>c.classList.remove('sel'));
-  $('dc-'+id).classList.add('sel');
-  $('btnSiguiente1').disabled = false;
+function buscarDocentes(q){
+  const txt = q.toLowerCase().trim();
+  if(!txt){ renderDocentes(STATE.docentes); return; }
+  const filtrados = STATE.docentes.filter(d=>
+    (d.nombre+' '+d.apellido).toLowerCase().includes(txt) ||
+    (d.area||d.asignatura||'').toLowerCase().includes(txt)
+  );
+  renderDocentes(filtrados);
 }
 
 // ══════════════════════════════════════════════
-// NAVEGACIÓN
+// SELECCIONAR DOCENTE → CALENDARIO
 // ══════════════════════════════════════════════
-function irPaso(n){
-  document.querySelectorAll('.step-view').forEach(v=>v.classList.remove('on'));
-  $('sv'+n).classList.add('on');
-  pasoActual = n;
-  actualizarProgress();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
+function selDocente(id, colorIdx){
+  STATE.docentesSel = STATE.docentes.find(d=>d.id===id);
+  if(!STATE.docentesSel) return;
 
-function actualizarProgress(){
-  for(let i=1;i<=5;i++){
-    const ps = $('ps'+i);
-    ps.classList.remove('done','active');
-    if(i < pasoActual) ps.classList.add('done');
-    else if(i === pasoActual) ps.classList.add('active');
-  }
-}
+  STATE.fechaSel = null;
+  STATE.horaSel = null;
+  STATE.horaFinSel = null;
+  STATE.disponibilidad = {};
+  STATE.calFecha = new Date();
 
-function irPaso2(){
-  if(!RES.docente) return;
-  $('sv2Sub').textContent = `Docente: ${RES.docente.nombre} ${RES.docente.apellido}`;
-  irPaso(2);
-  cargarDisponibilidad();
-  renderCal2();
-}
+  const ini = [(STATE.docentesSel.nombre||'').charAt(0),(STATE.docentesSel.apellido||'').charAt(0)].join('').toUpperCase();
+  const av = $('calDocAvatar');
+  av.textContent = ini;
+  av.className = `cal-doc-avatar ${avColor(colorIdx)}`;
+  $('calDocNombre').textContent = `${STATE.docentesSel.nombre} ${STATE.docentesSel.apellido}`;
 
-function irPaso3(){
-  if(!RES.fecha) return;
-  irPaso(3);
-  renderSlots();
-}
+  $('slotsWrap').style.display='none';
+  $('calContinueBtn').classList.remove('on');
 
-function irPaso4(){
-  if(!RES.horaInicio) return;
-  irPaso(4);
-}
-
-function irPaso5(){
-  // Validar formulario
-  const err = validarFormulario();
-  if(err){ mostrarError(err); return; }
-  $('formErr').classList.remove('on');
-
-  // Llenar resumen
-  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-  const d = new Date(RES.fecha+'T12:00:00');
-  const fechaLegible = `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
-
-  $('resDocente').textContent = `${RES.docente.nombre} ${RES.docente.apellido}`;
-  $('resFecha').textContent = fechaLegible;
-  $('resHora').textContent = `${RES.horaInicio} – ${RES.horaFin}`;
-  $('resPadre').textContent = `${$('padreNombre').value} ${$('padreApellido').value}`;
-  $('resEstudiante').textContent = $('estudianteNombre').value;
-  $('resGrado').textContent = $('gradoSelect').value;
-  $('resMotivo').textContent = $('motivoSelect').value + ($('motivoSelect').value==='Otro' && $('motivoExtra').value ? ': '+$('motivoExtra').value : '');
-  $('resCorreo').textContent = $('padreCorreo').value;
-
-  RES.padre = {
-    nombre: $('padreNombre').value.trim(),
-    apellido: $('padreApellido').value.trim(),
-    correo: $('padreCorreo').value.trim(),
-  };
-  RES.estudiante = {
-    nombre: $('estudianteNombre').value.trim(),
-    grado: $('gradoSelect').value,
-    motivo: $('motivoSelect').value,
-    motivoExtra: $('motivoExtra').value.trim(),
-  };
-
-  irPaso(5);
-}
-
-function validarFormulario(){
-  if(!$('padreNombre').value.trim()) return 'Ingresa tu nombre';
-  if(!$('padreApellido').value.trim()) return 'Ingresa tu apellido';
-  const correo = $('padreCorreo').value.trim();
-  if(!correo || !correo.includes('@')) return 'Ingresa un correo electrónico válido';
-  if(!$('estudianteNombre').value.trim()) return 'Ingresa el nombre del estudiante';
-  if(!$('gradoSelect').value) return 'Selecciona el grado';
-  if(!$('motivoSelect').value) return 'Selecciona el motivo de la cita';
-  return null;
-}
-
-function mostrarError(msg){
-  const el = $('formErr');
-  el.textContent = '⚠ ' + msg;
-  el.classList.add('on');
-  el.scrollIntoView({behavior:'smooth',block:'center'});
+  irVista('cal');
+  showLoading('Cargando disponibilidad...');
+  cargarDisponibilidad().finally(()=>{ hideLoading(); renderCal(); });
 }
 
 // ══════════════════════════════════════════════
 // DISPONIBILIDAD
 // ══════════════════════════════════════════════
-function cargarDisponibilidad(){
-  if(!RES.docente) return;
-  disponibilidad = {};
-  // Cargar horarios del docente y citas ya tomadas
-  Promise.all([
-    apiPublic('misHorarios',{docenteId:RES.docente.id}),
-    apiPublic('citasDocente',{docenteId:RES.docente.id})
-  ]).then(([horarios, citas]=[]) => {
+async function cargarDisponibilidad(){
+  try{
+    const [horarios, citas] = await Promise.all([
+      apiPublic('misHorarios',{docenteId:STATE.docentesSel.id}),
+      apiPublic('citasDocente',{docenteId:STATE.docentesSel.id})
+    ]);
+
     const hs = horarios||[];
     const cs = citas||[];
-
-    // Para cada día del mes actual y siguiente, calcular slots
+    const ocupados = new Set(cs.filter(c=>c.estado==='confirmada').map(c=>c.fecha+'_'+c.horaInicio));
+    const diaMap={'Lunes':1,'Martes':2,'Miércoles':3,'Jueves':4,'Viernes':5,'Sábado':6,'Domingo':0};
     const hoy = new Date(); hoy.setHours(0,0,0,0);
     const limite = new Date(hoy); limite.setDate(limite.getDate()+60);
 
-    const diaMap = {
-      'Lunes':1,'Martes':2,'Miércoles':3,'Jueves':4,'Viernes':5,'Sábado':6,'Domingo':0
-    };
-
-    // Citas ya tomadas (Set de 'YYYY-MM-DD HH:MM')
-    const ocupados = new Set(cs.filter(c=>c.estado==='confirmada').map(c=>c.fecha+'_'+c.horaInicio));
-
+    STATE.disponibilidad = {};
     for(let d=new Date(hoy);d<=limite;d.setDate(d.getDate()+1)){
-      if(d<=hoy) continue; // solo fechas futuras (mañana en adelante)
-      const dayOfWeek = d.getDay();
+      if(d<=hoy) continue;
+      const dow = d.getDay();
       const fs = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-
-      // Buscar horarios del docente para ese día de la semana
-      const bloques = hs.filter(h=>diaMap[h.dia]===dayOfWeek);
+      const bloques = hs.filter(h=>diaMap[h.dia]===dow);
       if(!bloques.length) continue;
 
-      const slots = [];
+      const slots=[];
       bloques.forEach(b=>{
-        // Generar slots de 30 min en el rango
-        let [hh,mm] = b.horaInicio.split(':').map(Number);
-        const [hfin,mfin] = b.horaFin.split(':').map(Number);
-        while(hh*60+mm + 30 <= hfin*60+mfin){
-          const ini = pad(hh)+':'+pad(mm);
-          const finM = hh*60+mm+30;
-          const fin = pad(Math.floor(finM/60))+':'+pad(finM%60);
-          const key = fs+'_'+ini;
-          slots.push({ini, fin, ocupado: ocupados.has(key)});
-          mm += 30;
-          if(mm>=60){hh++;mm-=60;}
+        let [hh,mm]=b.horaInicio.split(':').map(Number);
+        const [hf,mf]=b.horaFin.split(':').map(Number);
+        while(hh*60+mm+30<=hf*60+mf){
+          const ini=pad(hh)+':'+pad(mm);
+          const finM=hh*60+mm+30;
+          const fin=pad(Math.floor(finM/60))+':'+pad(finM%60);
+          slots.push({ini,fin,ocupado:ocupados.has(fs+'_'+ini)});
+          mm+=30; if(mm>=60){hh++;mm-=60;}
         }
       });
-
-      if(slots.length) disponibilidad[fs] = slots;
+      if(slots.length) STATE.disponibilidad[fs]=slots;
     }
-
-    renderCal2();
-  }).catch(()=>{renderCal2();});
+  }catch(e){ console.error(e); }
 }
 
 // ══════════════════════════════════════════════
-// CALENDARIO PASO 2
+// CALENDARIO
 // ══════════════════════════════════════════════
-function navCal2(delta){
-  calFecha2.setMonth(calFecha2.getMonth()+delta);
-  // No ir antes del mes actual
-  const hoy = new Date();
-  if(calFecha2.getFullYear() < hoy.getFullYear() ||
-    (calFecha2.getFullYear()===hoy.getFullYear() && calFecha2.getMonth()<hoy.getMonth())){
-    calFecha2 = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+function navCal(delta){
+  STATE.calFecha.setMonth(STATE.calFecha.getMonth()+delta);
+  const hoy=new Date();
+  if(STATE.calFecha.getFullYear()<hoy.getFullYear()||(STATE.calFecha.getFullYear()===hoy.getFullYear()&&STATE.calFecha.getMonth()<hoy.getMonth())){
+    STATE.calFecha=new Date(hoy.getFullYear(),hoy.getMonth(),1);
   }
-  $('calPrev2').disabled = (calFecha2.getMonth()===hoy.getMonth() && calFecha2.getFullYear()===hoy.getFullYear());
-  renderCal2();
+  renderCal();
+  $('slotsWrap').style.display='none';
+  $('calContinueBtn').classList.remove('on');
 }
 
-function renderCal2(){
-  const y = calFecha2.getFullYear(), m = calFecha2.getMonth();
-  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  $('calMes2').textContent = meses[m]+' '+y;
+function renderCal(){
+  const y=STATE.calFecha.getFullYear(),m=STATE.calFecha.getMonth();
+  $('calMesLbl').textContent=`${MESES[m]} ${y}`;
 
-  const hoy = new Date(); hoy.setHours(0,0,0,0);
-  let pd = new Date(y,m,1).getDay(); pd = pd===0?6:pd-1;
-  const dim = new Date(y,m+1,0).getDate();
-  const dias = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  let pd=new Date(y,m,1).getDay();
+  const dim=new Date(y,m+1,0).getDate();
 
-  let html = dias.map(d=>`<div class="cal-hd">${d}</div>`).join('');
-  for(let i=0;i<pd;i++) html += '<div class="cal-day vacio"></div>';
+  let html='';
+  for(let i=0;i<pd;i++) html+='<div class="cal-day vacio"></div>';
 
   for(let dd=1;dd<=dim;dd++){
-    const fecha = new Date(y,m,dd); fecha.setHours(0,0,0,0);
-    const fs = y+'-'+pad(m+1)+'-'+pad(dd);
-    const esHoy = fecha.getTime()===hoy.getTime();
-    const esPasado = fecha <= hoy;
-    const slots = disponibilidad[fs]||[];
-    const tieneLibres = slots.some(s=>!s.ocupado);
+    const fs=y+'-'+pad(m+1)+'-'+pad(dd);
+    const fecha=new Date(y,m,dd);fecha.setHours(0,0,0,0);
+    const esHoy=fecha.getTime()===hoy.getTime();
+    const esPasado=fecha<=hoy;
+    const slots=STATE.disponibilidad[fs]||[];
+    const tieneLibres=slots.some(s=>!s.ocupado);
+    const esSel=STATE.fechaSel===fs;
 
-    let cls = 'cal-day';
-    let onclick = '';
-    if(fs===RES.fecha) { cls+=' sel'; onclick=`onclick="selFecha('${fs}')"` }
-    else if(esPasado) cls += ' pasado';
-    else if(tieneLibres){ cls+=' disponible'; if(esHoy)cls+=' hoy'; onclick=`onclick="selFecha('${fs}')"` }
-    else if(slots.length) cls+=' sin-slots';
-    else cls+=' pasado';
+    let cls='cal-day';
+    let onclick='';
+    if(esSel){cls+=' sel';}
+    else if(esPasado){cls+=' pasado';}
+    else if(tieneLibres){cls+=' disponible';if(esHoy)cls+=' hoy';onclick=`onclick="selFecha('${fs}')"` }
+    else{cls+=' pasado';}
 
-    html += `<div class="${cls}" ${onclick}>${dd}</div>`;
+    html+=`<div class="${cls}" ${onclick}>${dd}</div>`;
   }
+  $('calGrid').innerHTML=html;
 
-  $('calGrid2').innerHTML = html;
-  $('calPrev2').disabled = (m===hoy.getMonth() && y===hoy.getFullYear());
+  const hoyM=hoy.getMonth(),hoyY=hoy.getFullYear();
+  $('calPrev').disabled=(m===hoyM&&y===hoyY);
 }
 
 function selFecha(fs){
-  RES.fecha = fs;
-  RES.horaInicio = null;
-  RES.horaFin = null;
-  renderCal2();
-  $('btnSiguiente2').disabled = false;
+  STATE.fechaSel=fs;
+  STATE.horaSel=null;
+  STATE.horaFinSel=null;
+  renderCal();
+  renderSlots(fs);
+  $('calContinueBtn').classList.remove('on');
 }
 
-// ══════════════════════════════════════════════
-// SLOTS PASO 3
-// ══════════════════════════════════════════════
-function renderSlots(){
-  const slots = disponibilidad[RES.fecha]||[];
-  const d = RES.fecha ? RES.fecha.split('-') : [];
-  if(d.length) $('slotsLbl').textContent = `${d[2]}/${d[1]}/${d[0]}`;
+function renderSlots(fs){
+  const slots=STATE.disponibilidad[fs]||[];
+  const d=new Date(fs+'T12:00:00');
+  $('slotsFechaLbl').textContent=`${DIAS_S[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+  $('slotsWrap').style.display='block';
+  $('slotsWrap').scrollIntoView({behavior:'smooth',block:'nearest'});
 
   if(!slots.length){
-    $('slotsGrid').innerHTML = '<div class="empty" style="grid-column:1/-1">No hay horarios disponibles para este día.</div>';
+    $('slotsGrid').innerHTML=`<div class="slots-empty" style="grid-column:1/-1">Sin horarios disponibles</div>`;
     return;
   }
 
-  $('slotsGrid').innerHTML = slots.map(s=>`
-    <div class="slot ${s.ocupado?'ocupado':''} ${RES.horaInicio===s.ini&&!s.ocupado?'sel':''}"
+  $('slotsGrid').innerHTML=slots.map(s=>`
+    <div class="slot ${s.ocupado?'ocupado':''} ${STATE.horaSel===s.ini&&!s.ocupado?'sel':''}"
       onclick="${s.ocupado?'':'selSlot(\''+s.ini+'\',\''+s.fin+'\')'}">
-      <div class="slot-hora">${s.ini}</div>
-      <div class="slot-dur">${s.ocupado?'Ocupado':'30 min'}</div>
+      ${s.ini}
+    </div>`).join('');
+}
+
+function selSlot(ini,fin){
+  STATE.horaSel=ini;
+  STATE.horaFinSel=fin;
+  renderSlots(STATE.fechaSel);
+  $('calContinueBtn').classList.add('on');
+  setTimeout(()=>$('calContinueBtn').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+// ══════════════════════════════════════════════
+// FORMULARIO
+// ══════════════════════════════════════════════
+function irFormulario(){
+  // Resumen
+  const d=new Date(STATE.fechaSel+'T12:00:00');
+  const fechaLbl=`${DIAS_S[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+  $('citaResumen').innerHTML=`
+    <div class="cr-row">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <span class="cr-lbl">${STATE.docentesSel.nombre} ${STATE.docentesSel.apellido}</span>
     </div>
-  `).join('');
+    <div class="cr-row">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span class="cr-lbl">${fechaLbl}</span>
+    </div>
+    <div class="cr-row">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <span class="cr-lbl">${STATE.horaSel} – ${STATE.horaFinSel} · 30 minutos</span>
+    </div>`;
+  irVista('form');
 }
 
-function selSlot(ini, fin){
-  RES.horaInicio = ini;
-  RES.horaFin = fin;
-  renderSlots();
-  $('btnSiguiente3').disabled = false;
+function toggleMotivoExtra(){
+  $('motivoExtraWrap').style.display=$('fMotivo').value==='Otro'?'block':'none';
 }
 
-// ══════════════════════════════════════════════
-// CONFIRMAR RESERVA
-// ══════════════════════════════════════════════
+function validarForm(){
+  if(!$('fNombre').value.trim()) return 'Ingresa tu nombre';
+  if(!$('fApellido').value.trim()) return 'Ingresa tu apellido';
+  const c=$('fCorreo').value.trim();
+  if(!c||!c.includes('@')) return 'Ingresa un correo electrónico válido';
+  if(!$('fTelefono').value.trim()) return 'Ingresa tu número de teléfono';
+  if(!$('fEstudiante').value.trim()) return 'Ingresa el nombre del estudiante';
+  if(!$('fGrado').value) return 'Selecciona el grado';
+  if(!$('fMotivo').value) return 'Selecciona el motivo de la cita';
+  return null;
+}
+
 function confirmarReserva(){
-  const btn = $('btnReservar');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> Reservando...';
+  const err=validarForm();
+  if(err){
+    const el=$('formErr');
+    el.textContent='⚠ '+err;el.classList.add('on');
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  $('formErr').classList.remove('on');
 
-  showLoading('Reservando tu cita...');
+  const btn=$('submitBtn');
+  btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
 
-  const payload = {
-    docenteId: RES.docente.id,
-    docenteNombre: `${RES.docente.nombre} ${RES.docente.apellido}`,
-    fecha: RES.fecha,
-    horaInicio: RES.horaInicio,
-    horaFin: RES.horaFin,
-    padreNombre: RES.padre.nombre,
-    padreApellido: RES.padre.apellido,
-    padreCorreo: RES.padre.correo,
-    estudianteNombre: RES.estudiante.nombre,
-    grado: RES.estudiante.grado,
-    motivos: RES.estudiante.motivo,
-    motivoExtra: RES.estudiante.motivoExtra,
+  const payload={
+    docenteId:STATE.docentesSel.id,
+    docenteNombre:`${STATE.docentesSel.nombre} ${STATE.docentesSel.apellido}`,
+    fecha:STATE.fechaSel,
+    horaInicio:STATE.horaSel,
+    horaFin:STATE.horaFinSel,
+    padreNombre:$('fNombre').value.trim(),
+    padreApellido:$('fApellido').value.trim(),
+    padreCorreo:$('fCorreo').value.trim(),
+    padreTelefono:$('fTelefono').value.trim(),
+    estudianteNombre:$('fEstudiante').value.trim(),
+    grado:$('fGrado').value,
+    motivos:$('fMotivo').value,
+    motivoExtra:$('fMotivoExtra')&&$('fMotivoExtra').value.trim()||'',
   };
 
-  apiPublic('reservarCita', payload).then(r=>{
-    hideLoading();
-    if(r.ok){
-      mostrarExito();
-    } else {
-      btn.disabled = false;
-      btn.innerHTML = '✓ Reservar cita';
-      // Si el slot ya fue tomado
-      const msg = r.mensaje || 'Error al reservar. Intenta con otro horario.';
-      alert(msg);
-    }
+  apiPublic('reservarCita',payload).then(r=>{
+    btn.innerHTML='Confirmar reserva';btn.disabled=false;
+    if(r.ok){ mostrarExito(payload); }
+    else{ const el=$('formErr');el.textContent='⚠ '+(r.mensaje||'Error al reservar. Intenta de nuevo.');el.classList.add('on'); }
   }).catch(()=>{
-    hideLoading();
-    btn.disabled = false;
-    btn.innerHTML = '✓ Reservar cita';
-    alert('Error de conexión. Verifica tu internet e intenta de nuevo.');
+    btn.innerHTML='Confirmar reserva';btn.disabled=false;
+    const el=$('formErr');el.textContent='⚠ Error de conexión. Verifica tu internet.';el.classList.add('on');
   });
 }
 
-function mostrarExito(){
-  $('mainContent').style.display = 'none';
-  $('progressWrap').style.display = 'none';
-  const s = $('s-success');
-  s.classList.add('on');
-
-  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-  const d = new Date(RES.fecha+'T12:00:00');
-  const fechaLegible = `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]}`;
-
-  $('successSub').textContent = `Hemos enviado la confirmación a ${RES.padre.correo}`;
-  $('successCard').innerHTML = `
-    <div class="success-row"><span class="success-lb">Docente</span>${RES.docente.nombre} ${RES.docente.apellido}</div>
-    <div class="success-row"><span class="success-lb">Fecha</span>${fechaLegible}</div>
-    <div class="success-row"><span class="success-lb">Hora</span>${RES.horaInicio} – ${RES.horaFin}</div>
-    <div class="success-row"><span class="success-lb">Estudiante</span>${RES.estudiante.nombre}</div>
-    <div class="success-row"><span class="success-lb">Grado</span>${RES.estudiante.grado}</div>
+function mostrarExito(p){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  const d=new Date(p.fecha+'T12:00:00');
+  const fechaLbl=`${DIAS_S[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+  $('exitoSub').textContent=`Hemos enviado la confirmación a ${p.padreCorreo}`;
+  $('exitoCard').innerHTML=`
+    <div class="exito-row"><span class="exito-lb">Docente</span><span class="exito-val">${p.docenteNombre}</span></div>
+    <div class="exito-row"><span class="exito-lb">Fecha</span><span class="exito-val">${fechaLbl}</span></div>
+    <div class="exito-row"><span class="exito-lb">Hora</span><span class="exito-val">${p.horaInicio} – ${p.horaFin}</span></div>
+    <div class="exito-row"><span class="exito-lb">Estudiante</span><span class="exito-val">${p.estudianteNombre} · ${p.grado}</span></div>
+    <div class="exito-row"><span class="exito-lb">Motivo</span><span class="exito-val">${p.motivos}</span></div>
   `;
+  $('v-exito').classList.add('on');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function nuevaReserva(){
-  RES = {docente:null,fecha:null,horaInicio:null,horaFin:null,padre:{},estudiante:{}};
-  disponibilidad = {};
-  $('s-success').classList.remove('on');
-  $('mainContent').style.display = 'block';
-  $('progressWrap').style.display = 'block';
-  document.querySelectorAll('.doc-card').forEach(c=>c.classList.remove('sel'));
-  $('btnSiguiente1').disabled = true;
-  calFecha2 = new Date();
-  irPaso(1);
-}
-
-function showLoading(msg){
-  $('loadingMsg').textContent = msg||'Procesando...';
-  $('loadingOverlay').classList.add('on');
-}
-function hideLoading(){
-  $('loadingOverlay').classList.remove('on');
+  STATE={docentes:STATE.docentes,docentesSel:null,disponibilidad:{},calFecha:new Date(),fechaSel:null,horaSel:null,horaFinSel:null};
+  $('searchInp').value='';
+  $('v-exito').classList.remove('on');
+  renderDocentes(STATE.docentes);
+  irVista('docs');
 }
 </script>
 </body>
