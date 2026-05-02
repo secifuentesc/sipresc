@@ -8,684 +8,906 @@
 <link rel="icon" type="image/png" href="/logo.png">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
 :root{
-  --s0:#050e1d;--s1:#0a1628;--s2:#0f1f3a;--s3:#162447;
-  --gold:#c9962a;--gold2:#e8b84b;--gold3:rgba(201,150,42,.1);
-  --green:#2dd4a0;--red:#f06b6b;--blue:#3b82f6;
-  --tx:#f0f4ff;--mt:#6b7fa3;--mt2:#8a9dc0;
-  --br:rgba(255,255,255,.06);--br2:rgba(255,255,255,.11);
-  --royal:#0f2657;--cobalt:#1e4db7;
+  --s0:#050e1d;
+  --s1:#0a1628;
+  --s2:#0f1f3a;
+  --gold:#c9962a;
+  --gold2:#e8b84b;
+  --green:#2dd4a0;
+  --red:#f06b6b;
+  --blue:#3b82f6;
+  --purple:#8b84f8;
+  --tx:#f0f4ff;
+  --mt:#6b7fa3;
+  --mt2:#8a9dc0;
+  --br:rgba(255,255,255,.07);
+  --br2:rgba(255,255,255,.12);
+  --royal:#0f2657;
+  --cobalt:#1e4db7;
 }
 
 html,body{
   height:100%;height:100svh;
-  font-family:-apple-system,'SF Pro Text','Helvetica Neue',sans-serif;
+  font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
   background:var(--s0);color:var(--tx);
-  overflow:hidden;font-size:15px;
-  -webkit-text-size-adjust:100%
+  overflow:hidden;-webkit-text-size-adjust:100%
 }
 
-/* ── PANTALLA DESARROLLO ── */
-#s-dev{
+/* ══════════════════════════════════
+   DEV GATE
+══════════════════════════════════ */
+#dev-gate{
   position:fixed;inset:0;z-index:999;
   background:var(--s0);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:40px 28px;
   background-image:
-    radial-gradient(ellipse 80% 60% at 50% -10%,rgba(30,77,183,.35) 0%,transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 110%,rgba(14,36,90,.5) 0%,transparent 55%)
+    radial-gradient(ellipse 100% 50% at 50% 0%,rgba(30,77,183,.3) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 40% at 20% 100%,rgba(201,150,42,.08) 0%,transparent 60%)
 }
-.dev-glow{
-  position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:300px;height:300px;
-  background:radial-gradient(circle,rgba(201,150,42,.08) 0%,transparent 70%);
-  pointer-events:none
-}
-.dev-logo{
-  width:76px;height:76px;border-radius:22px;
-  background:linear-gradient(145deg,#1a3a6b,#2046a0,#1a3890);
+.gate-logo{
+  width:72px;height:72px;border-radius:20px;
+  background:linear-gradient(145deg,#1a3a6b,#2046a0);
   display:flex;align-items:center;justify-content:center;
-  margin-bottom:22px;position:relative;z-index:1;
-  box-shadow:0 24px 60px rgba(20,50,160,.45),0 4px 14px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.18)
+  margin-bottom:20px;
+  box-shadow:0 20px 50px rgba(20,50,160,.4),inset 0 1px 0 rgba(255,255,255,.15)
 }
-.dev-logo img{width:44px;filter:brightness(10)}
-.dev-logo span{color:#fff;font-size:28px;font-weight:700}
-.dev-title{font-size:24px;font-weight:700;letter-spacing:-.5px;color:#fff;margin-bottom:6px;position:relative;z-index:1;text-align:center}
-.dev-desc{font-size:13px;color:var(--mt2);text-align:center;line-height:1.6;margin-bottom:10px;position:relative;z-index:1;max-width:260px}
-.dev-chip{
-  background:rgba(201,150,42,.12);border:1px solid rgba(201,150,42,.22);
-  border-radius:20px;padding:5px 14px;font-size:11px;color:var(--gold2);
-  letter-spacing:.8px;margin-bottom:32px;position:relative;z-index:1
+.gate-logo img{width:42px;filter:brightness(10)}
+.gate-logo span{color:#fff;font-size:26px;font-weight:700}
+.gate-title{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.4px;margin-bottom:6px;text-align:center}
+.gate-sub{font-size:13px;color:var(--mt2);text-align:center;margin-bottom:8px;line-height:1.5;max-width:240px}
+.gate-badge{
+  font-size:10px;color:var(--gold2);
+  background:rgba(201,150,42,.1);border:1px solid rgba(201,150,42,.2);
+  border-radius:20px;padding:4px 12px;letter-spacing:.8px;margin-bottom:28px
 }
-.dev-card{
-  width:100%;max-width:310px;position:relative;z-index:1;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:22px;padding:22px 20px;
-  box-shadow:0 32px 64px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06)
+.gate-card{
+  width:100%;max-width:300px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;padding:20px;
+  box-shadow:0 24px 60px rgba(0,0,0,.3)
 }
-.dev-lbl{font-size:11px;color:var(--mt);margin-bottom:8px;letter-spacing:.3px}
-.dev-input{
+.gate-lbl{font-size:11px;color:var(--mt);margin-bottom:7px;letter-spacing:.3px}
+.gate-inp{
   width:100%;background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.1);border-radius:12px;
-  color:#fff;padding:14px;font-size:20px;letter-spacing:6px;
-  text-align:center;outline:none;-webkit-appearance:none;
-  transition:border-color .2s,box-shadow .2s;margin-bottom:12px
+  border:1px solid rgba(255,255,255,.1);border-radius:11px;
+  color:#fff;padding:13px;font-size:22px;letter-spacing:8px;text-align:center;
+  outline:none;-webkit-appearance:none;margin-bottom:11px;
+  transition:border-color .2s,box-shadow .2s
 }
-.dev-input:focus{border-color:rgba(201,150,42,.5);box-shadow:0 0 0 3px rgba(201,150,42,.1)}
-.dev-btn{
-  width:100%;padding:14px;border-radius:12px;
-  background:linear-gradient(135deg,rgba(201,150,42,.8),var(--gold2));
-  border:none;color:#000;font-size:14px;font-weight:700;
-  cursor:pointer;transition:all .15s;letter-spacing:-.1px
+.gate-inp:focus{border-color:rgba(201,150,42,.5);box-shadow:0 0 0 3px rgba(201,150,42,.1)}
+.gate-btn{
+  width:100%;padding:13px;border-radius:11px;border:none;
+  background:linear-gradient(135deg,#9a7220,var(--gold2));
+  color:#000;font-size:14px;font-weight:700;cursor:pointer;
+  transition:opacity .15s,transform .1s
 }
-.dev-btn:active{transform:scale(.98);opacity:.9}
-.dev-err{font-size:12px;color:var(--red);text-align:center;margin-top:10px;height:16px;transition:opacity .2s}
+.gate-btn:active{transform:scale(.98);opacity:.9}
+.gate-err{
+  font-size:12px;color:var(--red);text-align:center;
+  margin-top:8px;min-height:16px;transition:opacity .2s
+}
 
-/* ── SPLASH ── */
+/* ══════════════════════════════════
+   SPLASH
+══════════════════════════════════ */
 #splash{
   position:fixed;inset:0;background:var(--s0);
   display:flex;align-items:center;justify-content:center;
-  z-index:200;gap:10px;flex-direction:column
+  z-index:200;flex-direction:column;gap:10px
 }
 #splash p{font-size:12px;color:var(--mt);letter-spacing:.5px}
+.spin-w{
+  width:22px;height:22px;
+  border:2.5px solid rgba(255,255,255,.1);
+  border-top-color:rgba(255,255,255,.6);
+  border-radius:50%;animation:rot .7s linear infinite
+}
+@keyframes rot{to{transform:rotate(360deg)}}
 
-/* ── APP SHELL ── */
-#app{position:fixed;inset:0;display:none;flex-direction:column}
+/* ══════════════════════════════════
+   APP SHELL
+══════════════════════════════════ */
+#app{
+  position:fixed;inset:0;
+  display:none;flex-direction:column;
+  background:var(--s0)
+}
 #app.on{display:flex}
 
-/* ── TOPBAR ── */
+/* ══════════════════════════════════
+   TOPBAR — ultra minimal
+══════════════════════════════════ */
 .topbar{
   flex-shrink:0;
-  display:flex;align-items:center;gap:10px;
-  padding:10px 16px;
-  padding-top:calc(10px + env(safe-area-inset-top,0));
-  background:rgba(5,14,29,.82);
-  border-bottom:1px solid var(--br);
-  -webkit-backdrop-filter:blur(28px);backdrop-filter:blur(28px);
-  z-index:20
+  padding:14px 20px 0;
+  padding-top:calc(14px + env(safe-area-inset-top,0));
+  display:flex;align-items:center;justify-content:space-between
 }
+.tb-logo-wrap{display:flex;align-items:center;gap:8px}
 .tb-logo{
-  width:32px;height:32px;border-radius:10px;
+  width:28px;height:28px;border-radius:8px;
   background:linear-gradient(140deg,#1c3f7a,#2557c7);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0
+  display:flex;align-items:center;justify-content:center
 }
-.tb-logo img{width:19px;filter:brightness(10)}
-.tb-logo span{color:#fff;font-size:14px;font-weight:700}
-.tb-title{font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1;color:#fff}
-.tb-back{
-  background:none;border:none;color:var(--mt2);
-  font-size:13px;cursor:pointer;padding:4px 8px;
-  display:flex;align-items:center;gap:4px;flex-shrink:0;
-  transition:color .15s
-}
-.tb-back:hover{color:#fff}
-.tb-back svg{width:15px;height:15px;stroke:currentColor;stroke-width:2.5;fill:none}
-.tb-out{
-  background:none;border:none;color:var(--mt);
-  font-size:12px;cursor:pointer;padding:4px 8px;flex-shrink:0
-}
-
-/* ── SEGMENTED CONTROL (iOS style) ── */
-.seg{
-  flex-shrink:0;
-  padding:8px 16px 10px;
-  background:rgba(5,14,29,.6);
-  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)
-}
-.seg-inner{
-  display:flex;background:rgba(255,255,255,.06);
-  border-radius:10px;padding:2px;gap:2px
-}
-.seg-btn{
-  flex:1;padding:7px 0;border-radius:8px;border:none;background:none;
-  color:var(--mt2);font-size:13px;font-weight:500;cursor:pointer;
-  transition:all .2s;font-family:-apple-system,sans-serif
-}
-.seg-btn.on{
-  background:rgba(255,255,255,.12);color:#fff;font-weight:600;
-  box-shadow:0 1px 4px rgba(0,0,0,.3)
-}
-
-/* ── SCROLL AREA ── */
-.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-
-/* ── TABS ── */
-.tab{display:none}
-.tab.on{display:block;animation:fadeIn .2s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-/* ══════════════════════════════════
-   TAB CALENDARIO — estilo Calendly
-   ══════════════════════════════════ */
-#t-cal{padding:0}
-
-/* Header del mes */
-.cal-month-bar{
-  padding:16px 20px 10px;
-  display:flex;align-items:center;justify-content:space-between
-}
-.cal-month-name{font-size:18px;font-weight:700;letter-spacing:-.3px}
-.cal-year{font-size:13px;color:var(--mt);margin-left:6px;font-weight:400}
-.cal-nav{display:flex;gap:6px}
-.cal-nav-btn{
-  width:34px;height:34px;border-radius:50%;
-  background:rgba(255,255,255,.06);border:1px solid var(--br2);
-  color:var(--tx);display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all .15s
-}
-.cal-nav-btn:hover{background:rgba(255,255,255,.11)}
-.cal-nav-btn:active{transform:scale(.92)}
-.cal-nav-btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:2.5;fill:none}
-
-/* Grid del calendario */
-.cal-grid-wrap{padding:0 12px 4px}
-.cal-hds{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px}
-.cal-hd{text-align:center;font-size:11px;color:var(--mt);font-weight:600;padding:4px 0;letter-spacing:.3px}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.cd{
-  aspect-ratio:1;border-radius:50%;font-size:13px;font-weight:500;
-  display:flex;align-items:center;justify-content:center;
-  cursor:default;transition:all .18s;position:relative;
-  color:rgba(255,255,255,.25)
-}
-.cd.vacio{visibility:hidden}
-.cd.hoy{color:var(--gold2);font-weight:700}
-.cd.hoy::after{
-  content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);
-  width:4px;height:4px;border-radius:50%;background:var(--gold)
-}
-.cd.disponible{
-  color:#fff;cursor:pointer;
-  background:rgba(45,212,160,.07);
-}
-.cd.disponible:hover{
-  background:rgba(45,212,160,.2);
-  transform:scale(1.12)
-}
-.cd.disponible:active{transform:scale(.95)}
-.cd.sel{
-  background:var(--gold)!important;
-  color:#000!important;font-weight:700;
-  box-shadow:0 4px 16px rgba(201,150,42,.4);
-  transform:scale(1.1)
-}
-.cd.sel::after{display:none}
-.cd.agotado{color:rgba(255,255,255,.15)}
-
-/* Panel de citas del día */
-.dia-panel{
-  margin:12px 16px 0;
-  background:rgba(255,255,255,.03);
-  border:1px solid var(--br);border-radius:20px;
-  overflow:hidden;min-height:120px
-}
-.dia-panel-header{
-  padding:14px 16px 10px;
-  border-bottom:1px solid var(--br);
-  display:flex;align-items:center;justify-content:space-between
-}
-.dia-panel-fecha{font-size:14px;font-weight:600;letter-spacing:-.2px}
-.dia-panel-cnt{
-  font-size:11px;background:rgba(45,212,160,.12);
-  border:1px solid rgba(45,212,160,.2);color:var(--green);
-  border-radius:20px;padding:3px 10px;font-weight:600
-}
-.dia-panel-body{padding:10px 12px 14px}
-
-/* Cita item — timeline style */
-.cita-item{
-  display:flex;gap:12px;padding:10px 0;
-  border-bottom:1px solid var(--br);
-  cursor:pointer;transition:all .15s;border-radius:0
-}
-.cita-item:last-child{border-bottom:none}
-.cita-item:active{opacity:.7}
-.ci-time{
-  flex-shrink:0;width:52px;
-  font-size:12px;font-weight:600;color:var(--gold2);
-  font-family:'SF Mono','Courier New',monospace;
-  padding-top:2px;text-align:right
-}
-.ci-line{
-  flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:0;
-  padding-top:6px
-}
-.ci-dot{
-  width:10px;height:10px;border-radius:50%;flex-shrink:0;
-  border:2px solid var(--green);background:rgba(45,212,160,.2)
-}
-.ci-dot.cancelada{border-color:var(--red);background:rgba(240,107,107,.15)}
-.ci-stem{width:1px;flex:1;background:var(--br2);margin-top:3px}
-.ci-info{flex:1;min-width:0;padding-top:0}
-.ci-nombre{font-size:14px;font-weight:600;margin-bottom:2px}
-.ci-meta{font-size:12px;color:var(--mt2);margin-bottom:4px}
-.ci-chip{
-  display:inline-flex;align-items:center;gap:4px;
-  font-size:10px;border-radius:20px;padding:2px 8px;
-  font-family:'SF Mono','Courier New',monospace
-}
-.ci-chip.confirmada{background:rgba(45,212,160,.1);color:var(--green);border:1px solid rgba(45,212,160,.18)}
-.ci-chip.cancelada{background:rgba(240,107,107,.1);color:var(--red);border:1px solid rgba(240,107,107,.18)}
-.ci-acta-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
-
-/* Estado vacío del panel */
-.dia-empty{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:28px 20px;gap:8px;text-align:center
-}
-.dia-empty svg{width:32px;height:32px;stroke:var(--mt);opacity:.35}
-.dia-empty p{font-size:13px;color:var(--mt);line-height:1.5}
-
-/* Leyenda */
-.cal-legend{
-  display:flex;gap:16px;padding:10px 20px 6px;flex-wrap:wrap
-}
-.leg{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mt)}
-.leg-dot{width:8px;height:8px;border-radius:50%}
-
-/* ══════════════════════════════════
-   TAB HORARIOS — tarjetas limpias
-   ══════════════════════════════════ */
-#t-hor{padding:20px 16px 40px}
-
-.hor-profile{
-  background:rgba(255,255,255,.04);border:1px solid var(--br2);
-  border-radius:20px;padding:18px 16px;margin-bottom:20px;
-  display:flex;align-items:center;gap:14px
-}
-.hor-avatar{
-  width:52px;height:52px;border-radius:16px;flex-shrink:0;
-  background:linear-gradient(135deg,var(--royal),var(--cobalt));
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;font-weight:700;color:var(--gold2)
-}
-.hor-profile-info{flex:1;min-width:0}
-.hor-profile-name{font-size:16px;font-weight:700;margin-bottom:3px;letter-spacing:-.2px}
-.hor-profile-status{display:flex;align-items:center;gap:6px;font-size:12px}
-.hor-status-dot{width:7px;height:7px;border-radius:50%}
-
-/* Sección */
-.hor-section{margin-bottom:24px}
-.hor-section-title{
-  font-size:11px;font-weight:600;color:var(--mt);
-  letter-spacing:.8px;text-transform:uppercase;
-  margin-bottom:10px;padding-left:2px
-}
-
-/* Día card */
-.dia-card{
-  background:rgba(255,255,255,.04);border:1px solid var(--br);
-  border-radius:16px;padding:14px 16px;margin-bottom:8px;
-  transition:all .18s
-}
-.dia-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0}
-.dia-card.has-slots .dia-card-header{margin-bottom:12px}
-.dia-nombre{font-size:14px;font-weight:600}
-.dia-add-btn{
+.tb-logo img{width:16px;filter:brightness(10)}
+.tb-logo span{color:#fff;font-size:12px;font-weight:700}
+.tb-brand{font-size:12px;font-weight:600;color:var(--mt2);letter-spacing:.3px}
+.tb-actions{display:flex;align-items:center;gap:4px}
+.tb-btn{
   background:rgba(255,255,255,.07);border:1px solid var(--br2);
-  border-radius:8px;padding:5px 10px;color:var(--mt2);
-  font-size:12px;cursor:pointer;transition:all .15s;
+  border-radius:20px;padding:5px 12px;
+  color:var(--mt2);font-size:12px;cursor:pointer;
+  font-family:-apple-system,sans-serif;transition:all .15s
+}
+.tb-btn:hover{color:#fff;background:rgba(255,255,255,.11)}
+
+/* ══════════════════════════════════
+   TAB BAR — iOS style
+══════════════════════════════════ */
+.tabbar{
+  flex-shrink:0;
+  padding:10px 20px 0;
+  display:flex;gap:0
+}
+.tabb{
+  flex:1;padding:8px 0;border:none;background:none;
+  color:var(--mt);font-size:13px;font-weight:500;cursor:pointer;
+  font-family:-apple-system,sans-serif;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  position:relative;transition:color .2s
+}
+.tabb svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.6;fill:none;transition:all .2s}
+.tabb span{font-size:10px;letter-spacing:.2px}
+.tabb.on{color:#fff}
+.tabb.on svg{stroke-width:2.2}
+.tab-indicator{
+  position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--gold);
+  opacity:0;transition:opacity .2s
+}
+.tabb.on .tab-indicator{opacity:1}
+.tabbar-line{height:1px;background:var(--br);margin:10px 20px 0;flex-shrink:0}
+
+/* ══════════════════════════════════
+   SCROLL
+══════════════════════════════════ */
+.scroll{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding-bottom:calc(20px + env(safe-area-inset-bottom,0))
+}
+
+/* ══════════════════════════════════
+   VISTAS
+══════════════════════════════════ */
+.view{display:none}
+.view.on{display:block;animation:slideUp .28s cubic-bezier(.34,1.3,.64,1) both}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════════════
+   VISTA REUNIONES
+══════════════════════════════════ */
+
+/* Hero saludo */
+.hero{
+  padding:24px 20px 8px
+}
+.hero-greeting{
+  font-size:13px;color:var(--mt2);font-weight:500;
+  letter-spacing:.2px;margin-bottom:4px
+}
+.hero-name{
+  font-size:30px;font-weight:700;letter-spacing:-.8px;
+  line-height:1.1;margin-bottom:18px
+}
+.hero-name span{color:var(--gold2)}
+
+/* Stats row — estilo Fitness rings */
+.stats-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  margin-bottom:6px
+}
+.stat-card{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;padding:14px 12px;
+  position:relative;overflow:hidden;
+  transition:transform .15s
+}
+.stat-card:active{transform:scale(.97)}
+.stat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:18px 18px 0 0
+}
+.stat-card.s-green::before{background:var(--green)}
+.stat-card.s-gold::before{background:var(--gold)}
+.stat-card.s-red::before{background:var(--red)}
+.stat-num{
+  font-size:28px;font-weight:700;letter-spacing:-.5px;line-height:1;margin-bottom:4px
+}
+.stat-card.s-green .stat-num{color:var(--green)}
+.stat-card.s-gold .stat-num{color:var(--gold2)}
+.stat-card.s-red .stat-num{color:var(--red)}
+.stat-lbl{font-size:10px;color:var(--mt2);line-height:1.3;font-weight:500}
+
+/* Sección header */
+.sec-header{
+  display:flex;align-items:baseline;justify-content:space-between;
+  padding:20px 20px 10px
+}
+.sec-title{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.sec-link{font-size:13px;color:var(--gold2);font-weight:500}
+
+/* Filtro chips */
+.filter-row{
+  display:flex;gap:6px;padding:0 20px 14px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch
+}
+.filter-row::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;padding:6px 14px;border-radius:20px;
+  background:rgba(255,255,255,.06);border:1px solid var(--br2);
+  color:var(--mt2);font-size:12px;font-weight:500;cursor:pointer;
+  transition:all .18s;white-space:nowrap;
   font-family:-apple-system,sans-serif
 }
-.dia-add-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.chip.on{
+  background:rgba(201,150,42,.15);border-color:rgba(201,150,42,.35);
+  color:var(--gold2);font-weight:600
+}
 
-/* Slot row */
+/* Cita card — premium */
+.cita-card{
+  margin:0 16px 12px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:22px;overflow:hidden;
+  cursor:pointer;transition:all .2s;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)
+}
+.cita-card:active{transform:scale(.98);opacity:.85}
+
+/* Banda de color + hora */
+.cita-band{
+  padding:14px 16px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,.06)
+}
+.cita-hora-wrap{display:flex;align-items:center;gap:10px}
+.cita-hora-dot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 8px currentColor
+}
+.cita-hora{
+  font-size:16px;font-weight:700;letter-spacing:-.2px;
+  font-variant-numeric:tabular-nums
+}
+.cita-dur{
+  font-size:11px;color:var(--mt2);font-weight:500;
+  background:rgba(255,255,255,.07);border-radius:20px;padding:3px 9px
+}
+
+/* Cuerpo de la card */
+.cita-body{padding:12px 16px 14px}
+.cita-fecha-lbl{
+  font-size:11px;color:var(--mt);font-weight:600;
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px
+}
+.cita-nombre{font-size:17px;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
+.cita-info{font-size:13px;color:var(--mt2);margin-bottom:10px;line-height:1.5}
+.cita-footer{display:flex;align-items:center;justify-content:space-between}
+.cita-badge{
+  font-size:10px;font-weight:600;border-radius:20px;padding:4px 10px;
+  letter-spacing:.3px
+}
+.cita-badge.confirmada{
+  background:rgba(45,212,160,.12);color:var(--green);
+  border:1px solid rgba(45,212,160,.2)
+}
+.cita-badge.cancelada{
+  background:rgba(240,107,107,.1);color:var(--red);
+  border:1px solid rgba(240,107,107,.18)
+}
+.cita-acta{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;color:var(--gold2);font-weight:500
+}
+.cita-acta-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+
+/* Cita HOY — destacada */
+.cita-card.hoy{
+  background:linear-gradient(145deg,rgba(14,36,90,.9),rgba(25,60,130,.7));
+  border-color:rgba(45,212,160,.25);
+  box-shadow:0 8px 32px rgba(45,212,160,.1)
+}
+.cita-card.hoy .cita-band{border-bottom-color:rgba(45,212,160,.15)}
+
+/* Agrupador de fecha */
+.date-group{padding:6px 20px 4px}
+.date-group-lbl{
+  font-size:13px;font-weight:700;color:var(--mt2);letter-spacing:-.1px
+}
+.date-group-lbl.hoy-lbl{color:var(--green)}
+
+/* Empty state */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;
+  padding:48px 32px;text-align:center;gap:12px
+}
+.empty-ico{
+  width:64px;height:64px;border-radius:20px;
+  background:rgba(255,255,255,.05);border:1px solid var(--br);
+  display:flex;align-items:center;justify-content:center;margin-bottom:4px
+}
+.empty-ico svg{width:28px;height:28px;stroke:var(--mt);stroke-width:1.5;fill:none}
+.empty-title{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.empty-sub{font-size:13px;color:var(--mt2);line-height:1.6;max-width:220px}
+
+/* ══════════════════════════════════
+   VISTA DISPONIBILIDAD
+══════════════════════════════════ */
+
+/* Hero disponibilidad */
+.avail-hero{
+  padding:24px 20px 20px;
+  background:linear-gradient(180deg,rgba(30,77,183,.15) 0%,transparent 100%)
+}
+.avail-hero-top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.avail-avatar{
+  width:54px;height:54px;border-radius:16px;
+  background:linear-gradient(135deg,var(--royal),var(--cobalt));
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:700;color:var(--gold2);flex-shrink:0;
+  box-shadow:0 8px 20px rgba(14,36,90,.5)
+}
+.avail-info{flex:1}
+.avail-nombre{font-size:18px;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
+.avail-status{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mt2)}
+.avail-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* Info pills */
+.avail-pills{display:flex;gap:8px;flex-wrap:wrap}
+.avail-pill{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.06);border:1px solid var(--br2);
+  border-radius:12px;padding:8px 12px;font-size:12px;font-weight:500
+}
+.avail-pill svg{width:14px;height:14px;stroke:var(--gold2);stroke-width:2;fill:none;flex-shrink:0}
+
+/* Sección días */
+.avail-section{padding:0 20px;margin-bottom:8px}
+.avail-sec-title{
+  font-size:13px;font-weight:600;color:var(--mt);
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px
+}
+
+/* Día row — estilo Calendly availability */
+.dia-row{
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--br);
+  border-radius:18px;margin-bottom:8px;
+  overflow:hidden;transition:border-color .2s
+}
+.dia-row.active{border-color:rgba(45,212,160,.2)}
+.dia-row-header{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;cursor:pointer;transition:background .15s
+}
+.dia-row-header:active{background:rgba(255,255,255,.03)}
+
+/* Toggle iOS */
+.toggle-wrap{flex-shrink:0}
+.toggle{
+  position:relative;width:44px;height:26px;
+  background:rgba(255,255,255,.12);border-radius:13px;
+  cursor:pointer;transition:background .25s;flex-shrink:0
+}
+.toggle.on{background:var(--green)}
+.toggle-thumb{
+  position:absolute;top:3px;left:3px;
+  width:20px;height:20px;border-radius:50%;background:#fff;
+  transition:transform .25s cubic-bezier(.34,1.4,.64,1);
+  box-shadow:0 2px 6px rgba(0,0,0,.3)
+}
+.toggle.on .toggle-thumb{transform:translateX(18px)}
+
+.dia-nombre{font-size:15px;font-weight:600;flex:1}
+.dia-resumen{font-size:12px;color:var(--mt2)}
+
+/* Slots dentro del día */
+.dia-slots{
+  padding:0 16px 14px;
+  border-top:1px solid var(--br);
+  display:none
+}
+.dia-row.active .dia-slots{display:block}
+.dia-slots-inner{padding-top:12px}
 .slot-row{
-  display:flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,.04);border:1px solid var(--br);
-  border-radius:10px;padding:8px 10px;margin-bottom:6px
+  display:flex;align-items:center;gap:8px;margin-bottom:8px
 }
-.slot-row:last-child{margin-bottom:0}
-.time-inp{
-  flex:1;background:none;border:none;color:#fff;
-  font-size:14px;font-weight:500;outline:none;
-  font-family:-apple-system,sans-serif;
-  -webkit-appearance:none
+.time-pill{
+  flex:1;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  padding:9px 10px;gap:6px
 }
-.slot-sep{color:var(--mt);font-size:13px;flex-shrink:0}
+.time-pill input[type="time"]{
+  background:none;border:none;color:#fff;
+  font-size:15px;font-weight:600;outline:none;
+  -webkit-appearance:none;font-family:-apple-system,sans-serif;
+  width:70px;text-align:center
+}
+.time-pill-sep{color:var(--mt);font-size:13px;font-weight:300}
 .slot-del{
-  background:none;border:none;color:var(--mt);
-  font-size:18px;line-height:1;cursor:pointer;padding:0 2px;
-  flex-shrink:0;transition:color .15s
+  width:28px;height:28px;border-radius:8px;
+  background:rgba(240,107,107,.1);border:1px solid rgba(240,107,107,.15);
+  color:var(--red);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all .15s
 }
-.slot-del:hover{color:var(--red)}
+.slot-del:hover{background:rgba(240,107,107,.2)}
+.add-slot-btn{
+  display:flex;align-items:center;gap:6px;
+  background:none;border:1px dashed rgba(255,255,255,.15);
+  border-radius:10px;padding:9px 14px;width:100%;
+  color:var(--mt2);font-size:13px;font-weight:500;cursor:pointer;
+  transition:all .15s;font-family:-apple-system,sans-serif;margin-top:4px
+}
+.add-slot-btn:hover{border-color:rgba(201,150,42,.3);color:var(--gold2)}
+.add-slot-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.5;fill:none}
 
-/* Sin slots label */
-.dia-empty-label{font-size:12px;color:var(--mt);padding:2px 0}
-
-/* Guardar btn */
-.save-bar{
-  position:sticky;bottom:0;padding:12px 16px;
-  background:rgba(5,14,29,.9);
-  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
-  border-top:1px solid var(--br)
+/* Readonly slots (ya guardado) */
+.slot-readonly{
+  display:flex;align-items:center;gap:8px;margin-bottom:6px
+}
+.slot-readonly-time{
+  background:rgba(255,255,255,.05);border:1px solid var(--br);
+  border-radius:10px;padding:8px 14px;
+  font-size:14px;font-weight:600;color:var(--gold2);
+  font-variant-numeric:tabular-nums;flex:1;text-align:center
 }
 
-/* Cierre agenda card */
-.cierre-section{
-  background:rgba(240,107,107,.04);border:1px solid rgba(240,107,107,.1);
-  border-radius:16px;padding:16px;margin-bottom:20px
-}
-.cierre-title{font-size:14px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
-.cierre-desc{font-size:12px;color:var(--mt2);line-height:1.6;margin-bottom:12px}
-
-/* Sol modificación */
-.sol-section{
-  background:rgba(139,132,248,.04);border:1px solid rgba(139,132,248,.12);
-  border-radius:16px;padding:16px
-}
-.sol-title{font-size:14px;font-weight:600;margin-bottom:4px}
-.sol-desc{font-size:12px;color:var(--mt2);line-height:1.6;margin-bottom:12px}
-
-/* ── BUTTONS ── */
-.btn{
-  width:100%;padding:14px;border-radius:13px;border:none;
-  font-family:-apple-system,sans-serif;font-size:15px;font-weight:600;
-  cursor:pointer;transition:all .15s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  -webkit-appearance:none;letter-spacing:-.1px
-}
-.btn:active{transform:scale(.98)}
-.btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important}
-.btn-gold{
+/* Botón guardar fijo */
+.save-fab{
+  position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0));
+  left:50%;transform:translateX(-50%);
   background:linear-gradient(135deg,#7a5a14,var(--gold));
-  color:#000;font-weight:700;
-  box-shadow:0 6px 20px rgba(201,150,42,.25)
+  color:#000;font-size:15px;font-weight:700;
+  border:none;border-radius:14px;padding:15px 32px;
+  cursor:pointer;white-space:nowrap;
+  box-shadow:0 8px 28px rgba(201,150,42,.35);
+  display:none;align-items:center;gap:8px;
+  transition:all .2s;font-family:-apple-system,sans-serif;
+  z-index:30
 }
-.btn-ghost{background:rgba(255,255,255,.07);border:1px solid var(--br2);color:var(--tx)}
-.btn-ghost:hover{background:rgba(255,255,255,.1)}
-.btn-danger{background:rgba(240,107,107,.1);border:1px solid rgba(240,107,107,.2);color:var(--red)}
-.btn-sm{padding:10px 14px;font-size:13px;border-radius:10px;width:auto}
+.save-fab.on{display:flex}
+.save-fab:active{transform:translateX(-50%) scale(.97)}
 
-/* ── SHEET ── */
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;display:none;
-  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+/* Modificación y cierre */
+.action-section{padding:0 20px 20px}
+.action-card{
+  background:rgba(255,255,255,.04);border:1px solid var(--br);
+  border-radius:18px;padding:16px;margin-bottom:10px
+}
+.action-card-title{
+  font-size:15px;font-weight:700;margin-bottom:4px;
+  display:flex;align-items:center;gap:8px
+}
+.action-card-desc{font-size:13px;color:var(--mt2);line-height:1.6;margin-bottom:12px}
+.action-btn{
+  width:100%;padding:12px;border-radius:12px;border:none;
+  font-size:14px;font-weight:600;cursor:pointer;
+  font-family:-apple-system,sans-serif;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px
+}
+.action-btn:active{transform:scale(.98)}
+.ab-ghost{background:rgba(255,255,255,.07);border:1px solid var(--br2);color:var(--tx)}
+.ab-danger{background:rgba(240,107,107,.1);border:1px solid rgba(240,107,107,.18);color:var(--red)}
+
+/* ══════════════════════════════════
+   SHEET — full sheet iOS
+══════════════════════════════════ */
+.ov{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;
+  display:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)
+}
 .ov.on{display:block}
 .sheet{
   position:fixed;bottom:0;left:0;right:0;z-index:41;
-  background:#0f1e38;border-top:1px solid var(--br2);
-  border-radius:22px 22px 0 0;
-  padding:0 0 calc(28px + env(safe-area-inset-bottom,0px));
-  max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  transform:translateY(100%);transition:transform .32s cubic-bezier(.34,1.4,.64,1)
+  background:#0c1b34;
+  border-top:1px solid rgba(255,255,255,.1);
+  border-radius:24px 24px 0 0;
+  padding-bottom:calc(32px + env(safe-area-inset-bottom,0));
+  max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.32,1.2,.64,1)
 }
 .sheet.on{transform:translateY(0)}
-.sh-handle{width:38px;height:4px;background:var(--br2);border-radius:2px;margin:14px auto 0}
-.sh-body{padding:18px 18px 0}
-.sh-title{font-size:18px;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
-.sh-sub{font-size:13px;color:var(--mt2);margin-bottom:18px;line-height:1.5}
+.sh-handle{
+  width:36px;height:4px;background:rgba(255,255,255,.18);
+  border-radius:2px;margin:14px auto 0
+}
+.sh-content{padding:20px 20px 0}
+.sh-eyebrow{
+  font-size:11px;font-weight:600;color:var(--mt);
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px
+}
+.sh-title{font-size:22px;font-weight:700;letter-spacing:-.4px;margin-bottom:4px}
+.sh-meta{font-size:13px;color:var(--mt2);margin-bottom:20px;line-height:1.4}
 
-/* Info rows */
+.sh-info-card{
+  background:rgba(255,255,255,.04);border:1px solid var(--br);
+  border-radius:16px;padding:4px 0;margin-bottom:18px
+}
 .sh-row{
-  display:flex;gap:10px;padding:10px 0;
+  display:flex;gap:12px;padding:11px 16px;
   border-bottom:1px solid var(--br);font-size:13px;align-items:flex-start
 }
-.sh-row:last-of-type{border-bottom:none}
-.sh-lb{color:var(--mt);width:80px;flex-shrink:0;font-size:12px;padding-top:1px}
+.sh-row:last-child{border-bottom:none}
+.sh-lb{color:var(--mt);width:76px;flex-shrink:0;font-size:12px;padding-top:1px;font-weight:500}
+.sh-val{flex:1;line-height:1.4}
 
-/* Acta */
-.acta-section{
-  background:rgba(201,150,42,.05);border:1px solid rgba(201,150,42,.13);
-  border-radius:14px;padding:14px;margin-top:14px
+/* Acta section */
+.acta-wrap{
+  background:rgba(201,150,42,.05);border:1px solid rgba(201,150,42,.15);
+  border-radius:16px;padding:16px;margin-bottom:16px
 }
-.acta-lbl{font-size:11px;font-weight:600;color:var(--gold2);letter-spacing:.5px;margin-bottom:8px}
-.acta-txt{
+.acta-eyebrow{
+  font-size:10px;font-weight:700;color:var(--gold2);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;
+  display:flex;align-items:center;gap:6px
+}
+.acta-dot-ind{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.acta-preview{
+  font-size:13px;line-height:1.7;color:var(--tx);
+  background:rgba(255,255,255,.04);border-radius:10px;
+  padding:12px;margin-bottom:10px
+}
+.acta-textarea{
   width:100%;background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.1);border-radius:10px;
-  color:#fff;padding:12px;font-size:14px;line-height:1.5;
-  font-family:-apple-system,sans-serif;outline:none;resize:none;
-  min-height:90px;-webkit-appearance:none;transition:border-color .2s
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;
+  color:#fff;padding:12px;font-size:14px;line-height:1.6;
+  font-family:-apple-system,sans-serif;outline:none;
+  resize:none;min-height:100px;-webkit-appearance:none;
+  transition:border-color .2s
 }
-.acta-txt:focus{border-color:rgba(201,150,42,.4)}
-.acta-saved{
-  background:rgba(45,212,160,.06);border:1px solid rgba(45,212,160,.15);
-  border-radius:10px;padding:12px;font-size:13px;line-height:1.6;color:var(--tx)
+.acta-textarea:focus{border-color:rgba(201,150,42,.4)}
+.acta-hint{font-size:11px;color:var(--mt);margin-bottom:10px;line-height:1.5}
+
+/* Botones del sheet */
+.sh-btns{display:flex;flex-direction:column;gap:8px}
+.sh-btn{
+  width:100%;padding:14px;border-radius:13px;border:none;
+  font-size:15px;font-weight:600;cursor:pointer;
+  font-family:-apple-system,sans-serif;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  -webkit-appearance:none
 }
-.acta-badge{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:10px;background:rgba(201,150,42,.1);
-  color:var(--gold2);border:1px solid rgba(201,150,42,.2);
-  border-radius:20px;padding:3px 9px;margin-bottom:8px
+.sh-btn:active{transform:scale(.98)}
+.sh-btn-green{
+  background:linear-gradient(135deg,#059669,var(--green));
+  color:#000;box-shadow:0 6px 20px rgba(45,212,160,.25)
 }
+.sh-btn-gold{
+  background:linear-gradient(135deg,#7a5a14,var(--gold));
+  color:#000;box-shadow:0 6px 20px rgba(201,150,42,.2)
+}
+.sh-btn-danger{background:rgba(240,107,107,.1);border:1px solid rgba(240,107,107,.2);color:var(--red)}
+.sh-btn-ghost{background:rgba(255,255,255,.07);border:1px solid var(--br2);color:var(--mt2)}
 
 /* Form */
 .fg{margin-bottom:12px}
-.fl{display:block;font-size:10px;color:var(--mt);margin-bottom:6px;
-  letter-spacing:.5px;text-transform:uppercase}
+.fl{display:block;font-size:11px;color:var(--mt);margin-bottom:6px;
+  letter-spacing:.4px;text-transform:uppercase;font-weight:600}
 .fi,.fta{
   width:100%;background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.1);border-radius:11px;
-  color:#fff;padding:12px 13px;font-size:15px;
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;
+  color:#fff;padding:13px;font-size:15px;line-height:1.4;
   font-family:-apple-system,sans-serif;outline:none;
-  transition:border-color .2s,box-shadow .2s;-webkit-appearance:none
+  -webkit-appearance:none;transition:border-color .2s,box-shadow .2s
 }
 .fi:focus,.fta:focus{border-color:rgba(201,150,42,.4);box-shadow:0 0 0 3px rgba(201,150,42,.08)}
-.fta{resize:vertical;min-height:80px}
-
-/* Spinner */
-.spin{width:14px;height:14px;border:2px solid rgba(0,0,0,.2);
-  border-top-color:#000;border-radius:50%;animation:rot .7s linear infinite;flex-shrink:0}
-.spin-w{width:14px;height:14px;border:2px solid rgba(255,255,255,.15);
-  border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;flex-shrink:0}
-@keyframes rot{to{transform:rotate(360deg)}}
+.fta{resize:vertical;min-height:88px}
 
 /* Toast */
 .toast{
-  position:fixed;bottom:90px;left:50%;
-  transform:translateX(-50%) translateY(120px);
-  background:#1a2f52;border:1px solid var(--br2);border-radius:13px;
-  padding:12px 18px;font-size:13px;max-width:300px;width:calc(100% - 36px);
-  text-align:center;z-index:200;
-  transition:transform .3s cubic-bezier(.34,1.4,.64,1)
+  position:fixed;bottom:calc(80px + env(safe-area-inset-bottom,0));
+  left:50%;transform:translateX(-50%) translateY(120px);
+  background:#1a2f52;border:1px solid rgba(255,255,255,.15);
+  border-radius:13px;padding:12px 20px;font-size:13px;font-weight:500;
+  max-width:300px;width:calc(100% - 36px);text-align:center;
+  z-index:200;transition:transform .32s cubic-bezier(.34,1.4,.64,1)
 }
 .toast.on{transform:translateX(-50%) translateY(0)}
 .toast.ok{border-color:rgba(45,212,160,.35);color:var(--green)}
 .toast.er{border-color:rgba(240,107,107,.35);color:var(--red)}
 
-/* Divider */
-.div{height:1px;background:var(--br);margin:16px 0}
+/* Spinner btn */
+.spin-btn{width:16px;height:16px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:rot .7s linear infinite;flex-shrink:0}
 </style>
 </head>
 <body>
 
-<!-- ── PANTALLA DESARROLLO ── -->
-<div id="s-dev">
-  <div class="dev-glow"></div>
-  <div class="dev-logo">
+<!-- ══ DEV GATE ══ -->
+<div id="dev-gate">
+  <div class="gate-logo">
     <img src="/logo.png" onerror="this.style.display='none';this.parentNode.innerHTML='<span>S</span>'">
   </div>
-  <div class="dev-title">Módulo de Citas</div>
-  <div class="dev-desc">Este módulo está en desarrollo y estará disponible pronto.</div>
-  <div class="dev-chip">⚙ EN DESARROLLO</div>
-  <div class="dev-card">
-    <div class="dev-lbl">Acceso de administrador</div>
-    <input type="password" id="devClave" class="dev-input" placeholder="••••••••" maxlength="20">
-    <button class="dev-btn" onclick="checkDev()">Continuar</button>
-    <div class="dev-err" id="devErr"> </div>
+  <div class="gate-title">Módulo de Citas</div>
+  <div class="gate-sub">Próximamente disponible para todos los docentes</div>
+  <div class="gate-badge">⚙ EN DESARROLLO</div>
+  <div class="gate-card">
+    <div class="gate-lbl">Acceso de administrador</div>
+    <input type="password" id="gateInp" class="gate-inp" placeholder="••••••••" maxlength="20"
+      onkeydown="if(event.key==='Enter')checkGate()">
+    <button class="gate-btn" onclick="checkGate()">Continuar →</button>
+    <div class="gate-err" id="gateErr"> </div>
   </div>
 </div>
 
-<!-- ── SPLASH ── -->
+<!-- ══ SPLASH ══ -->
 <div id="splash">
   <div class="spin-w"></div>
   <p>Validando sesión...</p>
 </div>
 
-<!-- ── APP ── -->
+<!-- ══ APP ══ -->
 <div id="app">
 
-  <!-- TOPBAR -->
+  <!-- Topbar -->
   <div class="topbar">
-    <div class="tb-logo">
-      <img src="/logo.png" onerror="this.style.display='none';this.parentNode.innerHTML='<span>S</span>'">
+    <div class="tb-logo-wrap">
+      <div class="tb-logo">
+        <img src="/logo.png" onerror="this.style.display='none';this.parentNode.innerHTML='<span>S</span>'">
+      </div>
+      <span class="tb-brand">SIPRESC</span>
     </div>
-    <div class="tb-title" id="tbTitle">Mis Citas</div>
-    <button class="tb-back" onclick="window.location.href='/'">
-      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      Inicio
+    <div class="tb-actions">
+      <button class="tb-btn" onclick="window.location.href='/'">← Inicio</button>
+      <button class="tb-btn" onclick="doLogout()">Salir</button>
+    </div>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tabbar">
+    <button class="tabb on" id="tab-meet" onclick="goView('meet',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2.5"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="8" cy="15" r="1" fill="currentColor"/><circle cx="12" cy="15" r="1" fill="currentColor"/><circle cx="16" cy="15" r="1" fill="currentColor"/></svg>
+      <span>Reuniones</span>
+      <div class="tab-indicator"></div>
     </button>
-    <button class="tb-out" onclick="doLogout()">Salir</button>
+    <button class="tabb" id="tab-avail" onclick="goView('avail',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <span>Disponibilidad</span>
+      <div class="tab-indicator"></div>
+    </button>
   </div>
+  <div class="tabbar-line"></div>
 
-  <!-- SEGMENTED CONTROL -->
-  <div class="seg">
-    <div class="seg-inner">
-      <button class="seg-btn on" id="seg-cal" onclick="goTab('cal',this)">Calendario</button>
-      <button class="seg-btn" id="seg-hor" onclick="goTab('hor',this)">Horarios</button>
-    </div>
-  </div>
-
-  <!-- SCROLL -->
+  <!-- Scroll area -->
   <div class="scroll" id="scrollArea">
 
-    <!-- ═══════ TAB CALENDARIO ═══════ -->
-    <div class="tab on" id="t-cal">
+    <!-- ════ VISTA REUNIONES ════ -->
+    <div class="view on" id="v-meet">
 
-      <!-- Navegación mes -->
-      <div class="cal-month-bar">
-        <div>
-          <span class="cal-month-name" id="calMes">—</span>
-          <span class="cal-year" id="calAnio"></span>
-        </div>
-        <div class="cal-nav">
-          <button class="cal-nav-btn" onclick="navCal(-1)">
-            <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
-          <button class="cal-nav-btn" onclick="navCal(1)">
-            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
-        </div>
-      </div>
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-greeting" id="heroDate">—</div>
+        <div class="hero-name">Hola, <span id="heroName">—</span> 👋</div>
 
-      <!-- Leyenda -->
-      <div class="cal-legend">
-        <div class="leg"><div class="leg-dot" style="background:rgba(45,212,160,.5)"></div>Con citas</div>
-        <div class="leg"><div class="leg-dot" style="background:var(--gold);opacity:.7"></div>Hoy</div>
-      </div>
-
-      <!-- Grid días semana -->
-      <div class="cal-grid-wrap">
-        <div class="cal-hds">
-          <div class="cal-hd">Lu</div><div class="cal-hd">Ma</div><div class="cal-hd">Mi</div>
-          <div class="cal-hd">Ju</div><div class="cal-hd">Vi</div>
-          <div class="cal-hd">Sá</div><div class="cal-hd">Do</div>
-        </div>
-        <div class="cal-grid" id="calGrid"></div>
-      </div>
-
-      <!-- Panel citas del día -->
-      <div class="dia-panel" id="diaPanel">
-        <div class="dia-empty">
-          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.5"/></svg>
-          <p>Toca un día para ver tus citas</p>
-        </div>
-      </div>
-
-      <div style="height:24px"></div>
-    </div>
-
-    <!-- ═══════ TAB HORARIOS ═══════ -->
-    <div class="tab" id="t-hor">
-
-      <!-- Perfil docente -->
-      <div class="hor-profile">
-        <div class="hor-avatar" id="horAvatar">—</div>
-        <div class="hor-profile-info">
-          <div class="hor-profile-name" id="horNombre">—</div>
-          <div class="hor-profile-status">
-            <div class="hor-status-dot" id="horStatusDot" style="background:var(--green)"></div>
-            <span id="horStatusLbl" style="color:var(--mt2)">Cargando...</span>
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card s-green">
+            <div class="stat-num" id="statProx">—</div>
+            <div class="stat-lbl">Próximas citas</div>
+          </div>
+          <div class="stat-card s-gold">
+            <div class="stat-num" id="statHoy">—</div>
+            <div class="stat-lbl">Hoy</div>
+          </div>
+          <div class="stat-card s-red">
+            <div class="stat-num" id="statTotal">—</div>
+            <div class="stat-lbl">Este mes</div>
           </div>
         </div>
       </div>
 
-      <!-- Horario actual / editable -->
-      <div class="hor-section">
-        <div class="hor-section-title" id="horSecTitle">Horario de atención</div>
-        <div id="horCards"></div>
+      <!-- Filtros -->
+      <div class="sec-header">
+        <div class="sec-title">Reuniones</div>
+      </div>
+      <div class="filter-row">
+        <button class="chip on" onclick="filtrar('proximas',this)">Próximas</button>
+        <button class="chip" onclick="filtrar('hoy',this)">Hoy</button>
+        <button class="chip" onclick="filtrar('pasadas',this)">Pasadas</button>
+        <button class="chip" onclick="filtrar('todas',this)">Todas</button>
       </div>
 
-      <!-- Solicitar modificación (si ya tiene horario) -->
-      <div class="sol-section" id="solSection" style="display:none">
-        <div class="sol-title">¿Necesitas cambiar tu horario?</div>
-        <div class="sol-desc">Las modificaciones al horario requieren autorización del administrador. La coordinadora también será notificada.</div>
-        <button class="btn btn-ghost btn-sm" style="width:100%" onclick="abrirSolHorario()">Solicitar modificación →</button>
-      </div>
-
-      <div class="div"></div>
-
-      <!-- Cierre de agenda -->
-      <div class="cierre-section">
-        <div class="cierre-title">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          Cierre de agenda
+      <!-- Lista citas -->
+      <div id="citasList">
+        <div class="empty-state">
+          <div class="empty-ico"><div class="spin-w"></div></div>
+          <div class="empty-sub">Cargando reuniones...</div>
         </div>
-        <div class="cierre-desc">Si necesitas bloquear días específicos en tu agenda, envía una solicitud. La coordinadora es notificada y el administrador autoriza.</div>
-        <button class="btn btn-danger btn-sm" style="width:100%" onclick="abrirSolCierre()">Solicitar cierre de agenda</button>
       </div>
 
-      <!-- Botón guardar (primera vez) -->
-      <div id="saveWrap" style="display:none;margin-top:8px">
-        <button class="btn btn-gold" onclick="guardarHorario()">Guardar horario</button>
+    </div><!-- /v-meet -->
+
+    <!-- ════ VISTA DISPONIBILIDAD ════ -->
+    <div class="view" id="v-avail">
+
+      <!-- Hero perfil -->
+      <div class="avail-hero">
+        <div class="avail-hero-top">
+          <div class="avail-avatar" id="availAvatar">—</div>
+          <div class="avail-info">
+            <div class="avail-nombre" id="availNombre">—</div>
+            <div class="avail-status">
+              <div class="avail-dot" id="availDot" style="background:var(--mt)"></div>
+              <span id="availStatusLbl">Cargando...</span>
+            </div>
+          </div>
+        </div>
+        <div class="avail-pills">
+          <div class="avail-pill">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            30 min por cita
+          </div>
+          <div class="avail-pill">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+            Solo padres de familia
+          </div>
+        </div>
       </div>
 
-      <div style="height:32px"></div>
-    </div>
+      <!-- Días -->
+      <div class="avail-section" style="padding-top:16px">
+        <div class="avail-sec-title">Horas semanales</div>
+        <div id="diasGrid"></div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="action-section" id="actionSection" style="display:none">
+        <div class="action-card">
+          <div class="action-card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Modificar horario
+          </div>
+          <div class="action-card-desc">Los cambios de horario requieren autorización del administrador. La coordinadora también es notificada.</div>
+          <button class="action-btn ab-ghost" onclick="abrirSolHorario()">Solicitar cambio →</button>
+        </div>
+        <div class="action-card">
+          <div class="action-card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Cerrar agenda
+          </div>
+          <div class="action-card-desc">Bloquea tu agenda para fechas específicas. La coordinadora es notificada y el administrador autoriza.</div>
+          <button class="action-btn ab-danger" onclick="abrirSolCierre()">Solicitar cierre</button>
+        </div>
+      </div>
+
+      <div style="height:100px"></div>
+    </div><!-- /v-avail -->
 
   </div><!-- /scroll -->
+
+  <!-- FAB guardar -->
+  <button class="save-fab" id="saveFab" onclick="guardarHorario()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    Guardar horario
+  </button>
+
 </div><!-- /app -->
 
-<!-- SHEETS -->
+<!-- Sheets -->
 <div class="ov" id="ov1" onclick="closeSheet('sh1','ov1')"></div>
 <div class="sheet" id="sh1">
   <div class="sh-handle"></div>
-  <div class="sh-body" id="sh1b"></div>
+  <div class="sh-content" id="sh1c"></div>
 </div>
 
 <div class="ov" id="ov2" onclick="closeSheet('sh2','ov2')"></div>
 <div class="sheet" id="sh2">
   <div class="sh-handle"></div>
-  <div class="sh-body" id="sh2b"></div>
+  <div class="sh-content" id="sh2c"></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-
-const $ = id => document.getElementById(id);
-const pad = n => String(n).padStart(2,'0');
-const DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-// ══════════════════════════════════════
-// DEV GATE
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════
+// CONSTANTES Y UTILS
+// ══════════════════════════════════════════════
 const CLAVE_DEV = '1624Scc$';
 const DEV_KEY   = 'sipresc_citas_dev';
+const API       = '/api/proxy';
+const DIAS      = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const MESES     = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES_CORTO = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
-function checkDev(){
-  if($('devClave').value === CLAVE_DEV){
+// — IMPORTANTE: $ debe declararse PRIMERO —
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,'0');
+
+let ST = {correo:null,nombre:null,docenteId:null,rol:null,citas:[],horarios:{},yaGuardado:false};
+let filtroCitas = 'proximas';
+
+// ══════════════════════════════════════════════
+// DEV GATE
+// ══════════════════════════════════════════════
+function checkGate(){
+  if($('gateInp').value === CLAVE_DEV){
     sessionStorage.setItem(DEV_KEY,'1');
-    $('s-dev').style.display = 'none';
+    $('dev-gate').style.display = 'none';
     boot();
   } else {
-    $('devErr').textContent = 'Clave incorrecta';
-    $('devClave').value = '';
-    setTimeout(()=>$('devErr').textContent=' ',1800);
+    $('gateErr').textContent = 'Clave incorrecta';
+    $('gateInp').value = '';
+    setTimeout(()=>$('gateErr').textContent=' ', 1800);
   }
 }
-$('devClave').addEventListener('keydown',e=>{ if(e.key==='Enter') checkDev(); });
 
-// ══════════════════════════════════════
-// CORE
-// ══════════════════════════════════════
-const API = '/api/proxy';
-let ST = {correo:null,nombre:null,docenteId:null,rol:null,citas:[],horarios:{},yaGuardado:false};
-let calFecha = new Date();
-let calSel   = null;
+// ══════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════
+function boot(){
+  $('splash').style.display = 'flex';
+  const data = localStorage.getItem('lp_user');
+  if(!data){ go('/'); return; }
+  try{
+    const obj = JSON.parse(data);
+    if(Date.now() - obj.loginTime > 14*864e5){ localStorage.removeItem('lp_user'); go('/'); return; }
+    ST.correo = obj.correo;
+    api('loginGoogle',{correo:obj.correo}).then(r=>{
+      if(!r.ok){ localStorage.removeItem('lp_user'); go('/'); return; }
+      ST.rol=r.rol; ST.nombre=r.nombre; ST.docenteId=r.docenteId;
+      $('splash').style.display='none';
+      $('app').classList.add('on');
+      iniciar();
+    }).catch(()=>{ $('splash').style.display='none'; go('/'); });
+  }catch{ go('/'); }
+}
 
+function go(url){ window.location.href = url; }
+function doLogout(){ localStorage.removeItem('lp_user'); sessionStorage.removeItem(DEV_KEY); go('/'); }
 
-function api(action,payload){
+function iniciar(){
+  // Hero
+  const primer = (ST.nombre||'').split(' ')[0];
+  $('heroName').textContent = primer.charAt(0).toUpperCase()+primer.slice(1).toLowerCase();
+  const d = new Date();
+  const diasSemana=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  $('heroDate').textContent = `${diasSemana[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]}`;
+
+  // Disponibilidad profile
+  const ini = (ST.nombre||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
+  $('availAvatar').textContent = ini||'—';
+  $('availNombre').textContent = ST.nombre||'—';
+
+  cargarCitas();
+  cargarHorarios();
+}
+
+// ══════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════
+function goView(id, el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.tabb').forEach(b=>b.classList.remove('on'));
+  $('v-'+id).classList.add('on');
+  el.classList.add('on');
+  $('scrollArea').scrollTop = 0;
+  // FAB solo en disponibilidad si no tiene horario
+  $('saveFab').classList.toggle('on', id==='avail' && !ST.yaGuardado);
+}
+
+// ══════════════════════════════════════════════
+// API
+// ══════════════════════════════════════════════
+function api(action, payload){
   return new Promise((res,rej)=>{
     const body={action,...(payload||{})};
     if(ST.correo) body.correo=ST.correo;
@@ -697,266 +919,227 @@ function api(action,payload){
 function toast(msg,tipo){
   const t=$('toast'); t.textContent=msg;
   t.className='toast on '+(tipo||'');
-  clearTimeout(t._t); t._t=setTimeout(()=>t.className='toast',3200);
+  clearTimeout(t._t); t._t=setTimeout(()=>t.className='toast',3000);
 }
-function openSheet(sh,ov){$(ov).classList.add('on');$(sh).classList.add('on');}
-function closeSheet(sh,ov){$(ov).classList.remove('on');$(sh).classList.remove('on');}
+function openSheet(s,o){$(o).classList.add('on');$(s).classList.add('on');}
+function closeSheet(s,o){$(o).classList.remove('on');$(s).classList.remove('on');}
 function spinBtn(btn){
-  const o=btn.innerHTML; btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
-  return t=>{btn.innerHTML=t||o;btn.disabled=false;};
-}
-function fmtFecha(f){if(!f)return'';const p=f.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
-
-// ══════════════════════════════════════
-// BOOT
-// ══════════════════════════════════════
-function boot(){
-  $('splash').style.display='flex';
-  const data=localStorage.getItem('lp_user');
-  if(!data){window.location.href='/';return;}
-  try{
-    const obj=JSON.parse(data);
-    if(Date.now()-obj.loginTime>14*864e5){localStorage.removeItem('lp_user');window.location.href='/';return;}
-    ST.correo=obj.correo;
-    api('loginGoogle',{correo:obj.correo}).then(r=>{
-      if(!r.ok){localStorage.removeItem('lp_user');window.location.href='/';return;}
-      ST.rol=r.rol; ST.nombre=r.nombre; ST.docenteId=r.docenteId;
-      $('splash').style.display='none';
-      $('app').classList.add('on');
-      iniciar();
-    }).catch(()=>{$('splash').style.display='none';window.location.href='/';});
-  }catch{window.location.href='/';}
+  const o=btn.innerHTML; btn.innerHTML='<span class="spin-btn"></span>'; btn.disabled=true;
+  return t=>{btn.innerHTML=t||o; btn.disabled=false;};
 }
 
-function doLogout(){
-  localStorage.removeItem('lp_user');
-  sessionStorage.removeItem(DEV_KEY);
-  window.location.href='/';
-}
-
-function iniciar(){
-  // Topbar nombre
-  const primer=(ST.nombre||'').split(' ')[0];
-  $('tbTitle').textContent='Hola, '+primer.charAt(0).toUpperCase()+primer.slice(1).toLowerCase();
-
-  // Horario profile
-  const ini=(ST.nombre||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
-  $('horAvatar').textContent=ini||'—';
-  $('horNombre').textContent=ST.nombre||'—';
-
-  cargarCitas();
-  cargarHorarios();
-  renderCal();
-}
-
-// ══════════════════════════════════════
-// TAB NAV
-// ══════════════════════════════════════
-function goTab(id,el){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
-  document.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('on'));
-  $('t-'+id).classList.add('on');
-  el.classList.add('on');
-  $('scrollArea').scrollTop=0;
-}
-
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════
 // CITAS
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════
 function cargarCitas(){
   api('misCitas',{docenteId:ST.docenteId}).then(citas=>{
-    ST.citas=citas||[];
-    renderCal();
-    if(calSel) mostrarDia(calSel);
-  }).catch(()=>{});
+    ST.citas = citas||[];
+    actualizarStats();
+    renderCitas(filtroCitas);
+  }).catch(()=>{
+    $('citasList').innerHTML=`<div class="empty-state">
+      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01" stroke-width="2"/><circle cx="12" cy="12" r="9" stroke-width="1.5"/></svg></div>
+      <div class="empty-title">Sin conexión</div>
+      <div class="empty-sub">No se pudieron cargar las citas</div>
+    </div>`;
+  });
 }
 
-// ══════════════════════════════════════
-// CALENDARIO
-// ══════════════════════════════════════
-function navCal(d){
-  calFecha.setMonth(calFecha.getMonth()+d);
-  calSel=null;
-  renderCal();
-  $('diaPanel').innerHTML=`<div class="dia-empty">
-    <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.5"/></svg>
-    <p>Toca un día para ver tus citas</p></div>`;
+function actualizarStats(){
+  const hoyStr = new Date().toISOString().split('T')[0];
+  const [y,m] = hoyStr.split('-');
+  const mesStr = `${y}-${m}`;
+
+  const proximas = ST.citas.filter(c=>c.fecha>=hoyStr&&c.estado==='confirmada');
+  const hoy = ST.citas.filter(c=>c.fecha===hoyStr&&c.estado==='confirmada');
+  const esMes = ST.citas.filter(c=>c.fecha&&c.fecha.startsWith(mesStr)&&c.estado==='confirmada');
+
+  $('statProx').textContent = proximas.length;
+  $('statHoy').textContent  = hoy.length;
+  $('statTotal').textContent= esMes.length;
 }
 
-function renderCal(){
-  const y=calFecha.getFullYear(), m=calFecha.getMonth();
-  $('calMes').textContent=MESES[m];
-  $('calAnio').textContent=y;
+function filtrar(f, el){
+  filtroCitas = f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  renderCitas(f);
+}
 
-  const hoy=new Date(); hoy.setHours(0,0,0,0);
-  const cpf={};
-  (ST.citas||[]).forEach(c=>{
-    if(!cpf[c.fecha]) cpf[c.fecha]=[];
-    cpf[c.fecha].push(c);
+function renderCitas(filtro){
+  const hoyStr = new Date().toISOString().split('T')[0];
+  let citas = [...ST.citas];
+
+  if(filtro==='proximas') citas = citas.filter(c=>c.fecha>=hoyStr&&c.estado==='confirmada');
+  else if(filtro==='hoy')  citas = citas.filter(c=>c.fecha===hoyStr);
+  else if(filtro==='pasadas') citas = citas.filter(c=>c.fecha<hoyStr);
+  // 'todas' → sin filtro adicional
+
+  citas.sort((a,b)=>a.fecha===b.fecha?a.horaInicio.localeCompare(b.horaInicio):a.fecha.localeCompare(b.fecha));
+
+  if(!citas.length){
+    const msgs = {
+      proximas:'No tienes citas próximas programadas',
+      hoy:'No tienes citas para hoy',
+      pasadas:'Sin citas pasadas registradas',
+      todas:'No hay citas registradas'
+    };
+    $('citasList').innerHTML=`<div class="empty-state">
+      <div class="empty-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2.5"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      </div>
+      <div class="empty-title">Sin reuniones</div>
+      <div class="empty-sub">${msgs[filtro]||''}</div>
+    </div>`;
+    return;
+  }
+
+  // Agrupar por fecha
+  const grupos = {};
+  citas.forEach(c=>{
+    if(!grupos[c.fecha]) grupos[c.fecha]=[];
+    grupos[c.fecha].push(c);
   });
 
-  let pd=new Date(y,m,1).getDay(); pd=pd===0?6:pd-1;
-  const dim=new Date(y,m+1,0).getDate();
-  let html='';
-  for(let i=0;i<pd;i++) html+='<div class="cd vacio"></div>';
+  let html = '';
+  Object.keys(grupos).sort().forEach(fecha=>{
+    const d = new Date(fecha+'T12:00:00');
+    const diasSemana=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    const esHoy = fecha===hoyStr;
+    const esMañana = fecha===new Date(Date.now()+864e5).toISOString().split('T')[0];
 
-  for(let dd=1;dd<=dim;dd++){
-    const fs=y+'-'+pad(m+1)+'-'+pad(dd);
-    const fecha=new Date(y,m,dd); fecha.setHours(0,0,0,0);
-    const cd=cpf[fs]||[];
-    const esHoy=fecha.getTime()===hoy.getTime();
-    const esSel=calSel===fs;
+    let lbl = `${diasSemana[d.getDay()]} ${d.getDate()} ${MESES_CORTO[d.getMonth()]}`;
+    if(esHoy) lbl = 'Hoy · '+lbl;
+    else if(esMañana) lbl = 'Mañana · '+lbl;
 
-    let cls='cd';
-    let style='';
-    let onclick='';
+    html += `<div class="date-group"><div class="date-group-lbl ${esHoy?'hoy-lbl':''}">${lbl}</div></div>`;
 
-    if(esSel){ cls+=' sel'; }
-    else if(esHoy){ cls+=' hoy disponible'; onclick=`onclick="selDia('${fs}')"` }
-    else if(cd.length){ cls+=' disponible'; onclick=`onclick="selDia('${fs}')"` }
-    else { cls+=' agotado'; }
-
-    // Indicador de citas
-    if(cd.length && !esSel){
-      style=`style="background:rgba(45,212,160,${Math.min(.07+cd.length*.03,.18)})"`;
-    }
-
-    html+=`<div class="${cls}" ${style} ${onclick}>${dd}</div>`;
-  }
-  $('calGrid').innerHTML=html;
-}
-
-function selDia(fs){
-  calSel=fs;
-  renderCal();
-  mostrarDia(fs);
-}
-
-function mostrarDia(fs){
-  const citas=(ST.citas||[]).filter(c=>c.fecha===fs);
-  const d=fs.split('-');
-  const diasSemana=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  const fechaObj=new Date(fs+'T12:00:00');
-  const diaNombre=diasSemana[fechaObj.getDay()];
-  const fechaLegible=`${diaNombre} ${parseInt(d[2])} de ${MESES[parseInt(d[1])-1]}`;
-
-  const sorted=[...citas].sort((a,b)=>a.horaInicio.localeCompare(b.horaInicio));
-
-  let inner='';
-  if(!sorted.length){
-    inner=`<div class="dia-empty"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke-width="1.5"/><path d="M9 12l2 2 4-4" stroke-width="1.5"/></svg><p>Sin citas para este día</p></div>`;
-  } else {
-    inner=sorted.map((c,i)=>`
-      <div class="cita-item" onclick="verCita('${c.id}')">
-        <div class="ci-time">${c.horaInicio}</div>
-        <div class="ci-line">
-          <div class="ci-dot ${c.estado}"></div>
-          ${i<sorted.length-1?'<div class="ci-stem"></div>':''}
-        </div>
-        <div class="ci-info">
-          <div class="ci-nombre">${c.padreNombre||''} ${c.padreApellido||''}</div>
-          <div class="ci-meta">👤 ${c.estudianteNombre||''} · ${c.grado||''}</div>
-          <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-            <span class="ci-chip ${c.estado}">${c.estado==='confirmada'?'Confirmada':'Cancelada'}</span>
-            ${c.acta?'<span class="ci-chip" style="background:rgba(201,150,42,.1);color:var(--gold2);border:1px solid rgba(201,150,42,.18)"><span class="ci-acta-dot"></span>Acta</span>':''}
+    grupos[fecha].forEach(c=>{
+      const esHoyCard = fecha===hoyStr;
+      const color = c.estado==='confirmada' ? 'var(--green)' : 'var(--red)';
+      html += `
+        <div class="cita-card ${esHoyCard?'hoy':''}" onclick="verCita('${c.id}')">
+          <div class="cita-band">
+            <div class="cita-hora-wrap">
+              <div class="cita-hora-dot" style="color:${color};background:${color}"></div>
+              <div class="cita-hora">${c.horaInicio} – ${c.horaFin}</div>
+            </div>
+            <div class="cita-dur">30 min</div>
           </div>
-        </div>
-      </div>`).join('');
-  }
+          <div class="cita-body">
+            <div class="cita-fecha-lbl">${esHoyCard?'HOY':'REUNIÓN PRESENCIAL'}</div>
+            <div class="cita-nombre">${c.padreNombre||''} ${c.padreApellido||''}</div>
+            <div class="cita-info">👤 ${c.estudianteNombre||''} · ${c.grado||''}<br>📋 ${c.motivos||''}</div>
+            <div class="cita-footer">
+              <span class="cita-badge ${c.estado}">${c.estado==='confirmada'?'✓ Confirmada':'✕ Cancelada'}</span>
+              ${c.acta?`<div class="cita-acta"><div class="cita-acta-dot"></div>Acta guardada</div>`:''}
+            </div>
+          </div>
+        </div>`;
+    });
+  });
 
-  $('diaPanel').innerHTML=`
-    <div class="dia-panel-header">
-      <div class="dia-panel-fecha">${fechaLegible}</div>
-      ${sorted.length?`<div class="dia-panel-cnt">${sorted.length} cita${sorted.length>1?'s':''}</div>`:''}
-    </div>
-    <div class="dia-panel-body">${inner}</div>`;
+  $('citasList').innerHTML = html;
 }
 
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════
 // DETALLE CITA
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════
 function verCita(id){
-  const c=ST.citas.find(x=>x.id===id);
+  const c = ST.citas.find(x=>x.id===id);
   if(!c) return;
-  const tieneActa=c.acta&&c.acta.trim().length>0;
+  const tieneActa = c.acta&&c.acta.trim().length>0;
+  const d = new Date(c.fecha+'T12:00:00');
+  const diasSemana=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const fechaLegible = `${diasSemana[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
 
-  $('sh1b').innerHTML=`
+  $('sh1c').innerHTML = `
+    <div class="sh-eyebrow">Reunión presencial · 30 min</div>
     <div class="sh-title">${c.padreNombre||''} ${c.padreApellido||''}</div>
-    <div class="sh-sub">${fmtFecha(c.fecha)} · ${c.horaInicio} – ${c.horaFin}</div>
+    <div class="sh-meta">${fechaLegible} · ${c.horaInicio} – ${c.horaFin}</div>
 
-    <div class="sh-row"><span class="sh-lb">Estudiante</span>${c.estudianteNombre||'—'}</div>
-    <div class="sh-row"><span class="sh-lb">Grado</span>${c.grado||'—'}</div>
-    <div class="sh-row"><span class="sh-lb">Correo</span><span style="font-size:12px;word-break:break-all">${c.padreCorreo||'—'}</span></div>
-    <div class="sh-row"><span class="sh-lb">Motivo</span>${c.motivos||'—'}${c.motivoExtra?' · '+c.motivoExtra:''}</div>
-    <div class="sh-row" style="border:none"><span class="sh-lb">Estado</span>
-      <span class="ci-chip ${c.estado}" style="margin:0">${c.estado==='confirmada'?'✓ Confirmada':'✕ Cancelada'}</span>
+    <div class="sh-info-card">
+      <div class="sh-row"><span class="sh-lb">Estudiante</span><span class="sh-val">${c.estudianteNombre||'—'}</span></div>
+      <div class="sh-row"><span class="sh-lb">Grado</span><span class="sh-val">${c.grado||'—'}</span></div>
+      <div class="sh-row"><span class="sh-lb">Correo</span><span class="sh-val" style="font-size:12px;word-break:break-all">${c.padreCorreo||'—'}</span></div>
+      <div class="sh-row"><span class="sh-lb">Motivo</span><span class="sh-val">${c.motivos||'—'}${c.motivoExtra?' · '+c.motivoExtra:''}</span></div>
+      <div class="sh-row" style="border:none"><span class="sh-lb">Estado</span>
+        <span class="cita-badge ${c.estado}" style="margin:0;font-size:11px">${c.estado==='confirmada'?'✓ Confirmada':'✕ Cancelada'}</span>
+      </div>
     </div>
 
-    ${c.estado==='confirmada' ? `
-    <div class="acta-section">
+    ${c.estado==='confirmada'?`
+    <div class="acta-wrap">
+      <div class="acta-eyebrow">
+        <div class="acta-dot-ind"></div>
+        ACTA DE REUNIÓN
+      </div>
       ${tieneActa?`
-        <div class="acta-badge">📝 Acta registrada</div>
-        <div class="acta-saved" id="actaPreview">${c.acta}</div>
-        <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:10px" onclick="toggleActaEditor('${id}')">Editar acta →</button>
-        <div id="actaEditor" style="display:none;margin-top:10px">
-          <textarea class="acta-txt" id="actaTxt">${c.acta}</textarea>
-          <button class="btn btn-gold btn-sm" style="width:100%;margin-top:8px" onclick="guardarActa('${id}')">Guardar cambios</button>
+        <div class="acta-preview" id="actaPreview">${c.acta}</div>
+        <div id="actaEditWrap" style="display:none">
+          <textarea class="acta-textarea" id="actaTxt">${c.acta}</textarea>
+          <button class="sh-btn sh-btn-gold" style="margin-top:10px" onclick="guardarActa('${c.id}')">Guardar cambios</button>
         </div>
+        <button class="sh-btn sh-btn-ghost" style="margin-top:8px" onclick="toggleActaEdit()">✏ Editar acta</button>
       `:`
-        <div class="acta-lbl">ACTA DE REUNIÓN</div>
-        <div style="font-size:12px;color:var(--mt2);margin-bottom:10px;line-height:1.5">Escribe un breve resumen. Se enviará copia al correo del padre/madre.</div>
-        <textarea class="acta-txt" id="actaTxt" placeholder="Ej: Se revisó el rendimiento académico. Se acordó refuerzo en casa..."></textarea>
-        <button class="btn btn-gold btn-sm" style="width:100%;margin-top:8px" onclick="guardarActa('${id}')">Enviar y guardar acta</button>
+        <div class="acta-hint">Escribe un breve resumen de la reunión. Se enviará copia al correo del padre/madre.</div>
+        <textarea class="acta-textarea" id="actaTxt" placeholder="Ej: Se revisó el rendimiento académico en matemáticas. Se acordó refuerzo en casa tres veces por semana..."></textarea>
+        <button class="sh-btn sh-btn-gold" style="margin-top:10px" onclick="guardarActa('${c.id}')">
+          📤 Enviar y guardar acta
+        </button>
       `}
     </div>
-
-    <div style="margin-top:14px">
-      <button class="btn btn-danger btn-sm" style="width:100%" onclick="pedirCancelacion('${id}')">Cancelar cita</button>
-    </div>` : ''}
-
-    <div style="margin-top:10px">
-      <button class="btn btn-ghost" onclick="closeSheet('sh1','ov1')">Cerrar</button>
+    <div class="sh-btns" style="margin-top:12px">
+      <button class="sh-btn sh-btn-danger" onclick="pedirCancelacion('${c.id}')">Cancelar cita</button>
     </div>
-    <div style="height:8px"></div>
+    `:''}
+
+    <div class="sh-btns" style="margin-top:8px">
+      <button class="sh-btn sh-btn-ghost" onclick="closeSheet('sh1','ov1')">Cerrar</button>
+    </div>
+    <div style="height:12px"></div>
   `;
   openSheet('sh1','ov1');
 }
 
-function toggleActaEditor(id){
-  const ed=$('actaEditor');
-  const show=ed.style.display==='none';
-  ed.style.display=show?'block':'none';
+function toggleActaEdit(){
+  const w=$('actaEditWrap'), p=$('actaPreview');
+  const show = w.style.display==='none';
+  w.style.display = show?'block':'none';
+  if(p) p.style.display = show?'none':'block';
   if(show) $('actaTxt').focus();
 }
 
 function guardarActa(citaId){
-  const texto=($('actaTxt')&&$('actaTxt').value||'').trim();
-  if(texto.length<10){toast('Escribe al menos 10 caracteres','er');return;}
-  const btn=document.querySelector('#sh1b .btn-gold');
+  const txt=($('actaTxt')&&$('actaTxt').value||'').trim();
+  if(txt.length<10){toast('Escribe al menos 10 caracteres','er');return;}
+  const btn=document.querySelector('#sh1c .sh-btn-gold');
   const rest=spinBtn(btn);
-  api('guardarActa',{citaId,acta:texto,docenteId:ST.docenteId}).then(r=>{
+  api('guardarActa',{citaId,acta:txt,docenteId:ST.docenteId}).then(r=>{
     rest();
     if(r.ok){
       const c=ST.citas.find(x=>x.id===citaId);
-      if(c) c.acta=texto;
-      toast('Acta guardada y enviada ✔','ok');
+      if(c) c.acta=txt;
+      toast('Acta guardada y enviada al padre ✔','ok');
       closeSheet('sh1','ov1');
-      if(calSel) mostrarDia(calSel);
+      renderCitas(filtroCitas);
     } else toast(r.mensaje||'Error','er');
   }).catch(()=>{rest();toast('Error de conexión','er');});
 }
 
 function pedirCancelacion(citaId){
-  $('sh2b').innerHTML=`
-    <div class="sh-title">Cancelar cita</div>
-    <div class="sh-sub">El padre/madre recibirá notificación por correo.</div>
+  $('sh2c').innerHTML=`
+    <div class="sh-title">Cancelar reunión</div>
+    <div class="sh-meta">El padre/madre recibirá una notificación por correo.</div>
     <div class="fg">
-      <label class="fl">Motivo</label>
-      <textarea class="fta" id="motCan" placeholder="Explica el motivo de la cancelación..."></textarea>
+      <label class="fl">Motivo de cancelación</label>
+      <textarea class="fta" id="motCan" placeholder="Explica el motivo..."></textarea>
     </div>
-    <button class="btn btn-danger" onclick="confirmarCancelacion('${citaId}')">Confirmar cancelación</button>
-    <button class="btn btn-ghost" onclick="closeSheet('sh2','ov2')" style="margin-top:8px">Volver</button>
-    <div style="height:8px"></div>
+    <div class="sh-btns">
+      <button class="sh-btn sh-btn-danger" onclick="confirmarCancelacion('${citaId}')">Confirmar cancelación</button>
+      <button class="sh-btn sh-btn-ghost" onclick="closeSheet('sh2','ov2')">Volver</button>
+    </div>
+    <div style="height:12px"></div>
   `;
   openSheet('sh2','ov2');
 }
@@ -964,22 +1147,21 @@ function pedirCancelacion(citaId){
 function confirmarCancelacion(citaId){
   const mot=($('motCan')&&$('motCan').value||'').trim();
   if(!mot){toast('El motivo es obligatorio','er');return;}
-  const btn=document.querySelector('#sh2b .btn-danger');
+  const btn=document.querySelector('#sh2c .sh-btn-danger');
   const rest=spinBtn(btn);
   api('cancelarCita',{citaId,motivo:mot,docenteId:ST.docenteId}).then(r=>{
     rest();
     if(r.ok){
       toast('Cita cancelada','ok');
-      closeSheet('sh2','ov2');
-      closeSheet('sh1','ov1');
+      closeSheet('sh2','ov2');closeSheet('sh1','ov1');
       cargarCitas();
     } else toast(r.mensaje||'Error','er');
   }).catch(()=>{rest();toast('Error de conexión','er');});
 }
 
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════
 // HORARIOS
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════
 function cargarHorarios(){
   api('misHorarios',{docenteId:ST.docenteId}).then(hs=>{
     ST.horarios={};
@@ -987,104 +1169,128 @@ function cargarHorarios(){
       if(!ST.horarios[h.dia]) ST.horarios[h.dia]=[];
       ST.horarios[h.dia].push({ini:h.horaInicio,fin:h.horaFin});
     });
-    ST.yaGuardado=hs&&hs.length>0;
-    renderHorarios();
+    ST.yaGuardado = hs&&hs.length>0;
+    renderDisponibilidad();
   }).catch(()=>{});
 }
 
-function renderHorarios(){
-  const ya=ST.yaGuardado;
+function renderDisponibilidad(){
+  const ya = ST.yaGuardado;
+  $('availDot').style.background = ya ? 'var(--green)' : 'var(--red)';
+  $('availStatusLbl').textContent = ya ? 'Horario activo · Disponible para reservas' : 'Sin horario configurado';
+  $('actionSection').style.display = ya ? 'block' : 'none';
+  $('saveFab').classList.toggle('on', !ya);
 
-  // Status
-  $('horStatusDot').style.background = ya ? 'var(--green)' : 'var(--red)';
-  $('horStatusLbl').textContent = ya ? 'Horario configurado · 30 min/cita' : 'Sin horario configurado';
-  $('horSecTitle').textContent = ya ? 'Tu horario actual' : 'Configurar horario de atención';
-  $('solSection').style.display = ya ? 'block' : 'none';
-  $('saveWrap').style.display = ya ? 'none' : 'block';
-
-  // Cards por día
   let html='';
   DIAS.forEach(dia=>{
     const sid=dia.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
     const bloques=ST.horarios[dia]||[];
-    const hasBloques=bloques.length>0;
+    const activo=bloques.length>0;
+    const resumen=activo?bloques.map(b=>`${b.ini}–${b.fin}`).join(', '):'Sin horario';
 
-    html+=`<div class="dia-card ${hasBloques?'has-slots':''}" id="dc-${sid}">
-      <div class="dia-card-header">
+    html+=`<div class="dia-row ${activo?'active':''}" id="dr-${sid}">
+      <div class="dia-row-header" onclick="${!ya?`toggleDia('${dia}','${sid}')`:''}" style="${ya?'cursor:default':''}">
+        <div class="toggle ${activo?'on':''}" id="tog-${sid}" ${!ya?`onclick="event.stopPropagation();toggleDia('${dia}','${sid}')"`:''}>
+          <div class="toggle-thumb"></div>
+        </div>
         <div class="dia-nombre">${dia}</div>
-        ${!ya?`<button class="dia-add-btn" onclick="addBloque('${dia}')">+ Agregar</button>`:''}
+        <div class="dia-resumen" id="dr-resumen-${sid}">${resumen}</div>
       </div>
-      <div id="slots-${sid}">
-        ${hasBloques
-          ? bloques.map((b,i)=>renderSlotRow(dia,i,b,ya)).join('')
-          : `<div class="dia-empty-label">Sin horario${ya?'':' — toca Agregar'}</div>`}
+      <div class="dia-slots">
+        <div class="dia-slots-inner" id="ds-${sid}">
+          ${activo
+            ? bloques.map((b,i)=>ya?renderSlotReadonly(b):renderSlotEditable(dia,i,b)).join('')
+            : '<div style="font-size:12px;color:var(--mt);padding:4px 0">Toca el toggle para activar este día</div>'
+          }
+          ${(!ya&&activo)?`<button class="add-slot-btn" onclick="addSlot('${dia}','${sid}')">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Agregar horario
+          </button>`:''}
+        </div>
       </div>
     </div>`;
   });
 
-  $('horCards').innerHTML=html;
+  $('diasGrid').innerHTML=html;
 }
 
-function renderSlotRow(dia,idx,b,readonly){
-  const sid=dia.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  if(readonly){
-    return `<div class="slot-row">
-      <span style="font-size:14px;font-weight:500;color:var(--gold2);font-family:'SF Mono','Courier New',monospace">${b.ini}</span>
-      <span class="slot-sep">→</span>
-      <span style="font-size:14px;font-weight:500;color:var(--gold2);font-family:'SF Mono','Courier New',monospace">${b.fin}</span>
-    </div>`;
-  }
-  return `<div class="slot-row">
-    <input type="time" class="time-inp" value="${b.ini||''}" onchange="updBloque('${dia}',${idx},'ini',this.value)">
-    <span class="slot-sep">–</span>
-    <input type="time" class="time-inp" value="${b.fin||''}" onchange="updBloque('${dia}',${idx},'fin',this.value)">
-    <button class="slot-del" onclick="delBloque('${dia}',${idx})">×</button>
+function renderSlotReadonly(b){
+  return `<div class="slot-readonly">
+    <div class="slot-readonly-time">${b.ini}</div>
+    <div style="color:var(--mt);font-size:13px">→</div>
+    <div class="slot-readonly-time">${b.fin}</div>
   </div>`;
 }
 
-function addBloque(dia){
+function renderSlotEditable(dia,idx,b){
+  return `<div class="slot-row" id="sr-${dia}-${idx}">
+    <div class="time-pill">
+      <input type="time" value="${b.ini||'07:00'}" onchange="updSlot('${dia}',${idx},'ini',this.value)">
+    </div>
+    <span style="color:var(--mt);font-size:13px">–</span>
+    <div class="time-pill">
+      <input type="time" value="${b.fin||'17:00'}" onchange="updSlot('${dia}',${idx},'fin',this.value)">
+    </div>
+    <button class="slot-del" onclick="delSlot('${dia}',${idx})">×</button>
+  </div>`;
+}
+
+function toggleDia(dia,sid){
+  if(!ST.horarios[dia]) ST.horarios[dia]=[];
+  const activo=ST.horarios[dia].length>0;
+  if(activo){
+    ST.horarios[dia]=[];
+  } else {
+    ST.horarios[dia]=[{ini:'07:00',fin:'17:00'}];
+  }
+  renderDisponibilidad();
+}
+
+function addSlot(dia,sid){
   if(!ST.horarios[dia]) ST.horarios[dia]=[];
   ST.horarios[dia].push({ini:'07:00',fin:'17:00'});
-  renderHorarios();
+  renderDisponibilidad();
 }
-function updBloque(dia,idx,k,v){if(ST.horarios[dia]&&ST.horarios[dia][idx])ST.horarios[dia][idx][k]=v;}
-function delBloque(dia,idx){if(ST.horarios[dia])ST.horarios[dia].splice(idx,1);renderHorarios();}
+function updSlot(dia,idx,k,v){ if(ST.horarios[dia]&&ST.horarios[dia][idx]) ST.horarios[dia][idx][k]=v; }
+function delSlot(dia,idx){ if(ST.horarios[dia]) ST.horarios[dia].splice(idx,1); renderDisponibilidad(); }
 
 function guardarHorario(){
   const h=[];
   DIAS.forEach(dia=>(ST.horarios[dia]||[]).forEach(b=>{if(b.ini&&b.fin)h.push({dia,horaInicio:b.ini,horaFin:b.fin});}));
-  if(!h.length){toast('Agrega al menos un horario','er');return;}
-  const btn=document.querySelector('#saveWrap .btn-gold');
-  const rest=spinBtn(btn);
+  if(!h.length){toast('Activa al menos un día con horario','er');return;}
+  const btn=$('saveFab');
+  const orig=btn.innerHTML; btn.innerHTML='<span class="spin-w" style="width:18px;height:18px"></span> Guardando...'; btn.disabled=true;
   api('guardarHorarios',{docenteId:ST.docenteId,horarios:h}).then(r=>{
-    rest();
-    if(r.ok){toast('Horario guardado ✔','ok');ST.yaGuardado=true;renderHorarios();}
+    btn.innerHTML=orig; btn.disabled=false;
+    if(r.ok){ toast('Horario guardado ✔','ok'); ST.yaGuardado=true; renderDisponibilidad(); $('saveFab').classList.remove('on'); }
     else toast(r.mensaje||'Error','er');
-  }).catch(()=>{rest();toast('Error de conexión','er');});
+  }).catch(()=>{btn.innerHTML=orig;btn.disabled=false;toast('Error de conexión','er');});
 }
 
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════
 // SOLICITUDES
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════
 function abrirSolHorario(){
-  $('sh1b').innerHTML=`
+  $('sh1c').innerHTML=`
     <div class="sh-title">Solicitar cambio de horario</div>
-    <div class="sh-sub">Describe el cambio que necesitas. La coordinadora será notificada y el administrador autorizará.</div>
+    <div class="sh-meta">El administrador recibirá la solicitud. La coordinadora también será notificada.</div>
     <div class="fg">
-      <label class="fl">Descripción del cambio</label>
-      <textarea class="fta" id="solHorTxt" placeholder="Ej: Necesito cambiar los martes de 2–4pm a 3–5pm por reunión de área..."></textarea>
+      <label class="fl">Describe el cambio</label>
+      <textarea class="fta" id="solTxt" placeholder="Ej: Necesito cambiar los martes de 2–4pm a 3–5pm por reunión de área..."></textarea>
     </div>
-    <button class="btn btn-gold" onclick="enviarSolHorario()">Enviar solicitud</button>
-    <button class="btn btn-ghost" onclick="closeSheet('sh1','ov1')" style="margin-top:8px">Cancelar</button>
-    <div style="height:8px"></div>
+    <div class="sh-btns">
+      <button class="sh-btn sh-btn-gold" onclick="enviarSolHorario()">Enviar solicitud</button>
+      <button class="sh-btn sh-btn-ghost" onclick="closeSheet('sh1','ov1')">Cancelar</button>
+    </div>
+    <div style="height:12px"></div>
   `;
   openSheet('sh1','ov1');
 }
 
 function enviarSolHorario(){
-  const txt=($('solHorTxt')&&$('solHorTxt').value||'').trim();
+  const txt=($('solTxt')&&$('solTxt').value||'').trim();
   if(txt.length<10){toast('Describe el cambio requerido','er');return;}
-  const btn=document.querySelector('#sh1b .btn-gold');
+  const btn=document.querySelector('#sh1c .sh-btn-gold');
   const rest=spinBtn(btn);
   api('solicitarCambioHorario',{docenteId:ST.docenteId,descripcion:txt,nombre:ST.nombre}).then(r=>{
     rest();
@@ -1095,9 +1301,9 @@ function enviarSolHorario(){
 
 function abrirSolCierre(){
   const hoy=new Date().toISOString().split('T')[0];
-  $('sh1b').innerHTML=`
+  $('sh1c').innerHTML=`
     <div class="sh-title">Solicitar cierre de agenda</div>
-    <div class="sh-sub">Define las fechas y el motivo. La coordinadora recibirá la notificación y el administrador autorizará.</div>
+    <div class="sh-meta">Define las fechas. La coordinadora recibirá la notificación y el administrador autorizará.</div>
     <div class="fg">
       <label class="fl">Fecha inicio</label>
       <input type="date" class="fi" id="cieIni" min="${hoy}">
@@ -1108,11 +1314,13 @@ function abrirSolCierre(){
     </div>
     <div class="fg">
       <label class="fl">Motivo</label>
-      <textarea class="fta" id="cieMot" placeholder="Explica brevemente el motivo..."></textarea>
+      <textarea class="fta" id="cieMot" placeholder="Explica brevemente..."></textarea>
     </div>
-    <button class="btn btn-danger" onclick="enviarSolCierre()">Enviar solicitud</button>
-    <button class="btn btn-ghost" onclick="closeSheet('sh1','ov1')" style="margin-top:8px">Cancelar</button>
-    <div style="height:8px"></div>
+    <div class="sh-btns">
+      <button class="sh-btn sh-btn-danger" onclick="enviarSolCierre()">Enviar solicitud</button>
+      <button class="sh-btn sh-btn-ghost" onclick="closeSheet('sh1','ov1')">Cancelar</button>
+    </div>
+    <div style="height:12px"></div>
   `;
   openSheet('sh1','ov1');
 }
@@ -1123,21 +1331,21 @@ function enviarSolCierre(){
   const mot=($('cieMot')&&$('cieMot').value||'').trim();
   if(!ini||!fin||!mot){toast('Completa todos los campos','er');return;}
   if(fin<ini){toast('La fecha fin debe ser posterior al inicio','er');return;}
-  const btn=document.querySelector('#sh1b .btn-danger');
+  const btn=document.querySelector('#sh1c .sh-btn-danger');
   const rest=spinBtn(btn);
   api('solicitarCierre',{docenteId:ST.docenteId,ini,fin,motivo:mot,nombre:ST.nombre}).then(r=>{
     rest();
-    if(r.ok){toast('Solicitud enviada ✔ Coordinadora notificada','ok');closeSheet('sh1','ov1');}
+    if(r.ok){toast('Solicitud enviada ✔','ok');closeSheet('sh1','ov1');}
     else toast(r.mensaje||'Error','er');
   }).catch(()=>{rest();toast('Error de conexión','er');});
 }
 
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════
 // ARRANQUE
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   if(sessionStorage.getItem(DEV_KEY)==='1'){
-    $('s-dev').style.display='none';
+    $('dev-gate').style.display='none';
     boot();
   } else {
     $('splash').style.display='none';
