@@ -914,16 +914,15 @@ function renderDocentes(){
 // PLANEACIONES
 // ══════════════════════════════════════════════
 function cargarPlaneaciones(){
-  const sem=getSemLabel();
   apiPlaneaciones('planeacionesUI').then(res=>{
-    const raw=res.ok&&res.data?res.data:{};
-    DATA.planeaciones=normalizarPlanes(raw,sem);
+    if(!res.ok||!res.data){DATA.planeaciones=[];renderPlaneacionesOverview();renderAlertas();return;}
+    DATA.planeaciones=normalizarPlanes(res.data,null);
     renderPlaneacionesOverview();
     renderSemanas();
     renderPlaneacionesList();
     renderAlertas();
     renderPendientesSidebar();
-  }).catch(()=>{renderPlaneacionesOverview();renderAlertas();});
+  }).catch(()=>{DATA.planeaciones=[];renderPlaneacionesOverview();renderAlertas();});
 }
 
 function normalizarPlanes(raw,semFiltro){
