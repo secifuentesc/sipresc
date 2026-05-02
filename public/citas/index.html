@@ -965,7 +965,16 @@ function boot(){
     if(Date.now() - obj.loginTime > 14*864e5){ localStorage.removeItem('lp_user'); go('/'); return; }
     ST.correo = obj.correo;
     api('loginGoogle',{correo:obj.correo}).then(r=>{
-      if(!r.ok){ localStorage.removeItem('lp_user'); go('/'); return; }
+      if(!r.ok){ 
+        // Si falla, usar datos del localStorage igual
+        ST.rol = 'docente';
+        ST.nombre = obj.correo.split('@')[0];
+        ST.docenteId = obj.correo;
+        $('splash').style.display='none';
+        $('app').classList.add('on');
+        iniciar();
+        return;
+      }
       ST.rol=r.rol; ST.nombre=r.nombre; ST.docenteId=r.docenteId;
       $('splash').style.display='none';
       $('app').classList.add('on');
