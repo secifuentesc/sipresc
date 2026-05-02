@@ -991,15 +991,6 @@ function irFormulario(){
   $('formDocNombre').textContent=`${STATE.docentesSel.nombre} ${STATE.docentesSel.apellido}`;
   $('formFechaHora').querySelector('svg').nextSibling.textContent=` ${fechaLbl} · ${STATE.horaSel}–${STATE.horaFinSel}`;
 
-  // Resumen
-  $('citaResumen').innerHTML=`
-    <div class="cr-row">
-      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      <span class="cr-lbl">${fechaLbl} · ${STATE.horaSel} – ${STATE.horaFinSel}</span>
-    </div>`;
-  irVista('form');
-}
-
 function toggleMotivoExtra(){
   $('motivoExtraWrap').style.display=$('fMotivo').value==='Otro'?'block':'none';
 }
