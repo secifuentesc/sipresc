@@ -1536,12 +1536,20 @@ function enviarSolCierre(){
 // ARRANQUE
 // ══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
-  if(localStorage.getItem(DEV_KEY)==='1'){
-    $('dev-gate').style.display='none';
-    boot();
-  } else {
-    $('splash').style.display='none';
+  $('dev-gate').style.display='none';
+  $('splash').style.display='none';
+  $('app').classList.add('on');
+  const data=localStorage.getItem('lp_user');
+  if(data){
+    try{
+      const obj=JSON.parse(data);
+      ST.correo=obj.correo;
+      ST.nombre=obj.nombre||obj.correo.split('@')[0];
+      ST.docenteId=obj.docenteId||obj.correo;
+      ST.rol=obj.rol||'docente';
+    }catch{}
   }
+  iniciar();
 });
 </script>
 </body>
