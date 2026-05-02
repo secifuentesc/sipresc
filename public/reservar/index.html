@@ -262,6 +262,11 @@ html,body{
 .slot:hover{border-color:var(--blue);background:var(--blue3);transform:translateY(-1px)}
 .slot:active{transform:scale(.97)}
 .slot.sel{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 3px 10px rgba(30,77,183,.3)}
+.slot.sel{
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;
+  background:var(--blue);border-color:var(--blue);color:#fff;
+  box-shadow:0 3px 10px rgba(30,77,183,.3)
+}
 .slot.ocupado{color:var(--mt2);border-color:var(--br);cursor:not-allowed;font-weight:400;text-decoration:line-through;opacity:.5}
 
 .slots-empty{
@@ -913,9 +918,14 @@ function renderSlots(fs){
 function selSlot(ini,fin){
   STATE.horaSel=ini;
   STATE.horaFinSel=fin;
-  renderSlots(STATE.fechaSel);
-  $('calContinueBtn').classList.add('on');
-  setTimeout(()=>$('calContinueBtn').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+  // Renderizar slots con botón inline en el seleccionado
+  const slots=STATE.disponibilidad[STATE.fechaSel]||[];
+  $('slotsGrid').innerHTML=slots.map(s=>`
+    <div class="slot ${s.ocupado?'ocupado':''} ${STATE.horaSel===s.ini&&!s.ocupado?'sel':''}"
+      onclick="${s.ocupado?'':'selSlot(\''+s.ini+'\',\''+s.fin+'\')'}">
+      ${s.ini}${STATE.horaSel===s.ini&&!s.ocupado?`<button onclick="event.stopPropagation();irFormulario()" style="background:#fff;color:var(--blue);border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">Siguiente</button>`:''}
+    </div>`).join('');
+  $('calContinueBtn').classList.remove('on');
 }
 
 // ══════════════════════════════════════════════
