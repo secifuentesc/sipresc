@@ -193,7 +193,18 @@ html,body{
 .cal-doc-pill svg{width:14px;height:14px;stroke:var(--mt);stroke-width:1.8;fill:none;flex-shrink:0}
 
 /* Calendario principal */
-.cal-main{padding:20px}
+.cal-main{padding:20px;display:flex;gap:24px;align-items:flex-start}
+.cal-grid-wrap{flex:1;min-width:0}
+.slots-wrap{
+  width:200px;flex-shrink:0;
+  border-top:none;padding-top:0;
+  border-left:1px solid var(--br);
+  padding-left:20px;margin-top:0
+}
+@media(max-width:699px){
+  .cal-main{flex-direction:column}
+  .slots-wrap{width:100%;border-left:none;padding-left:0;border-top:1px solid var(--br);padding-top:16px;margin-top:16px}
+}
 
 .cal-month-nav{
   display:flex;align-items:center;justify-content:space-between;margin-bottom:16px
@@ -532,6 +543,7 @@ html,body{
 
     <!-- Calendario -->
     <div class="cal-main">
+      <div class="cal-grid-wrap">
       <div class="cal-month-nav">
         <div class="cal-month-lbl" id="calMesLbl">—</div>
         <div class="cal-nav-btns">
@@ -551,6 +563,7 @@ html,body{
         <div class="cal-hd">Sáb</div>
       </div>
       <div class="cal-grid" id="calGrid"></div>
+      </div><!-- /cal-grid-wrap -->
 
       <!-- Slots hora -->
       <div class="slots-wrap" id="slotsWrap" style="display:none">
