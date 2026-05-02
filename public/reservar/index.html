@@ -603,75 +603,86 @@ html,body{
 
 <!-- ══ VISTA 3 — FORMULARIO ══ -->
 <div class="view" id="v-form">
-  <div class="form-header">
-    <button class="form-back" onclick="irVista('cal')">
-      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      Cambiar horario
-    </button>
-  </div>
-
-  <!-- Resumen selección -->
-  <div class="cita-resumen" id="citaResumen"></div>
-
-  <div class="form-body">
-    <div class="form-err" id="formErr"></div>
-
-    <div class="form-section-title">Acudiente</div>
-
-    <div class="fg">
-      <label class="fl">Nombre <span>*</span></label>
-      <input type="text" class="fi" id="fNombre" placeholder="Tu nombre" autocapitalize="words">
-    </div>
-    <div class="fg">
-      <label class="fl">Apellido <span>*</span></label>
-      <input type="text" class="fi" id="fApellido" placeholder="Tu apellido" autocapitalize="words">
-    </div>
-    <div class="fg">
-      <label class="fl">Correo electrónico <span>*</span></label>
-      <input type="email" class="fi" id="fCorreo" placeholder="tu@correo.com" inputmode="email" autocapitalize="none">
-    </div>
-    <div class="fg">
-      <label class="fl">Teléfono <span>*</span></label>
-      <input type="tel" class="fi" id="fTelefono" placeholder="300 000 0000" inputmode="tel">
+  <div class="cal-layout">
+    <!-- Sidebar izquierda -->
+    <div class="cal-sidebar">
+      <button class="form-back" onclick="irVista('cal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Cambiar horario
+      </button>
+      <div class="cal-doc-avatar" id="formDocAvatar"></div>
+      <div class="cal-doc-school">Instituto Parroquial</div>
+      <div class="cal-doc-nombre" id="formDocNombre">—</div>
+      <div class="cal-doc-pills">
+        <div class="cal-doc-pill">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          30 minutos
+        </div>
+        <div class="cal-doc-pill" id="formFechaHora">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <span>—</span>
+        </div>
+      </div>
     </div>
 
-    <div class="form-section-title">Estudiante</div>
+    <!-- Formulario derecha -->
+    <div class="cal-main" style="border-left:1px solid var(--br)">
+      <div class="form-err" id="formErr"></div>
 
-    <div class="fg">
-      <label class="fl">Nombre del estudiante <span>*</span></label>
-      <input type="text" class="fi" id="fEstudiante" placeholder="Nombre completo" autocapitalize="words">
-    </div>
-    <div class="fg">
-      <label class="fl">Grado <span>*</span></label>
-      <select class="fs" id="fGrado">
-        <option value="">Seleccionar grado...</option>
-      </select>
-    </div>
+      <div class="form-section-title">Acudiente</div>
+      <div class="fg">
+        <label class="fl">Nombre <span>*</span></label>
+        <input type="text" class="fi" id="fNombre" placeholder="Tu nombre" autocapitalize="words">
+      </div>
+      <div class="fg">
+        <label class="fl">Apellido <span>*</span></label>
+        <input type="text" class="fi" id="fApellido" placeholder="Tu apellido" autocapitalize="words">
+      </div>
+      <div class="fg">
+        <label class="fl">Correo electrónico <span>*</span></label>
+        <input type="email" class="fi" id="fCorreo" placeholder="tu@correo.com" inputmode="email" autocapitalize="none">
+      </div>
+      <div class="fg">
+        <label class="fl">Teléfono <span>*</span></label>
+        <input type="tel" class="fi" id="fTelefono" placeholder="300 000 0000" inputmode="tel">
+      </div>
 
-    <div class="form-section-title">Motivo de la cita</div>
+      <div class="form-section-title">Estudiante</div>
+      <div class="fg">
+        <label class="fl">Nombre del estudiante <span>*</span></label>
+        <input type="text" class="fi" id="fEstudiante" placeholder="Nombre completo" autocapitalize="words">
+      </div>
+      <div class="fg">
+        <label class="fl">Grado <span>*</span></label>
+        <select class="fs" id="fGrado">
+          <option value="">Seleccionar grado...</option>
+        </select>
+      </div>
 
-    <div class="fg">
-      <label class="fl">¿Por qué solicitas esta cita? <span>*</span></label>
-      <select class="fs" id="fMotivo" onchange="toggleMotivoExtra()">
-        <option value="">Seleccionar motivo...</option>
-        <option value="Seguimiento académico">Seguimiento académico</option>
-        <option value="Comportamiento">Comportamiento</option>
-        <option value="Inasistencias">Inasistencias y puntualidad</option>
-        <option value="Resultados de evaluaciones">Resultados de evaluaciones</option>
-        <option value="Situación familiar">Situación familiar</option>
-        <option value="Otro">Otro</option>
-      </select>
-    </div>
-    <div class="fg" id="motivoExtraWrap" style="display:none">
-      <label class="fl">Especifica el motivo</label>
-      <textarea class="fta" id="fMotivoExtra" placeholder="Describe brevemente..."></textarea>
-    </div>
+      <div class="form-section-title">Motivo de la cita</div>
+      <div class="fg">
+        <label class="fl">¿Por qué solicitas esta cita? <span>*</span></label>
+        <select class="fs" id="fMotivo" onchange="toggleMotivoExtra()">
+          <option value="">Seleccionar motivo...</option>
+          <option value="Seguimiento académico">Seguimiento académico</option>
+          <option value="Comportamiento">Comportamiento</option>
+          <option value="Inasistencias">Inasistencias y puntualidad</option>
+          <option value="Resultados de evaluaciones">Resultados de evaluaciones</option>
+          <option value="Situación familiar">Situación familiar</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+      <div class="fg" id="motivoExtraWrap" style="display:none">
+        <label class="fl">Especifica el motivo</label>
+        <textarea class="fta" id="fMotivoExtra" placeholder="Describe brevemente..."></textarea>
+      </div>
 
-    <button class="submit-btn" id="submitBtn" onclick="confirmarReserva()">
-      Confirmar reserva
-    </button>
-  </div>
-</div>
+      <button class="submit-btn" id="submitBtn" onclick="confirmarReserva()">
+        Confirmar reserva
+      </button>
+    </div><!-- /cal-main -->
+  </div><!-- /cal-layout -->
+</div><!-- /v-form -->
 
 <!-- ══ VISTA 4 — ÉXITO ══ -->
 <div id="v-exito">
@@ -970,21 +981,21 @@ function selSlot(ini,fin){
 // FORMULARIO
 // ══════════════════════════════════════════════
 function irFormulario(){
-  // Resumen
   const d=new Date(STATE.fechaSel+'T12:00:00');
   const fechaLbl=`${DIAS_S[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+  
+  // Poblar sidebar
+  const av=$('formDocAvatar');
+  av.textContent=$('calDocAvatar').textContent;
+  av.className=$('calDocAvatar').className;
+  $('formDocNombre').textContent=`${STATE.docentesSel.nombre} ${STATE.docentesSel.apellido}`;
+  $('formFechaHora').querySelector('svg').nextSibling.textContent=` ${fechaLbl} · ${STATE.horaSel}–${STATE.horaFinSel}`;
+
+  // Resumen
   $('citaResumen').innerHTML=`
     <div class="cr-row">
-      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-      <span class="cr-lbl">${STATE.docentesSel.nombre} ${STATE.docentesSel.apellido}</span>
-    </div>
-    <div class="cr-row">
       <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      <span class="cr-lbl">${fechaLbl}</span>
-    </div>
-    <div class="cr-row">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-      <span class="cr-lbl">${STATE.horaSel} – ${STATE.horaFinSel} · 30 minutos</span>
+      <span class="cr-lbl">${fechaLbl} · ${STATE.horaSel} – ${STATE.horaFinSel}</span>
     </div>`;
   irVista('form');
 }
