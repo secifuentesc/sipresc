@@ -156,8 +156,7 @@ html,body{
    BOTTOM NAV — estilo sistema
 ══════════════════════════════════ */
 .bnav{
-  flex-shrink:0;
-  position:relative;z-index:20;
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
   background:rgba(5,14,29,.8);
   border-top:1px solid rgba(255,255,255,.07);
   display:flex;
@@ -183,7 +182,7 @@ html,body{
   flex:1;overflow-y:auto;
   -webkit-overflow-scrolling:touch;
   overscroll-behavior:contain;
-  padding-bottom:calc(20px + env(safe-area-inset-bottom,0))
+  padding-bottom:calc(68px + env(safe-area-inset-bottom,0px));
 }
 
 /* ══════════════════════════════════
