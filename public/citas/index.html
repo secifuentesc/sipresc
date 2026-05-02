@@ -1546,7 +1546,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         const obj=JSON.parse(data);
         ST.correo=obj.correo;
         ST.nombre=obj.correo.split('@')[0];
-        ST.docenteId=obj.correo;
+        ST.docenteId=obj.docenteId||obj.correo;
         ST.rol='docente';
       }catch{}
     }
