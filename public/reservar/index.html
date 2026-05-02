@@ -797,12 +797,12 @@ function selDocente(id, colorIdx){
 async function cargarDisponibilidad(){
   try{
     const [horarios, citas] = await Promise.all([
-      apiPublic('misHorarios',{docenteId:STATE.docentesSel.id}),
-      apiPublic('citasDocente',{docenteId:STATE.docentesSel.id})
+      apiPublic('horariosPublicos',{docenteId:STATE.docentesSel.id}),
+      apiPublic('citasPublicas',{docenteId:STATE.docentesSel.id})
     ]);
 
-    const hs = horarios||[];
-    const cs = citas||[];
+    const hs = Array.isArray(horarios) ? horarios : [];
+    const cs = Array.isArray(citas) ? citas : [];
     const ocupados = new Set(cs.filter(c=>c.estado==='confirmada').map(c=>c.fecha+'_'+c.horaInicio));
     const diaMap={'Lunes':1,'Martes':2,'Miércoles':3,'Jueves':4,'Viernes':5,'Sábado':6,'Domingo':0};
     const hoy = new Date(); hoy.setHours(0,0,0,0);
