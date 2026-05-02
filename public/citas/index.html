@@ -976,13 +976,10 @@ function go(url){ window.location.href = url; }
 function doLogout(){ localStorage.removeItem('lp_user'); sessionStorage.removeItem(DEV_KEY); go('/'); }
 
 function iniciar(){
-  const d = new Date();
-  const diasSemana=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-
   // Disponibilidad profile
   const ini = (ST.nombre||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
-  $('availAvatar').textContent = ini||'—';
-  $('availNombre').textContent = ST.nombre||'—';
+  if($('availAvatar')) $('availAvatar').textContent = ini||'—';
+  if($('availNombre')) $('availNombre').textContent = ST.nombre||'—';
 
   cargarCitas();
   cargarHorarios();
