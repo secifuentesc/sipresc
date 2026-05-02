@@ -1399,10 +1399,10 @@ function mostrarPantallaInicial(){
 function abrirModulo(modulo){
   const rutas = {
   planeaciones: '/planeaciones/',
-  evaluaciones: '/evaluaciones/', // 👈 NUEVO
-  prompts: '/prompts/'
+  evaluaciones: '/evaluaciones/',
+  prompts: '/prompts/',
+  citas: '/citas/'
 };
-  if(modulo==='citas'){goTab('citas',document.getElementById('ni-citas'));return;}
   if(rutas[modulo]){window.location.href=rutas[modulo];return;}
   toast('Módulo no disponible','er');}
 
