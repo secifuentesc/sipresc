@@ -196,14 +196,15 @@ html,body{
 .cal-main{padding:20px;display:flex;gap:24px;align-items:flex-start}
 .cal-grid-wrap{flex:1;min-width:0}
 .slots-wrap{
-  width:200px;flex-shrink:0;
-  border-top:none;padding-top:0;
+  width:220px;flex-shrink:0;
   border-left:1px solid var(--br);
-  padding-left:20px;margin-top:0
+  padding-left:20px;margin-top:0;
+  max-height:400px;overflow-y:auto
 }
 @media(max-width:699px){
   .cal-main{flex-direction:column}
-  .slots-wrap{width:100%;border-left:none;padding-left:0;border-top:1px solid var(--br);padding-top:16px;margin-top:16px}
+  .slots-wrap{width:100%;border-left:none;padding-left:0;
+    border-top:1px solid var(--br);padding-top:16px;margin-top:16px;max-height:none}
 }
 
 .cal-month-nav{
