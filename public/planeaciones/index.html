@@ -1862,10 +1862,18 @@ function generarSemanas(){
     div.textContent = "Semana " + i;
 
     // 🔒 Bloquear semanas pasadas
-    if(i < actual){
-      div.style.opacity = "0.4";
-      div.style.pointerEvents = "none";
-    }
+    const desbloqueos = {
+  "siramirez@lapresentaciongirardota.edu.co": [5],
+  "sistemas@lapresentaciongirardota.edu.co": [5]
+};
+
+const correo = obtenerCorreo();
+const semanasPermitidas = desbloqueos[correo] || [];
+
+if(i < actual && !semanasPermitidas.includes(i)){
+  div.style.opacity = "0.4";
+  div.style.pointerEvents = "none";
+}
 
     // 🔥 AUTOSELECCIÓN INTELIGENTE
     if(i === actual){
