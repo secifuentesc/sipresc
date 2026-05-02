@@ -957,29 +957,18 @@ function checkGate(){
 // BOOT
 // ══════════════════════════════════════════════
 function boot(){
-  $('splash').style.display = 'flex';
-  const data = localStorage.getItem('lp_user');
+  $('splash').style.display='none';
+  $('app').classList.add('on');
+  const data=localStorage.getItem('lp_user');
   if(!data){ go('/'); return; }
   try{
-    const obj = JSON.parse(data);
-    if(Date.now() - obj.loginTime > 14*864e5){ localStorage.removeItem('lp_user'); go('/'); return; }
-    ST.correo = obj.correo;
-    api('loginGoogle',{correo:obj.correo}).then(r=>{
-      if(!r.ok){ 
-        // Si falla, usar datos del localStorage igual
-        ST.rol = 'docente';
-        ST.nombre = obj.correo.split('@')[0];
-        ST.docenteId = obj.correo;
-        $('splash').style.display='none';
-        $('app').classList.add('on');
-        iniciar();
-        return;
-      }
-      ST.rol=r.rol; ST.nombre=r.nombre; ST.docenteId=r.docenteId;
-      $('splash').style.display='none';
-      $('app').classList.add('on');
-      iniciar();
-    }).catch(()=>{ $('splash').style.display='none'; go('/'); });
+    const obj=JSON.parse(data);
+    if(Date.now()-obj.loginTime>14*864e5){ localStorage.removeItem('lp_user'); go('/'); return; }
+    ST.correo=obj.correo;
+    ST.nombre=obj.nombre||obj.correo.split('@')[0];
+    ST.docenteId=obj.docenteId||obj.correo;
+    ST.rol=obj.rol||'docente';
+    iniciar();
   }catch{ go('/'); }
 }
 
