@@ -1351,9 +1351,12 @@ async function verificarCodigoLogin(){
       ST.docenteId = r.docenteId;
 
       localStorage.setItem('lp_user', JSON.stringify({
-        correo: r.correo,
-        loginTime: Date.now()
-      }));
+  correo: r.correo,
+  nombre: r.nombre,
+  docenteId: r.docenteId,
+  rol: r.rol,
+  loginTime: Date.now()
+}));
 
       setTimeout(() => {
         iniciarApp();
