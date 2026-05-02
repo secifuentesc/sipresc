@@ -930,7 +930,6 @@ function normalizarPlanes(raw,semFiltro){
   const MAP={'Aprobada':'aprobada','Con ajustes':'ajustes','Pendiente':'pendiente','Recibida':'enviada'};
   Object.values(raw.periodos).forEach(sems=>{
     Object.entries(sems).forEach(([sem,docs])=>{
-      if(semFiltro&&sem.toUpperCase()!==semFiltro.toUpperCase())return;
       Object.entries(docs).forEach(([nd,planes])=>{
         planes.forEach(p=>{
           out.push({
