@@ -502,6 +502,12 @@ html,body{
   .doc-item{border-right:1px solid var(--br)}
   .doc-item:nth-child(2n){border-right:none}
 }
+
+.form-main{
+  flex:1;padding:24px 20px;
+  display:flex;flex-direction:column
+}
+  
 </style>
 </head>
 <body>
@@ -627,7 +633,7 @@ html,body{
     </div>
 
     <!-- Formulario derecha -->
-    <div class="cal-main" style="border-left:1px solid var(--br)">
+    <div class="form-main" style="border-left:1px solid var(--br)">
       <div class="form-err" id="formErr"></div>
 
       <div class="form-section-title">Acudiente</div>
