@@ -978,8 +978,6 @@ function doLogout(){ localStorage.removeItem('lp_user'); sessionStorage.removeIt
 function iniciar(){
   const d = new Date();
   const diasSemana=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-  $('heroDate').textContent = `${diasSemana[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]}`;
-  $('heroViewTitle').textContent = 'Reuniones';
 
   // Disponibilidad profile
   const ini = (ST.nombre||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
