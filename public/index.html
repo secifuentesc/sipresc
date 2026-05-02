@@ -959,7 +959,8 @@ function iniciarApp(){
 
   // 🆕 Admin → redirige directo al dashboard completo
   // Admin y coordinadora → dashboard completo
-  if(ST.rol==='admin' || ST.rol==='coordinador') { window.location.href = '/dashboard/'; return; }
+  if(ST.rol==='admin') { window.location.href = '/dashboard/'; return; }
+  if(ST.rol==='coordinador') { window.location.href = '/dashboardcoord/'; return; }
   goTab('home',document.getElementById('ni-home'));
 
   loadDash();
