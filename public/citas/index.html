@@ -959,7 +959,7 @@ let filtroCitas = 'proximas';
 // ══════════════════════════════════════════════
 function checkGate(){
   if($('gateInp').value === CLAVE_DEV){
-    sessionStorage.setItem(DEV_KEY,'1');
+    localStorage.setItem(DEV_KEY,'1');
     $('dev-gate').style.display = 'none';
     boot();
   } else {
@@ -991,7 +991,7 @@ function boot(){
 }
 
 function go(url){ window.location.href = url; }
-function doLogout(){ localStorage.removeItem('lp_user'); sessionStorage.removeItem(DEV_KEY); go('/'); }
+function doLogout(){ localStorage.removeItem('lp_user'); localStorage.removeItem(DEV_KEY); go('/'); }
 
 function iniciar(){
   const d = new Date();
@@ -1536,7 +1536,7 @@ function enviarSolCierre(){
 // ARRANQUE
 // ══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
-  if(sessionStorage.getItem(DEV_KEY)==='1'){
+  if(localStorage.getItem(DEV_KEY)==='1'){
     $('dev-gate').style.display='none';
     boot();
   } else {
