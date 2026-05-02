@@ -726,9 +726,10 @@ function api(action,payload){
   });
 }
 
-function apiPlaneaciones(action,payload){
+function apiPlaneaciones(accion,params){
   return new Promise((res,rej)=>{
-    fetch(API_PLN+'?action='+action+(payload?'&'+new URLSearchParams(payload):''))
+    const p=new URLSearchParams({accion,correo:ST.correo,...(params||{})});
+    fetch('/api/planeaciones?'+p.toString())
       .then(r=>r.json()).then(res).catch(rej);
   });
 }
