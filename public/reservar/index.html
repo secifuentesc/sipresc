@@ -984,12 +984,15 @@ function irFormulario(){
   const d=new Date(STATE.fechaSel+'T12:00:00');
   const fechaLbl=`${DIAS_S[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
   
-  // Poblar sidebar
   const av=$('formDocAvatar');
   av.textContent=$('calDocAvatar').textContent;
   av.className=$('calDocAvatar').className;
   $('formDocNombre').textContent=`${STATE.docentesSel.nombre} ${STATE.docentesSel.apellido}`;
-  $('formFechaHora').querySelector('svg').nextSibling.textContent=` ${fechaLbl} · ${STATE.horaSel}–${STATE.horaFinSel}`;
+  $('formFechaHora').querySelector('span').textContent=`${fechaLbl} · ${STATE.horaSel}–${STATE.horaFinSel}`;
+  irVista('form');
+}
+
+function toggleMotivoExtra(){
 
 function toggleMotivoExtra(){
   $('motivoExtraWrap').style.display=$('fMotivo').value==='Otro'?'block':'none';
