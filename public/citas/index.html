@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a1628">
+<title>Mis Citas — La Presentación</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --ink:#0a1628;--royal:#0f2657;--cobalt:#1e4db7;
+  --gold:#c9962a;--gold2:#e8b84b;--gold3:rgba(201,150,42,.12);
+  --s0:#050e1d;--s1:#0d1f3c;--s2:#122449;--s3:#182e58;
+  --br:rgba(255,255,255,.07);--br2:rgba(255,255,255,.13);
+  --tx:#e8edf8;--mt:#7a8fb0;
+  --green:#2dd4a0;--red:#f06b6b;--purple:#8b84f8;
+  --r:12px;
+}
+html,body{height:100%;height:100svh;overflow:hidden;font-size:15px;
+  font-family:-apple-system,'Helvetica Neue',sans-serif}
+body{background:var(--s0);color:var(--tx);
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 0%,rgba(26,58,107,.5) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 100%,rgba(30,77,183,.25) 0%,transparent 70%)}
+
+/* ── PANTALLA EN DESARROLLO ── */
+#s-dev{
+  position:fixed;inset:0;z-index:999;
+  background:var(--s0);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px 24px;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 0%,rgba(26,58,107,.5) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 100%,rgba(30,77,183,.25) 0%,transparent 70%)
+}
+.dev-ico{
+  width:72px;height:72px;border-radius:20px;
+  background:linear-gradient(145deg,#1c3f7a,#2046a0);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:24px;
+  box-shadow:0 20px 50px rgba(20,50,160,.4),inset 0 1px 0 rgba(255,255,255,.2)
+}
+.dev-title{font-size:22px;font-weight:700;letter-spacing:-.5px;color:#fff;margin-bottom:8px;text-align:center}
+.dev-sub{font-size:13px;color:rgba(255,255,255,.35);text-align:center;line-height:1.6;margin-bottom:32px;max-width:260px}
+.dev-badge{
+  background:rgba(201,150,42,.1);border:1px solid rgba(201,150,42,.25);
+  border-radius:20px;padding:6px 16px;
+  font-size:11px;color:var(--gold2);letter-spacing:.5px;
+  margin-bottom:32px;
+  font-family:'Courier New',monospace
+}
+.dev-card{
+  width:100%;max-width:300px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:20px;padding:20px;
+  box-shadow:0 24px 48px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.07)
+}
+.dev-lbl{font-size:11px;color:rgba(255,255,255,.3);margin-bottom:8px;letter-spacing:.3px}
+.dev-input{
+  width:100%;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);border-radius:10px;
+  color:#fff;padding:13px 14px;font-size:17px;
+  letter-spacing:4px;text-align:center;
+  outline:none;-webkit-appearance:none;
+  transition:border-color .2s,background .2s;margin-bottom:12px;
+  font-family:-apple-system,sans-serif
+}
+.dev-input:focus{border-color:rgba(100,150,255,.45);background:rgba(255,255,255,.09)}
+.dev-btn{
+  width:100%;padding:13px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.1);
+  color:#fff;font-size:14px;font-weight:500;
+  cursor:pointer;transition:background .15s,transform .1s;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)
+}
+.dev-btn:active{transform:scale(.98);background:rgba(255,255,255,.07)}
+.dev-err{font-size:12px;color:#ff7b7b;text-align:center;margin-top:10px;display:none}
+.dev-err.on{display:block}
+
+/* ── SPLASH ── */
+#splash{position:fixed;inset:0;background:var(--s0);display:flex;align-items:center;
+  justify-content:center;z-index:200;flex-direction:column;gap:12px}
+.spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.2);
+  border-top-color:white;border-radius:50%;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+#splash p{font-size:13px;color:rgba(255,255,255,.4);letter-spacing:.5px}
+
+/* ── APP ── */
+#s-app{position:fixed;inset:0;display:none;flex-direction:column;overflow:hidden}
+#s-app.on{display:flex}
+
+/* ── TOPBAR ── */
+.topbar{
+  flex-shrink:0;
+  background:rgba(5,14,29,.8);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding:10px 16px;
+  padding-top:calc(10px + env(safe-area-inset-top,0));
+  display:flex;align-items:center;gap:10px;
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);
+  z-index:20
+}
+.topbar-logo{
+  width:30px;height:30px;border-radius:9px;
+  background:linear-gradient(140deg,#1c3f7a,#2557c7);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;flex-shrink:0
+}
+.topbar-logo img{width:18px;filter:brightness(10)}
+.topbar-logo span{color:#fff;font-size:14px;font-weight:700}
+.topbar h1{
+  font-size:15px;font-weight:600;letter-spacing:-.2px;
+  flex:1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.topbar-back{
+  background:none;border:none;color:rgba(255,255,255,.5);
+  font-size:13px;cursor:pointer;padding:4px 8px;
+  display:flex;align-items:center;gap:4px;flex-shrink:0
+}
+.topbar-back svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none}
+.logout-btn{
+  background:none;border:none;color:rgba(255,255,255,.35);
+  font-size:12px;cursor:pointer;padding:4px 6px;flex-shrink:0
+}
+
+/* ── BOTTOM NAV ── */
+.bnav{
+  flex-shrink:0;
+  background:rgba(5,14,29,.85);
+  border-top:1px solid rgba(255,255,255,.07);
+  display:flex;
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 4px)
+}
+.ni{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:10px 2px;cursor:pointer;border:none;background:none;
+  color:rgba(255,255,255,.3);font-size:9px;gap:4px;transition:color .15s;letter-spacing:.2px
+}
+.ni svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.5;fill:none}
+.ni.on{color:rgba(255,255,255,.9)}
+.ni.on svg{stroke-width:2}
+
+/* ── SCROLL AREA ── */
+.scroll-area{
+  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain
+}
+
+/* ── TABS ── */
+.tab{display:none;padding:14px 14px 24px}
+.tab.on{display:block}
+
+/* ── CALENDARIO ── */
+.cal-wrap{padding:14px 14px 0}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-mes{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.cal-nav-btns{display:flex;gap:6px}
+.cal-nav-btn{
+  width:32px;height:32px;border-radius:10px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+  color:var(--tx);display:flex;align-items:center;justify-content:center;cursor:pointer
+}
+.cal-nav-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.5;fill:none}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-hd{text-align:center;font-size:10px;color:var(--mt);padding:4px 0;letter-spacing:.3px}
+.cal-day{
+  aspect-ratio:1;border-radius:8px;font-size:12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border:1px solid transparent;cursor:pointer;position:relative;
+  transition:all .15s;gap:2px
+}
+.cal-day.vacio{visibility:hidden}
+.cal-day.hoy{border-color:var(--gold);color:var(--gold);font-weight:700}
+.cal-day.tiene-citas{background:rgba(45,212,160,.08)}
+.cal-day.tiene-pendiente{background:rgba(201,150,42,.08)}
+.cal-day.sel{background:var(--gold)!important;color:#000!important;font-weight:700}
+.cal-day:hover:not(.sel):not(.vacio){background:rgba(255,255,255,.06)}
+.cal-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.cal-dot.conf{background:var(--green)}
+.cal-dot.pend{background:var(--gold)}
+
+/* ── CITAS DEL DIA ── */
+.dia-citas{padding:14px 14px 0}
+.dia-lbl{
+  font-size:11px;color:var(--mt);letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:10px;font-family:'Courier New',monospace
+}
+.cita-card{
+  background:var(--s1);border:1px solid var(--br);border-radius:14px;
+  padding:14px;margin-bottom:10px;cursor:pointer;transition:all .15s;
+  position:relative;overflow:hidden
+}
+.cita-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:14px 0 0 14px
+}
+.cita-card.confirmada::before{background:var(--green)}
+.cita-card.cancelada::before{background:var(--red);opacity:.5}
+.cita-card.cancelada{opacity:.5}
+.cita-card:active{transform:scale(.98)}
+.cita-hora{
+  font-size:13px;font-weight:600;color:var(--gold2);
+  font-family:'Courier New',monospace;margin-bottom:6px
+}
+.cita-padre{font-size:15px;font-weight:600;margin-bottom:3px}
+.cita-meta{font-size:12px;color:var(--mt);margin-bottom:2px}
+.cita-badge{
+  display:inline-block;font-size:9px;padding:2px 8px;border-radius:20px;
+  font-family:'Courier New',monospace;margin-top:4px
+}
+.cita-badge.confirmada{background:rgba(45,212,160,.1);color:var(--green);border:1px solid rgba(45,212,160,.2)}
+.cita-badge.cancelada{background:rgba(240,107,107,.1);color:var(--red);border:1px solid rgba(240,107,107,.2)}
+.cita-acta-ind{
+  position:absolute;top:12px;right:12px;
+  width:8px;height:8px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 6px rgba(201,150,42,.5)
+}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:32px 0;color:var(--mt);font-size:13px;line-height:1.6}
+.empty svg{width:36px;height:36px;stroke:var(--mt);opacity:.4;margin-bottom:10px}
+
+/* ── HORARIOS TAB ── */
+.hor-status{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;padding:14px;margin-bottom:16px
+}
+.hor-status-row{display:flex;align-items:center;justify-content:space-between}
+.hor-status-lbl{font-size:13px;font-weight:500}
+.hor-status-sub{font-size:11px;color:var(--mt);margin-top:3px}
+.hor-badge{
+  font-size:10px;font-family:'Courier New',monospace;padding:4px 10px;
+  border-radius:20px;flex-shrink:0
+}
+.hor-badge.libre{background:rgba(45,212,160,.1);color:var(--green);border:1px solid rgba(45,212,160,.2)}
+.hor-badge.bloqueado{background:rgba(240,107,107,.1);color:var(--red);border:1px solid rgba(240,107,107,.2)}
+
+.slabel{
+  font-family:'Courier New',monospace;font-size:9px;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--mt);margin-bottom:10px
+}
+.card{background:var(--s2);border:1px solid var(--br);border-radius:14px;padding:15px;margin-bottom:12px}
+.hb{display:flex;align-items:center;gap:7px;background:var(--s1);
+  border:1px solid var(--br);border-radius:9px;padding:9px 11px;margin-bottom:7px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.hb-x{background:none;border:none;color:var(--red);font-size:17px;cursor:pointer;padding:0;flex-shrink:0}
+.fi,.fta,.fs{
+  width:100%;background:var(--s1);border:1px solid var(--br);
+  border-radius:9px;color:var(--tx);padding:12px 13px;
+  font-family:-apple-system,sans-serif;font-size:15px;outline:none;
+  transition:border-color .2s;-webkit-appearance:none
+}
+.fi:focus,.fta:focus{border-color:var(--gold)}
+.fta{resize:vertical;min-height:80px}
+.fg{margin-bottom:12px}
+.fl{display:block;font-family:'Courier New',monospace;font-size:9px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--mt);margin-bottom:7px}
+
+/* ── BUTTONS ── */
+.btn{
+  width:100%;padding:14px;border-radius:11px;border:none;
+  font-family:'Courier New',monospace;font-size:11px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;cursor:pointer;transition:all .15s;margin-bottom:9px;
+  display:flex;align-items:center;justify-content:center;gap:7px
+}
+.btn:last-child{margin-bottom:0}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-g{background:linear-gradient(135deg,#7a5a14,var(--gold));color:var(--s0);font-weight:700}
+.btn-o{background:transparent;border:1px solid var(--br2);color:var(--mt)}
+.btn-r{background:rgba(240,107,107,.1);border:1px solid rgba(240,107,107,.22);color:var(--red)}
+.btn-gr{background:rgba(45,212,160,.1);border:1px solid rgba(45,212,160,.22);color:var(--green)}
+.btn-sm{padding:8px 13px;width:auto;font-size:10px;margin-bottom:0}
+
+/* ── SHEET / OVERLAY ── */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;display:none;
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.ov.on{display:block}
+.sheet{
+  position:fixed;bottom:0;left:0;right:0;z-index:41;
+  background:var(--s2);border-top:1px solid var(--br2);
+  border-radius:20px 20px 0 0;
+  padding:0 0 calc(32px + env(safe-area-inset-bottom,0px));
+  max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.56,.64,1)
+}
+.sheet.on{transform:translateY(0)}
+.sheet-handle{width:36px;height:4px;background:var(--br2);border-radius:2px;margin:14px auto 0}
+.sh-pad{padding:16px}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:82px;left:50%;
+  transform:translateX(-50%) translateY(110px);
+  background:var(--s3);border:1px solid var(--br2);border-radius:12px;
+  padding:12px 18px;font-size:13px;max-width:290px;width:calc(100% - 36px);
+  text-align:center;transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:100
+}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(45,212,160,.4);color:var(--green)}
+.toast.er{border-color:rgba(240,107,107,.4);color:var(--red)}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--br);margin:14px 0}
+
+/* ── INFO ROWS ── */
+.info-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--br);font-size:13px}
+.info-row:last-child{border-bottom:none}
+.info-lb{color:var(--mt);width:80px;flex-shrink:0;font-size:12px}
+
+/* ── ACTA FORM ── */
+.acta-form{
+  background:rgba(201,150,42,.04);border:1px solid rgba(201,150,42,.15);
+  border-radius:12px;padding:14px;margin-top:12px;display:none
+}
+.acta-form.on{display:block;animation:fadeUp .2s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CIERRE REQUEST ── */
+.cierre-card{
+  background:rgba(240,107,107,.04);border:1px solid rgba(240,107,107,.12);
+  border-radius:12px;padding:14px;margin-bottom:12px
+}
+.cierre-pendiente{
+  background:rgba(201,150,42,.06);border:1px solid rgba(201,150,42,.2);
+  border-radius:10px;padding:11px 13px;margin-bottom:8px;font-size:13px
+}
+
+/* ── SOLICITUD HORARIO ── */
+.sol-card{
+  background:rgba(139,132,248,.05);border:1px solid rgba(139,132,248,.15);
+  border-radius:12px;padding:14px;margin-bottom:12px
+}
+
+/* ── SEMANA TABS ── */
+.week-tabs{display:flex;gap:0;background:rgba(255,255,255,.04);border-radius:10px;padding:3px;margin-bottom:14px}
+.week-tab{
+  flex:1;padding:7px;border-radius:8px;border:none;background:none;
+  color:var(--mt);font-size:11px;cursor:pointer;transition:all .15s;
+  font-family:-apple-system,sans-serif
+}
+.week-tab.on{background:rgba(255,255,255,.1);color:#fff;font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- PANTALLA EN DESARROLLO -->
+<div id="s-dev">
+  <div class="dev-ico">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(180,220,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="5" width="18" height="16" rx="3"/>
+      <path d="M8 3v4M16 3v4"/><line x1="3" y1="11" x2="21" y2="11"/>
+      <circle cx="8" cy="16" r="1" fill="rgba(110,231,183,.9)"/>
+      <circle cx="12" cy="16" r="1" fill="rgba(110,231,183,.9)"/>
+      <circle cx="16" cy="16" r="1" fill="rgba(110,231,183,.9)"/>
+    </svg>
+  </div>
+  <div class="dev-title">Módulo de Citas</div>
+  <div class="dev-sub">Este módulo está en desarrollo y estará disponible pronto para todos los docentes.</div>
+  <div class="dev-badge">⚙ EN DESARROLLO</div>
+  <div class="dev-card">
+    <div class="dev-lbl">Acceso de administrador</div>
+    <input type="password" id="devClave" class="dev-input" placeholder="••••••••" maxlength="20">
+    <button class="dev-btn" onclick="verificarClaveDev()">Ingresar</button>
+    <div class="dev-err" id="devErr">Clave incorrecta</div>
+  </div>
+</div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="spin"></div>
+  <p>Validando acceso...</p>
+</div>
+
+<!-- APP -->
+<div id="s-app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <img src="/logo.png" onerror="this.style.display='none';this.parentNode.innerHTML='<span>S</span>'">
+    </div>
+    <h1>Mis Citas</h1>
+    <button class="topbar-back" onclick="window.location.href='/'">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inicio
+    </button>
+    <button class="logout-btn" onclick="doLogout()">Salir</button>
+  </div>
+
+  <!-- SCROLL AREA -->
+  <div class="scroll-area" id="scrollArea">
+
+    <!-- TAB CALENDARIO -->
+    <div class="tab on" id="t-cal">
+      <div class="cal-wrap">
+        <div class="cal-header">
+          <div class="cal-mes" id="calMes">—</div>
+          <div class="cal-nav-btns">
+            <button class="cal-nav-btn" onclick="navCal(-1)">
+              <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="cal-nav-btn" onclick="navCal(1)">
+              <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+      <div class="dia-citas" id="diaCitas">
+        <div class="empty">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <div>Selecciona un día para ver tus citas</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB HORARIOS -->
+    <div class="tab" id="t-hor">
+
+      <!-- Estado de configuración -->
+      <div class="hor-status" id="horStatus">
+        <div class="hor-status-row">
+          <div>
+            <div class="hor-status-lbl">Configuración de horario</div>
+            <div class="hor-status-sub" id="horStatusSub">Cargando...</div>
+          </div>
+          <span class="hor-badge libre" id="horBadge">—</span>
+        </div>
+      </div>
+
+      <div id="horContenido"></div>
+
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav">
+    <button class="ni on" id="ni-cal" onclick="goTab('cal',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span>Calendario</span>
+    </button>
+    <button class="ni" id="ni-hor" onclick="goTab('hor',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <span>Horarios</span>
+    </button>
+  </div>
+
+</div>
+
+<!-- OVERLAY + SHEETS -->
+<div class="ov" id="ov1" onclick="closeSheet('sh1','ov1')"></div>
+<div class="sheet" id="sh1">
+  <div class="sheet-handle"></div>
+  <div class="sh-pad" id="sh1c"></div>
+</div>
+
+<div class="ov" id="ov2" onclick="closeSheet('sh2','ov2')"></div>
+<div class="sheet" id="sh2">
+  <div class="sheet-handle"></div>
+  <div class="sh-pad" id="sh2c"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// CLAVE DE DESARROLLO
+// ══════════════════════════════════════════════
+const CLAVE_DEV = '1624Scc$';
+const DEV_KEY = 'sipresc_dev_ok';
+
+function verificarClaveDev(){
+  const val = document.getElementById('devClave').value;
+  if(val === CLAVE_DEV){
+    sessionStorage.setItem(DEV_KEY, '1');
+    document.getElementById('s-dev').style.display = 'none';
+    iniciarSplash();
+  } else {
+    document.getElementById('devErr').classList.add('on');
+    document.getElementById('devClave').value = '';
+    setTimeout(()=>document.getElementById('devErr').classList.remove('on'), 2000);
+  }
+}
+document.getElementById('devClave').addEventListener('keydown', e => {
+  if(e.key === 'Enter') verificarClaveDev();
+});
+
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+const API = '/api/proxy';
+let ST = {correo:null, nombre:null, docenteId:null, rol:null, citas:[], horarios:{}, horarioGuardado:false};
+let calFecha = new Date();
+let calSel = null;
+
+const $ = id => document.getElementById(id);
+function pad(n){return String(n).padStart(2,'0');}
+function fmtFecha(f){if(!f)return'';const p=f.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+
+function toast(msg, tipo){
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast on ' + (tipo||'');
+  clearTimeout(t._to);
+  t._to = setTimeout(()=>t.className='toast', 3500);
+}
+
+function openSheet(sh,ov){$(ov).classList.add('on');$(sh).classList.add('on');}
+function closeSheet(sh,ov){$(ov).classList.remove('on');$(sh).classList.remove('on');}
+
+function spinBtn(btn){
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<span class="spin"></span> …';
+  btn.disabled = true;
+  return txt => {btn.innerHTML = txt||orig; btn.disabled = false;};
+}
+
+function api(action, payload){
+  return new Promise((res,rej)=>{
+    const body = {action, ...(payload||{})};
+    if(ST.correo) body.correo = ST.correo;
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+      .then(r=>r.json()).then(res).catch(rej);
+  });
+}
+
+// ══════════════════════════════════════════════
+// INICIO
+// ══════════════════════════════════════════════
+function iniciarSplash(){
+  const splash = $('splash');
+  splash.style.display = 'flex';
+  const data = localStorage.getItem('lp_user');
+  if(!data){
+    splash.style.display = 'none';
+    window.location.href = '/';
+    return;
+  }
+  try{
+    const obj = JSON.parse(data);
+    const DIAS_14 = 14*24*60*60*1000;
+    if(Date.now() - obj.loginTime > DIAS_14){
+      localStorage.removeItem('lp_user');
+      window.location.href = '/';
+      return;
+    }
+    ST.correo = obj.correo;
+    api('loginGoogle',{correo:obj.correo}).then(r=>{
+      if(r.ok){
+        ST.rol = r.rol;
+        ST.nombre = r.nombre;
+        ST.docenteId = r.docenteId;
+        splash.style.display = 'none';
+        $('s-app').classList.add('on');
+        iniciarApp();
+      } else {
+        localStorage.removeItem('lp_user');
+        window.location.href = '/';
+      }
+    }).catch(()=>{
+      splash.style.display = 'none';
+      window.location.href = '/';
+    });
+  }catch{
+    window.location.href = '/';
+  }
+}
+
+function doLogout(){
+  localStorage.removeItem('lp_user');
+  sessionStorage.removeItem(DEV_KEY);
+  window.location.href = '/';
+}
+
+function iniciarApp(){
+  cargarCitas();
+  cargarHorarios();
+  renderCal();
+}
+
+function goTab(id, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  $('t-'+id).classList.add('on');
+  el.classList.add('on');
+  $('scrollArea').scrollTop = 0;
+}
+
+// ══════════════════════════════════════════════
+// CITAS
+// ══════════════════════════════════════════════
+function cargarCitas(){
+  api('misCitas',{docenteId:ST.docenteId}).then(citas=>{
+    ST.citas = citas||[];
+    renderCal();
+    if(calSel) mostrarCitasDia(calSel);
+  }).catch(()=>{});
+}
+
+// ══════════════════════════════════════════════
+// CALENDARIO
+// ══════════════════════════════════════════════
+function navCal(delta){
+  calFecha.setMonth(calFecha.getMonth() + delta);
+  calSel = null;
+  renderCal();
+  $('diaCitas').innerHTML = `<div class="empty">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    <div>Selecciona un día para ver tus citas</div>
+  </div>`;
+}
+
+function renderCal(){
+  const y = calFecha.getFullYear(), m = calFecha.getMonth();
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  $('calMes').textContent = meses[m] + ' ' + y;
+
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const cpf = {};
+  (ST.citas||[]).forEach(c=>{
+    if(!cpf[c.fecha]) cpf[c.fecha] = [];
+    cpf[c.fecha].push(c);
+  });
+
+  let pd = new Date(y,m,1).getDay(); pd = pd===0?6:pd-1;
+  const dim = new Date(y,m+1,0).getDate();
+  const dias = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+
+  let html = dias.map(d=>`<div class="cal-hd">${d}</div>`).join('');
+  for(let i=0;i<pd;i++) html += '<div class="cal-day vacio"></div>';
+
+  for(let dd=1;dd<=dim;dd++){
+    const fs = y+'-'+pad(m+1)+'-'+pad(dd);
+    const fecha = new Date(y,m,dd); fecha.setHours(0,0,0,0);
+    const cd = cpf[fs]||[];
+    const tieneConf = cd.some(c=>c.estado==='confirmada');
+    const tienePend = cd.some(c=>c.estado==='pendiente');
+
+    let cls = 'cal-day';
+    if(fecha.getTime()===hoy.getTime()) cls+=' hoy';
+    if(calSel===fs) cls+=' sel';
+    else if(tieneConf) cls+=' tiene-citas';
+    else if(tienePend) cls+=' tiene-pendiente';
+
+    let dots = '';
+    if(tieneConf) dots += '<div class="cal-dot conf"></div>';
+    if(tienePend) dots += '<div class="cal-dot pend"></div>';
+
+    html += `<div class="${cls}" onclick="selDia('${fs}')">${dd}${dots}</div>`;
+  }
+
+  $('calGrid').innerHTML = html;
+}
+
+function selDia(fecha){
+  calSel = fecha;
+  renderCal();
+  mostrarCitasDia(fecha);
+}
+
+function mostrarCitasDia(fecha){
+  const citas = (ST.citas||[]).filter(c=>c.fecha===fecha);
+  const el = $('diaCitas');
+  const d = fecha.split('-');
+  const lbl = d[2]+'/'+d[1]+'/'+d[0];
+
+  if(!citas.length){
+    el.innerHTML = `<div class="dia-lbl">Citas del ${lbl}</div>
+      <div class="empty"><div>Sin citas para este día</div></div>`;
+    return;
+  }
+
+  const sorted = [...citas].sort((a,b)=>a.horaInicio.localeCompare(b.horaInicio));
+  el.innerHTML = `<div class="dia-lbl">Citas del ${lbl} · ${sorted.length} cita${sorted.length>1?'s':''}</div>`
+    + sorted.map(c=>`
+    <div class="cita-card ${c.estado}" onclick="verDetalleCita('${c.id}')">
+      ${c.acta ? '<div class="cita-acta-ind" title="Acta registrada"></div>' : ''}
+      <div class="cita-hora">${c.horaInicio} – ${c.horaFin}</div>
+      <div class="cita-padre">${c.padreNombre||''} ${c.padreApellido||''}</div>
+      <div class="cita-meta">👤 ${c.estudianteNombre||''} · ${c.grado||''}</div>
+      <div class="cita-meta">📋 ${c.motivos||''}</div>
+      <span class="cita-badge ${c.estado}">${c.estado==='confirmada'?'Confirmada':'Cancelada'}</span>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════
+// DETALLE CITA
+// ══════════════════════════════════════════════
+function verDetalleCita(citaId){
+  const c = ST.citas.find(x=>x.id===citaId);
+  if(!c) return;
+
+  const tieneActa = c.acta && c.acta.trim().length > 0;
+
+  $('sh1c').innerHTML = `
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px">${c.padreNombre||''} ${c.padreApellido||''}</div>
+    <div style="font-size:12px;color:var(--mt);margin-bottom:16px">${fmtFecha(c.fecha)} · ${c.horaInicio} – ${c.horaFin}</div>
+
+    <div class="info-row"><span class="info-lb">Estudiante</span>${c.estudianteNombre||'—'}</div>
+    <div class="info-row"><span class="info-lb">Grado</span>${c.grado||'—'}</div>
+    <div class="info-row"><span class="info-lb">Correo</span><span style="font-size:12px">${c.padreCorreo||'—'}</span></div>
+    <div class="info-row"><span class="info-lb">Motivo</span>${c.motivos||'—'}${c.motivoExtra?' · '+c.motivoExtra:''}</div>
+    <div class="info-row"><span class="info-lb">Estado</span>
+      <span class="cita-badge ${c.estado}" style="margin:0">${c.estado==='confirmada'?'Confirmada':'Cancelada'}</span>
+    </div>
+
+    ${tieneActa ? `
+    <div style="margin-top:14px">
+      <div class="slabel" style="margin-bottom:8px">Acta de reunión registrada</div>
+      <div style="background:rgba(201,150,42,.06);border:1px solid rgba(201,150,42,.15);border-radius:10px;padding:12px;font-size:13px;line-height:1.6;color:var(--tx)">${c.acta}</div>
+    </div>` : ''}
+
+    <div style="margin-top:16px">
+      ${c.estado==='confirmada' ? `
+        <button class="btn btn-gr" onclick="mostrarActaForm('${c.id}')">
+          ${tieneActa ? '✏ Editar acta de reunión' : '📝 Registrar acta de reunión'}
+        </button>
+        <button class="btn btn-r" onclick="pedirCancelacion('${c.id}')">Cancelar cita</button>
+      ` : ''}
+      <button class="btn btn-o" onclick="closeSheet('sh1','ov1')">Cerrar</button>
+    </div>
+
+    <div class="acta-form" id="actaForm">
+      <div class="slabel" style="margin-bottom:8px">Acta de reunión</div>
+      <div style="font-size:12px;color:var(--mt);margin-bottom:10px;line-height:1.5">
+        Escribe un breve resumen de lo tratado. Se enviará copia al correo del padre/madre.
+      </div>
+      <textarea class="fta" id="actaTexto" placeholder="Ej: Se trató el rendimiento académico del estudiante en matemáticas. Se acordó refuerzo en casa tres veces por semana...">${c.acta||''}</textarea>
+      <button class="btn btn-g" style="margin-top:10px" onclick="guardarActa('${c.id}')">Enviar y guardar acta</button>
+    </div>
+  `;
+  openSheet('sh1','ov1');
+}
+
+function mostrarActaForm(citaId){
+  const form = $('actaForm');
+  form.classList.toggle('on');
+  if(form.classList.contains('on')){
+    setTimeout(()=>$('actaTexto').focus(), 100);
+  }
+}
+
+function guardarActa(citaId){
+  const texto = $('actaTexto').value.trim();
+  if(!texto || texto.length < 10){
+    toast('Escribe al menos 10 caracteres','er'); return;
+  }
+  const btn = document.querySelector('#actaForm .btn-g');
+  const rest = spinBtn(btn);
+  api('guardarActa',{citaId, acta:texto, docenteId:ST.docenteId}).then(r=>{
+    rest();
+    if(r.ok){
+      const c = ST.citas.find(x=>x.id===citaId);
+      if(c) c.acta = texto;
+      toast('Acta guardada y enviada al padre ✔','ok');
+      closeSheet('sh1','ov1');
+      if(calSel) mostrarCitasDia(calSel);
+    } else toast(r.mensaje||'Error','er');
+  }).catch(()=>{rest();toast('Error de conexión','er');});
+}
+
+function pedirCancelacion(citaId){
+  $('sh2c').innerHTML = `
+    <div style="font-size:16px;font-weight:700;margin-bottom:6px">Cancelar cita</div>
+    <div style="font-size:13px;color:var(--mt);margin-bottom:16px;line-height:1.5">
+      Se notificará al padre/madre por correo electrónico.
+    </div>
+    <div class="fg">
+      <label class="fl">Motivo de cancelación</label>
+      <textarea class="fta" id="motCan" placeholder="Explica brevemente el motivo..."></textarea>
+    </div>
+    <button class="btn btn-r" onclick="confirmarCancelacion('${citaId}')">Confirmar cancelación</button>
+    <button class="btn btn-o" onclick="closeSheet('sh2','ov2')">Volver</button>
+  `;
+  openSheet('sh2','ov2');
+}
+
+function confirmarCancelacion(citaId){
+  const mot = $('motCan').value.trim();
+  if(!mot){toast('El motivo es obligatorio','er');return;}
+  const btn = document.querySelector('#sh2 .btn-r');
+  const rest = spinBtn(btn);
+  api('cancelarCita',{citaId,motivo:mot,docenteId:ST.docenteId}).then(r=>{
+    rest();
+    if(r.ok){
+      toast('Cita cancelada','ok');
+      closeSheet('sh2','ov2');
+      closeSheet('sh1','ov1');
+      cargarCitas();
+    } else toast(r.mensaje||'Error','er');
+  }).catch(()=>{rest();toast('Error de conexión','er');});
+}
+
+// ══════════════════════════════════════════════
+// HORARIOS
+// ══════════════════════════════════════════════
+const DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+function cargarHorarios(){
+  api('misHorarios',{docenteId:ST.docenteId}).then(hs=>{
+    ST.horarios = {};
+    (hs||[]).forEach(h=>{
+      if(!ST.horarios[h.dia]) ST.horarios[h.dia]=[];
+      ST.horarios[h.dia].push({ini:h.horaInicio,fin:h.horaFin});
+    });
+    // Detectar si ya configuró horario antes
+    ST.horarioGuardado = hs && hs.length > 0;
+    renderHorarios();
+  }).catch(()=>{});
+}
+
+function renderHorarios(){
+  const cont = $('horContenido');
+  const yaGuardado = ST.horarioGuardado;
+
+  $('horStatusSub').textContent = yaGuardado
+    ? 'Ya tienes horario configurado. Modificaciones requieren solicitud.'
+    : 'Aún no has configurado tu horario de atención.';
+  $('horBadge').textContent = yaGuardado ? 'Configurado' : 'Sin configurar';
+  $('horBadge').className = 'hor-badge ' + (yaGuardado ? 'libre' : 'bloqueado');
+
+  let html = '';
+
+  // Si ya tiene horario guardado → puede ver pero modificar requiere solicitud
+  if(yaGuardado){
+    html += `<div class="slabel">Tu horario actual</div>`;
+    DIAS.forEach(dia=>{
+      const bloques = ST.horarios[dia]||[];
+      if(!bloques.length) return;
+      html += `<div style="margin-bottom:10px">
+        <div style="font-size:12px;color:var(--mt);margin-bottom:5px">${dia}</div>
+        ${bloques.map(b=>`<div style="background:var(--s1);border:1px solid var(--br);border-radius:8px;padding:9px 12px;font-size:13px;font-family:'Courier New',monospace;margin-bottom:4px">${b.ini} – ${b.fin}</div>`).join('')}
+      </div>`;
+    });
+
+    html += `<div class="divider"></div>
+    <div class="sol-card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">¿Necesitas modificar tu horario?</div>
+      <div style="font-size:12px;color:var(--mt);line-height:1.5;margin-bottom:12px">
+        Las modificaciones de horario requieren aprobación del administrador. Envía una solicitud indicando el cambio que necesitas.
+      </div>
+      <button class="btn btn-o btn-sm" style="width:100%" onclick="abrirSolicitudHorario()">Solicitar modificación</button>
+    </div>`;
+
+  } else {
+    // Primera vez — puede configurar libremente
+    html += `<div class="slabel">Configura tu horario de atención</div>
+    <div style="font-size:12px;color:var(--mt);line-height:1.5;margin-bottom:14px">
+      Define en qué días y horarios estás disponible para atender padres de familia. Las citas duran 30 minutos.
+    </div>`;
+
+    DIAS.forEach(dia=>{
+      const sid = dia.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      const bloques = ST.horarios[dia]||[];
+      html += `<div class="card" style="margin-bottom:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+          <span style="font-size:13px;font-weight:600">${dia}</span>
+          <button class="btn btn-sm btn-o" onclick="addBloque('${dia}')">+ Agregar</button>
+        </div>
+        <div id="blo-${sid}">
+          ${bloques.length
+            ? bloques.map((b,i)=>renderBloque(dia,i,b)).join('')
+            : '<div style="font-size:12px;color:var(--mt);padding:4px 0">Sin horarios</div>'}
+        </div>
+      </div>`;
+    });
+
+    html += `<button class="btn btn-g" onclick="guardarHorarios()">Guardar horario</button>`;
+  }
+
+  // Solicitud de cierre de agenda
+  html += `<div class="divider"></div>
+  <div class="slabel">Cierre de agenda</div>
+  <div class="cierre-card">
+    <div style="font-size:13px;font-weight:600;margin-bottom:4px">Solicitar cierre de agenda</div>
+    <div style="font-size:12px;color:var(--mt);line-height:1.5;margin-bottom:12px">
+      Si necesitas cerrar tu agenda para fechas específicas, envía una solicitud. El administrador la revisará.
+    </div>
+    <button class="btn btn-r btn-sm" style="width:100%" onclick="abrirSolicitudCierre()">Solicitar cierre</button>
+  </div>`;
+
+  cont.innerHTML = html;
+}
+
+function renderBloque(dia,idx,b){
+  return `<div class="hb">
+    <div class="row2" style="flex:1">
+      <input type="time" class="fi" value="${b.ini||''}" style="padding:9px;font-size:14px"
+        onchange="updBloque('${dia}',${idx},'ini',this.value)">
+      <input type="time" class="fi" value="${b.fin||''}" style="padding:9px;font-size:14px"
+        onchange="updBloque('${dia}',${idx},'fin',this.value)">
+    </div>
+    <button class="hb-x" onclick="delBloque('${dia}',${idx})">×</button>
+  </div>`;
+}
+
+function addBloque(dia){
+  if(!ST.horarios[dia]) ST.horarios[dia]=[];
+  ST.horarios[dia].push({ini:'07:00',fin:'17:00'});
+  renderHorarios();
+}
+function updBloque(dia,idx,campo,val){
+  if(ST.horarios[dia]&&ST.horarios[dia][idx]) ST.horarios[dia][idx][campo]=val;
+}
+function delBloque(dia,idx){
+  if(ST.horarios[dia]) ST.horarios[dia].splice(idx,1);
+  renderHorarios();
+}
+
+function guardarHorarios(){
+  const horarios = [];
+  DIAS.forEach(dia=>(ST.horarios[dia]||[]).forEach(b=>{
+    if(b.ini&&b.fin) horarios.push({dia,horaInicio:b.ini,horaFin:b.fin});
+  }));
+  if(!horarios.length){toast('Agrega al menos un horario','er');return;}
+  const btn = document.querySelector('#t-hor .btn-g');
+  const rest = spinBtn(btn);
+  api('guardarHorarios',{docenteId:ST.docenteId,horarios}).then(r=>{
+    rest();
+    if(r.ok){
+      toast('Horario guardado ✔','ok');
+      ST.horarioGuardado = true;
+      renderHorarios();
+    } else toast(r.mensaje||'Error','er');
+  }).catch(()=>{rest();toast('Error de conexión','er');});
+}
+
+// ══════════════════════════════════════════════
+// SOLICITUD MODIFICACIÓN HORARIO
+// ══════════════════════════════════════════════
+function abrirSolicitudHorario(){
+  $('sh1c').innerHTML = `
+    <div style="font-size:17px;font-weight:700;margin-bottom:6px">Solicitar cambio de horario</div>
+    <div style="font-size:13px;color:var(--mt);margin-bottom:16px;line-height:1.5">
+      Describe el cambio que necesitas. El administrador recibirá la solicitud y la coordinadora será notificada.
+    </div>
+    <div class="fg">
+      <label class="fl">Descripción del cambio</label>
+      <textarea class="fta" id="solHorTexto" placeholder="Ej: Necesito cambiar los martes de 2pm-4pm a 3pm-5pm porque tengo reunión de área..."></textarea>
+    </div>
+    <button class="btn btn-g" onclick="enviarSolicitudHorario()">Enviar solicitud</button>
+    <button class="btn btn-o" onclick="closeSheet('sh1','ov1')">Cancelar</button>
+  `;
+  openSheet('sh1','ov1');
+}
+
+function enviarSolicitudHorario(){
+  const texto = $('solHorTexto').value.trim();
+  if(!texto||texto.length<10){toast('Describe el cambio requerido','er');return;}
+  const btn = document.querySelector('#sh1 .btn-g');
+  const rest = spinBtn(btn);
+  api('solicitarCambioHorario',{docenteId:ST.docenteId,descripcion:texto,nombre:ST.nombre}).then(r=>{
+    rest();
+    if(r.ok){
+      toast('Solicitud enviada al administrador ✔','ok');
+      closeSheet('sh1','ov1');
+    } else toast(r.mensaje||'Error','er');
+  }).catch(()=>{rest();toast('Error de conexión','er');});
+}
+
+// ══════════════════════════════════════════════
+// SOLICITUD CIERRE AGENDA
+// ══════════════════════════════════════════════
+function abrirSolicitudCierre(){
+  $('sh1c').innerHTML = `
+    <div style="font-size:17px;font-weight:700;margin-bottom:6px">Solicitar cierre de agenda</div>
+    <div style="font-size:13px;color:var(--mt);margin-bottom:16px;line-height:1.5">
+      Define las fechas y el motivo. La coordinadora será notificada y el administrador autorizará.
+    </div>
+    <div class="fg">
+      <label class="fl">Fecha inicio</label>
+      <input type="date" class="fi" id="cieIni">
+    </div>
+    <div class="fg">
+      <label class="fl">Fecha fin</label>
+      <input type="date" class="fi" id="cieFin">
+    </div>
+    <div class="fg">
+      <label class="fl">Motivo</label>
+      <textarea class="fta" id="cieMot" placeholder="Explica el motivo del cierre..."></textarea>
+    </div>
+    <button class="btn btn-r" onclick="enviarSolicitudCierre()">Enviar solicitud</button>
+    <button class="btn btn-o" onclick="closeSheet('sh1','ov1')">Cancelar</button>
+  `;
+  // Setear fecha mínima hoy
+  const hoy = new Date().toISOString().split('T')[0];
+  setTimeout(()=>{
+    $('cieIni').min = hoy;
+    $('cieFin').min = hoy;
+  },50);
+  openSheet('sh1','ov1');
+}
+
+function enviarSolicitudCierre(){
+  const ini = $('cieIni').value;
+  const fin = $('cieFin').value;
+  const mot = $('cieMot').value.trim();
+  if(!ini||!fin||!mot){toast('Completa todos los campos','er');return;}
+  if(fin < ini){toast('La fecha fin debe ser igual o posterior al inicio','er');return;}
+  const btn = document.querySelector('#sh1 .btn-r');
+  const rest = spinBtn(btn);
+  api('solicitarCierre',{docenteId:ST.docenteId,ini,fin,motivo:mot,nombre:ST.nombre}).then(r=>{
+    rest();
+    if(r.ok){
+      toast('Solicitud enviada ✔ Coordinadora notificada','ok');
+      closeSheet('sh1','ov1');
+    } else toast(r.mensaje||'Error','er');
+  }).catch(()=>{rest();toast('Error de conexión','er');});
+}
+
+// ══════════════════════════════════════════════
+// ARRANQUE
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', ()=>{
+  // ¿Ya pasó la pantalla dev en esta sesión?
+  if(sessionStorage.getItem(DEV_KEY) === '1'){
+    document.getElementById('s-dev').style.display = 'none';
+    iniciarSplash();
+  } else {
+    document.getElementById('splash').style.display = 'none';
+  }
+});
+</script>
+</body>
+</html>
