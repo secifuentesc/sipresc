@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -25,6 +25,10 @@
   --red:#dc2626;
   --red2:#fef2f2;
 }
+
+body{max-width:1000px;
+     margin:0 auto;}
+  
 
 html,body{
   font-family:-apple-system,'SF Pro Text','Helvetica Neue',sans-serif;
@@ -66,7 +70,7 @@ html,body{
 .hero{
   padding:28px 20px 20px;
   background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);
-  position:relative;overflow:hidden
+  position:relative;overflow:hidden;
 }
 .hero::after{
   content:'';position:absolute;
@@ -150,6 +154,7 @@ html,body{
 /* Info docente sidebar */
 .cal-layout{
   display:flex;flex-direction:column;
+  max-width:900px;margin:0 auto;
 }
 @media(min-width:700px){
   .cal-layout{flex-direction:row;align-items:flex-start;gap:0}
@@ -188,7 +193,18 @@ html,body{
 .cal-doc-pill svg{width:14px;height:14px;stroke:var(--mt);stroke-width:1.8;fill:none;flex-shrink:0}
 
 /* Calendario principal */
-.cal-main{padding:20px}
+.cal-main{padding:20px;display:flex;gap:24px;align-items:flex-start}
+.cal-grid-wrap{flex:1;min-width:0}
+.slots-wrap{
+  width:200px;flex-shrink:0;
+  border-top:none;padding-top:0;
+  border-left:1px solid var(--br);
+  padding-left:20px;margin-top:0
+}
+@media(max-width:699px){
+  .cal-main{flex-direction:column}
+  .slots-wrap{width:100%;border-left:none;padding-left:0;border-top:1px solid var(--br);padding-top:16px;margin-top:16px}
+}
 
 .cal-month-nav{
   display:flex;align-items:center;justify-content:space-between;margin-bottom:16px
@@ -245,18 +261,46 @@ html,body{
 .slots-fecha-lbl{
   font-size:14px;font-weight:700;color:var(--tx);margin-bottom:14px;letter-spacing:-.2px
 }
-.slots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-@media(min-width:400px){.slots-grid{grid-template-columns:repeat(4,1fr)}}
-
+.slots-grid{display:flex;flex-direction:column;gap:8px}
 .slot{
-  padding:11px 6px;border-radius:10px;
+  padding:12px 16px;border-radius:10px;
   border:1.5px solid var(--br);background:var(--white);
   text-align:center;cursor:pointer;transition:all .18s;
-  font-size:13px;font-weight:600;color:var(--blue)
+  font-size:14px;font-weight:600;color:var(--blue);
+  display:flex;align-items:center;justify-content:center;gap:10px
+}
+.slot:hover{border-color:var(--blue);background:var(--blue3)}
+.slot:active{transform:scale(.98)}
+.slot.ocupado{color:var(--mt2);border-color:var(--br);cursor:not-allowed;opacity:.4;text-decoration:line-through}
+.slot.sel{
+  border-color:var(--blue);
+  animation:slotExpand .2s ease both
+}
+@keyframes slotExpand{
+  from{padding-right:16px}
+  to{padding-right:16px}
+}
+.slot-hora{flex:1;text-align:center;transition:transform .2s}
+.slot.sel .slot-hora{transform:translateX(-8px);text-align:left}
+.slot-next{
+  background:var(--blue);color:#fff;
+  border:none;border-radius:7px;padding:7px 14px;
+  font-size:13px;font-weight:700;cursor:pointer;
+  white-space:nowrap;font-family:-apple-system,sans-serif;
+  animation:fadeInRight .2s ease both;flex-shrink:0
+}
+@keyframes fadeInRight{
+  from{opacity:0;transform:translateX(10px)}
+  to{opacity:1;transform:translateX(0)}
 }
 .slot:hover{border-color:var(--blue);background:var(--blue3);transform:translateY(-1px)}
 .slot:active{transform:scale(.97)}
 .slot.sel{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 3px 10px rgba(30,77,183,.3)}
+.slot.sel{
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;
+  background:var(--blue);border-color:var(--blue);color:#fff;
+  box-shadow:0 3px 10px rgba(30,77,183,.3)
+}
 .slot.ocupado{color:var(--mt2);border-color:var(--br);cursor:not-allowed;font-weight:400;text-decoration:line-through;opacity:.5}
 
 .slots-empty{
@@ -522,6 +566,7 @@ html,body{
 
     <!-- Calendario -->
     <div class="cal-main">
+      <div class="cal-grid-wrap">
       <div class="cal-month-nav">
         <div class="cal-month-lbl" id="calMesLbl">—</div>
         <div class="cal-nav-btns">
@@ -541,6 +586,7 @@ html,body{
         <div class="cal-hd">Sáb</div>
       </div>
       <div class="cal-grid" id="calGrid"></div>
+      </div><!-- /cal-grid-wrap -->
 
       <!-- Slots hora -->
       <div class="slots-wrap" id="slotsWrap" style="display:none">
@@ -557,75 +603,86 @@ html,body{
 
 <!-- ══ VISTA 3 — FORMULARIO ══ -->
 <div class="view" id="v-form">
-  <div class="form-header">
-    <button class="form-back" onclick="irVista('cal')">
-      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      Cambiar horario
-    </button>
-  </div>
-
-  <!-- Resumen selección -->
-  <div class="cita-resumen" id="citaResumen"></div>
-
-  <div class="form-body">
-    <div class="form-err" id="formErr"></div>
-
-    <div class="form-section-title">Acudiente</div>
-
-    <div class="fg">
-      <label class="fl">Nombre <span>*</span></label>
-      <input type="text" class="fi" id="fNombre" placeholder="Tu nombre" autocapitalize="words">
-    </div>
-    <div class="fg">
-      <label class="fl">Apellido <span>*</span></label>
-      <input type="text" class="fi" id="fApellido" placeholder="Tu apellido" autocapitalize="words">
-    </div>
-    <div class="fg">
-      <label class="fl">Correo electrónico <span>*</span></label>
-      <input type="email" class="fi" id="fCorreo" placeholder="tu@correo.com" inputmode="email" autocapitalize="none">
-    </div>
-    <div class="fg">
-      <label class="fl">Teléfono <span>*</span></label>
-      <input type="tel" class="fi" id="fTelefono" placeholder="300 000 0000" inputmode="tel">
+  <div class="cal-layout">
+    <!-- Sidebar izquierda -->
+    <div class="cal-sidebar">
+      <button class="form-back" onclick="irVista('cal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Cambiar horario
+      </button>
+      <div class="cal-doc-avatar" id="formDocAvatar"></div>
+      <div class="cal-doc-school">Instituto Parroquial</div>
+      <div class="cal-doc-nombre" id="formDocNombre">—</div>
+      <div class="cal-doc-pills">
+        <div class="cal-doc-pill">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          30 minutos
+        </div>
+        <div class="cal-doc-pill" id="formFechaHora">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <span>—</span>
+        </div>
+      </div>
     </div>
 
-    <div class="form-section-title">Estudiante</div>
+    <!-- Formulario derecha -->
+    <div class="cal-main" style="border-left:1px solid var(--br)">
+      <div class="form-err" id="formErr"></div>
 
-    <div class="fg">
-      <label class="fl">Nombre del estudiante <span>*</span></label>
-      <input type="text" class="fi" id="fEstudiante" placeholder="Nombre completo" autocapitalize="words">
-    </div>
-    <div class="fg">
-      <label class="fl">Grado <span>*</span></label>
-      <select class="fs" id="fGrado">
-        <option value="">Seleccionar grado...</option>
-      </select>
-    </div>
+      <div class="form-section-title">Acudiente</div>
+      <div class="fg">
+        <label class="fl">Nombre <span>*</span></label>
+        <input type="text" class="fi" id="fNombre" placeholder="Tu nombre" autocapitalize="words">
+      </div>
+      <div class="fg">
+        <label class="fl">Apellido <span>*</span></label>
+        <input type="text" class="fi" id="fApellido" placeholder="Tu apellido" autocapitalize="words">
+      </div>
+      <div class="fg">
+        <label class="fl">Correo electrónico <span>*</span></label>
+        <input type="email" class="fi" id="fCorreo" placeholder="tu@correo.com" inputmode="email" autocapitalize="none">
+      </div>
+      <div class="fg">
+        <label class="fl">Teléfono <span>*</span></label>
+        <input type="tel" class="fi" id="fTelefono" placeholder="300 000 0000" inputmode="tel">
+      </div>
 
-    <div class="form-section-title">Motivo de la cita</div>
+      <div class="form-section-title">Estudiante</div>
+      <div class="fg">
+        <label class="fl">Nombre del estudiante <span>*</span></label>
+        <input type="text" class="fi" id="fEstudiante" placeholder="Nombre completo" autocapitalize="words">
+      </div>
+      <div class="fg">
+        <label class="fl">Grado <span>*</span></label>
+        <select class="fs" id="fGrado">
+          <option value="">Seleccionar grado...</option>
+        </select>
+      </div>
 
-    <div class="fg">
-      <label class="fl">¿Por qué solicitas esta cita? <span>*</span></label>
-      <select class="fs" id="fMotivo" onchange="toggleMotivoExtra()">
-        <option value="">Seleccionar motivo...</option>
-        <option value="Seguimiento académico">Seguimiento académico</option>
-        <option value="Comportamiento">Comportamiento</option>
-        <option value="Inasistencias">Inasistencias y puntualidad</option>
-        <option value="Resultados de evaluaciones">Resultados de evaluaciones</option>
-        <option value="Situación familiar">Situación familiar</option>
-        <option value="Otro">Otro</option>
-      </select>
-    </div>
-    <div class="fg" id="motivoExtraWrap" style="display:none">
-      <label class="fl">Especifica el motivo</label>
-      <textarea class="fta" id="fMotivoExtra" placeholder="Describe brevemente..."></textarea>
-    </div>
+      <div class="form-section-title">Motivo de la cita</div>
+      <div class="fg">
+        <label class="fl">¿Por qué solicitas esta cita? <span>*</span></label>
+        <select class="fs" id="fMotivo" onchange="toggleMotivoExtra()">
+          <option value="">Seleccionar motivo...</option>
+          <option value="Seguimiento académico">Seguimiento académico</option>
+          <option value="Comportamiento">Comportamiento</option>
+          <option value="Inasistencias">Inasistencias y puntualidad</option>
+          <option value="Resultados de evaluaciones">Resultados de evaluaciones</option>
+          <option value="Situación familiar">Situación familiar</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+      <div class="fg" id="motivoExtraWrap" style="display:none">
+        <label class="fl">Especifica el motivo</label>
+        <textarea class="fta" id="fMotivoExtra" placeholder="Describe brevemente..."></textarea>
+      </div>
 
-    <button class="submit-btn" id="submitBtn" onclick="confirmarReserva()">
-      Confirmar reserva
-    </button>
-  </div>
-</div>
+      <button class="submit-btn" id="submitBtn" onclick="confirmarReserva()">
+        Confirmar reserva
+      </button>
+    </div><!-- /cal-main -->
+  </div><!-- /cal-layout -->
+</div><!-- /v-form -->
 
 <!-- ══ VISTA 4 — ÉXITO ══ -->
 <div id="v-exito">
@@ -645,20 +702,32 @@ html,body{
 </div>
 
 <script>
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
 const API = '/api/proxy';
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES_C = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const DIAS_S = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
 const $ = id => document.getElementById(id);
 const pad = n => String(n).padStart(2,'0');
+
+let STATE = {
+  docentes: [],
+  docentesSel: null,
+  disponibilidad: {},
+  calFecha: new Date(),
+  fechaSel: null,
+  horaSel: null,
+  horaFinSel: null,
+};
+
+// Colores avatar
 const AV_COLORS = ['av-0','av-1','av-2','av-3','av-4','av-5'];
 function avColor(idx){ return AV_COLORS[idx % AV_COLORS.length]; }
 
-let STATE = {
-  docentes:[],docentesSel:null,disponibilidad:{},
-  calFecha:new Date(),fechaSel:null,horaSel:null,horaFinSel:null
-};
-
-function apiPublic(action,payload){
+function apiPublic(action, payload){
   return new Promise((res,rej)=>{
     fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({action,...(payload||{})})})
@@ -666,16 +735,25 @@ function apiPublic(action,payload){
   });
 }
 
-function showLoading(msg){ $('loadingMsg').textContent=msg||'Cargando...'; $('loading').classList.add('on'); }
+function showLoading(msg){
+  $('loadingMsg').textContent = msg||'Cargando...';
+  $('loading').classList.add('on');
+}
 function hideLoading(){ $('loading').classList.remove('on'); }
 
+// ══════════════════════════════════════════════
+// NAVEGACIÓN
+// ══════════════════════════════════════════════
 function irVista(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
-  const v=$('v-'+id);
-  if(v) v.classList.add('on');
+  const v = $(('v-'+id));
+  if(v){ v.classList.add('on'); }
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
   cargarDocentes();
   cargarGrados();
@@ -683,7 +761,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 function cargarDocentes(){
   apiPublic('docentes',{}).then(docs=>{
-    STATE.docentes=(docs||[]).filter(d=>d.activo===true||String(d.activo)==='TRUE');
+    STATE.docentes = (docs||[]).filter(d=>d.activo===true||String(d.activo)==='TRUE');
     renderDocentes(STATE.docentes);
   }).catch(()=>{
     $('docList').innerHTML=`<div class="doc-empty"><p>Error cargando docentes. Recarga la página.</p></div>`;
@@ -700,14 +778,23 @@ function cargarGrados(){
   }).catch(()=>{});
 }
 
+// ══════════════════════════════════════════════
+// LISTA DOCENTES
+// ══════════════════════════════════════════════
 function renderDocentes(docs){
-  $('docCount').textContent=docs.length?`${docs.length} docente${docs.length>1?'s':''}` :'';
+  $('docCount').textContent = docs.length
+    ? `${docs.length} docente${docs.length>1?'s':''}` : '';
+
   if(!docs.length){
-    $('docList').innerHTML=`<div class="doc-empty"><p>No se encontraron docentes</p></div>`;
+    $('docList').innerHTML=`<div class="doc-empty">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke-width="1.5"/><path d="M9 9h.01M15 9h.01M9 15s1 2 3 2 3-2 3-2" stroke-width="1.5"/></svg>
+      <p>No se encontraron docentes</p>
+    </div>`;
     return;
   }
-  $('docList').innerHTML=docs.map((d,i)=>{
-    const ini=[(d.nombre||'').charAt(0),(d.apellido||'').charAt(0)].join('').toUpperCase();
+
+  $('docList').innerHTML = docs.map((d,i)=>{
+    const ini = [(d.nombre||'').charAt(0),(d.apellido||'').charAt(0)].join('').toUpperCase();
     return `<div class="doc-item" onclick="selDocente('${d.id}',${i})">
       <div class="doc-avatar ${avColor(i)}">${ini}</div>
       <div class="doc-body">
@@ -720,49 +807,67 @@ function renderDocentes(docs){
 }
 
 function buscarDocentes(q){
-  const txt=q.toLowerCase().trim();
-  if(!txt){renderDocentes(STATE.docentes);return;}
-  renderDocentes(STATE.docentes.filter(d=>
-    (d.nombre+' '+d.apellido).toLowerCase().includes(txt)||
+  const txt = q.toLowerCase().trim();
+  if(!txt){ renderDocentes(STATE.docentes); return; }
+  const filtrados = STATE.docentes.filter(d=>
+    (d.nombre+' '+d.apellido).toLowerCase().includes(txt) ||
     (d.area||d.asignatura||'').toLowerCase().includes(txt)
-  ));
+  );
+  renderDocentes(filtrados);
 }
 
-function selDocente(id,colorIdx){
-  STATE.docentesSel=STATE.docentes.find(d=>d.id===id);
+// ══════════════════════════════════════════════
+// SELECCIONAR DOCENTE → CALENDARIO
+// ══════════════════════════════════════════════
+function selDocente(id, colorIdx){
+  STATE.docentesSel = STATE.docentes.find(d=>d.id===id);
   if(!STATE.docentesSel) return;
-  STATE.fechaSel=null;STATE.horaSel=null;STATE.horaFinSel=null;
-  STATE.disponibilidad={};STATE.calFecha=new Date();
-  const ini=[(STATE.docentesSel.nombre||'').charAt(0),(STATE.docentesSel.apellido||'').charAt(0)].join('').toUpperCase();
-  const av=$('calDocAvatar');
-  av.textContent=ini;av.className=`cal-doc-avatar ${avColor(colorIdx)}`;
-  $('calDocNombre').textContent=`${STATE.docentesSel.nombre} ${STATE.docentesSel.apellido}`;
+
+  STATE.fechaSel = null;
+  STATE.horaSel = null;
+  STATE.horaFinSel = null;
+  STATE.disponibilidad = {};
+  STATE.calFecha = new Date();
+
+  const ini = [(STATE.docentesSel.nombre||'').charAt(0),(STATE.docentesSel.apellido||'').charAt(0)].join('').toUpperCase();
+  const av = $('calDocAvatar');
+  av.textContent = ini;
+  av.className = `cal-doc-avatar ${avColor(colorIdx)}`;
+  $('calDocNombre').textContent = `${STATE.docentesSel.nombre} ${STATE.docentesSel.apellido}`;
+
   $('slotsWrap').style.display='none';
   $('calContinueBtn').classList.remove('on');
+
   irVista('cal');
   showLoading('Cargando disponibilidad...');
-  cargarDisponibilidad().finally(()=>{hideLoading();renderCal();});
+  cargarDisponibilidad().finally(()=>{ hideLoading(); renderCal(); });
 }
 
+// ══════════════════════════════════════════════
+// DISPONIBILIDAD
+// ══════════════════════════════════════════════
 async function cargarDisponibilidad(){
   try{
-    const [horarios,citas]=await Promise.all([
+    const [horarios, citas] = await Promise.all([
       apiPublic('horariosPublicos',{docenteId:STATE.docentesSel.id}),
       apiPublic('citasPublicas',{docenteId:STATE.docentesSel.id})
     ]);
-    const hs=Array.isArray(horarios)?horarios:[];
-    const cs=Array.isArray(citas)?citas:[];
-    const ocupados=new Set(cs.filter(c=>c.estado==='confirmada').map(c=>c.fecha+'_'+c.horaInicio));
+
+    const hs = Array.isArray(horarios) ? horarios : [];
+    const cs = Array.isArray(citas) ? citas : [];
+    const ocupados = new Set(cs.filter(c=>c.estado==='confirmada').map(c=>c.fecha+'_'+c.horaInicio));
     const diaMap={'Lunes':1,'Martes':2,'Miércoles':3,'Jueves':4,'Viernes':5,'Sábado':6,'Domingo':0};
-    const hoy=new Date();hoy.setHours(0,0,0,0);
-    const limite=new Date(hoy);limite.setDate(limite.getDate()+60);
-    STATE.disponibilidad={};
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    const limite = new Date(hoy); limite.setDate(limite.getDate()+60);
+
+    STATE.disponibilidad = {};
     for(let d=new Date(hoy);d<=limite;d.setDate(d.getDate()+1)){
       if(d<=hoy) continue;
-      const dow=d.getDay();
-      const fs=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-      const bloques=hs.filter(h=>diaMap[h.dia]===dow);
+      const dow = d.getDay();
+      const fs = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+      const bloques = hs.filter(h=>diaMap[h.dia]===dow);
       if(!bloques.length) continue;
+
       const slots=[];
       bloques.forEach(b=>{
         let [hh,mm]=b.horaInicio.split(':').map(Number);
@@ -772,14 +877,17 @@ async function cargarDisponibilidad(){
           const finM=hh*60+mm+30;
           const fin=pad(Math.floor(finM/60))+':'+pad(finM%60);
           slots.push({ini,fin,ocupado:ocupados.has(fs+'_'+ini)});
-          mm+=30;if(mm>=60){hh++;mm-=60;}
+          mm+=30; if(mm>=60){hh++;mm-=60;}
         }
       });
       if(slots.length) STATE.disponibilidad[fs]=slots;
     }
-  }catch(e){console.error(e);}
+  }catch(e){ console.error(e); }
 }
 
+// ══════════════════════════════════════════════
+// CALENDARIO
+// ══════════════════════════════════════════════
 function navCal(delta){
   STATE.calFecha.setMonth(STATE.calFecha.getMonth()+delta);
   const hoy=new Date();
@@ -794,11 +902,14 @@ function navCal(delta){
 function renderCal(){
   const y=STATE.calFecha.getFullYear(),m=STATE.calFecha.getMonth();
   $('calMesLbl').textContent=`${MESES[m]} ${y}`;
+
   const hoy=new Date();hoy.setHours(0,0,0,0);
   let pd=new Date(y,m,1).getDay();
   const dim=new Date(y,m+1,0).getDate();
+
   let html='';
   for(let i=0;i<pd;i++) html+='<div class="cal-day vacio"></div>';
+
   for(let dd=1;dd<=dim;dd++){
     const fs=y+'-'+pad(m+1)+'-'+pad(dd);
     const fecha=new Date(y,m,dd);fecha.setHours(0,0,0,0);
@@ -807,21 +918,28 @@ function renderCal(){
     const slots=STATE.disponibilidad[fs]||[];
     const tieneLibres=slots.some(s=>!s.ocupado);
     const esSel=STATE.fechaSel===fs;
-    let cls='cal-day',onclick='';
+
+    let cls='cal-day';
+    let onclick='';
     if(esSel){cls+=' sel';}
     else if(esPasado){cls+=' pasado';}
     else if(tieneLibres){cls+=' disponible';if(esHoy)cls+=' hoy';onclick=`onclick="selFecha('${fs}')"` }
     else{cls+=' pasado';}
+
     html+=`<div class="${cls}" ${onclick}>${dd}</div>`;
   }
   $('calGrid').innerHTML=html;
+
   const hoyM=hoy.getMonth(),hoyY=hoy.getFullYear();
   $('calPrev').disabled=(m===hoyM&&y===hoyY);
 }
 
 function selFecha(fs){
-  STATE.fechaSel=fs;STATE.horaSel=null;STATE.horaFinSel=null;
-  renderCal();renderSlots(fs);
+  STATE.fechaSel=fs;
+  STATE.horaSel=null;
+  STATE.horaFinSel=null;
+  renderCal();
+  renderSlots(fs);
   $('calContinueBtn').classList.remove('on');
 }
 
@@ -830,28 +948,43 @@ function renderSlots(fs){
   const d=new Date(fs+'T12:00:00');
   $('slotsFechaLbl').textContent=`${DIAS_S[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
   $('slotsWrap').style.display='block';
+  $('slotsWrap').scrollIntoView({behavior:'smooth',block:'nearest'});
+
   if(!slots.length){
-    $('slotsGrid').innerHTML=`<div class="slots-empty">Sin horarios disponibles</div>`;
+    $('slotsGrid').innerHTML=`<div class="slots-empty" style="grid-column:1/-1">Sin horarios disponibles</div>`;
     return;
   }
+
+  $('slotsGrid').innerHTML=slots.map(s=>`
+    <div class="slot ${s.ocupado?'ocupado':''} ${STATE.horaSel===s.ini&&!s.ocupado?'sel':''}"
+      onclick="${s.ocupado?'':'selSlot(\''+s.ini+'\',\''+s.fin+'\')'}">
+      ${s.ini}
+    </div>`).join('');
+}
+
+function selSlot(ini,fin){
+  STATE.horaSel=ini;
+  STATE.horaFinSel=fin;
+  const slots=STATE.disponibilidad[STATE.fechaSel]||[];
   $('slotsGrid').innerHTML=slots.map(s=>`
     <div class="slot ${s.ocupado?'ocupado':''} ${STATE.horaSel===s.ini&&!s.ocupado?'sel':''}"
       onclick="${s.ocupado?'':'selSlot(\''+s.ini+'\',\''+s.fin+'\')'}">
       <span class="slot-hora">${s.ini}</span>
       ${STATE.horaSel===s.ini&&!s.ocupado
-        ?`<button class="slot-next" onclick="event.stopPropagation();irFormulario()">Siguiente →</button>`:''}
+        ?`<button class="slot-next" onclick="event.stopPropagation();irFormulario()">Siguiente →</button>`
+        :''}
     </div>`).join('');
-}
-
-function selSlot(ini,fin){
-  STATE.horaSel=ini;STATE.horaFinSel=fin;
-  renderSlots(STATE.fechaSel);
   $('calContinueBtn').classList.remove('on');
 }
 
+// ══════════════════════════════════════════════
+// FORMULARIO
+// ══════════════════════════════════════════════
 function irFormulario(){
   const d=new Date(STATE.fechaSel+'T12:00:00');
   const fechaLbl=`${DIAS_S[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+  
+  // Poblar sidebar
   const av=$('formDocAvatar');
   av.textContent=$('calDocAvatar').textContent;
   av.className=$('calDocAvatar').className;
@@ -885,27 +1018,33 @@ function confirmarReserva(){
     return;
   }
   $('formErr').classList.remove('on');
+
   const btn=$('submitBtn');
   btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
+
   const payload={
     docenteId:STATE.docentesSel.id,
     docenteNombre:`${STATE.docentesSel.nombre} ${STATE.docentesSel.apellido}`,
-    fecha:STATE.fechaSel,horaInicio:STATE.horaSel,horaFin:STATE.horaFinSel,
+    fecha:STATE.fechaSel,
+    horaInicio:STATE.horaSel,
+    horaFin:STATE.horaFinSel,
     padreNombre:$('fNombre').value.trim(),
     padreApellido:$('fApellido').value.trim(),
     padreCorreo:$('fCorreo').value.trim(),
     padreTelefono:$('fTelefono').value.trim(),
     estudianteNombre:$('fEstudiante').value.trim(),
-    grado:$('fGrado').value,motivos:$('fMotivo').value,
+    grado:$('fGrado').value,
+    motivos:$('fMotivo').value,
     motivoExtra:$('fMotivoExtra')&&$('fMotivoExtra').value.trim()||'',
   };
+
   apiPublic('reservarCita',payload).then(r=>{
     btn.innerHTML='Confirmar reserva';btn.disabled=false;
-    if(r.ok){mostrarExito(payload);}
-    else{const el=$('formErr');el.textContent='⚠ '+(r.mensaje||'Error al reservar.');el.classList.add('on');}
+    if(r.ok){ mostrarExito(payload); }
+    else{ const el=$('formErr');el.textContent='⚠ '+(r.mensaje||'Error al reservar. Intenta de nuevo.');el.classList.add('on'); }
   }).catch(()=>{
     btn.innerHTML='Confirmar reserva';btn.disabled=false;
-    const el=$('formErr');el.textContent='⚠ Error de conexión.';el.classList.add('on');
+    const el=$('formErr');el.textContent='⚠ Error de conexión. Verifica tu internet.';el.classList.add('on');
   });
 }
 
@@ -919,14 +1058,14 @@ function mostrarExito(p){
     <div class="exito-row"><span class="exito-lb">Fecha</span><span class="exito-val">${fechaLbl}</span></div>
     <div class="exito-row"><span class="exito-lb">Hora</span><span class="exito-val">${p.horaInicio} – ${p.horaFin}</span></div>
     <div class="exito-row"><span class="exito-lb">Estudiante</span><span class="exito-val">${p.estudianteNombre} · ${p.grado}</span></div>
-    <div class="exito-row"><span class="exito-lb">Motivo</span><span class="exito-val">${p.motivos}</span></div>`;
+    <div class="exito-row"><span class="exito-lb">Motivo</span><span class="exito-val">${p.motivos}</span></div>
+  `;
   $('v-exito').classList.add('on');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function nuevaReserva(){
-  STATE={docentes:STATE.docentes,docentesSel:null,disponibilidad:{},
-    calFecha:new Date(),fechaSel:null,horaSel:null,horaFinSel:null};
+  STATE={docentes:STATE.docentes,docentesSel:null,disponibilidad:{},calFecha:new Date(),fechaSel:null,horaSel:null,horaFinSel:null};
   $('searchInp').value='';
   $('v-exito').classList.remove('on');
   renderDocentes(STATE.docentes);
