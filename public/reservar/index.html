@@ -507,7 +507,20 @@ html,body{
   flex:1;padding:24px 20px;
   display:flex;flex-direction:column
 }
-  
+
+.motivos-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.motivo-btn{
+  padding:9px 14px;border-radius:20px;
+  border:1.5px solid var(--br2);background:var(--white);
+  color:var(--tx);font-size:13px;font-weight:500;cursor:pointer;
+  font-family:-apple-system,sans-serif;transition:all .18s;
+  white-space:nowrap
+}
+.motivo-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue3)}
+.motivo-btn.sel{
+  background:var(--blue);border-color:var(--blue);
+  color:#fff;font-weight:600
+}
 </style>
 </head>
 <body>
@@ -667,18 +680,18 @@ html,body{
       </div>
 
       <div class="form-section-title">Motivo de la cita</div>
-      <div class="fg">
-        <label class="fl">¿Por qué solicitas esta cita? <span>*</span></label>
-        <select class="fs" id="fMotivo" onchange="toggleMotivoExtra()">
-          <option value="">Seleccionar motivo...</option>
-          <option value="Seguimiento académico">Seguimiento académico</option>
-          <option value="Comportamiento">Comportamiento</option>
-          <option value="Inasistencias">Inasistencias y puntualidad</option>
-          <option value="Resultados de evaluaciones">Resultados de evaluaciones</option>
-          <option value="Situación familiar">Situación familiar</option>
-          <option value="Otro">Otro</option>
-        </select>
-      </div>
+<div class="fg">
+  <label class="fl">¿Por qué solicitas esta cita? <span>*</span></label>
+  <div class="motivos-grid" id="motivosGrid">
+    <button type="button" class="motivo-btn" onclick="selMotivo(this,'Seguimiento académico')">Seguimiento académico</button>
+    <button type="button" class="motivo-btn" onclick="selMotivo(this,'Comportamiento')">Comportamiento</button>
+    <button type="button" class="motivo-btn" onclick="selMotivo(this,'Inasistencias y puntualidad')">Inasistencias</button>
+    <button type="button" class="motivo-btn" onclick="selMotivo(this,'Resultados de evaluaciones')">Evaluaciones</button>
+    <button type="button" class="motivo-btn" onclick="selMotivo(this,'Situación familiar')">Situación familiar</button>
+    <button type="button" class="motivo-btn" onclick="selMotivo(this,'Otro')">Otro</button>
+  </div>
+  <input type="hidden" id="fMotivo">
+</div>
       <div class="fg" id="motivoExtraWrap" style="display:none">
         <label class="fl">Especifica el motivo</label>
         <textarea class="fta" id="fMotivoExtra" placeholder="Describe brevemente..."></textarea>
@@ -1077,6 +1090,13 @@ function nuevaReserva(){
   $('v-exito').classList.remove('on');
   renderDocentes(STATE.docentes);
   irVista('docs');
+}
+
+function selMotivo(btn, valor){
+  document.querySelectorAll('.motivo-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  $('fMotivo').value = valor;
+  $('motivoExtraWrap').style.display = valor==='Otro' ? 'block' : 'none';
 }
 </script>
 </body>
