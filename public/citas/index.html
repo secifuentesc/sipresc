@@ -113,8 +113,7 @@ html,body{
 #app{
   position:fixed;inset:0;
   display:none;flex-direction:column;
-  background:var(--s0);
-  overflow:hidden
+  background:var(--s0)
 }
 #app.on{display:flex}
 
@@ -156,7 +155,8 @@ html,body{
    BOTTOM NAV — estilo sistema
 ══════════════════════════════════ */
 .bnav{
-  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  flex-shrink:0;
+  position:relative;z-index:20;
   background:rgba(5,14,29,.8);
   border-top:1px solid rgba(255,255,255,.07);
   display:flex;
@@ -182,7 +182,7 @@ html,body{
   flex:1;overflow-y:auto;
   -webkit-overflow-scrolling:touch;
   overscroll-behavior:contain;
-  padding-bottom:calc(68px + env(safe-area-inset-bottom,0px));
+  padding-bottom:calc(20px + env(safe-area-inset-bottom,0))
 }
 
 /* ══════════════════════════════════
@@ -321,19 +321,134 @@ html,body{
 }
 .cita-acta-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
 
-/* Cita HOY — destacada */
-.cita-card.hoy{
-  background:linear-gradient(145deg,rgba(14,36,90,.9),rgba(25,60,130,.7));
-  border-color:rgba(45,212,160,.25);
-  box-shadow:0 8px 32px rgba(45,212,160,.1)
+/* ── MINI CALENDARIO SEMANAL ── */
+.week-cal{
+  padding:14px 16px 10px;
+  background:rgba(255,255,255,.02);
+  border-bottom:1px solid var(--br)
 }
-.cita-card.hoy .cita-band{border-bottom-color:rgba(45,212,160,.15)}
+.week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.week-nav-lbl{font-size:14px;font-weight:700;letter-spacing:-.2px}
+.week-nav-btns{display:flex;gap:4px}
+.week-nav-btn{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,.06);border:none;
+  color:var(--mt2);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .15s
+}
+.week-nav-btn:hover{background:rgba(255,255,255,.12)}
+.week-nav-btn svg{width:12px;height:12px;stroke:currentColor;stroke-width:2.5;fill:none}
+.week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.week-day{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:6px 2px;border-radius:12px;cursor:pointer;transition:background .15s
+}
+.week-day:active{transform:scale(.93)}
+.week-day-lbl{font-size:9px;color:var(--mt);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.week-day-num{
+  width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:600;color:var(--mt2);transition:all .18s
+}
+.week-day.tiene .week-day-num{color:#fff}
+.week-day.hoy .week-day-num{color:var(--gold2);font-weight:700}
+.week-day.sel .week-day-num{
+  background:var(--gold);color:#000;font-weight:700;
+  box-shadow:0 3px 10px rgba(201,150,42,.4)
+}
+.week-dot{width:4px;height:4px;border-radius:50%;background:var(--green);opacity:0}
+.week-day.tiene .week-dot{opacity:1}
+.week-day.sel .week-dot{background:rgba(0,0,0,.4)}
 
-/* Agrupador de fecha */
-.date-group{padding:6px 20px 4px}
-.date-group-lbl{
-  font-size:13px;font-weight:700;color:var(--mt2);letter-spacing:-.1px
+/* ── LISTA CITAS — Fantastical style ── */
+.dia-header{
+  padding:14px 20px 8px;
+  display:flex;align-items:baseline;gap:8px
 }
+.dia-header-fecha{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.dia-header-cnt{font-size:12px;color:var(--mt2)}
+.dia-header-hoy{color:var(--green)}
+
+.citas-lista{padding:0 16px}
+
+/* Fila de cita — Apple Calendar style */
+.cita-row{
+  display:flex;align-items:stretch;gap:0;
+  margin-bottom:1px;cursor:pointer;
+  border-radius:14px;overflow:hidden;
+  transition:opacity .15s
+}
+.cita-row:active{opacity:.7}
+
+/* Barra lateral de color */
+.cita-bar{
+  width:4px;flex-shrink:0;border-radius:4px 0 0 4px
+}
+.cita-bar.confirmada{background:var(--green)}
+.cita-bar.cancelada{background:var(--red);opacity:.5}
+
+/* Contenido */
+.cita-content{
+  flex:1;padding:12px 14px 12px 12px;
+  background:rgba(255,255,255,.04);
+  border-top:1px solid rgba(255,255,255,.05);
+  display:flex;align-items:center;gap:12px
+}
+.cita-row:first-child .cita-content{border-top:none}
+
+/* Hora */
+.cita-time-col{
+  flex-shrink:0;width:52px;text-align:right
+}
+.cita-time-ini{
+  font-size:14px;font-weight:700;color:var(--tx);
+  font-variant-numeric:tabular-nums;line-height:1.2
+}
+.cita-time-fin{
+  font-size:11px;color:var(--mt);
+  font-variant-numeric:tabular-nums
+}
+
+/* Divider vertical */
+.cita-divider{
+  width:1px;background:rgba(255,255,255,.08);
+  flex-shrink:0;margin:2px 0
+}
+
+/* Info principal */
+.cita-main{flex:1;min-width:0}
+.cita-main-nombre{
+  font-size:15px;font-weight:600;letter-spacing:-.2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  margin-bottom:3px
+}
+.cita-main-meta{
+  font-size:12px;color:var(--mt2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+
+/* Derecha */
+.cita-right{
+  flex-shrink:0;display:flex;flex-direction:column;
+  align-items:flex-end;gap:5px
+}
+.cita-status-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0
+}
+.cita-status-dot.confirmada{background:var(--green)}
+.cita-status-dot.cancelada{background:var(--red);opacity:.5}
+.cita-acta-pill{
+  font-size:9px;color:var(--gold2);
+  background:rgba(201,150,42,.1);border:1px solid rgba(201,150,42,.18);
+  border-radius:20px;padding:2px 6px;white-space:nowrap
+}
+.cita-chevron{
+  color:rgba(255,255,255,.2);font-size:14px;font-weight:300
+}
+
+/* Agrupador fecha */
+.date-group{padding:6px 20px 4px}
+.date-group-lbl{font-size:13px;font-weight:700;color:var(--mt2);letter-spacing:-.1px}
 .date-group-lbl.hoy-lbl{color:var(--green)}
 
 /* Empty state */
@@ -678,17 +793,24 @@ html,body{
     <!-- ════ VISTA REUNIONES ════ -->
     <div class="view on" id="v-meet">
 
-      <!-- Hero -->
-      <div class="hero">
-        <div class="hero-greeting" id="heroDate">—</div>
-        <div class="hero-name" id="heroViewTitle">Reuniones</div>
-
+      <!-- Mini calendario semanal -->
+      <div class="week-cal">
+        <div class="week-nav">
+          <div class="week-nav-lbl" id="weekNavLbl">—</div>
+          <div class="week-nav-btns">
+            <button class="week-nav-btn" onclick="navSemana(-1)">
+              <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="week-nav-btn" onclick="navSemana(1)">
+              <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="week-row" id="weekRow"></div>
+      </div>
 
       <!-- Filtros -->
-      <div class="sec-header">
-        <div class="sec-title">Reuniones</div>
-      </div>
-      <div class="filter-row">
+      <div class="filter-row" style="padding:12px 16px 0">
         <button class="chip on" onclick="filtrar('proximas',this)">Próximas</button>
         <button class="chip" onclick="filtrar('hoy',this)">Hoy</button>
         <button class="chip" onclick="filtrar('pasadas',this)">Pasadas</button>
@@ -696,7 +818,7 @@ html,body{
       </div>
 
       <!-- Lista citas -->
-      <div id="citasList">
+      <div id="citasList" style="padding-bottom:80px">
         <div class="empty-state">
           <div class="empty-ico"><div class="spin-w"></div></div>
           <div class="empty-sub">Cargando reuniones...</div>
@@ -868,6 +990,7 @@ function iniciar(){
 
   cargarCitas();
   cargarHorarios();
+  renderSemana();
 }
 
 // ══════════════════════════════════════════════
@@ -911,12 +1034,135 @@ function spinBtn(btn){
 }
 
 // ══════════════════════════════════════════════
-// CITAS
+// MINI CALENDARIO SEMANAL
 // ══════════════════════════════════════════════
+let semanaBase = new Date();
+let diaSeleccionado = null;
+
+function getLunes(fecha){
+  const d = new Date(fecha);
+  const day = d.getDay();
+  const diff = day===0 ? -6 : 1-day;
+  d.setDate(d.getDate()+diff);
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function navSemana(delta){
+  semanaBase.setDate(semanaBase.getDate() + delta*7);
+  diaSeleccionado = null;
+  renderSemana();
+  renderCitas(filtroCitas);
+}
+
+function renderSemana(){
+  const lunes = getLunes(semanaBase);
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const diasNom = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+  // Label del mes
+  const fin = new Date(lunes); fin.setDate(fin.getDate()+6);
+  if(lunes.getMonth()===fin.getMonth()){
+    $('weekNavLbl').textContent = `${MESES[lunes.getMonth()]} ${lunes.getFullYear()}`;
+  } else {
+    $('weekNavLbl').textContent = `${meses[lunes.getMonth()]} – ${meses[fin.getMonth()]} ${fin.getFullYear()}`;
+  }
+
+  // Citas agrupadas por fecha para mostrar dots
+  const cpf = {};
+  (ST.citas||[]).forEach(c=>{ if(!cpf[c.fecha]) cpf[c.fecha]=[]; cpf[c.fecha].push(c); });
+
+  let html = '';
+  for(let i=0;i<7;i++){
+    const d = new Date(lunes); d.setDate(lunes.getDate()+i);
+    const fs = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+    const esHoy = d.getTime()===hoy.getTime();
+    const esSel = diaSeleccionado===fs;
+    const tieneCitas = (cpf[fs]||[]).some(c=>c.estado==='confirmada');
+
+    let cls = 'week-day';
+    if(esHoy) cls+=' hoy';
+    if(esSel) cls+=' sel';
+    if(tieneCitas) cls+=' tiene';
+
+    html+=`<div class="${cls}" onclick="selDiaSemana('${fs}')">
+      <div class="week-day-lbl">${diasNom[i]}</div>
+      <div class="week-day-num">${d.getDate()}</div>
+      <div class="week-dot"></div>
+    </div>`;
+  }
+  $('weekRow').innerHTML = html;
+}
+
+function selDiaSemana(fs){
+  diaSeleccionado = diaSeleccionado===fs ? null : fs;
+  renderSemana();
+  if(diaSeleccionado){
+    // Cambiar a filtro del día seleccionado
+    mostrarCitasDia(diaSeleccionado);
+  } else {
+    renderCitas(filtroCitas);
+  }
+}
+
+function mostrarCitasDia(fs){
+  const citas = (ST.citas||[]).filter(c=>c.fecha===fs);
+  const d = new Date(fs+'T12:00:00');
+  const diasSemana=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const esHoy = fs===new Date().toISOString().split('T')[0];
+  const lbl = `${diasSemana[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+
+  if(!citas.length){
+    $('citasList').innerHTML=`
+      <div class="dia-header">
+        <div class="dia-header-fecha ${esHoy?'dia-header-hoy':''}">${lbl}</div>
+      </div>
+      <div class="empty-state" style="padding:24px 32px">
+        <div class="empty-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        </div>
+        <div class="empty-sub">Sin reuniones para este día</div>
+      </div>`;
+    return;
+  }
+
+  const sorted = [...citas].sort((a,b)=>a.horaInicio.localeCompare(b.horaInicio));
+  $('citasList').innerHTML=`
+    <div class="dia-header">
+      <div class="dia-header-fecha ${esHoy?'dia-header-hoy':''}">${lbl}</div>
+      <div class="dia-header-cnt">${sorted.length} reunión${sorted.length>1?'es':''}</div>
+    </div>
+    <div class="citas-lista">
+      ${sorted.map(c=>renderCitaRow(c)).join('')}
+    </div>`;
+}
+
+function renderCitaRow(c){
+  return `<div class="cita-row" onclick="verCita('${c.id}')">
+    <div class="cita-bar ${c.estado}"></div>
+    <div class="cita-content">
+      <div class="cita-time-col">
+        <div class="cita-time-ini">${c.horaInicio}</div>
+        <div class="cita-time-fin">${c.horaFin}</div>
+      </div>
+      <div class="cita-divider"></div>
+      <div class="cita-main">
+        <div class="cita-main-nombre">${c.padreNombre||''} ${c.padreApellido||''}</div>
+        <div class="cita-main-meta">👤 ${c.estudianteNombre||''} · ${c.grado||''} · ${c.motivos||''}</div>
+      </div>
+      <div class="cita-right">
+        <div class="cita-status-dot ${c.estado}"></div>
+        ${c.acta?'<div class="cita-acta-pill">📝 Acta</div>':''}
+        <div class="cita-chevron">›</div>
+      </div>
+    </div>
+  </div>`;
+}
 function cargarCitas(){
   api('misCitas',{docenteId:ST.docenteId}).then(citas=>{
     ST.citas = citas||[];
-    actualizarStats();
+    renderSemana();
     renderCitas(filtroCitas);
   }).catch(()=>{
     $('citasList').innerHTML=`<div class="empty-state">
@@ -927,20 +1173,6 @@ function cargarCitas(){
   });
 }
 
-function actualizarStats(){
-  const hoyStr = new Date().toISOString().split('T')[0];
-  const [y,m] = hoyStr.split('-');
-  const mesStr = `${y}-${m}`;
-
-  const proximas = ST.citas.filter(c=>c.fecha>=hoyStr&&c.estado==='confirmada');
-  const hoy = ST.citas.filter(c=>c.fecha===hoyStr&&c.estado==='confirmada');
-  const esMes = ST.citas.filter(c=>c.fecha&&c.fecha.startsWith(mesStr)&&c.estado==='confirmada');
-
-  $('statProx').textContent = proximas.length;
-  $('statHoy').textContent  = hoy.length;
-  $('statTotal').textContent= esMes.length;
-}
-
 function filtrar(f, el){
   filtroCitas = f;
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
@@ -949,76 +1181,45 @@ function filtrar(f, el){
 }
 
 function renderCitas(filtro){
+  diaSeleccionado = null;
+  renderSemana();
   const hoyStr = new Date().toISOString().split('T')[0];
   let citas = [...ST.citas];
 
   if(filtro==='proximas') citas = citas.filter(c=>c.fecha>=hoyStr&&c.estado==='confirmada');
   else if(filtro==='hoy')  citas = citas.filter(c=>c.fecha===hoyStr);
   else if(filtro==='pasadas') citas = citas.filter(c=>c.fecha<hoyStr);
-  // 'todas' → sin filtro adicional
 
   citas.sort((a,b)=>a.fecha===b.fecha?a.horaInicio.localeCompare(b.horaInicio):a.fecha.localeCompare(b.fecha));
 
   if(!citas.length){
-    const msgs = {
-      proximas:'No tienes citas próximas programadas',
-      hoy:'No tienes citas para hoy',
-      pasadas:'Sin citas pasadas registradas',
-      todas:'No hay citas registradas'
-    };
+    const msgs = {proximas:'No tienes citas próximas',hoy:'No tienes citas para hoy',pasadas:'Sin citas pasadas',todas:'No hay citas registradas'};
     $('citasList').innerHTML=`<div class="empty-state">
-      <div class="empty-ico">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2.5"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      </div>
+      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
       <div class="empty-title">Sin reuniones</div>
       <div class="empty-sub">${msgs[filtro]||''}</div>
     </div>`;
     return;
   }
 
-  // Agrupar por fecha
   const grupos = {};
-  citas.forEach(c=>{
-    if(!grupos[c.fecha]) grupos[c.fecha]=[];
-    grupos[c.fecha].push(c);
-  });
+  citas.forEach(c=>{ if(!grupos[c.fecha]) grupos[c.fecha]=[]; grupos[c.fecha].push(c); });
 
   let html = '';
+  const diasSemana=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
   Object.keys(grupos).sort().forEach(fecha=>{
     const d = new Date(fecha+'T12:00:00');
-    const diasSemana=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
     const esHoy = fecha===hoyStr;
     const esMañana = fecha===new Date(Date.now()+864e5).toISOString().split('T')[0];
-
-    let lbl = `${diasSemana[d.getDay()]} ${d.getDate()} ${MESES_CORTO[d.getMonth()]}`;
+    let lbl = `${diasSemana[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
     if(esHoy) lbl = 'Hoy · '+lbl;
     else if(esMañana) lbl = 'Mañana · '+lbl;
 
-    html += `<div class="date-group"><div class="date-group-lbl ${esHoy?'hoy-lbl':''}">${lbl}</div></div>`;
-
-    grupos[fecha].forEach(c=>{
-      const esHoyCard = fecha===hoyStr;
-      const color = c.estado==='confirmada' ? 'var(--green)' : 'var(--red)';
-      html += `
-        <div class="cita-card ${esHoyCard?'hoy':''}" onclick="verCita('${c.id}')">
-          <div class="cita-band">
-            <div class="cita-hora-wrap">
-              <div class="cita-hora-dot" style="color:${color};background:${color}"></div>
-              <div class="cita-hora">${c.horaInicio} – ${c.horaFin}</div>
-            </div>
-            <div class="cita-dur">30 min</div>
-          </div>
-          <div class="cita-body">
-            <div class="cita-fecha-lbl">${esHoyCard?'HOY':'REUNIÓN PRESENCIAL'}</div>
-            <div class="cita-nombre">${c.padreNombre||''} ${c.padreApellido||''}</div>
-            <div class="cita-info">👤 ${c.estudianteNombre||''} · ${c.grado||''}<br>📋 ${c.motivos||''}</div>
-            <div class="cita-footer">
-              <span class="cita-badge ${c.estado}">${c.estado==='confirmada'?'✓ Confirmada':'✕ Cancelada'}</span>
-              ${c.acta?`<div class="cita-acta"><div class="cita-acta-dot"></div>Acta guardada</div>`:''}
-            </div>
-          </div>
-        </div>`;
-    });
+    html+=`<div class="dia-header">
+      <div class="dia-header-fecha ${esHoy?'dia-header-hoy':''}">${lbl}</div>
+      <div class="dia-header-cnt">${grupos[fecha].length} reunión${grupos[fecha].length>1?'es':''}</div>
+    </div>
+    <div class="citas-lista">${grupos[fecha].map(c=>renderCitaRow(c)).join('')}</div>`;
   });
 
   $('citasList').innerHTML = html;
