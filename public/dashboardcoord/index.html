@@ -1,1 +1,1262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050e1d">
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="manifest" href="/manifest.json">
+<title>SIPRESC · Coordinación</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 
+:root{
+  /* SIPRESC Navy palette */
+  --bg:#050e1d;
+  --s1:#0a1628;
+  --s2:#0f1f3a;
+  --s3:#162847;
+  --s4:#1e3259;
+  --border:rgba(255,255,255,.07);
+  --border2:rgba(255,255,255,.13);
+  --ink:#e8edf8;
+  --ink2:#c0cbe0;
+  --ink3:#7a8fb0;
+  --ink4:#3d5070;
+  /* Azul SIPRESC */
+  --royal:#0f2657;
+  --cobalt:#1e4db7;
+  --blue:#2557d6;
+  --blue2:#4f7dff;
+  --blue-t:rgba(37,87,214,.18);
+  --blue-glow:rgba(37,87,214,.3);
+  /* Acentos */
+  --green:#2dd4a0;--green-t:rgba(45,212,160,.12);
+  --amber:#e8b84b;--amber-t:rgba(232,184,75,.12);
+  --red:#f06b6b;--red-t:rgba(240,107,107,.12);
+  --purple:#8b84f8;--purple-t:rgba(139,132,248,.12);
+  --white-t:rgba(255,255,255,.05);
+  --white-t2:rgba(255,255,255,.09);
+  --sans:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
+  --mono:'SF Mono','Fira Code',monospace;
+  --r:14px;--r2:10px;--r3:20px;
+}
+
+html,body{
+  min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:14px;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 0% 0%,rgba(15,38,87,.8) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 60% at 100% 100%,rgba(30,77,183,.3) 0%,transparent 60%)
+}
+
+/* ══ LAYOUT ══ */
+.layout{display:flex;min-height:100vh}
+
+/* ══ SIDEBAR ══ */
+.sidebar{
+  width:230px;flex-shrink:0;
+  background:rgba(5,14,29,.95);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:50;
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)
+}
+.sidebar::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--blue2),transparent)
+}
+
+.sb-top{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.sb-brand{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.sb-icon{
+  width:36px;height:36px;border-radius:11px;
+  background:linear-gradient(145deg,var(--royal),var(--cobalt));
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  box-shadow:0 6px 16px var(--blue-glow)
+}
+.sb-icon img{width:22px;filter:brightness(10)}
+.sb-icon-fb{color:#fff;font-size:13px;font-weight:700}
+.sb-bname{font-size:13px;font-weight:600;letter-spacing:-.2px}
+.sb-bsys{font-size:9px;color:var(--blue2);letter-spacing:1.5px;margin-top:2px;font-family:var(--mono)}
+
+/* Chip rol coordinadora */
+.coord-chip{
+  display:flex;align-items:center;gap:7px;
+  background:var(--blue-t);border:1px solid rgba(79,125,255,.2);
+  border-radius:10px;padding:8px 11px
+}
+.coord-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.coord-info{flex:1;min-width:0}
+.coord-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.coord-rol{font-size:9px;color:var(--blue2);font-family:var(--mono);letter-spacing:.8px;margin-top:1px}
+
+.sb-nav{flex:1;overflow-y:auto;padding:10px 8px;scrollbar-width:none}
+.sb-nav::-webkit-scrollbar{display:none}
+.sb-sect{
+  font-size:8px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--ink4);padding:14px 10px 5px
+}
+.sb-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 11px;border-radius:var(--r2);
+  cursor:pointer;color:var(--ink3);font-size:12px;font-weight:400;
+  border:none;background:none;width:100%;text-align:left;
+  transition:all .15s;position:relative;letter-spacing:-.1px
+}
+.sb-item svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.6;fill:none;flex-shrink:0;opacity:.5;transition:opacity .15s}
+.sb-item:hover{background:var(--white-t);color:var(--ink2)}
+.sb-item:hover svg{opacity:.8}
+.sb-item.on{background:var(--blue-t);color:var(--blue2);font-weight:500}
+.sb-item.on svg{opacity:1;stroke-width:2}
+.sb-item.on::before{
+  content:'';position:absolute;left:0;top:18%;bottom:18%;
+  width:2px;background:var(--blue2);border-radius:1px
+}
+.sb-badge{
+  margin-left:auto;font-size:8px;font-family:var(--mono);
+  padding:2px 6px;border-radius:10px;font-weight:600;flex-shrink:0
+}
+.sb-badge.r{background:var(--red-t);color:var(--red)}
+.sb-badge.a{background:var(--amber-t);color:var(--amber)}
+.sb-badge.g{background:var(--green-t);color:var(--green)}
+.sb-badge.b{background:var(--blue-t);color:var(--blue2)}
+
+.sb-foot{padding:12px 14px;border-top:1px solid var(--border)}
+.sb-out{
+  width:100%;background:rgba(240,107,107,.07);border:1px solid rgba(240,107,107,.15);
+  color:var(--red);font-size:11px;padding:8px;border-radius:8px;cursor:pointer;
+  transition:all .15s;font-family:var(--sans);letter-spacing:-.1px
+}
+.sb-out:hover{background:rgba(240,107,107,.14)}
+
+/* ══ TOPBAR MÓVIL ══ */
+.topbar{
+  display:none;position:fixed;top:0;left:0;right:0;z-index:49;
+  background:rgba(5,14,29,.97);border-bottom:1px solid var(--border);
+  padding:12px 14px;align-items:center;gap:10px;
+  padding-top:calc(12px + env(safe-area-inset-top,0));
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)
+}
+.topbar-title{font-size:13px;font-weight:600;flex:1;letter-spacing:-.2px}
+.menu-btn{background:none;border:none;padding:5px;color:var(--ink3)}
+.menu-btn svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none}
+.role-tag{
+  font-size:8px;font-family:var(--mono);padding:3px 8px;border-radius:10px;
+  background:var(--blue-t);color:var(--blue2);letter-spacing:.5px;flex-shrink:0
+}
+
+/* ══ MAIN ══ */
+.main{margin-left:230px;min-height:100vh;padding:24px 24px 60px}
+.page{display:none}
+.page.on{display:block;animation:fadeUp .2s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══ PAGE HEADER ══ */
+.ph{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px;gap:12px;flex-wrap:wrap}
+.ph-title{font-size:20px;font-weight:700;letter-spacing:-.5px;color:var(--ink)}
+.ph-sub{font-size:11px;color:var(--ink4);margin-top:3px;font-family:var(--mono);letter-spacing:.3px}
+.ph-right{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:auto}
+
+/* ══ BOTONES ══ */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:9px;border:1px solid var(--border2);
+  background:var(--white-t2);color:var(--ink2);font-size:11px;font-weight:500;
+  cursor:pointer;transition:all .15s;font-family:var(--sans);letter-spacing:-.1px
+}
+.btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none}
+.btn:hover{background:var(--white-t);border-color:var(--border2);color:var(--ink)}
+.btn-p{background:var(--blue-t);border-color:rgba(79,125,255,.3);color:var(--blue2)}
+.btn-p:hover{background:rgba(37,87,214,.25)}
+.btn-g{background:var(--green-t);border-color:rgba(45,212,160,.25);color:var(--green)}
+.btn-r{background:var(--red-t);border-color:rgba(240,107,107,.25);color:var(--red)}
+.btn-a{background:var(--amber-t);border-color:rgba(232,184,75,.25);color:var(--amber)}
+
+/* ══ GRIDS ══ */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.main-aside{display:grid;grid-template-columns:1fr 280px;gap:14px;margin-bottom:14px}
+
+/* ══ STAT CARD ══ */
+.sc{
+  background:var(--s2);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px;transition:border-color .2s,transform .15s;
+  position:relative;overflow:hidden
+}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:1px}
+.sc:hover{border-color:var(--border2);transform:translateY(-1px)}
+.sc-ico{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.sc-ico svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none}
+.sc-n{font-size:26px;font-weight:700;letter-spacing:-.6px;line-height:1;margin-bottom:3px;font-family:var(--mono)}
+.sc-l{font-size:10px;color:var(--ink4);letter-spacing:.2px}
+.sc-d{font-size:9px;font-family:var(--mono);margin-top:7px;display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:10px}
+.c-b::after{background:var(--blue)}.c-b .sc-ico{background:var(--blue-t);color:var(--blue2)}.c-b .sc-n{color:var(--blue2)}
+.c-g::after{background:var(--green)}.c-g .sc-ico{background:var(--green-t);color:var(--green)}.c-g .sc-n{color:var(--green)}
+.c-a::after{background:var(--amber)}.c-a .sc-ico{background:var(--amber-t);color:var(--amber)}.c-a .sc-n{color:var(--amber)}
+.c-r::after{background:var(--red)}.c-r .sc-ico{background:var(--red-t);color:var(--red)}.c-r .sc-n{color:var(--red)}
+.c-p::after{background:var(--purple)}.c-p .sc-ico{background:var(--purple-t);color:var(--purple)}.c-p .sc-n{color:var(--purple)}
+.dm{background:var(--white-t);color:var(--ink4)}
+.du{background:var(--green-t);color:var(--green)}
+.dd{background:var(--red-t);color:var(--red)}
+
+/* ══ CARD ══ */
+.card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.card:last-child{margin-bottom:0}
+.ch{padding:14px 16px 11px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ct{font-size:12px;font-weight:600;letter-spacing:-.1px}
+.cs{font-size:10px;color:var(--ink4);margin-top:2px;font-family:var(--mono)}
+.cb{padding:14px 16px}
+.ca{font-size:10px;color:var(--blue2);font-weight:500;cursor:pointer;background:none;border:none;padding:2px 8px;border-radius:6px;transition:background .15s;white-space:nowrap;font-family:var(--sans)}
+.ca:hover{background:var(--blue-t)}
+
+/* ══ LIST ROWS ══ */
+.lrow{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 0;border-bottom:1px solid var(--border)
+}
+.lrow:last-child{border-bottom:none}
+.lav{
+  width:32px;height:32px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;flex-shrink:0;letter-spacing:-.3px
+}
+.lav.b{background:var(--blue-t);color:var(--blue2)}
+.lav.g{background:var(--green-t);color:var(--green)}
+.lav.a{background:var(--amber-t);color:var(--amber)}
+.lav.r{background:var(--red-t);color:var(--red)}
+.lav.p{background:var(--purple-t);color:var(--purple)}
+.li{flex:1;min-width:0}
+.ln{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.lm{font-size:11px;color:var(--ink4)}
+.lr{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+
+/* ══ BADGE ══ */
+.bdg{font-size:9px;font-family:var(--mono);padding:2px 7px;border-radius:10px;white-space:nowrap;font-weight:500;letter-spacing:.3px;display:inline-block}
+.bdg-g{background:var(--green-t);color:var(--green);border:1px solid rgba(45,212,160,.18)}
+.bdg-r{background:var(--red-t);color:var(--red);border:1px solid rgba(240,107,107,.18)}
+.bdg-a{background:var(--amber-t);color:var(--amber);border:1px solid rgba(232,184,75,.18)}
+.bdg-b{background:var(--blue-t);color:var(--blue2);border:1px solid rgba(79,125,255,.18)}
+.bdg-x{background:var(--white-t);color:var(--ink4);border:1px solid var(--border)}
+
+/* ══ PROGRESS BARS ══ */
+.pr{margin-bottom:11px}
+.pr:last-child{margin-bottom:0}
+.pr-l{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;color:var(--ink3)}
+.pr-b{height:5px;background:var(--s3);border-radius:3px;overflow:hidden}
+.pr-f{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+/* ══ ALERTAS ══ */
+.al-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;border-bottom:1px solid var(--border)
+}
+.al-item:last-child{border-bottom:none}
+.al-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.al-b{flex:1;min-width:0}
+.al-t{font-size:12px;font-weight:500;margin-bottom:2px}
+.al-m{font-size:10px;color:var(--ink4)}
+.al-time{font-size:9px;font-family:var(--mono);color:var(--ink4);flex-shrink:0}
+
+/* ══ SHEET ══ */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:60;display:none;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.ov.on{display:block}
+.sheet{
+  position:fixed;bottom:0;left:0;right:0;z-index:61;
+  background:var(--s2);border-top:1px solid var(--border2);
+  border-radius:22px 22px 0 0;
+  padding:18px 18px calc(36px + env(safe-area-inset-bottom,0px));
+  max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  transform:translateY(100%);transition:transform .32s cubic-bezier(.34,1.2,.64,1)
+}
+.sheet.on{transform:translateY(0)}
+.sh-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 18px}
+.sh-title{font-size:18px;font-weight:700;letter-spacing:-.4px;margin-bottom:4px}
+.sh-meta{font-size:12px;color:var(--ink4);margin-bottom:18px;display:flex;gap:8px;flex-wrap:wrap}
+.sh-tag{background:var(--white-t);border:1px solid var(--border);border-radius:6px;padding:2px 8px;font-size:10px;font-family:var(--mono)}
+
+.info-row{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;align-items:flex-start}
+.info-row:last-child{border-bottom:none}
+.info-lb{color:var(--ink4);width:90px;flex-shrink:0;font-size:11px;padding-top:1px}
+.info-val{flex:1;line-height:1.5;color:var(--ink2)}
+
+/* Form dentro del sheet */
+.fg{margin-bottom:13px}
+.fl{display:block;font-size:9px;font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px}
+.fi,.fs,.fta{
+  width:100%;background:var(--s3);border:1px solid var(--border);
+  border-radius:9px;color:var(--ink);padding:12px 13px;
+  font-family:var(--sans);font-size:14px;outline:none;
+  transition:border-color .2s;-webkit-appearance:none
+}
+.fi:focus,.fs:focus,.fta:focus{border-color:rgba(79,125,255,.4);box-shadow:0 0 0 3px rgba(79,125,255,.08)}
+.fta{resize:vertical;min-height:80px;line-height:1.5}
+.fs{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%237a8fb0' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;background-size:16px;padding-right:36px}
+
+/* ══ SPINNER / TOAST ══ */
+.spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;flex-shrink:0}
+@keyframes rot{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:28px 0;color:var(--ink4);font-size:12px}
+.toast{
+  position:fixed;bottom:82px;left:50%;
+  transform:translateX(-50%) translateY(110px);
+  background:var(--s3);border:1px solid var(--border2);border-radius:12px;
+  padding:12px 20px;font-size:13px;max-width:300px;
+  width:calc(100% - 36px);text-align:center;
+  transition:transform .3s cubic-bezier(.34,1.4,.64,1);z-index:100
+}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(45,212,160,.35);color:var(--green)}
+.toast.er{border-color:rgba(240,107,107,.35);color:var(--red)}
+
+/* ══ PLANEACIONES ══ */
+.pln-filtros{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.pln-filtros::-webkit-scrollbar{display:none}
+.fbtn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--s1);color:var(--ink4);font-size:11px;cursor:pointer;font-family:var(--sans);transition:all .15s;white-space:nowrap}
+.fbtn.on{border-color:rgba(79,125,255,.4);color:var(--blue2);background:var(--blue-t)}
+
+/* Semanas selector */
+.sem-wrap{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory}
+.sem-wrap::-webkit-scrollbar{display:none}
+.sem-card{
+  flex-shrink:0;min-width:140px;
+  background:var(--s2);border:1px solid var(--border);border-radius:12px;
+  padding:12px;cursor:pointer;transition:all .18s;scroll-snap-align:start;
+  position:relative;overflow:hidden
+}
+.sem-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--border)}
+.sem-card.activa{border-color:rgba(79,125,255,.4);background:var(--blue-t)}
+.sem-card.activa::before{background:linear-gradient(90deg,var(--cobalt),var(--blue2))}
+.sem-card:active{transform:scale(.97)}
+.sem-num{font-size:9px;font-family:var(--mono);color:var(--ink4);margin-bottom:3px;letter-spacing:.5px}
+.sem-card.activa .sem-num{color:var(--blue2)}
+.sem-label{font-size:13px;font-weight:600;margin-bottom:2px}
+.sem-dates{font-size:10px;color:var(--ink4);margin-bottom:6px}
+.sem-pill{position:absolute;top:8px;right:8px;font-size:7px;font-family:var(--mono);background:var(--blue2);color:#fff;padding:2px 6px;border-radius:8px;letter-spacing:.5px;font-weight:600}
+.sem-prog{height:3px;background:var(--s3);border-radius:2px}
+.sem-prog-f{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--royal),var(--blue2));transition:width .5s ease}
+
+/* Estados badge en lrow */
+.pln-row{cursor:pointer;transition:background .15s;border-radius:10px;margin:0 -8px;padding:0 8px}
+.pln-row:hover{background:var(--white-t)}
+
+/* ══ CITAS ══ */
+.cita-card{
+  background:var(--s1);border:1px solid var(--border);border-radius:12px;
+  padding:13px;margin-bottom:9px;cursor:pointer;transition:all .15s;
+  border-left:3px solid transparent
+}
+.cita-card:active{transform:scale(.98)}
+.cita-card.conf{border-left-color:var(--green)}
+.cita-card.can{border-left-color:var(--red);opacity:.6}
+.cita-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;gap:8px}
+.cita-hora{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--amber)}
+.cita-nombre{font-size:13px;font-weight:500;margin-bottom:2px}
+.cita-meta{font-size:11px;color:var(--ink4);line-height:1.5}
+
+/* ══ CALENDARIO ══ */
+.mcal-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px}
+.mcal-tit{font-size:11px;font-weight:600;font-family:var(--mono)}
+.mcal-btn{background:none;border:none;color:var(--ink4);font-size:15px;padding:3px 7px;border-radius:6px;cursor:pointer;transition:background .15s;line-height:1}
+.mcal-btn:hover{background:var(--white-t)}
+.mcal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:0 12px 10px}
+.mcal-hd{text-align:center;font-size:8px;font-family:var(--mono);color:var(--ink4);padding:2px 0}
+.mcal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:10px;border-radius:50%;cursor:pointer;transition:all .15s;color:var(--ink4);position:relative}
+.mcal-day:hover{background:var(--white-t);color:var(--ink)}
+.mcal-day.today{background:var(--cobalt);color:#fff;font-weight:600}
+.mcal-day.has::after{content:'';width:3px;height:3px;background:var(--amber);border-radius:50%;position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
+.mcal-day.today.has::after{background:rgba(255,255,255,.7)}
+.cal-evs{border-top:1px solid var(--border);padding:10px 16px}
+.cal-ev{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--border)}
+.cal-ev:last-child{border-bottom:none}
+.cev-t{font-family:var(--mono);font-size:9px;color:var(--ink4);width:36px;flex-shrink:0;padding-top:1px}
+.cev-bar{width:2px;background:var(--blue2);border-radius:1px;flex-shrink:0;min-height:22px}
+.cev-bar.g{background:var(--green)}
+.cev-i{flex:1;min-width:0}
+.cev-n{font-size:11px;font-weight:500}
+.cev-m{font-size:9px;color:var(--ink4);margin-top:1px}
+
+/* ══ SIDEBAR OVERLAY MÓVIL ══ */
+.sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:49}
+
+/* ══ BNAV MÓVIL ══ */
+.bnav{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:48;
+  background:rgba(5,14,29,.97);border-top:1px solid var(--border);
+  padding-bottom:env(safe-area-inset-bottom,0);
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)
+}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 2px;background:none;border:none;color:var(--ink4);font-size:8px;font-family:var(--mono);cursor:pointer;transition:color .15s;letter-spacing:.3px}
+.bni svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.5;fill:none}
+.bni.on{color:var(--blue2)}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.main-aside{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){
+  .sidebar{transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1)}
+  .sidebar.open{transform:translateX(0)}
+  .sb-ov.on{display:block}
+  .main{margin-left:0;padding:12px 12px 80px;padding-top:calc(56px + env(safe-area-inset-top,0))}
+  .topbar{display:flex}
+  .bnav{display:flex}
+  .g4{grid-template-columns:1fr 1fr}
+  .g2{grid-template-columns:1fr}
+}
+@media(max-width:400px){.g4,.g3,.g2{grid-template-columns:1fr}.sc-n{font-size:22px}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <div class="sb-brand">
+      <div class="sb-icon">
+        <img src="/logo.png" alt="LP" onerror="this.style.display='none';this.parentNode.innerHTML='<span class=sb-icon-fb>LP</span>'">
+      </div>
+      <div>
+        <div class="sb-bname">La Presentación</div>
+        <div class="sb-bsys">COORDINACIÓN</div>
+      </div>
+    </div>
+    <div class="coord-chip">
+      <div class="coord-dot"></div>
+      <div class="coord-info">
+        <div class="coord-name" id="sb-nombre">Cargando...</div>
+        <div class="coord-rol">COORDINADORA</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-sect">Principal</div>
+    <button class="sb-item on" onclick="gp('resumen',this)" id="ni-resumen">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Resumen general
+    </button>
+    <button class="sb-item" onclick="gp('alertas',this)" id="ni-alertas">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Alertas
+      <span class="sb-badge r" id="sb-alert-cnt">—</span>
+    </button>
+
+    <div class="sb-sect">Académico</div>
+    <button class="sb-item" onclick="gp('planeaciones',this)" id="ni-planeaciones">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+      Planeaciones
+      <span class="sb-badge a" id="sb-pln-cnt">—</span>
+    </button>
+    <button class="sb-item" onclick="gp('citas',this)" id="ni-citas">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Citas con padres
+      <span class="sb-badge b" id="sb-citas-cnt">—</span>
+    </button>
+    <button class="sb-item" onclick="gp('docentes',this)" id="ni-docentes">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>
+      Docentes
+    </button>
+  </nav>
+
+  <div class="sb-foot">
+    <button class="sb-out" onclick="doLogout()">Cerrar sesión</button>
+  </div>
+</aside>
+<div class="sb-ov" id="sb-ov" onclick="closeSB()"></div>
+
+<!-- TOPBAR MÓVIL -->
+<header class="topbar">
+  <button class="menu-btn" onclick="toggleSB()">
+    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="topbar-title" id="top-title">Resumen general</div>
+  <span class="role-tag">Coordinación</span>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ══ RESUMEN ══ -->
+  <div class="page on" id="p-resumen">
+    <div class="ph">
+      <div>
+        <div class="ph-title" id="saludo-nombre">Buenos días</div>
+        <div class="ph-sub" id="ov-fecha">—</div>
+      </div>
+      <div class="ph-right">
+        <button class="btn" onclick="cargarTodo()">
+          <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          Actualizar
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 stat cards -->
+    <div class="g4">
+      <div class="sc c-a">
+        <div class="sc-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+        <div class="sc-n" id="ov-citas-hoy">—</div>
+        <div class="sc-l">Citas hoy</div>
+        <div class="sc-d dm" id="ov-citas-sub">—</div>
+      </div>
+      <div class="sc c-g">
+        <div class="sc-ico"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg></div>
+        <div class="sc-n" id="ov-pln-ap">—</div>
+        <div class="sc-l">Planeaciones aprobadas</div>
+        <div class="sc-d du" id="ov-pln-sub">Semana activa</div>
+      </div>
+      <div class="sc c-r">
+        <div class="sc-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <div class="sc-n" id="ov-pln-pend">—</div>
+        <div class="sc-l">Sin entregar</div>
+        <div class="sc-d dd">Semana activa</div>
+      </div>
+      <div class="sc c-b">
+        <div class="sc-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg></div>
+        <div class="sc-n" id="ov-docentes">—</div>
+        <div class="sc-l">Docentes activos</div>
+        <div class="sc-d dm">Planta completa</div>
+      </div>
+    </div>
+
+    <div class="main-aside">
+      <!-- col izq -->
+      <div>
+        <!-- alertas rápidas -->
+        <div class="card">
+          <div class="ch">
+            <div><div class="ct">Alertas y pendientes</div><div class="cs">Requieren atención</div></div>
+            <button class="ca" onclick="gp('alertas',document.getElementById('ni-alertas'))">Ver todas →</button>
+          </div>
+          <div class="cb" id="ov-alertas"><div class="empty"><div class="spin" style="margin:0 auto 8px"></div>Cargando...</div></div>
+        </div>
+
+        <!-- planeaciones semana -->
+        <div class="card">
+          <div class="ch">
+            <div><div class="ct">Planeaciones · Semana activa</div><div class="cs" id="ov-sem-lbl">—</div></div>
+            <button class="ca" onclick="gp('planeaciones',document.getElementById('ni-planeaciones'))">Ver todas →</button>
+          </div>
+          <div class="cb">
+            <div class="pr"><div class="pr-l"><span>Aprobadas</span><span id="p-ap">—</span></div><div class="pr-b"><div class="pr-f" id="f-ap" style="width:0%;background:var(--green)"></div></div></div>
+            <div class="pr"><div class="pr-l"><span>En revisión</span><span id="p-en">—</span></div><div class="pr-b"><div class="pr-f" id="f-en" style="width:0%;background:var(--blue2)"></div></div></div>
+            <div class="pr"><div class="pr-l"><span>Con ajustes</span><span id="p-aj">—</span></div><div class="pr-b"><div class="pr-f" id="f-aj" style="width:0%;background:var(--amber)"></div></div></div>
+            <div class="pr"><div class="pr-l"><span>Sin entregar</span><span id="p-pe">—</span></div><div class="pr-b"><div class="pr-f" id="f-pe" style="width:0%;background:var(--red)"></div></div></div>
+          </div>
+        </div>
+
+        <!-- citas próximas -->
+        <div class="card">
+          <div class="ch">
+            <div class="ct">Citas próximas</div>
+            <button class="ca" onclick="gp('citas',document.getElementById('ni-citas'))">Ver todas →</button>
+          </div>
+          <div class="cb" id="ov-citas-list"><div class="empty">Cargando...</div></div>
+        </div>
+      </div>
+
+      <!-- col der: mini calendario -->
+      <div>
+        <div class="card">
+          <div class="mcal-nav">
+            <button class="mcal-btn" onclick="navCal(-1)">‹</button>
+            <span class="mcal-tit" id="cal-tit">—</span>
+            <button class="mcal-btn" onclick="navCal(1)">›</button>
+          </div>
+          <div class="mcal-grid" id="cal-grid"></div>
+          <div class="cal-evs" id="cal-evs">
+            <div style="font-size:10px;color:var(--ink4);text-align:center;padding:5px 0">Selecciona un día</div>
+          </div>
+        </div>
+
+        <!-- docentes sin entregar -->
+        <div class="card">
+          <div class="ch"><div><div class="ct">Sin entregar esta semana</div><div class="cs">Planeaciones pendientes</div></div></div>
+          <div class="cb" id="pend-list"><div class="empty">Cargando...</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ALERTAS ══ -->
+  <div class="page" id="p-alertas">
+    <div class="ph">
+      <div><div class="ph-title">Alertas</div><div class="ph-sub">Situaciones que requieren tu atención</div></div>
+    </div>
+    <div class="g2">
+      <div class="card" style="margin-bottom:0">
+        <div class="ch"><div class="ct">Planeaciones sin entregar</div><span class="bdg bdg-r" id="al-pend-cnt">—</span></div>
+        <div class="cb" id="al-pend-list"><div class="empty">Cargando...</div></div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="ch"><div class="ct">Planeaciones con ajustes</div><span class="bdg bdg-a" id="al-aj-cnt">—</span></div>
+        <div class="cb" id="al-aj-list"><div class="empty">Cargando...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PLANEACIONES ══ -->
+  <div class="page" id="p-planeaciones">
+    <div class="ph">
+      <div><div class="ph-title">Planeaciones</div><div class="ph-sub">Revisión y aprobación por período y semana</div></div>
+      <div class="ph-right">
+        <a href="/planeaciones/" class="btn btn-p">Módulo completo →</a>
+      </div>
+    </div>
+
+    <!-- Filtro período -->
+    <div class="pln-filtros">
+      <button class="fbtn on" onclick="filtrarPeriodo('todos',this)">Todos los períodos</button>
+      <button class="fbtn" onclick="filtrarPeriodo('P1',this)">Período 1</button>
+      <button class="fbtn" onclick="filtrarPeriodo('P2',this)">Período 2</button>
+      <button class="fbtn" onclick="filtrarPeriodo('P3',this)">Período 3</button>
+      <button class="fbtn" onclick="filtrarPeriodo('P4',this)">Período 4</button>
+    </div>
+
+    <!-- Carrusel semanas -->
+    <div class="sem-wrap" id="sem-wrap"></div>
+
+    <!-- Filtro estado -->
+    <div class="pln-filtros">
+      <button class="fbtn on" onclick="filtrarEstado('todos',this)">Todos</button>
+      <button class="fbtn" onclick="filtrarEstado('pendiente',this)">Sin entregar</button>
+      <button class="fbtn" onclick="filtrarEstado('enviada',this)">En revisión</button>
+      <button class="fbtn" onclick="filtrarEstado('ajustes',this)">Con ajustes</button>
+      <button class="fbtn" onclick="filtrarEstado('aprobada',this)">Aprobadas</button>
+    </div>
+
+    <div class="card">
+      <div class="ch">
+        <div><div class="ct" id="pln-card-title">Docentes</div><div class="cs" id="pln-card-sub">Semana activa</div></div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="bdg bdg-g" id="pln-ap-cnt">0 aprobadas</span>
+          <span class="bdg bdg-r" id="pln-pend-cnt">0 sin entregar</span>
+        </div>
+      </div>
+      <div class="cb" id="pln-list"><div class="empty">Cargando...</div></div>
+    </div>
+  </div>
+
+  <!-- ══ CITAS ══ -->
+  <div class="page" id="p-citas">
+    <div class="ph">
+      <div><div class="ph-title">Citas con padres</div><div class="ph-sub">Monitoreo de la agenda docente</div></div>
+    </div>
+    <div class="g4" style="margin-bottom:16px">
+      <div class="sc c-a"><div class="sc-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div class="sc-n" id="c-hoy">—</div><div class="sc-l">Citas hoy</div></div>
+      <div class="sc c-g"><div class="sc-ico"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg></div><div class="sc-n" id="c-conf">—</div><div class="sc-l">Confirmadas hoy</div></div>
+      <div class="sc c-b"><div class="sc-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div class="sc-n" id="c-total">—</div><div class="sc-l">Total período</div></div>
+      <div class="sc c-r"><div class="sc-ico"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><div class="sc-n" id="c-can">—</div><div class="sc-l">Canceladas</div></div>
+    </div>
+
+    <!-- Filtros citas -->
+    <div class="pln-filtros">
+      <button class="fbtn on" onclick="filtrarCitas('todas',this)">Todas</button>
+      <button class="fbtn" onclick="filtrarCitas('confirmada',this)">Confirmadas</button>
+      <button class="fbtn" onclick="filtrarCitas('cancelada',this)">Canceladas</button>
+      <button class="fbtn" onclick="filtrarCitas('hoy',this)">Hoy</button>
+      <button class="fbtn" onclick="filtrarCitas('proximas',this)">Próximas</button>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Lista de citas</div></div>
+      <div class="cb" id="citas-list"><div class="empty">Cargando...</div></div>
+    </div>
+  </div>
+
+  <!-- ══ DOCENTES ══ -->
+  <div class="page" id="p-docentes">
+    <div class="ph">
+      <div><div class="ph-title">Docentes</div><div class="ph-sub">Estado de planta docente</div></div>
+    </div>
+    <div class="card">
+      <div class="cb" id="doc-list"><div class="empty">Cargando...</div></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- BNAV MÓVIL -->
+<nav class="bnav">
+  <button class="bni on" onclick="gp('resumen',document.getElementById('ni-resumen'));bnavOn(this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Inicio</button>
+  <button class="bni" onclick="gp('alertas',document.getElementById('ni-alertas'));bnavOn(this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Alertas</button>
+  <button class="bni" onclick="gp('planeaciones',document.getElementById('ni-planeaciones'));bnavOn(this)"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Planes</button>
+  <button class="bni" onclick="gp('citas',document.getElementById('ni-citas'));bnavOn(this)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Citas</button>
+  <button class="bni" onclick="gp('docentes',document.getElementById('ni-docentes'));bnavOn(this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>Docentes</button>
+</nav>
+
+<!-- SHEET detalle planeación -->
+<div class="ov" id="pln-ov" onclick="closePln()"></div>
+<div class="sheet" id="pln-sheet">
+  <div class="sh-handle"></div>
+  <div id="pln-sh-content"></div>
+</div>
+
+<!-- SHEET detalle cita -->
+<div class="ov" id="cita-ov" onclick="closeCita()"></div>
+<div class="sheet" id="cita-sheet">
+  <div class="sh-handle"></div>
+  <div id="cita-sh-content"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+const API = '/api/proxy';
+const API_PLN = 'https://script.google.com/macros/s/AKfycbwqfbF0kAUBl2t_ot7sHfJgBN9-4Ana6OHqrqb4_tYJd5xZHtw1AohGEz3sZ-OU4AfcbQ/exec';
+
+let ST = {correo:null,nombre:null,rol:null,docenteId:null};
+let DATA = {citas:[],planeaciones:[],docentes:[]};
+let calDate = new Date();
+let PLN_FILTRO_ESTADO = 'todos';
+let PLN_SEM_SEL = null;
+
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,'0');
+
+function fmtISO(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function fmtFecha(f){if(!f)return'';const p=f.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+
+function api(action,payload){
+  return new Promise((res,rej)=>{
+    const body={action,...(payload||{})};
+    if(ST.correo)body.correo=ST.correo;
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+      .then(r=>r.json()).then(res).catch(rej);
+  });
+}
+
+function apiPlaneaciones(action,payload){
+  return new Promise((res,rej)=>{
+    fetch(API_PLN+'?action='+action+(payload?'&'+new URLSearchParams(payload):''))
+      .then(r=>r.json()).then(res).catch(rej);
+  });
+}
+
+function toast(msg,tipo){
+  const t=$('toast');t.textContent=msg;t.className='toast on '+(tipo||'');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',3500);
+}
+
+// ══════════════════════════════════════════════
+// SEMANA ACTIVA
+// ══════════════════════════════════════════════
+function getSemanaActual(){
+  const base=new Date('2026-04-25T12:00:00-05:00');
+  const diff=Math.floor((Date.now()-base.getTime())/(7*24*60*60*1000));
+  let n=((5+diff-1)%10+10)%10+1;
+  return n;
+}
+
+function getSemLabel(){return `SEMANA ${getSemanaActual()}`;}
+
+function buildSemanas(){
+  const base=new Date('2026-01-19');
+  const activa=getSemanaActual();
+  return Array.from({length:10},(_,i)=>{
+    const n=i+1;
+    const ini=new Date(base);ini.setDate(ini.getDate()+(n-1)*7);
+    const fin=new Date(ini);fin.setDate(fin.getDate()+4);
+    const fmt=d=>d.toLocaleDateString('es-CO',{month:'short',day:'numeric'});
+    return{id:`S${String(n).padStart(2,'0')}`,num:n,label:`Semana ${n}`,
+      dates:`${fmt(ini)} – ${fmt(fin)}`,activa:n===activa};
+  });
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  const stored=JSON.parse(localStorage.getItem('lp_user')||'{}');
+  if(!stored.correo){window.location.href='/';return;}
+  ST.correo=stored.correo;ST.nombre=stored.nombre;ST.rol=stored.rol;ST.docenteId=stored.docenteId;
+  if(ST.rol!=='coordinador'){window.location.href='/';return;}
+
+  renderUI();
+  cargarTodo();
+  renderSemanas();
+  renderCalendario();
+
+  // Actualizar cada 2 min
+  setInterval(cargarTodo,120000);
+});
+
+function renderUI(){
+  const nom=ST.nombre||'Coordinadora';
+  $('sb-nombre').textContent=nom;
+  const hora=new Date().getHours();
+  const saludo=hora<12?'Buenos días':hora<18?'Buenas tardes':'Buenas noches';
+  const nombre=nom.split(' ')[0];
+  $('saludo-nombre').textContent=`${saludo}, ${nombre}`;
+  $('ov-fecha').textContent=new Date().toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  api('registrarAcceso',{nombre:ST.nombre,rol:ST.rol,modulo:'coordinacion'}).catch(()=>{});
+}
+
+function cargarTodo(){
+  cargarCitas();
+  cargarDocentes();
+  cargarPlaneaciones();
+}
+
+// ══════════════════════════════════════════════
+// CITAS
+// ══════════════════════════════════════════════
+function cargarCitas(){
+  api('todasCitas',{filtros:{}}).then(citas=>{
+    DATA.citas=citas||[];
+    const hoy=fmtISO(new Date());
+    const hoyConf=DATA.citas.filter(c=>c.fecha===hoy&&c.estado==='confirmada');
+    const total=DATA.citas.length;
+    const can=DATA.citas.filter(c=>c.estado==='cancelada').length;
+
+    $('ov-citas-hoy').textContent=hoyConf.length;
+    $('ov-citas-sub').textContent=hoyConf.length+' confirmadas hoy';
+    $('c-hoy').textContent=DATA.citas.filter(c=>c.fecha===hoy).length;
+    $('c-conf').textContent=hoyConf.length;
+    $('c-total').textContent=total;
+    $('c-can').textContent=can;
+    $('sb-citas-cnt').textContent=hoyConf.length||'0';
+
+    renderCitasProximas();
+    renderCitasList('todas');
+    renderCalendario();
+  }).catch(()=>{});
+}
+
+function renderCitasProximas(){
+  const hoy=fmtISO(new Date());
+  const prox=DATA.citas.filter(c=>c.fecha>=hoy&&c.estado==='confirmada')
+    .sort((a,b)=>(a.fecha+a.horaInicio).localeCompare(b.fecha+b.horaInicio)).slice(0,4);
+  $('ov-citas-list').innerHTML=prox.length?prox.map(c=>{
+    const cols=['b','g','p','a'];
+    const ini=(c.docenteNombre||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('');
+    return`<div class="lrow"><div class="lav ${cols[Math.floor(Math.random()*4)]}">${ini||'??'}</div>
+      <div class="li"><div class="ln">${c.padreNombre||''} ${c.padreApellido||''}</div>
+      <div class="lm">${c.docenteNombre||''} · ${c.grado||''} · ${fmtFecha(c.fecha)}</div></div>
+      <div class="lr"><div style="font-family:var(--mono);font-size:10px;color:var(--ink4)">${c.horaInicio}</div><span class="bdg bdg-g">✓</span></div></div>`;
+  }).join(''):'<div class="empty">Sin citas próximas confirmadas</div>';
+}
+
+function filtrarCitas(f,el){
+  document.querySelectorAll('#p-citas .pln-filtros .fbtn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');renderCitasList(f);
+}
+
+function renderCitasList(f){
+  const hoy=fmtISO(new Date());
+  let citas=[...DATA.citas];
+  if(f==='confirmada')citas=citas.filter(c=>c.estado==='confirmada');
+  else if(f==='cancelada')citas=citas.filter(c=>c.estado==='cancelada');
+  else if(f==='hoy')citas=citas.filter(c=>c.fecha===hoy);
+  else if(f==='proximas')citas=citas.filter(c=>c.fecha>=hoy&&c.estado==='confirmada');
+  citas.sort((a,b)=>(a.fecha+a.horaInicio).localeCompare(b.fecha+b.horaInicio));
+
+  $('citas-list').innerHTML=citas.length?citas.map(c=>`
+    <div class="cita-card ${c.estado}" onclick="verCita('${c.id}')">
+      <div class="cita-top">
+        <span class="cita-hora">${c.horaInicio} – ${c.horaFin}</span>
+        <span class="bdg ${c.estado==='confirmada'?'bdg-g':'bdg-r'}">${c.estado==='confirmada'?'Confirmada':'Cancelada'}</span>
+      </div>
+      <div class="cita-nombre">${c.padreNombre||''} ${c.padreApellido||''}</div>
+      <div class="cita-meta">👤 ${c.estudianteNombre||''} · ${c.grado||''} · 📅 ${fmtFecha(c.fecha)}</div>
+      <div class="cita-meta">👨‍🏫 ${c.docenteNombre||''}</div>
+    </div>`).join(''):'<div class="empty">No hay citas para este filtro</div>';
+}
+
+function verCita(id){
+  const c=DATA.citas.find(x=>x.id===id);if(!c)return;
+  $('cita-sh-content').innerHTML=`
+    <div class="sh-title">${c.padreNombre||''} ${c.padreApellido||''}</div>
+    <div class="sh-meta">
+      <span class="sh-tag">${fmtFecha(c.fecha)}</span>
+      <span class="sh-tag">${c.horaInicio} – ${c.horaFin}</span>
+      <span class="sh-tag ${c.estado==='confirmada'?'bdg-g':'bdg-r'}">${c.estado}</span>
+    </div>
+    <div class="info-row"><span class="info-lb">Docente</span><span class="info-val">${c.docenteNombre||'—'}</span></div>
+    <div class="info-row"><span class="info-lb">Estudiante</span><span class="info-val">${c.estudianteNombre||'—'}</span></div>
+    <div class="info-row"><span class="info-lb">Grado</span><span class="info-val">${c.grado||'—'}</span></div>
+    <div class="info-row"><span class="info-lb">Correo</span><span class="info-val" style="font-size:11px;word-break:break-all">${c.padreCorreo||'—'}</span></div>
+    <div class="info-row"><span class="info-lb">Motivo</span><span class="info-val">${c.motivos||'—'}</span></div>
+    ${c.estado==='cancelada'?`<div class="info-row"><span class="info-lb">Cancelación</span><span class="info-val">${c.notasCancelacion||'—'}</span></div>`:''}
+    <div style="margin-top:16px">
+      <button class="btn" style="width:100%;justify-content:center" onclick="closeCita()">Cerrar</button>
+    </div>`;
+  $('cita-ov').classList.add('on');$('cita-sheet').classList.add('on');
+}
+function closeCita(){$('cita-ov').classList.remove('on');$('cita-sheet').classList.remove('on');}
+
+// ══════════════════════════════════════════════
+// DOCENTES
+// ══════════════════════════════════════════════
+function cargarDocentes(){
+  api('docentes',{}).then(docs=>{
+    DATA.docentes=docs||[];
+    $('ov-docentes').textContent=docs.length;
+    renderDocentes();
+  }).catch(()=>{});
+}
+
+function renderDocentes(){
+  const LABELS={aprobada:'Aprobada',enviada:'En revisión',ajustes:'Con ajustes',pendiente:'Sin entregar'};
+  const BC={aprobada:'g',enviada:'b',ajustes:'a',pendiente:'r'};
+  $('doc-list').innerHTML=DATA.docentes.length?DATA.docentes.map(d=>{
+    const pln=DATA.planeaciones.find(p=>p.nombreDocente===(d.nombre+' '+d.apellido));
+    const est=pln?.estadoRevision||'pendiente';
+    const ini=(d.nombre+' '+d.apellido).split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('');
+    return`<div class="lrow"><div class="lav ${BC[est]||'b'}">${ini}</div>
+      <div class="li"><div class="ln">${d.nombre} ${d.apellido}</div><div class="lm">${d.correo||''}</div></div>
+      <span class="bdg bdg-${BC[est]||'x'}">${LABELS[est]||est}</span></div>`;
+  }).join(''):'<div class="empty">Sin docentes</div>';
+}
+
+// ══════════════════════════════════════════════
+// PLANEACIONES
+// ══════════════════════════════════════════════
+function cargarPlaneaciones(){
+  const sem=getSemLabel();
+  apiPlaneaciones('planeacionesUI').then(res=>{
+    const raw=res.ok&&res.data?res.data:{};
+    DATA.planeaciones=normalizarPlanes(raw,sem);
+    renderPlaneacionesOverview();
+    renderSemanas();
+    renderPlaneacionesList();
+    renderAlertas();
+    renderPendientesSidebar();
+  }).catch(()=>{renderPlaneacionesOverview();renderAlertas();});
+}
+
+function normalizarPlanes(raw,semFiltro){
+  const out=[];if(!raw||!raw.periodos)return out;
+  const MAP={'Aprobada':'aprobada','Con ajustes':'ajustes','Pendiente':'pendiente','Recibida':'enviada'};
+  Object.values(raw.periodos).forEach(sems=>{
+    Object.entries(sems).forEach(([sem,docs])=>{
+      if(semFiltro&&sem.toUpperCase()!==semFiltro.toUpperCase())return;
+      Object.entries(docs).forEach(([nd,planes])=>{
+        planes.forEach(p=>{
+          out.push({
+            planeacionId:p.id||'',
+            nombreDocente:p.NOMBRE_DOCENTE||nd||'—',
+            asignatura:p.ASIGNATURA||'—',
+            grado:p.GRADO||'—',
+            semana:p.SEMANA||sem,
+            estadoRevision:MAP[p.REVISION_COORD]||'pendiente',
+            indicador:p.INDICADOR_SEMANAL||'',
+            d1Tema:p.D1_TEMA||'',d1Act:p.D1_ACTIVIDADES||'',
+            d2Tema:p.D2_TEMA||'',d2Act:p.D2_ACTIVIDADES||'',
+            obsFamilias:p.OBS_FAMILIAS||'',
+            obsCoord:p.OBS_COORDINACION||'',
+            motivoAjuste:p.MOTIVO_AJUSTE||'',
+          });
+        });
+      });
+    });
+  });
+  return out;
+}
+
+function renderPlaneacionesOverview(){
+  const d=DATA.planeaciones;
+  const T=Math.max(d.length,DATA.docentes.length,14);
+  const ap=d.filter(x=>x.estadoRevision==='aprobada').length;
+  const en=d.filter(x=>x.estadoRevision==='enviada').length;
+  const aj=d.filter(x=>x.estadoRevision==='ajustes').length;
+  const pe=d.filter(x=>!x.estadoRevision||x.estadoRevision==='pendiente').length;
+  const sem=getSemLabel();
+
+  $('ov-pln-ap').textContent=ap;$('ov-pln-pend').textContent=pe;
+  $('ov-sem-lbl').textContent=sem;
+  $('sb-pln-cnt').textContent=(aj+pe)||'0';
+  setBar('p-ap','f-ap',ap,T);setBar('p-en','f-en',en,T);
+  setBar('p-aj','f-aj',aj,T);setBar('p-pe','f-pe',pe,T);
+  $('p-ap').textContent=ap;$('p-en').textContent=en;$('p-aj').textContent=aj;$('p-pe').textContent=pe;
+}
+
+function setBar(lbl,fill,val,total){
+  const el=$(lbl),fe=$(fill);
+  if(el)el.textContent=val;
+  if(fe)fe.style.width=total>0?Math.round(val/total*100)+'%':'0%';
+}
+
+function renderSemanas(){
+  const wrap=$('sem-wrap');if(!wrap)return;
+  const sems=buildSemanas();
+  if(!PLN_SEM_SEL)PLN_SEM_SEL=sems.find(s=>s.activa)?.id||sems[0].id;
+
+  wrap.innerHTML=sems.map(s=>{
+    const docs=DATA.planeaciones.filter(d=>d.semana&&d.semana.toUpperCase()===('SEMANA '+s.num));
+    const total=DATA.docentes.length||14;
+    const pct=Math.round(docs.length/total*100);
+    return`<div class="sem-card ${s.activa?'activa':''} ${PLN_SEM_SEL===s.id?'activa':''}" onclick="selSemana('${s.id}',${s.num})">
+      ${s.activa?'<div class="sem-pill">ACTIVA</div>':''}
+      <div class="sem-num">SEMANA ${s.num}</div>
+      <div class="sem-label">${s.label}</div>
+      <div class="sem-dates">${s.dates}</div>
+      <div class="sem-prog"><div class="sem-prog-f" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+
+  setTimeout(()=>{
+    const a=wrap.querySelector('.activa');
+    if(a)a.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  },100);
+}
+
+function selSemana(id,num){
+  PLN_SEM_SEL=id;renderSemanas();
+  // filtrar planeaciones por semana
+  const docs=DATA.planeaciones.filter(d=>d.semana&&d.semana.toUpperCase()===('SEMANA '+num));
+  $('pln-card-title').textContent=`Semana ${num}`;
+  $('pln-card-sub').textContent=`${docs.length} planeaciones`;
+  renderPlaneacionesList(docs);
+}
+
+function filtrarPeriodo(p,el){
+  document.querySelectorAll('#p-planeaciones .pln-filtros:first-of-type .fbtn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');renderPlaneacionesList();
+}
+
+function filtrarEstado(e,el){
+  PLN_FILTRO_ESTADO=e;
+  document.querySelectorAll('#p-planeaciones .pln-filtros:last-of-type .fbtn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');renderPlaneacionesList();
+}
+
+function renderPlaneacionesList(docs){
+  let d=docs||DATA.planeaciones;
+  if(PLN_FILTRO_ESTADO!=='todos')d=d.filter(x=>(x.estadoRevision||'pendiente')===PLN_FILTRO_ESTADO);
+  d.sort((a,b)=>a.nombreDocente.localeCompare(b.nombreDocente));
+
+  const ap=d.filter(x=>x.estadoRevision==='aprobada').length;
+  const pe=d.filter(x=>!x.estadoRevision||x.estadoRevision==='pendiente').length;
+  $('pln-ap-cnt').textContent=ap+' aprobadas';
+  $('pln-pend-cnt').textContent=pe+' sin entregar';
+
+  const LABELS={aprobada:'Aprobada',enviada:'En revisión',ajustes:'Con ajustes',pendiente:'Sin entregar'};
+  const BC={aprobada:'g',enviada:'b',ajustes:'a',pendiente:'r'};
+
+  $('pln-list').innerHTML=d.length?d.map(x=>{
+    const est=x.estadoRevision||'pendiente';
+    const ini=(x.nombreDocente||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    return`<div class="lrow pln-row" onclick="verPlaneacion('${x.planeacionId}')">
+      <div class="lav ${BC[est]||'b'}">${ini}</div>
+      <div class="li"><div class="ln">${x.nombreDocente||'—'}</div><div class="lm">${x.asignatura||''} · ${x.grado||''}</div></div>
+      <span class="bdg bdg-${BC[est]||'x'}">${LABELS[est]||est}</span>
+    </div>`;
+  }).join(''):'<div class="empty">Sin planeaciones para este filtro</div>';
+}
+
+function renderPendientesSidebar(){
+  const pend=DATA.planeaciones.filter(x=>!x.estadoRevision||x.estadoRevision==='pendiente').slice(0,6);
+  $('pend-list').innerHTML=pend.length?pend.map(x=>{
+    const ini=(x.nombreDocente||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    return`<div class="lrow"><div class="lav r">${ini}</div>
+      <div class="li"><div class="ln">${x.nombreDocente||'—'}</div><div class="lm">${x.asignatura||''}</div></div>
+    </div>`;
+  }).join('')+'<div style="margin-top:8px"><button class="btn btn-r" style="width:100%;justify-content:center;font-size:10px" onclick="gp(\'planeaciones\',document.getElementById(\'ni-planeaciones\'))">Ver todas →</button></div>'
+  :'<div style="font-size:11px;color:var(--green);text-align:center;padding:10px 0">✓ Todos han entregado</div>';
+}
+
+function renderAlertas(){
+  const pend=DATA.planeaciones.filter(x=>!x.estadoRevision||x.estadoRevision==='pendiente');
+  const aj=DATA.planeaciones.filter(x=>x.estadoRevision==='ajustes');
+  const alertas=[];
+  if(pend.length)alertas.push({tipo:'r',titulo:`${pend.length} docente${pend.length>1?'s':''} sin entregar planeación`,meta:'Semana activa · Requieren seguimiento',tiempo:'Urgente'});
+  if(aj.length)alertas.push({tipo:'a',titulo:`${aj.length} planeación${aj.length>1?'es':''} con ajustes pendientes`,meta:'Esperando corrección del docente',tiempo:'Pendiente'});
+  const hoy=fmtISO(new Date());
+  const citasHoy=DATA.citas.filter(c=>c.fecha===hoy).length;
+  if(citasHoy>0)alertas.push({tipo:'b',titulo:`${citasHoy} cita${citasHoy>1?'s':''} programadas para hoy`,meta:'Atención a padres de familia',tiempo:'Hoy'});
+  $('sb-alert-cnt').textContent=alertas.filter(a=>a.tipo==='r'||a.tipo==='a').length||'0';
+
+  const col={r:'var(--red)',a:'var(--amber)',b:'var(--blue2)'};
+  const html=alertas.length?alertas.map(a=>`<div class="al-item">
+    <div class="al-dot" style="background:${col[a.tipo]}"></div>
+    <div class="al-b"><div class="al-t">${a.titulo}</div><div class="al-m">${a.meta}</div></div>
+    <div class="al-time">${a.tiempo}</div>
+  </div>`).join(''):'<div style="font-size:11px;color:var(--green);text-align:center;padding:10px 0">✓ Sin alertas activas</div>';
+  $('ov-alertas').innerHTML=html;
+
+  // Página alertas
+  $('al-pend-cnt').textContent=pend.length;
+  $('al-pend-list').innerHTML=pend.length?pend.map(x=>{
+    const ini=(x.nombreDocente||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    return`<div class="lrow"><div class="lav r">${ini}</div>
+      <div class="li"><div class="ln">${x.nombreDocente||'—'}</div><div class="lm">${x.asignatura||''} · ${x.grado||''}</div></div></div>`;
+  }).join(''):'<div style="color:var(--green);text-align:center;padding:12px 0;font-size:11px">✓ Todos han entregado</div>';
+
+  $('al-aj-cnt').textContent=aj.length;
+  $('al-aj-list').innerHTML=aj.length?aj.map(x=>{
+    const ini=(x.nombreDocente||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    return`<div class="lrow"><div class="lav a">${ini}</div>
+      <div class="li"><div class="ln">${x.nombreDocente||'—'}</div><div class="lm">${x.asignatura||''} · ${x.grado||''}</div></div>
+      <button class="btn btn-a" style="font-size:9px;padding:5px 10px" onclick="verPlaneacion('${x.planeacionId}')">Revisar</button></div>`;
+  }).join(''):'<div style="color:var(--green);text-align:center;padding:12px 0;font-size:11px">✓ Sin ajustes pendientes</div>';
+}
+
+// ══════════════════════════════════════════════
+// SHEET PLANEACIÓN
+// ══════════════════════════════════════════════
+function verPlaneacion(id){
+  const d=DATA.planeaciones.find(x=>x.planeacionId===id);
+  if(!d){toast('Planeación no encontrada','er');return;}
+  const est=d.estadoRevision||'pendiente';
+  const LABELS={aprobada:'Aprobada',enviada:'En revisión',ajustes:'Con ajustes',pendiente:'Sin entregar'};
+  const BC={aprobada:'bdg-g',enviada:'bdg-b',ajustes:'bdg-a',pendiente:'bdg-r'};
+
+  $('pln-sh-content').innerHTML=`
+    <div class="sh-title">${d.nombreDocente||'—'}</div>
+    <div class="sh-meta">
+      <span class="sh-tag">${d.asignatura||'—'}</span>
+      <span class="sh-tag">${d.grado||'—'}</span>
+      <span class="sh-tag">${d.semana||'—'}</span>
+      <span class="bdg ${BC[est]||'bdg-x'}">${LABELS[est]||est}</span>
+    </div>
+
+    ${est==='pendiente'?`<div class="empty" style="padding:20px 0;color:var(--ink4)">Este docente aún no ha enviado la planeación.</div>`:`
+      ${d.indicador?`<div class="info-row"><span class="info-lb">Indicador</span><span class="info-val">${d.indicador}</span></div>`:''}
+      ${d.d1Tema?`<div class="info-row"><span class="info-lb">Clase 1 · Tema</span><span class="info-val">${d.d1Tema}</span></div>`:''}
+      ${d.d1Act?`<div class="info-row"><span class="info-lb">Clase 1 · Act.</span><span class="info-val">${d.d1Act}</span></div>`:''}
+      ${d.d2Tema?`<div class="info-row"><span class="info-lb">Clase 2 · Tema</span><span class="info-val">${d.d2Tema}</span></div>`:''}
+      ${d.obsFamilias?`<div class="info-row"><span class="info-lb">Familias</span><span class="info-val">${d.obsFamilias}</span></div>`:''}
+      ${d.obsCoord?`<div class="info-row" style="border-color:rgba(232,184,75,.2)"><span class="info-lb" style="color:var(--amber)">Obs. coord.</span><span class="info-val">${d.obsCoord}</span></div>`:''}
+    `}
+
+    <div style="margin-top:18px;display:flex;flex-direction:column;gap:8px">
+      ${est!=='aprobada'&&est!=='pendiente'?`
+        <button class="btn btn-g" style="justify-content:center" onclick="aprobarPlaneacion('${d.planeacionId}')">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M20 6L9 17l-5-5"/></svg>
+          Aprobar planeación
+        </button>
+        <button class="btn btn-a" style="justify-content:center" id="btn-ajuste-toggle" onclick="toggleAjuste()">
+          Enviar ajustes al docente
+        </button>
+        <div id="ajuste-form" style="display:none;background:var(--s3);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:4px">
+          <div class="fg">
+            <label class="fl">Motivo del ajuste</label>
+            <select class="fs" id="ajuste-motivo">
+              <option value="">Seleccionar...</option>
+              <option>Indicador de desempeño incompleto</option>
+              <option>Actividades poco claras</option>
+              <option>Faltan recursos o materiales</option>
+              <option>No articula con el plan de área</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="fg" style="margin-bottom:10px">
+            <label class="fl">Observación para el docente</label>
+            <textarea class="fta" id="ajuste-obs" placeholder="Escribe los ajustes requeridos..."></textarea>
+          </div>
+          <button class="btn btn-a" style="width:100%;justify-content:center" onclick="enviarAjustes('${d.planeacionId}')">Confirmar y enviar</button>
+        </div>
+      `:''}
+      ${est==='aprobada'?`<div style="text-align:center;font-size:12px;color:var(--green);padding:8px 0">✓ Planeación ya aprobada</div>`:''}
+      <button class="btn" style="justify-content:center" onclick="closePln()">Cerrar</button>
+    </div>`;
+
+  $('pln-ov').classList.add('on');$('pln-sheet').classList.add('on');
+}
+
+function toggleAjuste(){
+  const f=$('ajuste-form');
+  f.style.display=f.style.display==='none'?'block':'none';
+}
+
+function aprobarPlaneacion(id){
+  const btn=document.querySelector('#pln-sh-content .btn-g');
+  if(btn){btn.innerHTML='<span class="spin"></span> Aprobando...';btn.disabled=true;}
+  api('aprobarPlaneacion',{planeacionId:id,quien:ST.correo}).then(r=>{
+    if(r.ok){
+      const d=DATA.planeaciones.find(x=>x.planeacionId===id);
+      if(d)d.estadoRevision='aprobada';
+      toast('Planeación aprobada ✔','ok');
+      closePln();renderPlaneacionesList();renderPlaneacionesOverview();renderPendientesSidebar();renderAlertas();
+    }else toast(r.mensaje||'Error','er');
+  }).catch(()=>toast('Error de conexión','er'));
+}
+
+function enviarAjustes(id){
+  const motivo=$('ajuste-motivo').value;
+  const obs=($('ajuste-obs').value||'').trim();
+  if(!motivo){toast('Selecciona el motivo','er');return;}
+  if(!obs||obs.length<10){toast('Escribe la observación (mín. 10 caracteres)','er');return;}
+  const btn=document.querySelector('#ajuste-form .btn-a');
+  if(btn){btn.innerHTML='<span class="spin"></span> Enviando...';btn.disabled=true;}
+  api('ajustesPlaneacion',{planeacionId:id,motivo,obs,quien:ST.correo}).then(r=>{
+    if(r.ok){
+      const d=DATA.planeaciones.find(x=>x.planeacionId===id);
+      if(d){d.estadoRevision='ajustes';d.obsCoord=obs;d.motivoAjuste=motivo;}
+      toast('Ajustes enviados al docente','ok');
+      closePln();renderPlaneacionesList();renderAlertas();
+    }else toast(r.mensaje||'Error','er');
+  }).catch(()=>toast('Error de conexión','er'));
+}
+
+function closePln(){$('pln-ov').classList.remove('on');$('pln-sheet').classList.remove('on');}
+
+// ══════════════════════════════════════════════
+// MINI CALENDARIO
+// ══════════════════════════════════════════════
+function renderCalendario(){
+  const y=calDate.getFullYear(),m=calDate.getMonth();
+  const meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  $('cal-tit').textContent=meses[m]+' '+y;
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  let pd=new Date(y,m,1).getDay();pd=pd===0?6:pd-1;
+  const dim=new Date(y,m+1,0).getDate();
+  const dias=['L','M','X','J','V','S','D'];
+  let html=dias.map(d=>`<div class="mcal-hd">${d}</div>`).join('');
+  for(let i=0;i<pd;i++)html+='<div class="mcal-day" style="visibility:hidden"></div>';
+  for(let d=1;d<=dim;d++){
+    const f=new Date(y,m,d);f.setHours(0,0,0,0);
+    const fs=fmtISO(f);
+    const isHoy=f.getTime()===hoy.getTime();
+    const hasEv=DATA.citas.some(c=>c.fecha===fs&&c.estado!=='cancelada');
+    html+=`<div class="mcal-day${isHoy?' today':''}${hasEv?' has':''}" onclick="calClick('${fs}')">${d}</div>`;
+  }
+  $('cal-grid').innerHTML=html;
+}
+
+function calClick(fecha){
+  const evs=DATA.citas.filter(c=>c.fecha===fecha&&c.estado!=='cancelada').sort((a,b)=>a.horaInicio.localeCompare(b.horaInicio));
+  $('cal-evs').innerHTML=evs.length?evs.slice(0,4).map(e=>`<div class="cal-ev">
+    <div class="cev-t">${e.horaInicio}</div>
+    <div class="cev-bar ${e.estado==='confirmada'?'g':''}"></div>
+    <div class="cev-i"><div class="cev-n">${e.padreNombre||''} ${e.padreApellido||''}</div>
+    <div class="cev-m">${e.docenteNombre||''}</div></div>
+  </div>`).join('')+(evs.length>4?`<div style="font-size:9px;color:var(--ink4);padding:4px 0">+${evs.length-4} más</div>`:'')
+  :`<div style="font-size:10px;color:var(--ink4);text-align:center;padding:6px 0">Sin citas el ${fmtFecha(fecha)}</div>`;
+}
+
+function navCal(delta){calDate.setMonth(calDate.getMonth()+delta);renderCalendario();}
+
+// ══════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════
+const TITLES={resumen:'Resumen general',alertas:'Alertas',planeaciones:'Planeaciones',citas:'Citas con padres',docentes:'Docentes'};
+
+function gp(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('on'));
+  const p=$('p-'+id);if(p)p.classList.add('on');
+  if(el)el.classList.add('on');
+  $('top-title').textContent=TITLES[id]||id;
+  closeSB();
+}
+
+function bnavOn(el){document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+function toggleSB(){$('sidebar').classList.toggle('open');$('sb-ov').classList.toggle('on');}
+function closeSB(){$('sidebar').classList.remove('open');$('sb-ov').classList.remove('on');}
+
+function doLogout(){
+  localStorage.removeItem('lp_user');
+  window.location.href='/';
+}
+</script>
+</body>
+</html>
