@@ -118,58 +118,62 @@ html,body{
 #app.on{display:flex}
 
 /* ══════════════════════════════════
-   TOPBAR — ultra minimal
+   TOPBAR — igual al sistema
 ══════════════════════════════════ */
 .topbar{
   flex-shrink:0;
-  padding:14px 20px 0;
-  padding-top:calc(14px + env(safe-area-inset-top,0));
-  display:flex;align-items:center;justify-content:space-between
+  position:sticky;top:0;z-index:20;
+  background:rgba(5,14,29,.75);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding:10px 18px;
+  padding-top:calc(10px + env(safe-area-inset-top,0));
+  display:flex;align-items:center;gap:10px;
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)
 }
-.tb-logo-wrap{display:flex;align-items:center;gap:8px}
 .tb-logo{
-  width:28px;height:28px;border-radius:8px;
+  width:30px;height:30px;border-radius:9px;
   background:linear-gradient(140deg,#1c3f7a,#2557c7);
-  display:flex;align-items:center;justify-content:center
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(20,60,180,.4)
 }
-.tb-logo img{width:16px;filter:brightness(10)}
-.tb-logo span{color:#fff;font-size:12px;font-weight:700}
-.tb-brand{font-size:12px;font-weight:600;color:var(--mt2);letter-spacing:.3px}
-.tb-actions{display:flex;align-items:center;gap:4px}
+.tb-logo img{width:18px;filter:brightness(10)}
+.tb-logo span{color:#fff;font-size:13px;font-weight:700}
+.tb-title{
+  font-size:15px;font-weight:600;letter-spacing:-.2px;
+  flex:1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
 .tb-btn{
-  background:rgba(255,255,255,.07);border:1px solid var(--br2);
-  border-radius:20px;padding:5px 12px;
-  color:var(--mt2);font-size:12px;cursor:pointer;
-  font-family:-apple-system,sans-serif;transition:all .15s
+  background:none;border:none;
+  color:rgba(255,255,255,.35);font-size:12px;cursor:pointer;
+  padding:4px 6px;font-family:-apple-system,sans-serif;
+  flex-shrink:0;transition:color .15s
 }
-.tb-btn:hover{color:#fff;background:rgba(255,255,255,.11)}
+.tb-btn:hover{color:rgba(255,255,255,.7)}
 
 /* ══════════════════════════════════
-   TAB BAR — iOS style
+   BOTTOM NAV — estilo sistema
 ══════════════════════════════════ */
-.tabbar{
+.bnav{
   flex-shrink:0;
-  padding:10px 20px 0;
-  display:flex;gap:0
+  position:relative;z-index:20;
+  background:rgba(5,14,29,.8);
+  border-top:1px solid rgba(255,255,255,.07);
+  display:flex;
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 4px)
 }
-.tabb{
-  flex:1;padding:8px 0;border:none;background:none;
-  color:var(--mt);font-size:13px;font-weight:500;cursor:pointer;
+.ni{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:10px 2px;cursor:pointer;border:none;background:none;
+  color:rgba(255,255,255,.3);font-size:9px;
   font-family:-apple-system,sans-serif;
-  display:flex;flex-direction:column;align-items:center;gap:5px;
-  position:relative;transition:color .2s
+  gap:4px;transition:color .15s;letter-spacing:.2px
 }
-.tabb svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.6;fill:none;transition:all .2s}
-.tabb span{font-size:10px;letter-spacing:.2px}
-.tabb.on{color:#fff}
-.tabb.on svg{stroke-width:2.2}
-.tab-indicator{
-  position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);
-  width:4px;height:4px;border-radius:50%;background:var(--gold);
-  opacity:0;transition:opacity .2s
-}
-.tabb.on .tab-indicator{opacity:1}
-.tabbar-line{height:1px;background:var(--br);margin:10px 20px 0;flex-shrink:0}
+.ni svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.5;fill:none}
+.ni.on{color:rgba(255,255,255,.9)}
+.ni.on svg{stroke-width:2}
 
 /* ══════════════════════════════════
    SCROLL
@@ -658,34 +662,15 @@ html,body{
 <!-- ══ APP ══ -->
 <div id="app">
 
-  <!-- Topbar -->
+  <!-- Topbar igual al sistema -->
   <div class="topbar">
-    <div class="tb-logo-wrap">
-      <div class="tb-logo">
-        <img src="/logo.png" onerror="this.style.display='none';this.parentNode.innerHTML='<span>S</span>'">
-      </div>
-      <span class="tb-brand">SIPRESC</span>
+    <div class="tb-logo">
+      <img src="/logo.png" onerror="this.style.display='none';this.parentNode.innerHTML='<span>S</span>'">
     </div>
-    <div class="tb-actions">
-      <button class="tb-btn" onclick="window.location.href='/'">← Inicio</button>
-      <button class="tb-btn" onclick="doLogout()">Salir</button>
-    </div>
+    <h1 style="font-family:-apple-system,'Helvetica Neue',sans-serif;font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="topbarTitle">Reuniones</h1>
+    <button class="tb-btn" onclick="window.location.href='/'">Inicio</button>
+    <button class="tb-btn" onclick="doLogout()">Salir</button>
   </div>
-
-  <!-- Tab bar -->
-  <div class="tabbar">
-    <button class="tabb on" id="tab-meet" onclick="goView('meet',this)">
-      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2.5"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="8" cy="15" r="1" fill="currentColor"/><circle cx="12" cy="15" r="1" fill="currentColor"/><circle cx="16" cy="15" r="1" fill="currentColor"/></svg>
-      <span>Reuniones</span>
-      <div class="tab-indicator"></div>
-    </button>
-    <button class="tabb" id="tab-avail" onclick="goView('avail',this)">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-      <span>Disponibilidad</span>
-      <div class="tab-indicator"></div>
-    </button>
-  </div>
-  <div class="tabbar-line"></div>
 
   <!-- Scroll area -->
   <div class="scroll" id="scrollArea">
@@ -696,7 +681,7 @@ html,body{
       <!-- Hero -->
       <div class="hero">
         <div class="hero-greeting" id="heroDate">—</div>
-        <div class="hero-name">Hola, <span id="heroName">—</span> 👋</div>
+        <div class="hero-name" id="heroViewTitle">Reuniones</div>
 
         <!-- Stats -->
         <div class="stats-row">
@@ -794,6 +779,18 @@ html,body{
 
   </div><!-- /scroll -->
 
+  <!-- Bottom nav estilo sistema -->
+  <div class="bnav">
+    <button class="ni on" id="ni-meet" onclick="goView('meet',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="8" cy="15" r="1" fill="currentColor"/><circle cx="12" cy="15" r="1" fill="currentColor"/><circle cx="16" cy="15" r="1" fill="currentColor"/></svg>
+      <span>Reuniones</span>
+    </button>
+    <button class="ni" id="ni-avail" onclick="goView('avail',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <span>Disponibilidad</span>
+    </button>
+  </div>
+
   <!-- FAB guardar -->
   <button class="save-fab" id="saveFab" onclick="guardarHorario()">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -875,12 +872,10 @@ function go(url){ window.location.href = url; }
 function doLogout(){ localStorage.removeItem('lp_user'); sessionStorage.removeItem(DEV_KEY); go('/'); }
 
 function iniciar(){
-  // Hero
-  const primer = (ST.nombre||'').split(' ')[0];
-  $('heroName').textContent = primer.charAt(0).toUpperCase()+primer.slice(1).toLowerCase();
   const d = new Date();
   const diasSemana=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
   $('heroDate').textContent = `${diasSemana[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]}`;
+  $('heroViewTitle').textContent = 'Reuniones';
 
   // Disponibilidad profile
   const ini = (ST.nombre||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
@@ -896,10 +891,13 @@ function iniciar(){
 // ══════════════════════════════════════════════
 function goView(id, el){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
-  document.querySelectorAll('.tabb').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('on'));
   $('v-'+id).classList.add('on');
   el.classList.add('on');
   $('scrollArea').scrollTop = 0;
+  // Actualizar título topbar
+  const titles = {meet:'Reuniones', avail:'Disponibilidad'};
+  $('topbarTitle').textContent = titles[id]||'Mis Citas';
   // FAB solo en disponibilidad si no tiene horario
   $('saveFab').classList.toggle('on', id==='avail' && !ST.yaGuardado);
 }
