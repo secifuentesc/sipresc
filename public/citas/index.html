@@ -1535,7 +1535,7 @@ function enviarSolCierre(){
 // ══════════════════════════════════════════════
 // ARRANQUE
 // ══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded',()=>{
+ocument.addEventListener('DOMContentLoaded',()=>{
   if(sessionStorage.getItem(DEV_KEY)==='1'){
     $('dev-gate').style.display='none';
     $('splash').style.display='none';
@@ -1545,9 +1545,9 @@ document.addEventListener('DOMContentLoaded',()=>{
       try{
         const obj=JSON.parse(data);
         ST.correo=obj.correo;
-        ST.nombre=obj.correo.split('@')[0];
+        ST.nombre=obj.nombre||obj.correo.split('@')[0];
         ST.docenteId=obj.docenteId||obj.correo;
-        ST.rol='docente';
+        ST.rol=obj.rol||'docente';
       }catch{}
     }
     iniciar();
@@ -1555,6 +1555,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     $('splash').style.display='none';
   }
 });
+
 </script>
 </body>
 </html>
