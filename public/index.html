@@ -1582,7 +1582,6 @@ async function verificarCodigoLogin(){
     return;
   }
 
-  // 🔥 SI DA CLICK MANUAL
   activarVerificando();
 
   try{
@@ -1602,37 +1601,37 @@ async function verificarCodigoLogin(){
       ST.docenteId = r.docenteId;
 
       localStorage.setItem('lp_user', JSON.stringify({
-  correo: r.correo,
-  nombre: r.nombre,
-  docenteId: r.docenteId,
-  rol: r.rol,
-  loginTime: Date.now()
-}));
+        correo: r.correo,
+        nombre: r.nombre,
+        docenteId: r.docenteId,
+        rol: r.rol,
+        loginTime: Date.now()
+      }));
 
       setTimeout(() => {
-  mostrarSplashDocente('Preparando panel');
 
-  setTimeout(() => {
-  if (r.rol === 'coordinador') {
-    window.location.href = '/dashboardcoord/';
-    return;
-  }
+        if(r.rol === 'coordinador'){
+          window.location.href = '/dashboardcoord/';
+          return;
+        }
 
-  if (r.rol === 'admin') {
-    window.location.href = '/dashboardadmin/';
-    return;
-  }
+        if(r.rol === 'admin'){
+          window.location.href = '/dashboardadmin/';
+          return;
+        }
 
-  mostrarSplashDocente('Preparando panel');
+        mostrarSplashDocente('Preparando panel');
 
-  setTimeout(() => {
-    iniciarApp();
+        setTimeout(() => {
+          iniciarApp();
 
-    setTimeout(() => {
-      ocultarSplashDocente();
-    }, 550);
-  }, 350);
-}, 500);
+          setTimeout(() => {
+            ocultarSplashDocente();
+          }, 550);
+
+        }, 350);
+
+      }, 500);
 
     } else {
 
@@ -1642,14 +1641,14 @@ async function verificarCodigoLogin(){
 
       toast(r.mensaje,'er');
 
-      setTimeout(()=>{
-        btn.innerHTML = 'Verificar código';
+      setTimeout(() => {
+        btn.innerHTML = 'Verificar acceso';
         btn.style.background = '';
-      },1500);
+      }, 1500);
 
     }
 
-  }catch(e){
+  } catch(e){
 
     btn.innerHTML = 'Error';
     btn.disabled = false;
@@ -1685,31 +1684,37 @@ function mostrarPantallaInicial(){
 
     api('loginGoogle', { correo: obj.correo })
       .then(r => {
+
         if(r.ok){
-  ST.rol = r.rol;
-  ST.nombre = r.nombre;
-  ST.docenteId = r.docenteId;
 
-  if (r.rol === 'coordinador') {
-    window.location.href = '/dashboardcoord/';
-    return;
-  }
+          ST.rol = r.rol;
+          ST.nombre = r.nombre;
+          ST.docenteId = r.docenteId;
 
-  if (r.rol === 'admin') {
-    window.location.href = '/dashboardadmin/';
-    return;
-  }
+          if(r.rol === 'coordinador'){
+            window.location.href = '/dashboardcoord/';
+            return;
+          }
 
-  iniciarApp();
+          if(r.rol === 'admin'){
+            window.location.href = '/dashboardadmin/';
+            return;
+          }
 
-  setTimeout(() => {
-    ocultarSplashDocente();
-  }, 450);
-}else{
+          iniciarApp();
+
+          setTimeout(() => {
+            ocultarSplashDocente();
+          }, 450);
+
+        } else {
+
           localStorage.removeItem('lp_user');
           $('s-login').classList.add('on');
           ocultarSplashDocente();
+
         }
+
       })
       .catch(() => {
         localStorage.removeItem('lp_user');
@@ -1717,7 +1722,7 @@ function mostrarPantallaInicial(){
         ocultarSplashDocente();
       });
 
-  }catch{
+  } catch {
     localStorage.removeItem('lp_user');
     $('s-login').classList.add('on');
     ocultarSplashDocente();
