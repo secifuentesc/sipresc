@@ -1,497 +1,1054 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>SIPRESC · Coordinación</title>
-  <link rel="manifest" href="/manifest.json">
-  <link rel="stylesheet" href="/css/base.css">
-  
-  <style>
-:root{
-  --bg:#f6f8fb;
-  --card:#ffffff;
-  --border:#e6e8ee;
-  --text:#1e1f25;
-  --text2:#6b7280;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SIPRESC · Coordinación</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
 
-  --blue:#1A428A;
-  --blue-soft:rgba(26,66,138,.08);
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  --green:#22c55e;
-  --amber:#f59e0b;
-  --red:#ef4444;
+  :root {
+    --blue:       #1A428A;
+    --blue-light: #EEF2FA;
+    --blue-mid:   #2F5BB8;
+    --green:      #12A259;
+    --green-bg:   #E8F8EF;
+    --yellow:     #D97706;
+    --yellow-bg:  #FEF3C7;
+    --red:        #DC2626;
+    --red-bg:     #FEE2E2;
+    --gray-50:    #F9FAFB;
+    --gray-100:   #F3F4F6;
+    --gray-200:   #E5E7EB;
+    --gray-400:   #9CA3AF;
+    --gray-600:   #4B5563;
+    --gray-800:   #1F2937;
+    --sidebar-w:  240px;
+    --radius:     14px;
+    --radius-sm:  8px;
+    --shadow:     0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+    --shadow-sm:  0 1px 2px rgba(0,0,0,.05);
+  }
 
-  --radius:14px;
-}
+  html, body {
+    height: 100%;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    -webkit-font-smoothing: antialiased;
+  }
 
-/* BASE */
-body{
-  background:var(--bg);
-  font-family:-apple-system, BlinkMacSystemFont, sans-serif;
-  color:var(--text);
-}
+  /* ── LAYOUT ── */
+  .layout { display: flex; height: 100vh; overflow: hidden; }
 
-/* HEADER */
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
-}
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: #fff;
+    border-right: 1px solid var(--gray-200);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    padding: 28px 0 20px;
+  }
 
-.title{
-  font-size:22px;
-  font-weight:600;
-}
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px 28px;
+    border-bottom: 1px solid var(--gray-100);
+  }
 
-.subtitle{
-  font-size:12px;
-  color:var(--text2);
-}
+  .brand-logo {
+    width: 36px; height: 36px;
+    background: var(--blue);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: -.5px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .brand-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
 
-/* GRID */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px;
-  margin-bottom:20px;
-}
+  .brand-text { line-height: 1.2; }
+  .brand-text strong { display: block; font-size: 14px; font-weight: 700; color: var(--gray-800); }
+  .brand-text span { font-size: 11px; color: var(--gray-400); font-weight: 400; }
 
-.grid-2{
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:14px;
-}
+  .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; }
 
-/* CARD */
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:16px;
-  box-shadow:0 4px 10px rgba(0,0,0,.03);
-}
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--gray-600);
+    transition: background .15s, color .15s;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: var(--gray-100); color: var(--gray-800); }
+  .nav-item.active { background: var(--blue-light); color: var(--blue); }
+  .nav-item svg { flex-shrink: 0; opacity: .7; }
+  .nav-item.active svg { opacity: 1; }
 
-/* KPI */
-.kpi-number{
-  font-size:26px;
-  font-weight:700;
-  color:var(--blue);
-}
+  .sidebar-footer {
+    padding: 16px 20px 0;
+    border-top: 1px solid var(--gray-100);
+  }
+  .user-chip {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .user-avatar {
+    width: 32px; height: 32px;
+    background: var(--blue-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--blue);
+  }
+  .user-info strong { display: block; font-size: 12.5px; font-weight: 600; color: var(--gray-800); }
+  .user-info span { font-size: 11px; color: var(--gray-400); }
 
-.kpi-label{
-  font-size:11px;
-  color:var(--text2);
-}
+  /* ── MAIN ── */
+  .main { flex: 1; overflow-y: auto; background: var(--gray-50); }
 
-/* ALERT */
-.alert{
-  border-left:4px solid var(--red);
-  padding:10px;
-  background:#fff;
-  border-radius:8px;
-  margin-bottom:8px;
-}
+  /* ── SCREENS ── */
+  .screen { display: none; padding: 36px 40px; max-width: 1100px; margin: 0 auto; }
+  .screen.active { display: block; }
 
-/* LIST */
-.row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:8px 0;
-  border-bottom:1px solid var(--border);
-}
+  /* ── PAGE HEADER ── */
+  .page-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 32px;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .page-header h1 {
+    font-size: 28px; font-weight: 700; letter-spacing: -.5px;
+    color: var(--gray-800);
+  }
+  .page-header p {
+    margin-top: 2px; font-size: 13.5px; color: var(--gray-400); font-weight: 400;
+  }
+  .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
-.row:last-child{
-  border:none;
-}
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; border: none;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { opacity: .88; }
+  .btn-outline {
+    background: #fff; color: var(--gray-800);
+    border: 1px solid var(--gray-200);
+  }
+  .btn-outline:hover { background: var(--gray-50); }
 
-/* BADGES */
-.badge{
-  font-size:10px;
-  padding:3px 8px;
-  border-radius:10px;
-}
+  /* ── KPI GRID ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  @media(max-width:900px){ .kpi-grid { grid-template-columns: repeat(2,1fr); } }
 
-.badge.green{background:rgba(34,197,94,.1);color:var(--green);}
-.badge.red{background:rgba(239,68,68,.1);color:var(--red);}
-.badge.amber{background:rgba(245,158,11,.1);color:var(--amber);}
-.badge.blue{background:var(--blue-soft);color:var(--blue);}
+  .kpi-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 22px 22px 18px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .kpi-card.blue::before   { background: var(--blue); }
+  .kpi-card.green::before  { background: var(--green); }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-card.red::before    { background: var(--red); }
 
-/* CALENDAR */
-.calendar{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:4px;
-  margin-top:10px;
-}
+  .kpi-label { font-size: 11.5px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 10px; }
+  .kpi-value { font-size: 38px; font-weight: 700; letter-spacing: -1.5px; line-height: 1; color: var(--gray-800); }
+  .kpi-sub { margin-top: 6px; font-size: 12px; color: var(--gray-400); }
+  .kpi-icon {
+    position: absolute; right: 18px; top: 18px;
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .kpi-icon.blue   { background: var(--blue-light);  }
+  .kpi-icon.green  { background: var(--green-bg); }
+  .kpi-icon.yellow { background: var(--yellow-bg); }
+  .kpi-icon.red    { background: var(--red-bg); }
 
-.day{
-  text-align:center;
-  padding:8px;
-  border-radius:8px;
-  font-size:11px;
-  cursor:pointer;
-}
+  /* ── TWO COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .three-col { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px; }
+  @media(max-width:800px){ .two-col, .three-col { grid-template-columns: 1fr; } }
 
-.day.today{
-  background:var(--blue);
-  color:#fff;
-}
+  /* ── SECTION CARD ── */
+  .section-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .section-head h2 { font-size: 14px; font-weight: 700; color: var(--gray-800); }
+  .section-head span { font-size: 12px; color: var(--gray-400); }
+  .section-body { padding: 8px 0; }
 
-.day.event::after{
-  content:'';
-  display:block;
-  width:4px;
-  height:4px;
-  background:var(--amber);
-  border-radius:50%;
-  margin:3px auto 0;
-}
+  /* ── ALERT ITEM ── */
+  .alert-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 13px 22px;
+    border-bottom: 1px solid var(--gray-100);
+    transition: background .1s;
+  }
+  .alert-item:last-child { border-bottom: none; }
+  .alert-item:hover { background: var(--gray-50); }
+  .alert-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 5px;
+  }
+  .alert-dot.red    { background: var(--red); }
+  .alert-dot.yellow { background: var(--yellow); }
+  .alert-dot.blue   { background: var(--blue); }
+  .alert-text { font-size: 13px; line-height: 1.45; color: var(--gray-800); }
+  .alert-text small { display: block; margin-top: 2px; font-size: 11.5px; color: var(--gray-400); }
 
-/* SIDEBAR CLARA */
-.sidebar{
-  width:230px;
-  position:fixed;
-  top:0;
-  left:0;
-  bottom:0;
-  background:#ffffff;
-  border-right:1px solid #e6e8ee;
-  display:flex;
-  flex-direction:column;
-}
+  /* ── CITA ROW ── */
+  .cita-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 13px 22px;
+    border-bottom: 1px solid var(--gray-100);
+    transition: background .1s;
+  }
+  .cita-row:last-child { border-bottom: none; }
+  .cita-row:hover { background: var(--gray-50); }
+  .cita-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--blue-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--blue);
+    flex-shrink: 0;
+  }
+  .cita-info { flex: 1; min-width: 0; }
+  .cita-info strong { display: block; font-size: 13px; font-weight: 600; color: var(--gray-800); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cita-info span { font-size: 11.5px; color: var(--gray-400); }
+  .cita-time { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--gray-600); flex-shrink: 0; }
 
-.sb-top{
-  padding:18px;
-  border-bottom:1px solid #eee;
-}
+  /* ── BADGE ── */
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 3px 9px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge.green  { background: var(--green-bg);  color: var(--green); }
+  .badge.yellow { background: var(--yellow-bg); color: var(--yellow); }
+  .badge.red    { background: var(--red-bg);    color: var(--red); }
+  .badge.blue   { background: var(--blue-light); color: var(--blue); }
 
-.sb-logo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+  /* ── DOCENTE ROW ── */
+  .docente-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 22px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .docente-row:last-child { border-bottom: none; }
+  .docente-icon {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: var(--gray-100);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .docente-info { flex: 1; }
+  .docente-info strong { display: block; font-size: 13px; font-weight: 600; }
+  .docente-info span { font-size: 11.5px; color: var(--gray-400); }
 
-.sb-icon{
-  width:34px;
-  height:34px;
-  border-radius:10px;
-  background:linear-gradient(135deg,#1A428A,#2563eb);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  font-weight:700;
-}
+  /* ── CALENDAR ── */
+  .calendar-wrap { padding: 16px 20px 20px; }
+  .cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .cal-header h3 { font-size: 14px; font-weight: 700; color: var(--gray-800); }
+  .cal-nav {
+    display: flex; gap: 4px;
+  }
+  .cal-nav button {
+    width: 28px; height: 28px;
+    border-radius: 7px; border: 1px solid var(--gray-200);
+    background: #fff; cursor: pointer; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .1s;
+  }
+  .cal-nav button:hover { background: var(--gray-100); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+  .cal-day-name {
+    text-align: center; font-size: 10.5px; font-weight: 600;
+    color: var(--gray-400); padding: 0 0 6px;
+    text-transform: uppercase; letter-spacing: .4px;
+  }
+  .cal-cell {
+    aspect-ratio: 1; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 500; color: var(--gray-600);
+    position: relative; cursor: pointer;
+    transition: background .1s;
+  }
+  .cal-cell:hover { background: var(--gray-100); }
+  .cal-cell.empty { cursor: default; }
+  .cal-cell.today { background: var(--blue); color: #fff; font-weight: 700; }
+  .cal-cell.today:hover { background: var(--blue-mid); }
+  .cal-cell.has-event::after {
+    content: '';
+    position: absolute; bottom: 3px;
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--blue);
+  }
+  .cal-cell.today::after { background: rgba(255,255,255,.7); }
 
-.sb-name{
-  font-size:13px;
-  font-weight:600;
-}
+  /* ── PLANEACIONES SCREEN ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .5px;
+    color: var(--gray-400); padding: 12px 20px;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+  }
+  td {
+    padding: 14px 20px; font-size: 13px; color: var(--gray-800);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  tr:hover td { background: var(--gray-50); }
+  tr:last-child td { border-bottom: none; }
 
-.sb-sys{
-  font-size:10px;
-  color:#1A428A;
-}
+  .filter-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 7px 14px; border-radius: 20px;
+    font-size: 12.5px; font-weight: 600;
+    border: 1.5px solid var(--gray-200);
+    background: #fff; color: var(--gray-600);
+    cursor: pointer; transition: all .15s;
+  }
+  .filter-btn.active { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
 
-.sb-nav{
-  padding:10px;
-}
+  /* ── CITAS SCREEN ── */
+  .citas-list { display: flex; flex-direction: column; gap: 12px; }
+  .cita-card {
+    background: #fff; border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 22px;
+    display: flex; align-items: center; gap: 18px;
+  }
+  .cita-card-avatar {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--blue-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; color: var(--blue);
+    flex-shrink: 0;
+  }
+  .cita-card-info { flex: 1; }
+  .cita-card-info h3 { font-size: 14.5px; font-weight: 700; margin-bottom: 3px; }
+  .cita-card-info p { font-size: 12.5px; color: var(--gray-400); }
+  .cita-card-meta { text-align: right; flex-shrink: 0; }
+  .cita-card-meta .cita-time { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 600; color: var(--blue); display: block; margin-bottom: 6px; }
 
-.sb-item{
-  width:100%;
-  text-align:left;
-  padding:10px;
-  border-radius:10px;
-  font-size:13px;
-  color:#6b7280;
-  cursor:pointer;
-  transition:.2s;
-}
+  /* ── DOCENTES SCREEN ── */
+  .docentes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; }
+  .docente-card {
+    background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 22px;
+  }
+  .docente-card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .docente-card-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--blue-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; color: var(--blue);
+  }
+  .docente-card-name strong { display: block; font-size: 14px; font-weight: 700; }
+  .docente-card-name span { font-size: 12px; color: var(--gray-400); }
+  .docente-card-stats { display: flex; gap: 12px; }
+  .docente-stat { flex: 1; text-align: center; background: var(--gray-50); border-radius: 8px; padding: 8px 4px; }
+  .docente-stat strong { display: block; font-size: 18px; font-weight: 700; color: var(--gray-800); }
+  .docente-stat span { font-size: 10px; color: var(--gray-400); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
 
-.sb-item:hover{
-  background:#f1f5ff;
-  color:#1A428A;
-}
+  /* ── EMPTY STATE ── */
+  .empty-state { padding: 40px 20px; text-align: center; color: var(--gray-400); }
+  .empty-state svg { margin-bottom: 12px; opacity: .4; }
+  .empty-state p { font-size: 13px; }
 
-.sb-item.active{
-  background:#e8f0ff;
-  color:#1A428A;
-  font-weight:600;
-}
-
-.btn-primary{
-  background:#1A428A;
-  color:#fff;
-  border:none;
-  padding:10px 14px;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.btn-secondary{
-  background:#f1f5ff;
-  color:#1A428A;
-  border:none;
-  padding:10px 14px;
-  border-radius:10px;
-  cursor:pointer;
-}
+  /* ── SCROLL ── */
+  .main::-webkit-scrollbar { width: 6px; }
+  .main::-webkit-scrollbar-track { background: transparent; }
+  .main::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 3px; }
 </style>
-  
 </head>
 <body>
-  <aside class="sidebar">
 
-  <div class="sb-top">
-    <div class="sb-logo">
-      <div class="sb-icon">LP</div>
-      <div>
-        <div class="sb-name">La Presentación</div>
-        <div class="sb-sys">SIPRESC · Coordinación</div>
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo" id="logoWrap">
+        <img src="/logo.png" alt="Logo" onerror="this.parentElement.innerHTML='LP'" />
+      </div>
+      <div class="brand-text">
+        <strong>SIPRESC</strong>
+        <span>Coordinación</span>
       </div>
     </div>
-  </div>
 
-  <div class="sb-nav">
-    <div class="sb-item active" onclick="nav('inicio')">Inicio</div>
-    <div class="sb-item" onclick="nav('planeaciones')">Planeaciones</div>
-    <div class="sb-item" onclick="nav('citas')">Citas</div>
-    <div class="sb-item" onclick="nav('docentes')">Docentes</div>
-  </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" onclick="navTo('inicio')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Inicio
+      </button>
+      <button class="nav-item" onclick="navTo('planeaciones')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+        Planeaciones
+      </button>
+      <button class="nav-item" onclick="navTo('citas')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Citas
+      </button>
+      <button class="nav-item" onclick="navTo('docentes')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Docentes
+      </button>
+    </nav>
 
-</aside>
-
-<<div class="header">
-  <div>
-    <div class="title">Coordinación</div>
-    <div class="subtitle">Resumen semanal SIPRESC</div>
-  </div>
-</div>
-<div style="display:flex;gap:10px;margin-bottom:15px;">
-
-  <button class="btn-primary" onclick="irAPlaneaciones()">
-
-    Revisar planeaciones
-
-  </button>
-
-  <button class="btn-secondary" onclick="irACitas()">
-
-    Ver citas de hoy
-
-  </button>
-
-</div>
-
-
-<!-- KPIs -->
-<div class="grid">
-  <div class="card">
-    <div class="kpi-number" id="pln-total">—</div>
-    <div class="kpi-label">Planeaciones</div>
-  </div>
-  <div class="card">
-    <div class="kpi-number" id="pln-ap">—</div>
-    <div class="kpi-label">Aprobadas</div>
-  </div>
-  <div class="card">
-    <div class="kpi-number" id="pln-pend">—</div>
-    <div class="kpi-label">Pendientes</div>
-  </div>
-  <div class="card">
-    <div class="kpi-number" id="citas-hoy">—</div>
-    <div class="kpi-label">Citas hoy</div>
-  </div>
-</div>
-
-<div class="grid-2">
-
-  <!-- IZQUIERDA -->
-  <div>
-
-    <!-- ALERTAS -->
-    <div class="card">
-      <div style="font-weight:600;margin-bottom:10px;">Revisión prioritaria</div>
-      <div id="alertas"></div>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar">CO</div>
+        <div class="user-info">
+          <strong>Coordinación</strong>
+          <span>En línea</span>
+        </div>
+      </div>
     </div>
+  </aside>
 
-    <!-- CITAS -->
-    <div class="card">
-      <div style="font-weight:600;margin-bottom:10px;">Citas del día</div>
-      <div id="lista-citas"></div>
-    </div>
+  <!-- ── MAIN ── -->
+  <main class="main">
 
-  </div>
+    <!-- ════════════ INICIO ════════════ -->
+    <section class="screen active" id="screen-inicio">
+      <div class="page-header">
+        <div>
+          <h1>Coordinación</h1>
+          <p id="fechaSubtitle"></p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" onclick="navTo('planeaciones')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Revisar planeaciones
+          </button>
+          <button class="btn btn-primary" onclick="navTo('citas')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Ver citas de hoy
+          </button>
+        </div>
+      </div>
 
-  <!-- DERECHA -->
-  <div>
+      <!-- KPIs -->
+      <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card blue">
+          <div class="kpi-icon blue">📋</div>
+          <div class="kpi-label">Planeaciones semana</div>
+          <div class="kpi-value" id="kpiTotal">—</div>
+          <div class="kpi-sub">Esta semana</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon green">✅</div>
+          <div class="kpi-label">Aprobadas</div>
+          <div class="kpi-value" id="kpiAprobadas">—</div>
+          <div class="kpi-sub">Revisadas y OK</div>
+        </div>
+        <div class="kpi-card yellow">
+          <div class="kpi-icon yellow">⚠️</div>
+          <div class="kpi-label">Pendientes</div>
+          <div class="kpi-value" id="kpiPendientes">—</div>
+          <div class="kpi-sub">Por revisar</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-icon red">📅</div>
+          <div class="kpi-label">Citas hoy</div>
+          <div class="kpi-value" id="kpiCitas">—</div>
+          <div class="kpi-sub">Programadas</div>
+        </div>
+      </div>
 
-    <!-- CALENDARIO -->
-    <div class="card">
-      <div style="font-weight:600;">Calendario</div>
-      <div class="calendar" id="calendar"></div>
-    </div>
+      <!-- Row 1: Alertas + Citas hoy -->
+      <div class="two-col">
 
-    <!-- DOCENTES -->
-    <div class="card">
-      <div style="font-weight:600;margin-bottom:10px;">Docentes con atención</div>
-      <div id="docentes"></div>
-    </div>
+        <!-- Alertas -->
+        <div class="section-card">
+          <div class="section-head">
+            <h2>⚡ Alertas inteligentes</h2>
+            <span id="alertCount"></span>
+          </div>
+          <div class="section-body" id="alertasBody">
+            <div class="empty-state">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <p>Calculando alertas…</p>
+            </div>
+          </div>
+        </div>
 
-  </div>
+        <!-- Citas del día -->
+        <div class="section-card">
+          <div class="section-head">
+            <h2>📅 Citas de hoy</h2>
+            <span id="citasHoyCount"></span>
+          </div>
+          <div class="section-body" id="citasHoyBody">
+            <div class="empty-state"><p>Cargando…</p></div>
+          </div>
+        </div>
 
+      </div>
+
+      <!-- Row 2: Docentes atención + Calendario -->
+      <div class="three-col">
+
+        <!-- Docentes con atención -->
+        <div class="section-card">
+          <div class="section-head">
+            <h2>👩‍🏫 Docentes con atención</h2>
+            <span id="docentesCount"></span>
+          </div>
+          <div class="section-body" id="docentesAtencionBody">
+            <div class="empty-state"><p>Cargando…</p></div>
+          </div>
+        </div>
+
+        <!-- Calendario -->
+        <div class="section-card">
+          <div class="section-head"><h2>🗓 Calendario</h2></div>
+          <div class="calendar-wrap">
+            <div class="cal-header">
+              <h3 id="calMonthLabel"></h3>
+              <div class="cal-nav">
+                <button onclick="changeMonth(-1)">‹</button>
+                <button onclick="changeMonth(1)">›</button>
+              </div>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ════════════ PLANEACIONES ════════════ -->
+    <section class="screen" id="screen-planeaciones">
+      <div class="page-header">
+        <div>
+          <h1>Planeaciones</h1>
+          <p>Revisión y aprobación de planeaciones docentes</p>
+        </div>
+        <button class="btn btn-primary" onclick="cargarPlaneaciones()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.37"/></svg>
+          Actualizar
+        </button>
+      </div>
+
+      <div class="filter-row" id="filterRow">
+        <button class="filter-btn active" onclick="filtrarPlaneaciones('todos')">Todas</button>
+        <button class="filter-btn" onclick="filtrarPlaneaciones('enviada')">Enviadas</button>
+        <button class="filter-btn" onclick="filtrarPlaneaciones('aprobada')">Aprobadas</button>
+        <button class="filter-btn" onclick="filtrarPlaneaciones('ajustes')">Con ajustes</button>
+        <button class="filter-btn" onclick="filtrarPlaneaciones('pendiente')">Sin enviar</button>
+      </div>
+
+      <div class="section-card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Docente</th>
+                <th>Materia</th>
+                <th>Semana</th>
+                <th>Estado</th>
+                <th>Fecha envío</th>
+              </tr>
+            </thead>
+            <tbody id="planeacionesTbody">
+              <tr><td colspan="5"><div class="empty-state"><p>Cargando planeaciones…</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ CITAS ════════════ -->
+    <section class="screen" id="screen-citas">
+      <div class="page-header">
+        <div>
+          <h1>Citas</h1>
+          <p>Agenda de citas programadas</p>
+        </div>
+        <button class="btn btn-primary" onclick="cargarCitas()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.37"/></svg>
+          Actualizar
+        </button>
+      </div>
+      <div class="citas-list" id="citasList">
+        <div class="empty-state"><p>Cargando citas…</p></div>
+      </div>
+    </section>
+
+    <!-- ════════════ DOCENTES ════════════ -->
+    <section class="screen" id="screen-docentes">
+      <div class="page-header">
+        <div>
+          <h1>Docentes</h1>
+          <p>Estado de planeaciones por docente</p>
+        </div>
+      </div>
+      <div class="docentes-grid" id="docentesGrid">
+        <div class="empty-state"><p>Cargando docentes…</p></div>
+      </div>
+    </section>
+
+  </main>
 </div>
 
-<script src="/js/core.js"></script>
 <script>
-function cargarDashboardCoord(){
+/* ══════════════════════════════════════
+   ESTADO GLOBAL
+══════════════════════════════════════ */
+let planeacionesUI   = [];
+let todasCitas       = [];
+let calCurrentDate   = new Date();
+let filtroActual     = 'todos';
 
-  // PLANEACIONES
-  apiPlaneaciones('planeacionesUI').then(res=>{
-    const data = normalizarPlanes(res.data);
-    
-    const total = data.length;
-    const aprobadas = data.filter(p=>p.estadoRevision==='aprobada').length;
-    const pendientes = data.filter(p=>!p.estadoRevision || p.estadoRevision==='pendiente').length;
+/* ══════════════════════════════════════
+   API HELPERS
+   (mismos nombres que el sistema existente)
+══════════════════════════════════════ */
+async function api(endpoint, opciones = {}) {
+  try {
+    const res = await fetch(endpoint, {
+      headers: { 'Content-Type': 'application/json', ...opciones.headers },
+      ...opciones
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (e) {
+    console.warn('api() error:', endpoint, e.message);
+    return null;
+  }
+}
 
-    document.getElementById('pln-total').textContent = total;
-    document.getElementById('pln-ap').textContent = aprobadas;
-    document.getElementById('pln-pend').textContent = pendientes;
+async function apiPlaneaciones(endpoint, opciones = {}) {
+  return api(endpoint, opciones);
+}
 
-    const alertas = data.filter(p=>p.estadoRevision==='enviada' || p.estadoRevision==='ajustes');
+/* ══════════════════════════════════════
+   NAVEGACIÓN
+══════════════════════════════════════ */
+function navTo(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-    document.getElementById('alertas').innerHTML =
-      alertas.length
-      ? alertas.slice(0,5).map(a=>`
-        <div class="alert">
-          ${a.nombreDocente} · ${a.asignatura}
-        </div>
-      `).join('')
-      : '<div style="font-size:12px;color:#6b7280">Todo al día</div>';
-  });
+  const s = document.getElementById('screen-' + screen);
+  if (s) s.classList.add('active');
 
-  // CITAS
-  api('todasCitas').then(citas=>{
-  renderCalendar(citas);
-});
+  const items = document.querySelectorAll('.nav-item');
+  const map = { inicio: 0, planeaciones: 1, citas: 2, docentes: 3 };
+  if (map[screen] !== undefined) items[map[screen]].classList.add('active');
 
-    document.getElementById('citas-hoy').textContent = citasHoy.length;
+  if (screen === 'planeaciones') cargarPlaneaciones();
+  if (screen === 'citas')        cargarCitas();
+  if (screen === 'docentes')     cargarDocentes();
 
-    document.getElementById('lista-citas').innerHTML =
-      citasHoy.length
-      ? citasHoy.map(c=>`
-        <div class="row">
-          <div>${c.padreNombre}</div>
-          <span class="badge ${c.estado==='confirmada'?'green':'amber'}">
-            ${c.horaInicio}
-          </span>
-        </div>
-      `).join('')
-      : 'Sin citas';
-  });
+  document.querySelector('.main').scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-  // DOCENTES
-  api('docentes').then(docs=>{
-    document.getElementById('docentes').innerHTML =
-      docs.slice(0,5).map(d=>`
-        <div class="row">
-          ${d.nombre}
-          <span class="badge blue">Activo</span>
-        </div>
-      `).join('');
-  });
+/* ══════════════════════════════════════
+   DATOS DEMO (fallback cuando no hay API)
+══════════════════════════════════════ */
+function datosDemo() {
+  const hoy = new Date();
+  const f = d => d.toISOString().split('T')[0];
 
+  planeacionesUI = [
+    { id:1, docente:'Ana Martínez',  materia:'Matemáticas',   semana:'2025-W20', estado:'aprobada',  fechaEnvio: f(new Date(hoy - 2*86400000)) },
+    { id:2, docente:'Carlos López',  materia:'Español',        semana:'2025-W20', estado:'enviada',   fechaEnvio: f(new Date(hoy - 1*86400000)) },
+    { id:3, docente:'María García',  materia:'Ciencias',       semana:'2025-W20', estado:'ajustes',   fechaEnvio: f(new Date(hoy - 3*86400000)) },
+    { id:4, docente:'Pedro Ruiz',    materia:'Historia',       semana:'2025-W20', estado:'pendiente', fechaEnvio: null },
+    { id:5, docente:'Laura Sánchez', materia:'Inglés',         semana:'2025-W20', estado:'aprobada',  fechaEnvio: f(new Date(hoy - 4*86400000)) },
+    { id:6, docente:'Andrés Torres', materia:'Ed. Física',     semana:'2025-W20', estado:'pendiente', fechaEnvio: null },
+    { id:7, docente:'Sofía Medina',  materia:'Arte',           semana:'2025-W20', estado:'enviada',   fechaEnvio: f(hoy) },
+    { id:8, docente:'Jorge Castro',  materia:'Tecnología',     semana:'2025-W20', estado:'ajustes',   fechaEnvio: f(new Date(hoy - 5*86400000)) },
+  ];
+
+  const hora = (h, m) => `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  todasCitas = [
+    { id:1, acudiente:'Patricia Mora',  docente:'Ana Martínez',  fecha: f(hoy),                       hora: hora(8,0),  estado:'confirmada' },
+    { id:2, acudiente:'Roberto Silva',  docente:'Carlos López',  fecha: f(hoy),                       hora: hora(9,30), estado:'pendiente'  },
+    { id:3, acudiente:'Diana Reyes',    docente:'María García',  fecha: f(hoy),                       hora: hora(11,0), estado:'confirmada' },
+    { id:4, acudiente:'Héctor Niño',    docente:'Laura Sánchez', fecha: f(new Date(hoy - 86400000)),  hora: hora(10,0), estado:'atendida'   },
+    { id:5, acudiente:'Camila Vargas',  docente:'Pedro Ruiz',    fecha: f(new Date(hoy + 86400000)),  hora: hora(14,0), estado:'pendiente'  },
+    { id:6, acudiente:'Marcos Peña',    docente:'Sofía Medina',  fecha: f(new Date(hoy + 2*86400000)),hora: hora(15,30),estado:'confirmada' },
+  ];
+}
+
+/* ══════════════════════════════════════
+   CARGA PRINCIPAL
+══════════════════════════════════════ */
+async function cargarDashboard() {
+  // Fecha subtitle
+  const ahora = new Date();
+  const opcF = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById('fechaSubtitle').textContent =
+    ahora.toLocaleDateString('es-CO', opcF).replace(/^\w/, c => c.toUpperCase());
+
+  // Intentar cargar desde API real
+  const [resPlan, resCitas] = await Promise.all([
+    apiPlaneaciones('/api/planeaciones/semana'),
+    api('/api/citas')
+  ]);
+
+  if (resPlan?.data?.length || resCitas?.data?.length) {
+    if (resPlan?.data) planeacionesUI = resPlan.data;
+    if (resCitas?.data) todasCitas = resCitas.data;
+  } else {
+    datosDemo(); // fallback con datos demo
+  }
+
+  renderKPIs();
+  renderAlertas();
+  renderCitasHoy();
+  renderDocentesAtencion();
   renderCalendar();
 }
 
-function renderCalendar(){
-  const cal = document.getElementById('calendar');
-  cal.innerHTML = '';
+/* ══════════════════════════════════════
+   KPIs
+══════════════════════════════════════ */
+function renderKPIs() {
+  const total    = planeacionesUI.length;
+  const aprob    = planeacionesUI.filter(p => p.estado === 'aprobada').length;
+  const pend     = planeacionesUI.filter(p => p.estado !== 'aprobada').length;
+  const hoyStr   = new Date().toISOString().split('T')[0];
+  const citasHoy = todasCitas.filter(c => c.fecha === hoyStr).length;
 
-  for(let i=1;i<=30;i++){
-    const day = document.createElement('div');
-    day.className = 'day';
-    day.textContent = i;
-
-    if(i === new Date().getDate()){
-      day.classList.add('today');
-    }
-
-    cal.appendChild(day);
-  }
+  anim('kpiTotal',     0, total);
+  anim('kpiAprobadas', 0, aprob);
+  anim('kpiPendientes',0, pend);
+  anim('kpiCitas',     0, citasHoy);
 }
 
-document.addEventListener('DOMContentLoaded', cargarDashboardCoord);
+function anim(id, from, to) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const dur = 600, start = performance.now();
+  const step = ts => {
+    const p = Math.min((ts - start) / dur, 1);
+    el.textContent = Math.round(from + (to - from) * ease(p));
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+function ease(t) { return t < .5 ? 2*t*t : -1+(4-2*t)*t; }
 
-function renderAlertasInteligentes(data){
+/* ══════════════════════════════════════
+   ALERTAS
+══════════════════════════════════════ */
+function renderAlertas() {
+  const alertas = [];
 
-  const sinEnviar = data.filter(p=>!p.estadoRevision || p.estadoRevision==='pendiente');
-  const ajustes = data.filter(p=>p.estadoRevision==='ajustes');
-  const enviadas = data.filter(p=>p.estadoRevision==='enviada');
+  const sinEnviar = planeacionesUI.filter(p => p.estado === 'pendiente');
+  sinEnviar.forEach(p =>
+    alertas.push({ tipo:'red', msg:`${p.docente} no ha enviado planeación`, sub:`Materia: ${p.materia}` })
+  );
 
-  let html = '';
+  const conAjustes = planeacionesUI.filter(p => p.estado === 'ajustes');
+  conAjustes.forEach(p =>
+    alertas.push({ tipo:'yellow', msg:`${p.docente} tiene planeación con ajustes`, sub:`Materia: ${p.materia}` })
+  );
 
-  if(sinEnviar.length){
-    html += `
-      <div class="alert">
-        ${sinEnviar.length} docentes no han enviado planeación
-      </div>`;
+  const enviadas = planeacionesUI.filter(p => p.estado === 'enviada');
+  enviadas.forEach(p =>
+    alertas.push({ tipo:'blue', msg:`${p.docente} envió planeación pendiente de revisión`, sub:`Materia: ${p.materia}` })
+  );
+
+  const body = document.getElementById('alertasBody');
+  document.getElementById('alertCount').textContent = `${alertas.length} alertas`;
+
+  if (!alertas.length) {
+    body.innerHTML = `<div class="empty-state">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <p>¡Sin alertas por ahora!</p></div>`;
+    return;
   }
 
-  if(ajustes.length){
-    html += `
-      <div class="alert" style="border-color:#f59e0b">
-        ${ajustes.length} planeaciones requieren ajustes
-      </div>`;
-  }
-
-  if(enviadas.length){
-    html += `
-      <div class="alert" style="border-color:#1A428A">
-        ${enviadas.length} planeaciones listas para revisar
-      </div>`;
-  }
-
-  if(!html){
-    html = `<div style="color:#22c55e;">Todo al día</div>`;
-  }
-
-  document.getElementById('alertas').innerHTML = html;
+  body.innerHTML = alertas.slice(0, 8).map(a => `
+    <div class="alert-item">
+      <div class="alert-dot ${a.tipo}"></div>
+      <div class="alert-text">${a.msg}<small>${a.sub}</small></div>
+    </div>`).join('');
 }
 
-function renderCalendar(citas){
+/* ══════════════════════════════════════
+   CITAS DEL DÍA
+══════════════════════════════════════ */
+function renderCitasHoy() {
+  const hoyStr = new Date().toISOString().split('T')[0];
+  const hoy = todasCitas.filter(c => c.fecha === hoyStr)
+    .sort((a,b) => a.hora.localeCompare(b.hora));
 
-  const cal = document.getElementById('calendar');
-  cal.innerHTML = '';
+  document.getElementById('citasHoyCount').textContent = `${hoy.length} citas`;
 
-  const hoy = new Date().getDate();
-
-  for(let i=1;i<=30;i++){
-
-    const tieneCita = citas.some(c=>{
-      return new Date(c.fecha).getDate() === i;
-    });
-
-    const day = document.createElement('div');
-    day.className = 'day';
-    day.textContent = i;
-
-    if(i === hoy){
-      day.classList.add('today');
-    }
-
-    if(tieneCita){
-      day.classList.add('event');
-    }
-
-    cal.appendChild(day);
+  const body = document.getElementById('citasHoyBody');
+  if (!hoy.length) {
+    body.innerHTML = `<div class="empty-state"><p>Sin citas programadas hoy</p></div>`;
+    return;
   }
+
+  body.innerHTML = hoy.map(c => {
+    const initials = c.acudiente.split(' ').map(w=>w[0]).join('').substring(0,2);
+    const badge = estadoBadge(c.estado);
+    return `<div class="cita-row">
+      <div class="cita-avatar">${initials}</div>
+      <div class="cita-info">
+        <strong>${c.acudiente}</strong>
+        <span>Con ${c.docente}</span>
+      </div>
+      <div class="cita-time">${c.hora}</div>
+      <span class="badge ${badge.cls}">${badge.txt}</span>
+    </div>`;
+  }).join('');
 }
 
+/* ══════════════════════════════════════
+   DOCENTES CON ATENCIÓN
+══════════════════════════════════════ */
+function renderDocentesAtencion() {
+  const docentes = planeacionesUI.filter(p =>
+    p.estado === 'pendiente' || p.estado === 'ajustes'
+  );
+  document.getElementById('docentesCount').textContent = `${docentes.length} docentes`;
 
+  const body = document.getElementById('docentesAtencionBody');
+  if (!docentes.length) {
+    body.innerHTML = `<div class="empty-state"><p>Todos los docentes al día 🎉</p></div>`;
+    return;
+  }
+
+  body.innerHTML = docentes.map(d => {
+    const badge = estadoBadge(d.estado);
+    return `<div class="docente-row">
+      <div class="docente-icon">👩‍🏫</div>
+      <div class="docente-info">
+        <strong>${d.docente}</strong>
+        <span>${d.materia}</span>
+      </div>
+      <span class="badge ${badge.cls}">${badge.txt}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   CALENDARIO
+══════════════════════════════════════ */
+function renderCalendar() {
+  const year  = calCurrentDate.getFullYear();
+  const month = calCurrentDate.getMonth();
+  const today = new Date();
+
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                 'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  document.getElementById('calMonthLabel').textContent = `${meses[month]} ${year}`;
+
+  const citaDias = new Set(
+    todasCitas.map(c => {
+      const d = new Date(c.fecha + 'T00:00:00');
+      return d.getMonth() === month && d.getFullYear() === year ? d.getDate() : null;
+    }).filter(Boolean)
+  );
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const days = ['D','L','M','X','J','V','S'];
+
+  let html = days.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+  for (let i = 0; i < firstDay; i++) html += `<div class="cal-cell empty"></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+    const hasEv  = citaDias.has(d);
+    html += `<div class="cal-cell ${isToday?'today':''} ${hasEv?'has-event':''}">${d}</div>`;
+  }
+
+  document.getElementById('calGrid').innerHTML = html;
+}
+
+function changeMonth(dir) {
+  calCurrentDate.setMonth(calCurrentDate.getMonth() + dir);
+  renderCalendar();
+}
+
+/* ══════════════════════════════════════
+   PANTALLA PLANEACIONES
+══════════════════════════════════════ */
+async function cargarPlaneaciones() {
+  if (!planeacionesUI.length) await cargarDashboard();
+  filtrarPlaneaciones(filtroActual);
+}
+
+function filtrarPlaneaciones(filtro) {
+  filtroActual = filtro;
+  document.querySelectorAll('#filterRow .filter-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('onclick').includes(`'${filtro}'`));
+  });
+
+  let lista = [...planeacionesUI];
+  if (filtro !== 'todos') lista = lista.filter(p => p.estado === filtro);
+
+  const tbody = document.getElementById('planeacionesTbody');
+  if (!lista.length) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><p>Sin resultados para este filtro</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = lista.map(p => {
+    const badge = estadoBadge(p.estado);
+    return `<tr>
+      <td><strong>${p.docente}</strong></td>
+      <td>${p.materia}</td>
+      <td>${p.semana || '—'}</td>
+      <td><span class="badge ${badge.cls}">${badge.txt}</span></td>
+      <td>${p.fechaEnvio || '<span style="color:var(--gray-400)">—</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   PANTALLA CITAS
+══════════════════════════════════════ */
+async function cargarCitas() {
+  if (!todasCitas.length) await cargarDashboard();
+
+  const lista = [...todasCitas].sort((a,b) => {
+    const da = new Date(a.fecha+'T'+a.hora), db = new Date(b.fecha+'T'+b.hora);
+    return da - db;
+  });
+
+  const el = document.getElementById('citasList');
+  if (!lista.length) { el.innerHTML = `<div class="empty-state"><p>Sin citas registradas</p></div>`; return; }
+
+  const hoyStr = new Date().toISOString().split('T')[0];
+  el.innerHTML = lista.map(c => {
+    const initials = c.acudiente.split(' ').map(w=>w[0]).join('').substring(0,2);
+    const badge = estadoBadge(c.estado);
+    const esHoy = c.fecha === hoyStr;
+    return `<div class="cita-card">
+      <div class="cita-card-avatar">${initials}</div>
+      <div class="cita-card-info">
+        <h3>${c.acudiente}</h3>
+        <p>Con ${c.docente} · ${formatFecha(c.fecha)}${esHoy ? ' <span class="badge blue" style="font-size:10px;padding:2px 7px">Hoy</span>' : ''}</p>
+      </div>
+      <div class="cita-card-meta">
+        <span class="cita-time">${c.hora}</span>
+        <span class="badge ${badge.cls}">${badge.txt}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   PANTALLA DOCENTES
+══════════════════════════════════════ */
+async function cargarDocentes() {
+  if (!planeacionesUI.length) await cargarDashboard();
+
+  const porDocente = {};
+  planeacionesUI.forEach(p => {
+    if (!porDocente[p.docente]) porDocente[p.docente] = { nombre: p.docente, materias: [], planeaciones: [] };
+    porDocente[p.docente].materias.push(p.materia);
+    porDocente[p.docente].planeaciones.push(p);
+  });
+
+  const grid = document.getElementById('docentesGrid');
+  if (!Object.keys(porDocente).length) {
+    grid.innerHTML = `<div class="empty-state"><p>Sin docentes registrados</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = Object.values(porDocente).map(d => {
+    const initials = d.nombre.split(' ').map(w=>w[0]).join('').substring(0,2);
+    const aprob  = d.planeaciones.filter(p=>p.estado==='aprobada').length;
+    const pend   = d.planeaciones.filter(p=>p.estado!=='aprobada').length;
+    const badge  = estadoBadge(d.planeaciones[0]?.estado || 'pendiente');
+    return `<div class="docente-card">
+      <div class="docente-card-header">
+        <div class="docente-card-avatar">${initials}</div>
+        <div class="docente-card-name">
+          <strong>${d.nombre}</strong>
+          <span>${d.materias.join(', ')}</span>
+        </div>
+      </div>
+      <div class="docente-card-stats">
+        <div class="docente-stat"><strong>${aprob}</strong><span>Aprobadas</span></div>
+        <div class="docente-stat"><strong>${pend}</strong><span>Pendientes</span></div>
+        <div class="docente-stat"><span class="badge ${badge.cls}" style="font-size:10px">${badge.txt}</span><span>Estado</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   HELPERS
+══════════════════════════════════════ */
+function estadoBadge(estado) {
+  const map = {
+    aprobada:  { cls:'green',  txt:'Aprobada'  },
+    enviada:   { cls:'blue',   txt:'Enviada'   },
+    ajustes:   { cls:'yellow', txt:'Ajustes'   },
+    pendiente: { cls:'red',    txt:'Sin enviar'},
+    confirmada:{ cls:'green',  txt:'Confirmada'},
+    atendida:  { cls:'blue',   txt:'Atendida'  },
+  };
+  return map[estado] || { cls:'blue', txt: estado || '—' };
+}
+
+function formatFecha(str) {
+  if (!str) return '—';
+  const d = new Date(str + 'T00:00:00');
+  return d.toLocaleDateString('es-CO', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', cargarDashboard);
 </script>
 </body>
 </html>
