@@ -1051,6 +1051,9 @@ tr:hover td { background: var(--surface-2); }
 </main>
 
 <script>
+
+let diaSeleccionado = new Date();
+  
 /* ══════ ESTADO GLOBAL ══════ */
 let planeacionesUI = [];
 let todasCitas = [];
@@ -1118,7 +1121,7 @@ document.getElementById('welcomeTitle').textContent = `${saludo}, ${nombre} 👋
 
   renderSemana();
   renderAlertas();
-  renderCitasHoy();
+  renderCitasPorDia();
   renderDocentesAten();
   renderCalendar();
   renderPills();
@@ -1218,23 +1221,37 @@ function renderAlertas() {
 }
 
 /* ══════ CITAS HOY ══════ */
-function renderCitasHoy() {
-  const hS = new Date().toISOString().split('T')[0];
-  const hoy = [...todasCitas].filter(c=>c.fecha===hS).sort((a,b)=>a.hora.localeCompare(b.hora));
-  document.getElementById('citasHoyBadge').textContent = `${hoy.length} citas`;
+function renderCitasPorDia(){
+  const fechaStr = diaSeleccionado.toISOString().split('T')[0];
+
+  const citas = todasCitas
+    .filter(c => c.fecha === fechaStr)
+    .sort((a,b) => a.hora.localeCompare(b.hora));
+
   const body = document.getElementById('citasHoyBody');
-  if (!hoy.length) { body.innerHTML = `<div class="empty"><p>Sin citas programadas hoy</p></div>`; return; }
-  body.innerHTML = hoy.map(c=>{
+
+  if(!citas.length){
+    body.innerHTML = `<div class="empty"><p>Sin citas para este día</p></div>`;
+    return;
+  }
+
+  body.innerHTML = citas.map(c => {
     const ini = c.acudiente.split(' ').map(w=>w[0]).join('').slice(0,2);
     const b = badge(c.estado);
-    return `<div class="cita-row">
-      <div class="cita-ava">${ini}</div>
-      <div class="cita-info"><strong>${c.acudiente}</strong><span>Con ${c.docente}</span></div>
-      <div class="cita-right">
-        <span class="cita-time">${c.hora}</span>
-        <span class="badge ${b.c}">${b.t}</span>
+
+    return `
+      <div class="cita-row">
+        <div class="cita-ava">${ini}</div>
+        <div class="cita-info">
+          <strong>${c.acudiente}</strong>
+          <span>Con ${c.docente}</span>
+        </div>
+        <div class="cita-right">
+          <span class="cita-time">${c.hora}</span>
+          <span class="badge ${b.c}">${b.t}</span>
+        </div>
       </div>
-    </div>`;
+    `;
   }).join('');
 }
 
@@ -1446,7 +1463,7 @@ function renderSemana() {
     const esHoy = fecha.toDateString() === hoy.toDateString();
 
     html += `
-      <div class="week-day ${esHoy ? 'active' : ''}">
+  <div class="week-day ${esHoy ? 'active' : ''}" onclick="seleccionarDia('${fecha.toISOString()}')">
         <span>${dias[i]}</span>
         <strong>${fecha.getDate()}</strong>
       </div>
@@ -1464,6 +1481,11 @@ function getSemanaActual(){
   const inicio = new Date(hoy.getFullYear(),0,1);
   const dias = Math.floor((hoy - inicio) / (1000*60*60*24));
   return Math.ceil((dias + inicio.getDay()+1)/7);
+}
+
+function seleccionarDia(fechaISO){
+  diaSeleccionado = new Date(fechaISO);
+  renderCitasPorDia();
 }
 
 /* ══════ INIT ══════ */
