@@ -6,6 +6,7 @@
   <title>SIPRESC · Coordinación</title>
   <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="/css/base.css">
+  
   <style>
 :root{
   --bg:#f6f8fb;
@@ -148,10 +149,120 @@ body{
   border-radius:50%;
   margin:3px auto 0;
 }
+
+/* SIDEBAR CLARA */
+.sidebar{
+  width:230px;
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  background:#ffffff;
+  border-right:1px solid #e6e8ee;
+  display:flex;
+  flex-direction:column;
+}
+
+.sb-top{
+  padding:18px;
+  border-bottom:1px solid #eee;
+}
+
+.sb-logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.sb-icon{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#1A428A,#2563eb);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-weight:700;
+}
+
+.sb-name{
+  font-size:13px;
+  font-weight:600;
+}
+
+.sb-sys{
+  font-size:10px;
+  color:#1A428A;
+}
+
+.sb-nav{
+  padding:10px;
+}
+
+.sb-item{
+  width:100%;
+  text-align:left;
+  padding:10px;
+  border-radius:10px;
+  font-size:13px;
+  color:#6b7280;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.sb-item:hover{
+  background:#f1f5ff;
+  color:#1A428A;
+}
+
+.sb-item.active{
+  background:#e8f0ff;
+  color:#1A428A;
+  font-weight:600;
+}
+
+.btn-primary{
+  background:#1A428A;
+  color:#fff;
+  border:none;
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.btn-secondary{
+  background:#f1f5ff;
+  color:#1A428A;
+  border:none;
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+}
 </style>
   
 </head>
 <body>
+  <aside class="sidebar">
+
+  <div class="sb-top">
+    <div class="sb-logo">
+      <div class="sb-icon">LP</div>
+      <div>
+        <div class="sb-name">La Presentación</div>
+        <div class="sb-sys">SIPRESC · Coordinación</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sb-nav">
+    <div class="sb-item active" onclick="nav('inicio')">Inicio</div>
+    <div class="sb-item" onclick="nav('planeaciones')">Planeaciones</div>
+    <div class="sb-item" onclick="nav('citas')">Citas</div>
+    <div class="sb-item" onclick="nav('docentes')">Docentes</div>
+  </div>
+
+</aside>
 
 <<div class="header">
   <div>
@@ -159,6 +270,22 @@ body{
     <div class="subtitle">Resumen semanal SIPRESC</div>
   </div>
 </div>
+<div style="display:flex;gap:10px;margin-bottom:15px;">
+
+  <button class="btn-primary" onclick="irAPlaneaciones()">
+
+    Revisar planeaciones
+
+  </button>
+
+  <button class="btn-secondary" onclick="irACitas()">
+
+    Ver citas de hoy
+
+  </button>
+
+</div>
+
 
 <!-- KPIs -->
 <div class="grid">
@@ -248,8 +375,8 @@ function cargarDashboardCoord(){
 
   // CITAS
   api('todasCitas').then(citas=>{
-    const hoy = fmtISO(new Date());
-    const citasHoy = citas.filter(c=>c.fecha===hoy);
+  renderCalendar(citas);
+});
 
     document.getElementById('citas-hoy').textContent = citasHoy.length;
 
@@ -298,6 +425,73 @@ function renderCalendar(){
 }
 
 document.addEventListener('DOMContentLoaded', cargarDashboardCoord);
+
+function renderAlertasInteligentes(data){
+
+  const sinEnviar = data.filter(p=>!p.estadoRevision || p.estadoRevision==='pendiente');
+  const ajustes = data.filter(p=>p.estadoRevision==='ajustes');
+  const enviadas = data.filter(p=>p.estadoRevision==='enviada');
+
+  let html = '';
+
+  if(sinEnviar.length){
+    html += `
+      <div class="alert">
+        ${sinEnviar.length} docentes no han enviado planeación
+      </div>`;
+  }
+
+  if(ajustes.length){
+    html += `
+      <div class="alert" style="border-color:#f59e0b">
+        ${ajustes.length} planeaciones requieren ajustes
+      </div>`;
+  }
+
+  if(enviadas.length){
+    html += `
+      <div class="alert" style="border-color:#1A428A">
+        ${enviadas.length} planeaciones listas para revisar
+      </div>`;
+  }
+
+  if(!html){
+    html = `<div style="color:#22c55e;">Todo al día</div>`;
+  }
+
+  document.getElementById('alertas').innerHTML = html;
+}
+
+function renderCalendar(citas){
+
+  const cal = document.getElementById('calendar');
+  cal.innerHTML = '';
+
+  const hoy = new Date().getDate();
+
+  for(let i=1;i<=30;i++){
+
+    const tieneCita = citas.some(c=>{
+      return new Date(c.fecha).getDate() === i;
+    });
+
+    const day = document.createElement('div');
+    day.className = 'day';
+    day.textContent = i;
+
+    if(i === hoy){
+      day.classList.add('today');
+    }
+
+    if(tieneCita){
+      day.classList.add('event');
+    }
+
+    cal.appendChild(day);
+  }
+}
+
+
 </script>
 </body>
 </html>
