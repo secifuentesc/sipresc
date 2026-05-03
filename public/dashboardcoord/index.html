@@ -1098,18 +1098,6 @@ async function cargarDashboard() {
   const h = hoy.getHours();
   const saludo = h < 12 ? 'Buenos días' : h < 18 ? 'Buenas tardes' : 'Buenas noches';
 
-  const nombre = obtenerNombreUsuario();
-
-  document.getElementById('welcomeTitle').textContent = `${saludo}, ${nombre} 👋`;
-
-  const hora = hoy.toLocaleTimeString('es-CO', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
-  document.getElementById('welcomeDate').textContent =
-    `${dias[hoy.getDay()]} ${hoy.getDate()} de ${meses[hoy.getMonth()]} · ${hora}`;
-
   let rP = null;
   let rC = null;
 
