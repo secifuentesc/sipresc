@@ -48,44 +48,46 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 
 /* Logo — recuadro premium igual a coordinación/docente */
 .lp-logo{
-  width:78px;
-  height:78px;
-  border-radius:24px;
+  width:74px;
+  height:74px;
+  border-radius:21px;
   background:
-    radial-gradient(circle at 35% 18%, rgba(255,255,255,.12), transparent 32%),
-    linear-gradient(145deg, #102a5f 0%, #0b1d42 52%, #07152f 100%);
+    linear-gradient(180deg, rgba(255,255,255,.055) 0%, transparent 38%),
+    linear-gradient(145deg, #142447 0%, #0b1832 48%, #071122 100%);
   display:flex;
   align-items:center;
   justify-content:center;
-  margin-bottom:22px;
+  margin-bottom:24px;
   position:relative;
   z-index:1;
-  border:1px solid rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.095);
   box-shadow:
-    0 28px 80px rgba(0,0,0,.58),
-    0 0 0 1px rgba(255,255,255,.045) inset,
-    0 0 36px rgba(26,66,138,.34);
+    0 22px 48px rgba(0,0,0,.46),
+    0 1px 0 rgba(255,255,255,.08) inset,
+    0 -1px 0 rgba(0,0,0,.45) inset;
   overflow:hidden;
-  animation:loginLogoFloat 2.8s ease-in-out infinite;
+  animation:loginLogoFloat 3.4s ease-in-out infinite;
 }
 
 .lp-logo::before{
   content:"";
   position:absolute;
-  inset:0;
+  inset:1px;
+  border-radius:20px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.14) 0%, transparent 48%),
-    radial-gradient(circle at 50% 20%, rgba(255,255,255,.16), transparent 42%);
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.10), transparent 34%);
+  opacity:.75;
   pointer-events:none;
 }
 
 .logo-img{
-  width:48px;
-  height:48px;
+  width:45px;
+  height:45px;
   object-fit:contain;
-  filter:brightness(10);
+  filter:brightness(8);
   position:relative;
   z-index:1;
+  opacity:.96;
 }
 
 /* Títulos premium */
@@ -104,36 +106,37 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 }
 
 .lp-sub{
-  font-size:11px;
-  color:rgba(255,255,255,.46);
-  margin-bottom:38px;
+  font-size:10px;
+  color:rgba(255,255,255,.38);
+  margin-bottom:40px;
   text-align:center;
-  font-family:-apple-system,'Helvetica Neue',sans-serif;
+  font-family:-apple-system,'SF Pro Text','Helvetica Neue',sans-serif;
   position:relative;
   z-index:1;
-  letter-spacing:2.4px;
+  letter-spacing:3px;
   text-transform:uppercase;
-  font-weight:600;
-  max-width:320px;
-  line-height:1.45;
+  font-weight:400;
+  max-width:360px;
+  line-height:1.65;
 }
 
 @keyframes loginLogoFloat{
   0%,100%{
     transform:translateY(0);
     box-shadow:
-      0 24px 70px rgba(0,0,0,.48),
-      0 0 0 1px rgba(255,255,255,.07) inset,
-      0 0 38px rgba(30,77,183,.38);
+      0 22px 48px rgba(0,0,0,.46),
+      0 1px 0 rgba(255,255,255,.08) inset,
+      0 -1px 0 rgba(0,0,0,.45) inset;
   }
   50%{
-  transform:translateY(-5px);
-  box-shadow:
-    0 34px 90px rgba(0,0,0,.66),
-    0 0 0 1px rgba(255,255,255,.07) inset,
-    0 0 48px rgba(26,66,138,.42);
+    transform:translateY(-3px);
+    box-shadow:
+      0 28px 58px rgba(0,0,0,.54),
+      0 1px 0 rgba(255,255,255,.09) inset,
+      0 -1px 0 rgba(0,0,0,.48) inset;
+  }
 }
-}
+
 
 /* Card glassmorphism */
 .lp-card{
