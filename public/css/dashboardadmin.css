@@ -1315,3 +1315,75 @@ svg { display: block; flex-shrink: 0; }
     display:none;
   }
 }s
+
+
+/* BOTÓN PARA ABRIR/CERRAR SIDEBAR */
+.sidebar-collapse-btn{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.05);
+  color:rgba(255,255,255,.65);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:all .18s ease;
+  flex-shrink:0;
+}
+
+.sidebar-collapse-btn svg{
+  width:17px;
+  height:17px;
+  transition:transform .22s ease;
+}
+
+.sidebar-collapse-btn:hover{
+  background:rgba(255,255,255,.09);
+  color:#fff;
+}
+
+/* Cuando la barra está comprimida, el botón queda visible */
+.sidebar.collapsed .sidebar-collapse-btn{
+  position:absolute;
+  top:16px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:50;
+  background:rgba(255,255,255,.08);
+}
+
+/* Ocultar textos al comprimir */
+.sidebar.collapsed .sidebar-brand,
+.sidebar.collapsed .nav-label,
+.sidebar.collapsed .nav-section-label,
+.sidebar.collapsed .sidebar-user-info,
+.sidebar.collapsed .nav-badge{
+  display:none;
+}
+
+/* Centrar elementos al comprimir */
+.sidebar.collapsed .sidebar-header{
+  justify-content:center;
+  padding-top:58px;
+}
+
+.sidebar.collapsed .sidebar-nav{
+  align-items:center;
+}
+
+.sidebar.collapsed .nav-item{
+  justify-content:center;
+  padding-left:0;
+  padding-right:0;
+}
+
+.sidebar.collapsed .nav-icon{
+  margin:0;
+}
+
+/* Girar icono cuando está comprimida */
+.sidebar.collapsed .sidebar-collapse-btn svg{
+  transform:rotate(180deg);
+}
