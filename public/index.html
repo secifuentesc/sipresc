@@ -1179,13 +1179,15 @@ function iniciarApp(){
   if(hf){const d=new Date();hf.textContent=d.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});}
 
   let navs=[];
-  if(ST.rol==='docente'){
+const ROL_UI = MODO_DOCENTE ? 'docente' : ST.rol;
+
+if(ROL_UI === 'docente'){
     navs=[
       {id:'home',label:'Inicio',svg:icoHome()},
       {id:'citas',label:'Mis Citas',svg:icoCalendar()},
       {id:'horarios',label:'Horarios',svg:icoClock()}
     ];
-  } else if(ST.rol==='coordinador'){
+  } } else if(ROL_UI === 'coordinador'){
     // 🆕 navbar coordinadora
     navs=[
       {id:'dash',label:'Inicio',svg:icoHome()},
@@ -1217,14 +1219,35 @@ if(!MODO_DOCENTE){
   if(ST.rol==='coordinador') { window.location.href = '/dashboardcoord/'; return; }
 }
 
-goTab('home', document.getElementById('ni-home') || document.querySelector('.ni'));
+$('s-login').classList.remove('on');
 
+if(MODO_DOCENTE){
+  goTab('home', document.getElementById('ni-home'));
+} else {
+  goTab('home', document.getElementById('ni-home') || document.querySelector('.ni'));
+}
+
+  if(MODO_DOCENTE){
+  loadMisCitas();
+  loadHorarios();
+} else {
   loadDash();
-  if(ST.rol==='docente'){loadMisCitas();loadHorarios();}
-  if(ST.rol==='admin'||ST.rol==='coordinador'){loadCal();loadStats();}
-  if(ST.rol==='admin'){loadAdmin();}
-  if(ST.rol==='admin'||ST.rol==='coordinador'){plnInit();}
 
+  if(ST.rol==='docente'){
+    loadMisCitas();
+    loadHorarios();
+  }
+
+  if(ST.rol==='admin'||ST.rol==='coordinador'){
+    loadCal();
+    loadStats();
+    plnInit();
+  }
+
+  if(ST.rol==='admin'){
+    loadAdmin();
+  }
+}
   const data=JSON.parse(localStorage.getItem('lp_user')||'{}');
   data.loginTime=Date.now();localStorage.setItem('lp_user',JSON.stringify(data));
 }
