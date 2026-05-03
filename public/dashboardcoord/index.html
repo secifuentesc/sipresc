@@ -1051,6 +1051,51 @@ tr:hover td { background: var(--surface-2); }
 
 <script>
 
+function cargarSesionCoordinadora(){
+  const data = localStorage.getItem('lp_user');
+
+  if(!data){
+    window.location.href = '/'; // vuelve al login
+    return;
+  }
+
+  try{
+    const obj = JSON.parse(data);
+
+    // Validar tiempo (opcional)
+    const ahora = Date.now();
+    const DIAS_15 = 15 * 24 * 60 * 60 * 1000;
+
+    if(ahora - obj.loginTime > DIAS_15){
+      localStorage.removeItem('lp_user');
+      window.location.href = '/';
+      return;
+    }
+
+    // 🔥 CARGAR DATOS
+    ST = {
+      rol: obj.rol,
+      correo: obj.correo,
+      nombre: obj.nombre,
+      docenteId: obj.docenteId
+    };
+
+    // Validar rol
+    if(ST.rol !== 'coordinador'){
+      window.location.href = '/';
+      return;
+    }
+
+    iniciarDashboardCoordinadora(); // tu función principal
+
+  }catch(e){
+    localStorage.removeItem('lp_user');
+    window.location.href = '/';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', cargarSesionCoordinadora);
+
 let diaSeleccionado = new Date();
   
 /* ══════ ESTADO GLOBAL ══════ */
