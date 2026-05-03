@@ -1051,68 +1051,15 @@ tr:hover td { background: var(--surface-2); }
 
 <script>
 
-function cargarSesionCoordinadora(){
-  const data = localStorage.getItem('lp_user');
-
-  if(!data){
-    window.location.href = '/'; // vuelve al login
-    return;
-  }
-
-  try{
-    const obj = JSON.parse(data);
-
-    // Validar tiempo (opcional)
-    const ahora = Date.now();
-    const DIAS_15 = 15 * 24 * 60 * 60 * 1000;
-
-    if(ahora - obj.loginTime > DIAS_15){
-      localStorage.removeItem('lp_user');
-      window.location.href = '/';
-      return;
-    }
-
-    // 🔥 CARGAR DATOS
-    ST = {
-      rol: obj.rol,
-      correo: obj.correo,
-      nombre: obj.nombre,
-      docenteId: obj.docenteId
-    };
-
-    // Validar rol
-    if(ST.rol !== 'coordinador'){
-      window.location.href = '/';
-      return;
-    }
-
-    iniciarDashboardCoordinadora(); // tu función principal
-
-  }catch(e){
-    localStorage.removeItem('lp_user');
-    window.location.href = '/';
-  }
-}
-
-document.addEventListener('DOMContentLoaded', cargarSesionCoordinadora);
-
-let diaSeleccionado = new Date();
-  
-/* ══════ ESTADO GLOBAL ══════ */
 let planeacionesUI = [];
 let todasCitas = [];
-let calDate = new Date();
 let filtroActual = 'todos';
+let diaSeleccionado = new Date();
+let calDate = new Date();
 
-/* ══════ API ══════ */
-async function api(ep, opts = {}) {
-  try {
-    const r = await fetch(ep, { headers: {'Content-Type':'application/json'}, ...opts });
-    if (!r.ok) throw new Error(r.status);
-    return r.json();
-  } catch(e) { return null; }
+function iniciarDashboardCoordinadora(){
+  cargarDashboard(); // SOLO aquí se carga todo
 }
-async function apiPlaneaciones(ep, opts = {}) { return api(ep, opts); }
 
 /* ══════ DATOS DEMO ══════ */
 function cargarDemo() {
@@ -1144,16 +1091,49 @@ function cargarDemo() {
 /* ══════ CARGA DASHBOARD ══════ */
 async function cargarDashboard() {
   const hoy = new Date();
+
   const dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
   const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
   const h = hoy.getHours();
   const saludo = h < 12 ? 'Buenos días' : h < 18 ? 'Buenas tardes' : 'Buenas noches';
-  function obtenerNombreUsuario() {
-  const usuarioGuardado = localStorage.getItem("usuario");
 
-  if (usuarioGuardado) {
-    const usuario = JSON.parse(usuarioGuardado);
-    return usuario.nombre.split(" ")[0]; // solo primer nombre
+  const nombre = obtenerNombreUsuario();
+
+  document.getElementById('welcomeTitle').textContent = `${saludo}, ${nombre} 👋`;
+
+  const hora = hoy.toLocaleTimeString('es-CO', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  document.getElementById('welcomeDate').textContent =
+    `${dias[hoy.getDay()]} ${hoy.getDate()} de ${meses[hoy.getMonth()]} · ${hora}`;
+
+  let rP = null;
+  let rC = null;
+
+  if (!planeacionesUI.length) cargarDemo();
+
+  renderSemana();
+  renderKPIs(); // 🔥 IMPORTANTE
+  renderAlertas();
+  renderCitasPorDia();
+  renderDocentesAten();
+  renderCalendar();
+  renderPills();
+}
+  
+  function obtenerNombreUsuario() {
+  const data = localStorage.getItem("lp_user");
+
+  if (data) {
+    try {
+      const usuario = JSON.parse(data);
+      return usuario.nombre?.split(" ")[0] || "Usuario";
+    } catch(e) {
+      return "Usuario";
+    }
   }
 
   return "Usuario";
@@ -1169,7 +1149,7 @@ document.getElementById('welcomeTitle').textContent = `${saludo}, ${nombre} 👋
 
 document.getElementById('welcomeDate').textContent =
   `${dias[hoy.getDay()]} ${hoy.getDate()} de ${meses[hoy.getMonth()]} · ${hora}`;
-  document.getElementById('welcomePriority').textContent = getPrioridad();
+  
 
   const [rP, rC] = await Promise.all([
     apiPlaneaciones('/api/planeaciones/semana'),
@@ -1185,6 +1165,7 @@ document.getElementById('welcomeDate').textContent =
   renderDocentesAten();
   renderCalendar();
   renderPills();
+  renderKPIs();
 }
 
 /* ══════ KPIs ══════ */
@@ -1212,13 +1193,7 @@ function renderKPIs() {
   document.getElementById('kpiTrendPend').textContent  = `${pend} restantes`;
   document.getElementById('kpiTrendCitas').textContent = `${cHoy} hoy`;
 
-  // quick stats en welcome
-  document.getElementById('quickStats').innerHTML = [
-    {label:`<strong>${apr}</strong> aprobadas`, filled: apr > 0},
-    {label:`<strong>${pend}</strong> pendientes`, filled: false},
-    {label:`<strong>${cHoy}</strong> citas hoy`, filled: cHoy > 0},
-  ].map(s=>`<div class="q-stat"><div class="q-stat-dot ${s.filled?'filled':''}"></div><span class="q-stat-text">${s.label}</span></div>`).join('');
-}
+
 
 function anim(id, to) {
   const el = document.getElementById(id); if (!el) return;
@@ -1548,8 +1523,8 @@ function seleccionarDia(fechaISO){
   renderCitasPorDia();
 }
 
-/* ══════ INIT ══════ */
-document.addEventListener('DOMContentLoaded', cargarDashboard);
+document.addEventListener('DOMContentLoaded', iniciarDashboardCoordinadora);
+
 </script>
 </body>
 </html>
