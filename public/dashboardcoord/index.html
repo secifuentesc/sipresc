@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#FFFFFF" />
+<meta name="mobile-web-app-capable" content="yes" />
 <title>SIPRESC · Panel de Coordinación</title>
 <link rel="icon" href="/logo.png" />
 <link rel="apple-touch-icon" href="/logo.png" />
@@ -12,6 +13,31 @@
 <link rel="stylesheet" href="/css/dashboardcoord.css" />
 </head>
 <body class="coord-body" data-loading="true">
+
+<!-- ==========================================
+     SPLASH / ENTRADA PREMIUM
+=========================================== -->
+<div class="coord-splash" id="coordSplash" aria-hidden="false">
+  <div class="coord-splash__glow coord-splash__glow--one"></div>
+  <div class="coord-splash__glow coord-splash__glow--two"></div>
+
+  <div class="coord-splash__content">
+    <div class="coord-splash__mark">
+      <img src="/logo.png" alt="SIPRESC" />
+    </div>
+
+    <h1 class="coord-splash__title">SIPRESC</h1>
+    <p class="coord-splash__subtitle">Panel de Coordinación</p>
+
+    <div class="coord-splash__line">
+      <span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     TOP BAR (desktop + tablet)
+=========================================== -->
 
 <!-- ==========================================
      TOP BAR (desktop + tablet)
@@ -412,12 +438,6 @@
 <!-- Toast container -->
 <div class="coord-toasts" id="coordToasts" aria-live="polite" aria-atomic="true"></div>
 
-<!-- Loader inicial -->
-<div class="coord-bootloader" id="coordBoot" aria-hidden="true">
-  <img src="/logo.png" alt="" />
-  <div class="coord-bootloader__bar"><span></span></div>
-  <p>Cargando panel…</p>
-</div>
 
 <script src="/js/core.js" defer></script>
 <script src="/js/dashboardcoord.js" defer></script>
