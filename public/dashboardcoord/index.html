@@ -664,7 +664,12 @@ tr:hover td { background: var(--surface-2); }
 }
 
 .week-calendar {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  padding: 18px 20px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
 .week-header {
@@ -713,6 +718,8 @@ tr:hover td { background: var(--surface-2); }
   font-size: 16px;
   font-weight: 700;
 }
+
+
 </style>
 </head>
 <body>
@@ -834,18 +841,6 @@ tr:hover td { background: var(--surface-2); }
           <div class="prog-bar"><div class="prog-fill" id="progTotal" style="width:0%"></div></div>
         </div>
 
-        <div class="week-calendar">
-
-  <div class="week-header">
-
-    <span id="weekLabel"></span>
-
-  </div>
-
-  <div class="week-days" id="weekDays"></div>
-
-</div>
-
         <div class="kpi-card kpi-c-green anim-in">
           <div class="kpi-top">
             <div class="kpi-icon">
@@ -882,6 +877,13 @@ tr:hover td { background: var(--surface-2); }
           <div class="prog-bar"><div class="prog-fill" id="progCitas" style="width:0%; background:var(--red)"></div></div>
         </div>
       </div>
+
+      <div class="week-calendar">
+  <div class="week-header">
+    <span id="weekLabel"></span>
+  </div>
+  <div class="week-days" id="weekDays"></div>
+</div>
 
       <!-- Row 2: Alertas + Citas hoy -->
       <div class="grid-2">
