@@ -1098,13 +1098,34 @@ async function cargarDashboard() {
   const h = hoy.getHours();
   const saludo = h < 12 ? 'Buenos días' : h < 18 ? 'Buenas tardes' : 'Buenas noches';
 
-  let rP = null;
-  let rC = null;
+  const nombre = obtenerNombreUsuario();
+
+  document.getElementById('welcomeTitle').textContent = `${saludo}, ${nombre} 👋`;
+
+  const hora = hoy.toLocaleTimeString('es-CO', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  document.getElementById('welcomeDate').textContent =
+    `${dias[hoy.getDay()]} ${hoy.getDate()} de ${meses[hoy.getMonth()]} · ${hora}`;
+
+  try {
+    const [rP, rC] = await Promise.all([
+      apiPlaneaciones('/api/planeaciones/semana'),
+      api('/api/citas')
+    ]);
+
+    if (rP?.data?.length) planeacionesUI = rP.data;
+    if (rC?.data?.length) todasCitas = rC.data;
+  } catch (e) {
+    console.warn('Usando datos demo');
+  }
 
   if (!planeacionesUI.length) cargarDemo();
 
   renderSemana();
-  renderKPIs(); // 🔥 IMPORTANTE
+  renderKPIs();
   renderAlertas();
   renderCitasPorDia();
   renderDocentesAten();
@@ -1127,34 +1148,6 @@ async function cargarDashboard() {
   return "Usuario";
 }
 
-const nombre = obtenerNombreUsuario();
-
-document.getElementById('welcomeTitle').textContent = `${saludo}, ${nombre} 👋`;
-  const hora = hoy.toLocaleTimeString('es-CO', {
-  hour: '2-digit',
-  minute: '2-digit'
-});
-
-document.getElementById('welcomeDate').textContent =
-  `${dias[hoy.getDay()]} ${hoy.getDate()} de ${meses[hoy.getMonth()]} · ${hora}`;
-  
-
-  const [rP, rC] = await Promise.all([
-    apiPlaneaciones('/api/planeaciones/semana'),
-    api('/api/citas')
-  ]);
-  if (rP?.data?.length) planeacionesUI = rP.data;
-  if (rC?.data?.length) todasCitas = rC.data;
-  if (!planeacionesUI.length) cargarDemo();
-
-  renderSemana();
-  renderAlertas();
-  renderCitasPorDia();
-  renderDocentesAten();
-  renderCalendar();
-  renderPills();
-  renderKPIs();
-}
 
 /* ══════ KPIs ══════ */
 function renderKPIs() {
