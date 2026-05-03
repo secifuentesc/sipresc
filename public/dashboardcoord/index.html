@@ -1136,16 +1136,26 @@ async function cargarDashboard() {
   function obtenerNombreUsuario() {
   const data = localStorage.getItem("lp_user");
 
-  if (data) {
-    try {
-      const usuario = JSON.parse(data);
-      return usuario.nombre?.split(" ")[0] || "Usuario";
-    } catch(e) {
-      return "Usuario";
-    }
-  }
+  if (!data) return "Usuario";
 
-  return "Usuario";
+  try {
+    const usuario = JSON.parse(data);
+
+    const nombreCompleto =
+      usuario.nombre ||
+      usuario.name ||
+      usuario.displayName ||
+      usuario.docenteNombre ||
+      usuario.coordinadorNombre ||
+      "";
+
+    if (!nombreCompleto) return "Usuario";
+
+    return nombreCompleto.trim().split(" ")[0];
+
+  } catch (e) {
+    return "Usuario";
+  }
 }
 
 
