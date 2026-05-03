@@ -1221,124 +1221,134 @@ input, select, textarea { font-family: inherit; }
 }
 
 /* =========================================================
-   BOOT LOADER — Premium oscuro SIPRESC
+   SPLASH / LOADER INICIAL — Estilo Admin adaptado a Coordinación
    ========================================================= */
-.coord-bootloader {
+
+.coord-splash {
   position: fixed;
   inset: 0;
-  z-index: 300;
+  z-index: 9999;
   background:
-    radial-gradient(circle at 50% 38%, rgba(26,66,138,.34) 0%, rgba(26,66,138,.10) 26%, transparent 52%),
-    radial-gradient(circle at 15% 15%, rgba(33,20,95,.35) 0%, transparent 34%),
-    linear-gradient(135deg, #030712 0%, #050816 42%, #071A3D 100%);
+    radial-gradient(circle at 50% 38%, rgba(26,66,138,.08) 0%, rgba(26,66,138,.035) 28%, transparent 54%),
+    radial-gradient(circle at 20% 15%, rgba(255,204,0,.10) 0%, transparent 30%),
+    linear-gradient(135deg, #FFFFFF 0%, #F6F8FC 48%, #EEF3FA 100%);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 18px;
-  transition: opacity .45s var(--ease), visibility .45s var(--ease);
+  transition: opacity .5s var(--ease), visibility .5s var(--ease);
   overflow: hidden;
 }
 
-.coord-bootloader::before {
+.coord-splash::before {
   content: "";
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, transparent, rgba(255,255,255,.035), transparent),
-    radial-gradient(circle at 50% 50%, rgba(255,255,255,.05), transparent 42%);
-  opacity: .75;
+    linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent),
+    radial-gradient(circle at 50% 50%, rgba(33,20,95,.06), transparent 45%);
+  opacity: .8;
   pointer-events: none;
 }
 
-.coord-bootloader[aria-hidden="true"] {
+.coord-splash.fade-out {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
-/* Recuadro premium para la S */
-.coord-bootloader img {
-  width: 64px;
-  height: 64px;
-  object-fit: contain;
-  padding: 14px;
-  border-radius: 20px;
+.coord-splash-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: coordSplashIn .8s var(--ease) both;
+}
+
+.coord-splash-logo-wrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
   background:
-    linear-gradient(145deg, rgba(26,66,138,.95), rgba(33,20,95,.98)),
-    #0B1742;
-  border: 1px solid rgba(255,255,255,.16);
+    linear-gradient(145deg, rgba(26,66,138,.98), rgba(33,20,95,.98)),
+    #21145F;
+  border: 1px solid rgba(255,255,255,.30);
   box-shadow:
-    0 22px 60px rgba(0,0,0,.42),
-    0 0 0 1px rgba(255,255,255,.06) inset,
-    0 0 34px rgba(26,66,138,.28);
+    0 22px 50px rgba(33,20,95,.28),
+    0 10px 24px rgba(26,66,138,.18),
+    inset 0 0 0 1px rgba(255,255,255,.10);
   animation: coordLogoFloat 2.8s ease-in-out infinite;
 }
 
-.coord-bootloader::after {
-  content: "SIPRESC";
-  display: block;
-  margin-top: 4px;
-  color: #FFFFFF;
-  font-size: 24px;
+.coord-splash-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,.20));
+}
+
+.coord-splash-name {
+  font-size: 1.5rem;
   font-weight: 800;
-  letter-spacing: 7px;
-  text-indent: 7px;
-  text-shadow: 0 8px 24px rgba(0,0,0,.35);
+  letter-spacing: .18em;
+  text-indent: .18em;
+  color: var(--c-azul-oscuro);
 }
 
-/* Línea de carga */
-.coord-bootloader__bar {
-  width: 190px;
-  height: 3px;
-  margin-top: 2px;
-  background: rgba(255,255,255,.10);
-  border-radius: 999px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: 0 0 0 1px rgba(255,255,255,.06);
-}
-
-.coord-bootloader__bar span {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 42%;
-  background: linear-gradient(90deg, #21145F 0%, #1A428A 48%, #60A5FA 100%);
-  border-radius: 999px;
-  box-shadow: 0 0 18px rgba(96,165,250,.5);
-  animation: coordLoadBar 1.25s infinite var(--ease);
-}
-
-.coord-bootloader p {
-  margin: -4px 0 0;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 3px;
+.coord-splash-sub {
+  font-size: .75rem;
+  color: var(--c-text-2);
+  letter-spacing: .09em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.52);
+  font-weight: 700;
 }
 
-@keyframes coordLoadBar {
-  0%   { transform: translateX(-110%); }
-  100% { transform: translateX(350%); }
+.coord-splash-bar {
+  width: 160px;
+  height: 2px;
+  background: rgba(33,20,95,.10);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.coord-splash-bar-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--c-azul-oscuro), var(--c-azul), var(--c-amarillo));
+  border-radius: 99px;
+  animation: coordSplashLoad 1.8s var(--ease) .3s both;
+}
+
+@keyframes coordSplashIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes coordSplashLoad {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 @keyframes coordLogoFloat {
   0%, 100% {
     transform: translateY(0);
-    box-shadow:
-      0 22px 60px rgba(0,0,0,.42),
-      0 0 0 1px rgba(255,255,255,.06) inset,
-      0 0 34px rgba(26,66,138,.28);
   }
   50% {
     transform: translateY(-5px);
-    box-shadow:
-      0 30px 72px rgba(0,0,0,.50),
-      0 0 0 1px rgba(255,255,255,.08) inset,
-      0 0 46px rgba(26,66,138,.42);
   }
 }
 /* =========================================================
