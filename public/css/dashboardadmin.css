@@ -1421,3 +1421,23 @@ svg { display: block; flex-shrink: 0; }
 .sidebar.collapsed .sidebar-logout-btn{
   display:none;
 }
+
+
+.nav-link-item{
+  text-decoration:none;
+}
+
+.nav-link-item:hover{
+  background:var(--bg-elevated);
+  color:var(--text-primary);
+}
+
+.nav-link-item .nav-label{
+  color:inherit;
+}
+
+.sidebar.collapsed .nav-link-item{
+  justify-content:center;
+  padding-left:0;
+  padding-right:0;
+}
