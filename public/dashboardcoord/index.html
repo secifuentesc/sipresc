@@ -1,1241 +1,919 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0a1628">
-<link rel="icon" type="image/png" href="/logo.png">
-<link rel="manifest" href="/manifest.json">
-<title>SIPRESC · Coordinación</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{
-  --navy:#050e1d;
-  --s1:#0a1628;
-  --s2:#0f1f3a;
-  --s3:#162847;
-  --cobalt:#1e4db7;
-  --blue:#2557d6;
-  --blue2:#4f7dff;
-  --blue-t:rgba(37,87,214,.15);
-  --blue-glow:rgba(37,87,214,.3);
-  --ink:#e8edf8;
-  --ink2:#c0cbe0;
-  --ink3:#7a8fb0;
-  --ink4:#3d5070;
-  --border:rgba(255,255,255,.07);
-  --border2:rgba(255,255,255,.13);
-  --green:#2dd4a0;--green-t:rgba(45,212,160,.12);
-  --amber:#e8b84b;--amber-t:rgba(232,184,75,.12);
-  --red:#f06b6b;--red-t:rgba(240,107,107,.12);
-  --wt:rgba(255,255,255,.05);
-  --wt2:rgba(255,255,255,.09);
-  --sans:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
-  --r:14px;
-}
-html,body{
-  height:100%;font-family:var(--sans);background:var(--navy);color:var(--ink);
-  font-size:14px;-webkit-font-smoothing:antialiased;overflow:hidden
-}
-body{
-  background-image:
-    radial-gradient(ellipse 80% 60% at 0% 0%,rgba(15,38,87,.9) 0%,transparent 55%),
-    radial-gradient(ellipse 50% 40% at 100% 100%,rgba(30,77,183,.25) 0%,transparent 55%)
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SIPRESC · Coordinación</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/css/base.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-/* ══ LAYOUT ══ */
-.app{display:flex;height:100vh;height:100svh;overflow:hidden}
+    :root{
+      --bg:#f2f2f7;
+      --surf:#ffffff;
+      --navy:#1a3a6b;
+      --gold:#c8960c;
+      --text:#1c1c1e;
+      --text2:#636366;
+      --text3:#aeaeb2;
+      --sep:#e5e5ea;
+      --green:#34c759;
+      --red:#ff3b30;
+      --amber:#ff9500;
+      --r:16px;
+      --rsm:10px;
+      --sh:0 2px 12px rgba(0,0,0,.06);
+      --sh-lg:0 8px 32px rgba(0,0,0,.12);
+      --sb-w:236px;
+    }
 
-/* ══ SIDEBAR ══ */
-.sidebar{
-  width:220px;flex-shrink:0;
-  background:rgba(5,14,29,.98);
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  position:relative;z-index:20;
-  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)
-}
-.sidebar::after{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--blue2),transparent)
-}
-.sb-top{padding:18px 14px 14px;border-bottom:1px solid var(--border)}
-.sb-brand{display:flex;align-items:center;gap:9px;margin-bottom:13px}
-.sb-ico{
-  width:34px;height:34px;border-radius:10px;flex-shrink:0;
-  background:linear-gradient(145deg,#0f2657,var(--cobalt));
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 14px var(--blue-glow)
-}
-.sb-ico img{width:21px;filter:brightness(10)}
-.sb-ico-fb{color:#fff;font-size:12px;font-weight:700}
-.sb-bname{font-size:12px;font-weight:600;color:var(--ink)}
-.sb-bsub{font-size:8px;color:var(--blue2);letter-spacing:1.5px;margin-top:1px}
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;font-size:15px;line-height:1.5}
 
-/* User chip */
-.sb-user{
-  background:var(--blue-t);border:1px solid rgba(79,125,255,.18);
-  border-radius:9px;padding:9px 10px;display:flex;align-items:center;gap:8px
-}
-.sb-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
-.sb-uname{font-size:12px;font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-urol{font-size:8px;color:var(--blue2);letter-spacing:.8px;margin-top:1px}
+    .layout{display:flex;height:100vh;overflow:hidden}
 
-/* Nav */
-.sb-nav{flex:1;overflow-y:auto;padding:8px 8px;scrollbar-width:none}
-.sb-nav::-webkit-scrollbar{display:none}
-.sb-sec{font-size:8px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink4);padding:12px 9px 4px}
-.ni{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 10px;border-radius:9px;
-  cursor:pointer;color:var(--ink3);font-size:12px;font-weight:400;
-  border:none;background:none;width:100%;text-align:left;
-  transition:all .15s;position:relative
-}
-.ni svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.6;fill:none;flex-shrink:0;opacity:.5}
-.ni:hover{background:var(--wt);color:var(--ink2)}
-.ni.on{background:var(--blue-t);color:var(--blue2);font-weight:500}
-.ni.on svg{opacity:1;stroke-width:2}
-.ni.on::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:2px;background:var(--blue2);border-radius:1px}
-.ni-badge{margin-left:auto;font-size:8px;padding:2px 6px;border-radius:10px;font-weight:600}
-.ni-badge.r{background:var(--red-t);color:var(--red)}
-.ni-badge.a{background:var(--amber-t);color:var(--amber)}
-.ni-badge.g{background:var(--green-t);color:var(--green)}
+    /* Sidebar */
+    .sidebar{width:var(--sb-w);background:var(--surf);border-right:1px solid var(--sep);display:flex;flex-direction:column;flex-shrink:0;z-index:200;transition:transform .28s cubic-bezier(.4,0,.2,1)}
+    .sb-logo{display:flex;align-items:center;gap:10px;padding:20px 16px 18px;border-bottom:1px solid var(--sep)}
+    .sb-mark{width:34px;height:34px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:var(--gold);flex-shrink:0}
+    .sb-brand strong{display:block;font-size:13px;font-weight:700;letter-spacing:.2px}
+    .sb-brand span{font-size:11px;color:var(--text2)}
+    .sb-nav{flex:1;padding:8px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+    .sb-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;cursor:pointer;color:var(--text2);font-size:13.5px;font-weight:500;transition:all .14s;border:none;background:none;width:100%;text-align:left}
+    .sb-item svg{flex-shrink:0;opacity:.7}
+    .sb-item:hover{background:var(--bg);color:var(--text)}
+    .sb-item.on{background:var(--navy);color:#fff}
+    .sb-item.on svg{opacity:1}
+    .sb-dot{margin-left:auto;background:var(--red);color:#fff;border-radius:99px;font-size:10px;font-weight:700;padding:1px 6px;min-width:18px;text-align:center}
+    .sb-footer{padding:10px 8px;border-top:1px solid var(--sep)}
+    .sb-user{display:flex;align-items:center;gap:10px;padding:8px}
+    .sb-av{width:32px;height:32px;border-radius:50%;background:var(--navy);color:var(--gold);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .sb-ui{flex:1;overflow:hidden}
+    .sb-ui strong{display:block;font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sb-ui span{font-size:11px;color:var(--text2)}
+    .sb-logout{background:none;border:none;cursor:pointer;padding:5px;color:var(--text3);border-radius:6px;transition:color .14s;display:flex}
+    .sb-logout:hover{color:var(--red)}
 
-.sb-foot{padding:10px 12px;border-top:1px solid var(--border)}
-.sb-logout{
-  width:100%;background:var(--red-t);border:1px solid rgba(240,107,107,.15);
-  color:var(--red);font-size:11px;padding:8px;border-radius:8px;
-  cursor:pointer;transition:all .15s;font-family:var(--sans)
-}
-.sb-logout:hover{background:rgba(240,107,107,.2)}
+    /* Main */
+    .main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
 
-/* ══ MAIN ══ */
-.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-.page{display:none;padding:22px 22px 40px;animation:fadeUp .18s ease both}
-.page.on{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    /* Topbar mobile */
+    .topbar{display:none;align-items:center;gap:12px;padding:13px 16px;background:var(--surf);border-bottom:1px solid var(--sep);position:sticky;top:0;z-index:100}
+    .tb-logo{display:flex;align-items:center;gap:8px;flex:1}
+    .tb-mark{width:28px;height:28px;background:var(--navy);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--gold)}
+    .tb-title{font-size:15px;font-weight:700}
+    .tb-ham{background:none;border:none;padding:4px;cursor:pointer;color:var(--text);border-radius:6px;display:flex}
 
-/* Page header */
-.ph{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;gap:10px;flex-wrap:wrap}
-.ph-title{font-size:20px;font-weight:700;letter-spacing:-.5px}
-.ph-sub{font-size:10px;color:var(--ink4);margin-top:2px;letter-spacing:.3px}
-.ph-right{display:flex;gap:7px;align-items:center;margin-left:auto}
+    /* Pages */
+    .page{display:none;padding:24px;flex:1;animation:fadeIn .2s ease}
+    .page.on{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
-/* Botones */
-.btn{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:7px 13px;border-radius:8px;border:1px solid var(--border2);
-  background:var(--wt2);color:var(--ink2);font-size:11px;font-weight:500;
-  cursor:pointer;transition:all .15s;font-family:var(--sans)
-}
-.btn svg{width:12px;height:12px;stroke:currentColor;stroke-width:2;fill:none}
-.btn:hover{background:var(--wt);color:var(--ink)}
-.btn-p{background:var(--blue-t);border-color:rgba(79,125,255,.3);color:var(--blue2)}
-.btn-g{background:var(--green-t);border-color:rgba(45,212,160,.25);color:var(--green)}
-.btn-g:hover{background:rgba(45,212,160,.2)}
-.btn-a{background:var(--amber-t);border-color:rgba(232,184,75,.25);color:var(--amber)}
-.btn-r{background:var(--red-t);border-color:rgba(240,107,107,.25);color:var(--red)}
-.btn-r:hover{background:rgba(240,107,107,.2)}
-.btn:disabled{opacity:.4;cursor:not-allowed}
+    /* Page header */
+    .ph{margin-bottom:20px}
+    .ph h1{font-size:24px;font-weight:700;letter-spacing:-.4px}
+    .ph p{font-size:13px;color:var(--text2);margin-top:2px}
+    .stitle{font-size:15px;font-weight:700;margin:20px 0 10px}
 
-/* Grids */
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.g-main{display:grid;grid-template-columns:1fr 300px;gap:14px}
+    /* KPIs */
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+    .kpi{background:var(--surf);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh)}
+    .kpi-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+    .kpi-ico.navy{background:#e8eef5;color:var(--navy)}
+    .kpi-ico.gold{background:#fdf3dc;color:var(--gold)}
+    .kpi-ico.green{background:#e8f8ef;color:#1a7d42}
+    .kpi-ico.purple{background:#eeebf8;color:#6b5ce7}
+    .kpi-val{font-size:26px;font-weight:700;letter-spacing:-.5px;line-height:1}
+    .kpi-lbl{font-size:12px;color:var(--text2);font-weight:500;margin-top:3px}
+    .prog-wrap{background:var(--bg);border-radius:99px;height:5px;margin-top:8px;overflow:hidden}
+    .prog-fill{height:100%;border-radius:99px;background:var(--navy);transition:width .6s ease;width:0%}
 
-/* Stat card */
-.sc{
-  background:var(--s2);border:1px solid var(--border);border-radius:var(--r);
-  padding:15px;transition:border-color .2s,transform .15s;
-  position:relative;overflow:hidden
-}
-.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:1px}
-.sc:hover{border-color:var(--border2);transform:translateY(-1px)}
-.sc-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
-.sc-ico svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none}
-.sc-n{font-size:26px;font-weight:700;letter-spacing:-.6px;line-height:1;margin-bottom:2px}
-.sc-l{font-size:10px;color:var(--ink4)}
-.sc-d{font-size:9px;margin-top:6px;display:inline-flex;align-items:center;gap:2px;padding:2px 6px;border-radius:8px}
-.c-b::after{background:var(--blue)}.c-b .sc-ico{background:var(--blue-t);color:var(--blue2)}.c-b .sc-n{color:var(--blue2)}
-.c-g::after{background:var(--green)}.c-g .sc-ico{background:var(--green-t);color:var(--green)}.c-g .sc-n{color:var(--green)}
-.c-a::after{background:var(--amber)}.c-a .sc-ico{background:var(--amber-t);color:var(--amber)}.c-a .sc-n{color:var(--amber)}
-.c-r::after{background:var(--red)}.c-r .sc-ico{background:var(--red-t);color:var(--red)}.c-r .sc-n{color:var(--red)}
-.dm{background:var(--wt);color:var(--ink4)}
-.du{background:var(--green-t);color:var(--green)}
-.dd{background:var(--red-t);color:var(--red)}
+    /* Calendar */
+    .cal-card{background:var(--surf);border-radius:var(--r);padding:16px;box-shadow:var(--sh);margin-bottom:20px}
+    .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .cal-month{font-size:15px;font-weight:700}
+    .cal-sem{font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;background:#e8eef5;color:var(--navy)}
+    .cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+    .cal-day{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px;border-radius:10px}
+    .cal-dn{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase}
+    .cal-num{font-size:15px;font-weight:700}
+    .cal-dot{width:5px;height:5px;border-radius:50%;background:transparent}
+    .cal-day.today{background:var(--navy)}
+    .cal-day.today .cal-dn,.cal-day.today .cal-num{color:#fff}
+    .cal-day.has-cita .cal-dot{background:var(--gold)}
+    .cal-day.today.has-cita .cal-dot{background:#fff}
 
-/* Card */
-.card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
-.card:last-child{margin-bottom:0}
-.ch{padding:13px 15px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
-.ct{font-size:12px;font-weight:600;letter-spacing:-.1px}
-.cs{font-size:10px;color:var(--ink4);margin-top:1px}
-.cb{padding:12px 15px}
-.ca{font-size:10px;color:var(--blue2);cursor:pointer;background:none;border:none;padding:2px 7px;border-radius:5px;transition:background .15s;font-family:var(--sans)}
-.ca:hover{background:var(--blue-t)}
+    /* Alerts */
+    .alert-list{display:flex;flex-direction:column;gap:8px}
+    .alert-row{display:flex;align-items:flex-start;gap:10px;background:var(--surf);border-radius:var(--rsm);padding:12px 14px;box-shadow:var(--sh)}
+    .alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+    .alert-dot.red{background:var(--red)}
+    .alert-dot.orange{background:var(--amber)}
+    .alert-dot.green{background:var(--green)}
+    .alert-body strong{font-size:14px;font-weight:600;display:block}
+    .alert-body span{font-size:12px;color:var(--text2)}
 
-/* List rows */
-.lrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
-.lrow:last-child{border-bottom:none}
-.lav{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
-.lav.b{background:var(--blue-t);color:var(--blue2)}
-.lav.g{background:var(--green-t);color:var(--green)}
-.lav.a{background:var(--amber-t);color:var(--amber)}
-.lav.r{background:var(--red-t);color:var(--red)}
-.li{flex:1;min-width:0}
-.ln{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
-.lm{font-size:11px;color:var(--ink4)}
-.lr{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+    /* Badges */
+    .bdg{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+    .bdg.aprobada{background:#e8f8ef;color:#1a7d42}
+    .bdg.pendiente{background:#f2f2f7;color:#636366}
+    .bdg.enviada{background:#e8f0fd;color:#1a5dbf}
+    .bdg.ajustes{background:#fdf3dc;color:#8a6200}
 
-/* Badge */
-.bdg{font-size:9px;padding:2px 7px;border-radius:8px;white-space:nowrap;font-weight:500;letter-spacing:.3px;display:inline-block}
-.bdg-g{background:var(--green-t);color:var(--green);border:1px solid rgba(45,212,160,.18)}
-.bdg-r{background:var(--red-t);color:var(--red);border:1px solid rgba(240,107,107,.18)}
-.bdg-a{background:var(--amber-t);color:var(--amber);border:1px solid rgba(232,184,75,.18)}
-.bdg-b{background:var(--blue-t);color:var(--blue2);border:1px solid rgba(79,125,255,.18)}
-.bdg-x{background:var(--wt);color:var(--ink4);border:1px solid var(--border)}
+    /* Tabs */
+    .tab-bar{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:12px;margin-bottom:14px;width:fit-content}
+    .tab-btn{padding:7px 18px;border:none;background:none;border-radius:9px;font-size:14px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .14s}
+    .tab-btn.on{background:var(--surf);color:var(--text);box-shadow:0 1px 6px rgba(0,0,0,.08)}
 
-/* Progress */
-.pr{margin-bottom:9px}
-.pr:last-child{margin-bottom:0}
-.pr-l{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;color:var(--ink3)}
-.pr-b{height:4px;background:var(--s3);border-radius:2px;overflow:hidden}
-.pr-f{height:100%;border-radius:2px;transition:width .6s ease}
+    /* Chips */
+    .chips{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+    .chip{padding:5px 13px;border-radius:99px;border:1.5px solid var(--sep);background:var(--surf);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .14s}
+    .chip.on{border-color:var(--navy);background:var(--navy);color:#fff}
+    .chip-c{font-size:11px;font-weight:700;margin-left:4px;opacity:.75}
 
-/* ══ PLANEACIONES PAGE ══ */
+    /* Planeaciones */
+    .pln-layout{display:flex;gap:14px;align-items:flex-start}
+    .pln-list-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+    .pln-row{display:flex;align-items:center;gap:12px;background:var(--surf);border-radius:var(--rsm);padding:11px 14px;box-shadow:var(--sh);cursor:pointer;transition:all .14s;border:1.5px solid transparent}
+    .pln-row:hover{border-color:var(--sep);transform:translateY(-1px)}
+    .pln-row.sel{border-color:var(--navy)}
+    .pln-av{width:38px;height:38px;border-radius:50%;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .pln-inf{flex:1;min-width:0}
+    .pln-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pln-meta{font-size:12px;color:var(--text2)}
 
-/* Semanas tabs — estilo Apple segmented */
-.sem-tabs{
-  display:flex;gap:6px;margin-bottom:16px;
-  overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch
-}
-.sem-tabs::-webkit-scrollbar{display:none}
-.sem-tab{
-  flex-shrink:0;padding:7px 14px;border-radius:20px;
-  border:1px solid var(--border);background:var(--s1);
-  color:var(--ink4);font-size:11px;cursor:pointer;
-  transition:all .18s;white-space:nowrap;font-family:var(--sans)
-}
-.sem-tab:hover{border-color:var(--border2);color:var(--ink2)}
-.sem-tab.on{
-  background:var(--cobalt);border-color:var(--cobalt);
-  color:#fff;font-weight:600;
-  box-shadow:0 3px 10px var(--blue-glow)
-}
-.sem-tab.activa-badge{position:relative}
-.sem-tab.activa-badge::after{
-  content:'•';position:absolute;top:2px;right:4px;
-  font-size:8px;color:var(--green)
-}
+    /* Detail panel */
+    .dp{width:370px;flex-shrink:0;background:var(--surf);border-radius:var(--r);box-shadow:var(--sh-lg);position:sticky;top:24px;max-height:calc(100vh - 100px);overflow-y:auto;display:none;flex-direction:column}
+    .dp.on{display:flex}
+    .dp-head{padding:18px 18px 14px;border-bottom:1px solid var(--sep)}
+    .dp-teacher{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .dp-av{width:46px;height:46px;border-radius:50%;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .dp-name{font-size:16px;font-weight:700;line-height:1.2}
+    .dp-sub{font-size:13px;color:var(--text2);margin-top:2px}
+    .dp-close{margin-left:auto;background:var(--bg);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;flex-shrink:0;align-self:flex-start}
+    .dp-close:hover{background:var(--sep)}
+    .dp-body{padding:16px 18px;flex:1}
+    .dp-st{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 7px}
+    .dp-st:first-child{margin-top:0}
+    .dp-text{font-size:14px;line-height:1.55}
+    .day-block{background:var(--bg);border-radius:10px;padding:10px 12px;margin-bottom:7px}
+    .day-block-t{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+    .day-block-tema{font-size:14px;font-weight:600}
+    .day-block-act{font-size:13px;color:var(--text2);margin-top:2px;line-height:1.4}
+    .dp-actions{padding:14px 18px;border-top:1px solid var(--sep);display:flex;gap:8px;flex-shrink:0}
+    .btn-ok{flex:1;padding:11px;background:var(--green);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .14s}
+    .btn-ok:hover{opacity:.88}
+    .btn-ok:disabled{opacity:.5;cursor:default}
+    .btn-adj{flex:1;padding:11px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .14s}
+    .btn-adj:hover{opacity:.88}
+    .btn-adj:disabled{opacity:.5;cursor:default}
 
-/* Layout planeaciones: lista izq + detalle der */
-.pln-layout{display:grid;grid-template-columns:300px 1fr;gap:0;height:calc(100vh - 180px);min-height:400px}
-.pln-left{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
-.pln-left-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.pln-left-title{font-size:12px;font-weight:600}
-.pln-left-cnt{font-size:10px;color:var(--ink4)}
-.pln-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.pln-list::-webkit-scrollbar{width:3px}
-.pln-list::-webkit-scrollbar-track{background:transparent}
-.pln-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+    /* Modal */
+    .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:flex-end;justify-content:center}
+    .modal-ov.on{display:flex}
+    .modal-sheet{background:var(--surf);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:20px 20px 28px;max-height:88vh;overflow-y:auto}
+    .modal-handle{width:36px;height:4px;background:var(--sep);border-radius:2px;margin:0 auto 18px}
+    .modal-title{font-size:17px;font-weight:700;margin-bottom:14px}
+    .mo{display:flex;align-items:flex-start;gap:12px;padding:10px;border-radius:10px;cursor:pointer;transition:background .12s;margin-bottom:2px}
+    .mo:hover{background:var(--bg)}
+    .mo input[type=checkbox]{width:20px;height:20px;accent-color:var(--navy);flex-shrink:0;margin-top:1px;cursor:pointer}
+    .mo-text{font-size:14px;line-height:1.4;cursor:pointer}
+    .modal-ta{width:100%;min-height:76px;border:1.5px solid var(--sep);border-radius:10px;padding:9px 12px;font-size:14px;font-family:inherit;resize:vertical;color:var(--text);margin-top:12px;background:var(--surf)}
+    .modal-ta:focus{outline:none;border-color:var(--navy)}
+    .modal-acts{display:flex;gap:8px;margin-top:16px}
+    .btn-cancel{flex:1;padding:12px;background:var(--bg);border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;color:var(--text2)}
+    .btn-send{flex:2;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .14s}
+    .btn-send:hover{opacity:.9}
+    .btn-send:disabled{opacity:.5;cursor:default}
 
-/* Filtros estado en lista */
-.pln-filters{display:flex;gap:5px;padding:8px 12px;border-bottom:1px solid var(--border);overflow-x:auto}
-.pln-filters::-webkit-scrollbar{display:none}
-.pf{flex-shrink:0;padding:4px 10px;border-radius:14px;border:1px solid var(--border);background:none;color:var(--ink4);font-size:10px;cursor:pointer;font-family:var(--sans);transition:all .15s}
-.pf.on{background:var(--blue-t);border-color:rgba(79,125,255,.3);color:var(--blue2)}
+    /* Citas */
+    .cita-row{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surf);border-radius:var(--rsm);box-shadow:var(--sh);margin-bottom:8px}
+    .cita-time{min-width:46px;font-size:13px;font-weight:700;color:var(--navy);text-align:center;flex-shrink:0}
+    .cita-sep{width:1px;height:34px;background:var(--sep);flex-shrink:0}
+    .cita-inf{flex:1;min-width:0}
+    .cita-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .cita-desc{font-size:12px;color:var(--text2)}
 
-/* Item docente en lista */
-.pln-item{
-  display:flex;align-items:center;gap:10px;
-  padding:11px 14px;border-bottom:1px solid var(--border);
-  cursor:pointer;transition:background .12s;position:relative
-}
-.pln-item:last-child{border-bottom:none}
-.pln-item:hover{background:var(--wt)}
-.pln-item.sel{background:var(--blue-t)}
-.pln-item.sel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue2);border-radius:0 2px 2px 0}
-.pln-item-av{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-.pln-item-info{flex:1;min-width:0}
-.pln-item-nombre{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
-.pln-item-meta{font-size:10px;color:var(--ink4)}
-.pln-item-est{flex-shrink:0}
+    /* Docentes */
+    .doc-row{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surf);border-radius:var(--rsm);box-shadow:var(--sh);margin-bottom:8px}
+    .doc-av{width:38px;height:38px;border-radius:50%;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .doc-inf{flex:1;min-width:0}
+    .doc-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .doc-area{font-size:12px;color:var(--text2)}
+    .doc-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+    .doc-count{font-size:11px;color:var(--text2)}
 
-/* Panel derecho — detalle planeación */
-.pln-right{
-  border:1px solid var(--border);border-radius:var(--r);
-  border-left:none;border-radius:0 var(--r) var(--r) 0;
-  overflow:hidden;display:flex;flex-direction:column;
-  background:var(--s2)
-}
-.pln-detail-empty{
-  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  color:var(--ink4);gap:10px;padding:32px
-}
-.pln-detail-empty svg{width:40px;height:40px;stroke:var(--ink4);stroke-width:1;fill:none;opacity:.4}
-.pln-detail-empty p{font-size:13px}
+    /* States */
+    .spin-wrap{display:flex;justify-content:center;align-items:center;padding:40px;color:var(--text2);font-size:14px;gap:10px}
+    .spin{width:18px;height:18px;border:2.5px solid var(--sep);border-top-color:var(--navy);border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    .empty{text-align:center;padding:36px;color:var(--text2)}
+    .empty svg{opacity:.25;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto}
+    .empty p{font-size:14px}
 
-.pln-detail-header{
-  padding:16px 18px 14px;border-bottom:1px solid var(--border);
-  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
-  flex-shrink:0
-}
-.pln-detail-nombre{font-size:16px;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
-.pln-detail-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.pln-detail-body{flex:1;overflow-y:auto;padding:16px 18px;-webkit-overflow-scrolling:touch}
-.pln-detail-body::-webkit-scrollbar{width:3px}
-.pln-detail-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.pln-detail-actions{
-  padding:12px 18px;border-top:1px solid var(--border);
-  display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap
-}
+    /* Overlay sidebar */
+    .sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:199}
+    .sb-ov.on{display:block}
 
-/* Secciones del detalle */
-.pln-sec{margin-bottom:16px}
-.pln-sec:last-child{margin-bottom:0}
-.pln-sec-lbl{
-  font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
-  color:var(--ink4);margin-bottom:8px
-}
-.pln-sec-val{
-  font-size:13px;color:var(--ink2);line-height:1.6;
-  background:var(--s3);border-radius:9px;padding:11px 13px
-}
+    /* Bottom nav */
+    .bnav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-top:1px solid var(--sep);z-index:150;padding:6px 0 env(safe-area-inset-bottom,0)}
+    .bnav-items{display:flex}
+    .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;color:var(--text3);font-size:10px;font-weight:500;border:none;background:none;transition:color .14s}
+    .bnav-item.on{color:var(--navy)}
+    .bnav-item svg{width:22px;height:22px}
 
-/* Clase block */
-.clase-block{
-  background:var(--s1);border:1px solid var(--border);border-radius:10px;
-  padding:12px;margin-bottom:8px
-}
-.clase-block:last-child{margin-bottom:0}
-.clase-n{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue2);margin-bottom:8px}
-.clase-row{margin-bottom:6px}
-.clase-row:last-child{margin-bottom:0}
-.clase-lb{font-size:10px;color:var(--ink4);margin-bottom:2px}
-.clase-val{font-size:12px;color:var(--ink2);line-height:1.5}
+    /* Mobile panel overlay */
+    .dp-ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299;display:none}
+    .dp-ov.on{display:block}
 
-/* ══ AJUSTES FORM ══ */
-.ajustes-form{
-  background:var(--s3);border:1px solid var(--border);
-  border-radius:10px;padding:14px;margin-top:10px;
-  display:none
-}
-.ajustes-form.on{display:block;animation:fadeUp .18s ease both}
-.ajustes-title{font-size:11px;font-weight:600;margin-bottom:10px;color:var(--amber)}
-
-/* Opciones motivos — chips seleccionables */
-.motivos-grid{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.motivo-opt{
-  display:flex;align-items:center;gap:9px;
-  padding:9px 12px;border-radius:9px;
-  border:1px solid var(--border);background:var(--s1);
-  cursor:pointer;transition:all .15s;text-align:left
-}
-.motivo-opt:hover{border-color:var(--border2);background:var(--wt)}
-.motivo-opt.sel{border-color:rgba(232,184,75,.4);background:var(--amber-t)}
-.motivo-check{
-  width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);
-  flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  transition:all .15s
-}
-.motivo-opt.sel .motivo-check{background:var(--amber);border-color:var(--amber)}
-.motivo-check svg{width:9px;height:9px;stroke:#000;stroke-width:2.5;fill:none;display:none}
-.motivo-opt.sel .motivo-check svg{display:block}
-.motivo-txt{font-size:11px;color:var(--ink2);line-height:1.4;flex:1}
-
-.ajustes-obs{
-  width:100%;background:var(--s1);border:1px solid var(--border);
-  border-radius:9px;color:var(--ink);padding:10px 12px;
-  font-family:var(--sans);font-size:13px;outline:none;
-  resize:none;min-height:72px;line-height:1.5;
-  transition:border-color .2s
-}
-.ajustes-obs:focus{border-color:rgba(79,125,255,.4)}
-.ajustes-obs::placeholder{color:var(--ink4)}
-
-/* ══ CITAS PAGE ══ */
-.citas-layout{display:grid;grid-template-columns:1fr 280px;gap:14px}
-
-/* ══ MINI CALENDARIO ══ */
-.mcal-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 8px}
-.mcal-tit{font-size:11px;font-weight:600}
-.mcal-btn{background:none;border:none;color:var(--ink4);font-size:14px;padding:3px 7px;border-radius:5px;cursor:pointer;transition:background .15s}
-.mcal-btn:hover{background:var(--wt)}
-.mcal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:0 10px 10px}
-.mcal-hd{text-align:center;font-size:8px;color:var(--ink4);padding:2px 0}
-.mcal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:10px;border-radius:50%;cursor:pointer;transition:all .15s;color:var(--ink4);position:relative}
-.mcal-day:hover{background:var(--wt);color:var(--ink)}
-.mcal-day.today{background:var(--cobalt);color:#fff;font-weight:600}
-.mcal-day.has::after{content:'';width:3px;height:3px;background:var(--amber);border-radius:50%;position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
-.mcal-day.today.has::after{background:rgba(255,255,255,.7)}
-.cal-evs{border-top:1px solid var(--border);padding:8px 14px}
-.cal-ev{display:flex;gap:7px;padding:5px 0;border-bottom:1px solid var(--border)}
-.cal-ev:last-child{border-bottom:none}
-.cev-t{font-size:9px;color:var(--ink4);width:34px;flex-shrink:0;padding-top:1px}
-.cev-bar{width:2px;background:var(--blue2);border-radius:1px;flex-shrink:0;min-height:20px}
-.cev-bar.g{background:var(--green)}
-.cev-i{flex:1;min-width:0}
-.cev-n{font-size:11px;font-weight:500}
-.cev-m{font-size:9px;color:var(--ink4);margin-top:1px}
-
-/* ══ SHEET ══ */
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:60;display:none;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.ov.on{display:block}
-.sheet{
-  position:fixed;bottom:0;left:0;right:0;z-index:61;
-  background:var(--s2);border-top:1px solid var(--border2);
-  border-radius:22px 22px 0 0;
-  padding:16px 18px calc(36px + env(safe-area-inset-bottom,0px));
-  max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.2,.64,1)
-}
-.sheet.on{transform:translateY(0)}
-.sh-handle{width:34px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px}
-.sh-title{font-size:17px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px}
-.sh-sub{font-size:12px;color:var(--ink4);margin-bottom:14px;display:flex;gap:6px;flex-wrap:wrap}
-.sh-tag{background:var(--wt);border:1px solid var(--border);border-radius:6px;padding:2px 8px;font-size:10px}
-.info-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
-.info-row:last-child{border-bottom:none}
-.info-lb{color:var(--ink4);width:84px;flex-shrink:0;font-size:11px;padding-top:1px}
-.info-val{flex:1;line-height:1.5;color:var(--ink2)}
-
-/* ══ TOAST / SPIN / EMPTY ══ */
-.spin{width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;flex-shrink:0}
-@keyframes rot{to{transform:rotate(360deg)}}
-.empty{text-align:center;padding:28px 0;color:var(--ink4);font-size:12px}
-.toast{
-  position:fixed;bottom:20px;left:50%;
-  transform:translateX(-50%) translateY(100px);
-  background:var(--s3);border:1px solid var(--border2);border-radius:12px;
-  padding:11px 18px;font-size:13px;max-width:300px;text-align:center;
-  transition:transform .3s cubic-bezier(.34,1.4,.64,1);z-index:100
-}
-.toast.on{transform:translateX(-50%) translateY(0)}
-.toast.ok{border-color:rgba(45,212,160,.35);color:var(--green)}
-.toast.er{border-color:rgba(240,107,107,.35);color:var(--red)}
-
-/* ══ TOPBAR MÓVIL ══ */
-.topbar{
-  display:none;position:fixed;top:0;left:0;right:0;z-index:30;
-  background:rgba(5,14,29,.97);border-bottom:1px solid var(--border);
-  padding:12px 14px;align-items:center;gap:10px;
-  padding-top:calc(12px + env(safe-area-inset-top,0));
-  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)
-}
-.topbar-title{font-size:13px;font-weight:600;flex:1}
-.menu-btn{background:none;border:none;padding:5px;color:var(--ink3)}
-.menu-btn svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
-
-/* BNAV móvil */
-.bnav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:29;background:rgba(5,14,29,.97);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)}
-.bni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 2px;background:none;border:none;color:var(--ink4);font-size:8px;cursor:pointer;transition:color .15s}
-.bni svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none}
-.bni.on{color:var(--blue2)}
-
-.sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:19}
-
-/* ══ RESPONSIVE ══ */
-@media(max-width:1100px){.pln-layout{grid-template-columns:260px 1fr}.g-main{grid-template-columns:1fr 260px}}
-@media(max-width:900px){.pln-layout{grid-template-columns:1fr;grid-template-rows:auto 1fr}.pln-right{border-radius:var(--r);border-left:1px solid var(--border)}.g-main{grid-template-columns:1fr}.citas-layout{grid-template-columns:1fr}}
-@media(max-width:680px){
-  .app{flex-direction:column}
-  .sidebar{width:240px;position:fixed;top:0;left:0;bottom:0;transform:translateX(-100%);transition:transform .26s ease;border-right:1px solid var(--border2)}
-  .sidebar.open{transform:translateX(0)}
-  .sb-ov.on{display:block}
-  .main{margin-top:calc(50px + env(safe-area-inset-top,0));padding-bottom:60px}
-  .main .page{padding:14px 14px 30px}
-  .topbar{display:flex}
-  .bnav{display:flex}
-  .g4{grid-template-columns:1fr 1fr}
-  .pln-layout{height:auto}
-}
-@media(max-width:400px){.g4{grid-template-columns:1fr}}
-</style>
+    /* Responsive */
+    @media(max-width:768px){
+      .sidebar{position:fixed;inset:0 auto 0 0;transform:translateX(-100%)}
+      .sidebar.open{transform:translateX(0)}
+      .topbar{display:flex}
+      .bnav{display:block}
+      .main{padding-bottom:70px}
+      .page{padding:16px}
+      .pln-layout{flex-direction:column}
+      .dp{position:fixed;inset:auto 0 0 0;width:100%;border-radius:24px 24px 0 0;max-height:82vh;z-index:300}
+    }
+  </style>
 </head>
 <body>
-<div class="app">
 
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <div class="sb-top">
-    <div class="sb-brand">
-      <div class="sb-ico">
-        <img src="/logo.png" onerror="this.style.display='none';this.parentNode.innerHTML='<span class=sb-ico-fb>LP</span>'">
-      </div>
-      <div>
-        <div class="sb-bname">La Presentación</div>
-        <div class="sb-bsub">COORDINACIÓN</div>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-mark">SP</div>
+      <div class="sb-brand">
+        <strong>SIPRESC</strong>
+        <span>Coordinación</span>
       </div>
     </div>
-    <div class="sb-user">
-      <div class="sb-dot"></div>
-      <div style="flex:1;min-width:0">
-        <div class="sb-uname" id="sb-nombre">—</div>
-        <div class="sb-urol">COORDINADORA</div>
-      </div>
-    </div>
-  </div>
-  <nav class="sb-nav">
-    <div class="sb-sec">Principal</div>
-    <button class="ni on" onclick="goPage('inicio',this)" id="ni-inicio">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Inicio
-    </button>
-    <div class="sb-sec">Académico</div>
-    <button class="ni" onclick="goPage('planeaciones',this)" id="ni-planeaciones">
-      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
-      Planeaciones
-      <span class="ni-badge a" id="nb-pln">—</span>
-    </button>
-    <button class="ni" onclick="goPage('citas',this)" id="ni-citas">
-      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      Citas
-      <span class="ni-badge b" id="nb-citas">—</span>
-    </button>
-  </nav>
-  <div class="sb-foot">
-    <button class="sb-logout" onclick="doLogout()">Cerrar sesión</button>
-  </div>
-</aside>
-<div class="sb-ov" id="sb-ov" onclick="closeSB()"></div>
-
-<!-- TOPBAR MÓVIL -->
-<header class="topbar">
-  <button class="menu-btn" onclick="toggleSB()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-  <div class="topbar-title" id="top-title">Inicio</div>
-</header>
-
-<!-- MAIN -->
-<main class="main">
-
-  <!-- ══ INICIO ══ -->
-  <div class="page on" id="p-inicio">
-    <div class="ph">
-      <div>
-        <div class="ph-title" id="saludo">Buenos días</div>
-        <div class="ph-sub" id="fecha-hoy">—</div>
-      </div>
-      <div class="ph-right">
-        <button class="btn" onclick="cargarTodo()">
-          <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-          Actualizar
+    <nav class="sb-nav">
+      <button class="sb-item on" onclick="goPage('inicio',this)">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Inicio
+      </button>
+      <button class="sb-item" onclick="goPage('planeaciones',this)">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Planeaciones
+        <span class="sb-dot" id="sb-pend" style="display:none">0</span>
+      </button>
+      <button class="sb-item" onclick="goPage('citas',this)">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Citas
+      </button>
+      <button class="sb-item" onclick="goPage('docentes',this)">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Docentes
+      </button>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-av" id="sb-av">??</div>
+        <div class="sb-ui">
+          <strong id="sb-name">Cargando…</strong>
+          <span>Coordinadora</span>
+        </div>
+        <button class="sb-logout" onclick="doLogout()" title="Cerrar sesión">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
       </div>
     </div>
+  </aside>
 
-    <div class="g4">
-      <div class="sc c-r">
-        <div class="sc-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-        <div class="sc-n" id="s-pend">—</div>
-        <div class="sc-l">Sin entregar hoy</div>
-        <div class="sc-d dd">Semana activa</div>
-      </div>
-      <div class="sc c-a">
-        <div class="sc-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div>
-        <div class="sc-n" id="s-ajust">—</div>
-        <div class="sc-l">Con ajustes</div>
-        <div class="sc-d" style="background:var(--amber-t);color:var(--amber)">Esperando corrección</div>
-      </div>
-      <div class="sc c-g">
-        <div class="sc-ico"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg></div>
-        <div class="sc-n" id="s-apro">—</div>
-        <div class="sc-l">Aprobadas</div>
-        <div class="sc-d du" id="s-apro-pct">Semana activa</div>
-      </div>
-      <div class="sc c-b">
-        <div class="sc-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
-        <div class="sc-n" id="s-citas">—</div>
-        <div class="sc-l">Citas hoy</div>
-        <div class="sc-d dm" id="s-citas-sub">—</div>
+  <div class="sb-ov" id="sb-ov" onclick="closeSB()"></div>
+
+  <main class="main">
+
+    <!-- Topbar mobile -->
+    <div class="topbar">
+      <button class="tb-ham" onclick="toggleSB()">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="tb-logo">
+        <div class="tb-mark">SP</div>
+        <span class="tb-title">Coordinación</span>
       </div>
     </div>
 
-    <div class="g-main">
-      <!-- col izq -->
-      <div>
-        <!-- pendientes urgentes -->
-        <div class="card">
-          <div class="ch">
-            <div><div class="ct">Pendientes urgentes</div><div class="cs">Docentes que aún no han entregado</div></div>
-            <button class="ca" onclick="goPage('planeaciones',document.getElementById('ni-planeaciones'))">Ver todas →</button>
-          </div>
-          <div class="cb" id="pend-urgentes"><div class="empty"><div class="spin" style="margin:0 auto 8px"></div></div></div>
-        </div>
+    <!-- INICIO -->
+    <section class="page on" id="page-inicio">
+      <div class="ph">
+        <h1 id="greeting">Buenos días</h1>
+        <p id="today-lbl">Cargando…</p>
+      </div>
 
-        <!-- progreso semana -->
-        <div class="card">
-          <div class="ch">
-            <div><div class="ct">Progreso semana activa</div><div class="cs" id="sem-activa-lbl">—</div></div>
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-ico navy">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           </div>
-          <div class="cb">
-            <div class="pr"><div class="pr-l"><span>Aprobadas</span><span id="p-ap">0</span></div><div class="pr-b"><div class="pr-f" id="f-ap" style="width:0%;background:var(--green)"></div></div></div>
-            <div class="pr"><div class="pr-l"><span>En revisión</span><span id="p-en">0</span></div><div class="pr-b"><div class="pr-f" id="f-en" style="width:0%;background:var(--blue2)"></div></div></div>
-            <div class="pr"><div class="pr-l"><span>Con ajustes</span><span id="p-aj">0</span></div><div class="pr-b"><div class="pr-f" id="f-aj" style="width:0%;background:var(--amber)"></div></div></div>
-            <div class="pr"><div class="pr-l"><span>Sin entregar</span><span id="p-pe">0</span></div><div class="pr-b"><div class="pr-f" id="f-pe" style="width:0%;background:var(--red)"></div></div></div>
-          </div>
+          <div class="kpi-val" id="k-pln">—</div>
+          <div class="kpi-lbl">Planeaciones entregadas</div>
+          <div class="prog-wrap"><div class="prog-fill" id="k-pln-bar"></div></div>
         </div>
-
-        <!-- citas hoy -->
-        <div class="card">
-          <div class="ch">
-            <div class="ct">Citas de hoy</div>
-            <button class="ca" onclick="goPage('citas',document.getElementById('ni-citas'))">Ver todas →</button>
+        <div class="kpi">
+          <div class="kpi-ico gold">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </div>
-          <div class="cb" id="citas-hoy-list"><div class="empty">Cargando...</div></div>
+          <div class="kpi-val" id="k-rev">—</div>
+          <div class="kpi-lbl">Pendientes de revisión</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-ico green">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="kpi-val" id="k-citas">—</div>
+          <div class="kpi-lbl">Citas hoy</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-ico purple">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="kpi-val" id="k-doc">—</div>
+          <div class="kpi-lbl">Docentes activos</div>
         </div>
       </div>
 
-      <!-- col der: mini calendario -->
-      <div>
-        <div class="card">
-          <div class="mcal-nav">
-            <button class="mcal-btn" onclick="navCal(-1)">‹</button>
-            <span class="mcal-tit" id="cal-tit">—</span>
-            <button class="mcal-btn" onclick="navCal(1)">›</button>
-          </div>
-          <div class="mcal-grid" id="cal-grid"></div>
-          <div class="cal-evs" id="cal-evs">
-            <div style="font-size:10px;color:var(--ink4);text-align:center;padding:4px 0">Toca un día</div>
-          </div>
+      <div class="cal-card">
+        <div class="cal-head">
+          <span class="cal-month" id="cal-month">—</span>
+          <span class="cal-sem" id="cal-sem-lbl">—</span>
         </div>
+        <div class="cal-days" id="cal-days"></div>
       </div>
+
+      <div class="stitle">Alertas</div>
+      <div class="alert-list" id="alert-list">
+        <div class="spin-wrap"><div class="spin"></div> Cargando…</div>
+      </div>
+    </section>
+
+    <!-- PLANEACIONES -->
+    <section class="page" id="page-planeaciones">
+      <div class="ph">
+        <h1>Planeaciones</h1>
+        <p id="pln-sub">Periodo 2</p>
+      </div>
+
+      <div class="tab-bar" id="tab-bar">
+        <button class="tab-btn on" id="tab-s5" onclick="selSemana('SEMANA 5',this)">Semana 5</button>
+      </div>
+
+      <div class="chips">
+        <button class="chip on" id="chip-todos" onclick="filtrar('todos',this)">Todos<span class="chip-c" id="cc-todos"></span></button>
+        <button class="chip" id="chip-enviada" onclick="filtrar('enviada',this)">Enviadas<span class="chip-c" id="cc-enviada"></span></button>
+        <button class="chip" id="chip-pendiente" onclick="filtrar('pendiente',this)">Sin revisar<span class="chip-c" id="cc-pendiente"></span></button>
+        <button class="chip" id="chip-ajustes" onclick="filtrar('ajustes',this)">Con ajustes<span class="chip-c" id="cc-ajustes"></span></button>
+        <button class="chip" id="chip-aprobada" onclick="filtrar('aprobada',this)">Aprobadas<span class="chip-c" id="cc-aprobada"></span></button>
+      </div>
+
+      <div class="pln-layout">
+        <div class="pln-list-col" id="pln-list">
+          <div class="spin-wrap"><div class="spin"></div> Cargando planeaciones…</div>
+        </div>
+        <div class="dp" id="dp"></div>
+      </div>
+    </section>
+
+    <!-- CITAS -->
+    <section class="page" id="page-citas">
+      <div class="ph">
+        <h1>Citas</h1>
+        <p id="citas-sub">Hoy</p>
+      </div>
+      <div class="stitle" style="margin-top:0">Hoy</div>
+      <div id="citas-hoy"><div class="spin-wrap"><div class="spin"></div></div></div>
+      <div class="stitle">Próximas</div>
+      <div id="citas-prox"><div class="spin-wrap"><div class="spin"></div></div></div>
+    </section>
+
+    <!-- DOCENTES -->
+    <section class="page" id="page-docentes">
+      <div class="ph">
+        <h1>Docentes</h1>
+        <p>Estado de entrega — semana activa</p>
+      </div>
+      <div id="doc-list"><div class="spin-wrap"><div class="spin"></div> Cargando…</div></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Bottom nav mobile -->
+<div class="bnav">
+  <div class="bnav-items">
+    <button class="bnav-item on" onclick="goPage('inicio',this)" data-p="inicio">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inicio
+    </button>
+    <button class="bnav-item" onclick="goPage('planeaciones',this)" data-p="planeaciones">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Planeaciones
+    </button>
+    <button class="bnav-item" onclick="goPage('citas',this)" data-p="citas">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Citas
+    </button>
+    <button class="bnav-item" onclick="goPage('docentes',this)" data-p="docentes">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Docentes
+    </button>
+  </div>
+</div>
+
+<!-- Mobile detail overlay -->
+<div class="dp-ov" id="dp-ov" onclick="cerrarPanel()"></div>
+
+<!-- Modal ajustes -->
+<div class="modal-ov" id="modal-adj">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Solicitar ajustes</div>
+    <label class="mo"><input type="checkbox" value="Errores ortográficos y redacción"><span class="mo-text">Errores ortográficos y redacción</span></label>
+    <label class="mo"><input type="checkbox" value="Indicador semanal no coherente o incompleto"><span class="mo-text">Indicador semanal no coherente o incompleto</span></label>
+    <label class="mo"><input type="checkbox" value="Falta claridad en actividades"><span class="mo-text">Falta claridad en actividades</span></label>
+    <label class="mo"><input type="checkbox" value="Evaluación (quiz, taller) sin indicar tema o criterio"><span class="mo-text">Evaluación (quiz, taller) sin indicar tema o criterio</span></label>
+    <label class="mo"><input type="checkbox" value="Falta secuencia lógica entre tema, actividades e indicador"><span class="mo-text">Falta secuencia lógica entre tema, actividades e indicador</span></label>
+    <label class="mo"><input type="checkbox" value="La actividad debe ser más descriptiva"><span class="mo-text">La actividad debe ser más descriptiva</span></label>
+    <label class="mo"><input type="checkbox" value="Otro"><span class="mo-text">Otro</span></label>
+    <textarea class="modal-ta" id="modal-obs" placeholder="Observación adicional (opcional)…"></textarea>
+    <div class="modal-acts">
+      <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-send" id="btn-send-adj" onclick="enviarAjustes()">Enviar ajustes</button>
     </div>
   </div>
+</div>
 
-  <!-- ══ PLANEACIONES ══ -->
-  <div class="page" id="p-planeaciones">
-    <div class="ph">
-      <div>
-        <div class="ph-title">Planeaciones</div>
-        <div class="ph-sub">Revisión y aprobación semanal</div>
-      </div>
-      <div class="ph-right">
-        <a href="/planeaciones/" class="btn btn-p">Módulo completo →</a>
-      </div>
-    </div>
-
-    <!-- Selector de semanas -->
-    <div class="sem-tabs" id="sem-tabs"></div>
-
-    <!-- Layout lista + detalle -->
-    <div class="pln-layout">
-      <!-- Lista docentes -->
-      <div class="pln-left">
-        <div class="pln-left-header">
-          <span class="pln-left-title" id="pln-list-title">Docentes</span>
-          <span class="pln-left-cnt" id="pln-list-cnt">—</span>
-        </div>
-        <div class="pln-filters">
-          <button class="pf on" onclick="filtrarPln('todos',this)">Todos</button>
-          <button class="pf" onclick="filtrarPln('pendiente',this)">Sin entregar</button>
-          <button class="pf" onclick="filtrarPln('enviada',this)">En revisión</button>
-          <button class="pf" onclick="filtrarPln('ajustes',this)">Con ajustes</button>
-          <button class="pf" onclick="filtrarPln('aprobada',this)">Aprobadas</button>
-        </div>
-        <div class="pln-list" id="pln-docentes"></div>
-      </div>
-
-      <!-- Detalle -->
-      <div class="pln-right" id="pln-right">
-        <div class="pln-detail-empty">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <p>Selecciona un docente</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ CITAS ══ -->
-  <div class="page" id="p-citas">
-    <div class="ph">
-      <div>
-        <div class="ph-title">Citas con padres</div>
-        <div class="ph-sub">Agenda y seguimiento</div>
-      </div>
-    </div>
-    <div class="g4" style="margin-bottom:16px">
-      <div class="sc c-b"><div class="sc-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div class="sc-n" id="c-total">—</div><div class="sc-l">Total período</div></div>
-      <div class="sc c-g"><div class="sc-ico"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg></div><div class="sc-n" id="c-conf">—</div><div class="sc-l">Confirmadas</div></div>
-      <div class="sc c-a"><div class="sc-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div class="sc-n" id="c-hoy">—</div><div class="sc-l">Hoy</div></div>
-      <div class="sc c-r"><div class="sc-ico"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><div class="sc-n" id="c-can">—</div><div class="sc-l">Canceladas</div></div>
-    </div>
-    <div class="citas-layout">
-      <div>
-        <!-- Filtros -->
-        <div class="sem-tabs" style="margin-bottom:12px">
-          <button class="sem-tab on" onclick="filtrarCitas('todas',this)">Todas</button>
-          <button class="sem-tab" onclick="filtrarCitas('confirmada',this)">Confirmadas</button>
-          <button class="sem-tab" onclick="filtrarCitas('hoy',this)">Hoy</button>
-          <button class="sem-tab" onclick="filtrarCitas('proximas',this)">Próximas</button>
-          <button class="sem-tab" onclick="filtrarCitas('cancelada',this)">Canceladas</button>
-        </div>
-        <div class="card">
-          <div class="cb" id="citas-list"><div class="empty">Cargando...</div></div>
-        </div>
-      </div>
-      <div>
-        <div class="card">
-          <div class="mcal-nav">
-            <button class="mcal-btn" onclick="navCal2(-1)">‹</button>
-            <span class="mcal-tit" id="cal2-tit">—</span>
-            <button class="mcal-btn" onclick="navCal2(1)">›</button>
-          </div>
-          <div class="mcal-grid" id="cal2-grid"></div>
-          <div class="cal-evs" id="cal2-evs"><div style="font-size:10px;color:var(--ink4);text-align:center;padding:4px 0">Toca un día</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</main>
-
-<!-- BNAV MÓVIL -->
-<nav class="bnav">
-  <button class="bni on" onclick="goPage('inicio',document.getElementById('ni-inicio'));bnavOn(this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Inicio</button>
-  <button class="bni" onclick="goPage('planeaciones',document.getElementById('ni-planeaciones'));bnavOn(this)"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Planes</button>
-  <button class="bni" onclick="goPage('citas',document.getElementById('ni-citas'));bnavOn(this)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Citas</button>
-</nav>
-
-<!-- Sheet cita detalle -->
-<div class="ov" id="cita-ov" onclick="closeCita()"></div>
-<div class="sheet" id="cita-sheet"><div class="sh-handle"></div><div id="cita-content"></div></div>
-
-<div class="toast" id="toast"></div>
-
+<script src="/js/core.js"></script>
 <script>
-// ══════════════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════════════
-const API = '/api/proxy';
-const API_PLN = '/api/planeaciones';
-const MOTIVOS_AJUSTE = [
-  'Errores ortográficos y de redacción',
-  'Indicador semanal no coherente o incompleto',
-  'Falta claridad en las actividades',
-  'Evaluación (quiz, taller) sin indicar tema o criterio',
-  'Falta secuencia lógica entre tema, actividades e indicador',
-  'La actividad debe ser más descriptiva',
-  'Otro'
-];
+const D = {
+  raw: null,
+  plns: [],
+  citas: [],
+  docs: [],
+  semana: getSemanaActualLabel(),
+  semSel: getSemanaActualLabel(),
+  filtro: 'todos',
+  selPln: null,
+};
 
-let ST = {correo:null,nombre:null,rol:null};
-let DATA = {citas:[],planeaciones:[],docentes:[]};
-let calDate = new Date(), calDate2 = new Date();
-let PLN_SEM_SEL = null, PLN_FILTRO = 'todos', PLN_DOC_SEL = null;
-let motSeleccionados = new Set();
+verificarAcceso(['coordinador','admin']).then(u => {
+  const nom = u.nombre || ST.nombre || '';
+  $('sb-name').textContent = nom;
+  $('sb-av').textContent = iniciales(nom);
 
-const $ = id => document.getElementById(id);
-const pad = n => String(n).padStart(2,'0');
-const fmtISO = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-const fmtFecha = f => {if(!f)return'';const p=f.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+  const h = new Date().getHours();
+  const sal = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
+  $('greeting').textContent = sal + ', ' + (nom.split(' ')[0] || 'Coordinadora');
 
-function api(action,payload){
-  return new Promise((res,rej)=>{
-    const body={action,...(payload||{})};
-    if(ST.correo)body.correo=ST.correo;
-    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
-      .then(r=>r.json()).then(res).catch(rej);
-  });
-}
+  const now = new Date();
+  const DIAS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  $('today-lbl').textContent = DIAS[now.getDay()] + ', ' + now.getDate() + ' de ' + MESES[now.getMonth()] + ' de ' + now.getFullYear();
 
-function apiPln(accion,params){
-  return new Promise((res,rej)=>{
-    const p=new URLSearchParams({accion,correo:ST.correo,...(params||{})});
-    fetch(API_PLN+'?'+p.toString()).then(r=>r.json()).then(res).catch(rej);
-  });
-}
-
-function toast(msg,tipo){
-  const t=$('toast');t.textContent=msg;t.className='toast on '+(tipo||'');
-  clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',3200);
-}
-
-// ══════════════════════════════════════════════
-// SEMANA ACTIVA
-// ══════════════════════════════════════════════
-function getSemanaActual(){
-  const base=new Date('2026-04-25T12:00:00-05:00');
-  const diff=Math.floor((Date.now()-base.getTime())/(7*24*60*60*1000));
-  return Math.max(1,Math.min(10,((5+diff-1)%10+10)%10+1));
-}
-
-function buildSemanas(){
-  const base=new Date('2026-01-19');
-  const activa=getSemanaActual();
-  return Array.from({length:10},(_,i)=>{
-    const n=i+1;
-    const ini=new Date(base);ini.setDate(ini.getDate()+(n-1)*7);
-    const fin=new Date(ini);fin.setDate(fin.getDate()+4);
-    const fmt=d=>d.toLocaleDateString('es-CO',{month:'short',day:'numeric'});
-    return{n,id:'SEMANA '+n,label:'Sem '+n,dates:fmt(ini)+'–'+fin.getDate(),activa:n===activa};
-  });
-}
-
-// ══════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded',()=>{
-  const stored=JSON.parse(localStorage.getItem('lp_user')||'{}');
-  if(!stored.correo){window.location.href='/';return;}
-  ST.correo=stored.correo;ST.nombre=stored.nombre||'';ST.rol=stored.rol;
-  if(ST.rol!=='coordinador'){window.location.href='/';return;}
-  renderUI();
+  buildCal();
   cargarTodo();
-  renderCalendario();renderCalendario2();
-  renderSemanaTabs();
-  api('registrarAcceso',{nombre:ST.nombre,rol:ST.rol,modulo:'coordinacion'}).catch(()=>{});
-  setInterval(()=>{cargarTodo();api('registrarAcceso',{nombre:ST.nombre,rol:ST.rol,modulo:'coordinacion'}).catch(()=>{});},120000);
 });
 
-function renderUI(){
-  const nom=ST.nombre||'';
-  $('sb-nombre').textContent=nom;
-  const hora=new Date().getHours();
-  const sal=hora<12?'Buenos días':hora<18?'Buenas tardes':'Buenas noches';
-  $('saludo').textContent=sal+', '+nom.split(' ')[0];
-  $('fecha-hoy').textContent=new Date().toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+function goPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  $('page-' + id).classList.add('on');
+  document.querySelectorAll('.sb-item,.bnav-item').forEach(b => b.classList.remove('on'));
+  if (btn) {
+    btn.classList.add('on');
+    if (btn.classList.contains('sb-item')) {
+      const bn = document.querySelector(`.bnav-item[data-p="${id}"]`);
+      if (bn) bn.classList.add('on');
+    } else {
+      const sb = document.querySelector(`.sb-item[onclick*="'${id}'"]`);
+      if (sb) sb.classList.add('on');
+    }
+  }
+  closeSB();
 }
 
-function cargarTodo(){cargarCitas();cargarPlaneaciones();}
-
-// ══════════════════════════════════════════════
-// PLANEACIONES
-// ══════════════════════════════════════════════
-function cargarPlaneaciones(){
-  apiPln('planeacionesUI').then(res=>{
-    if(!res.ok||!res.data){DATA.planeaciones=[];actualizarUI_pln();return;}
-    DATA.planeaciones=normalizarPlanes(res.data);
-    actualizarUI_pln();
-  }).catch(()=>{DATA.planeaciones=[];actualizarUI_pln();});
+function cargarTodo() {
+  cargarPlaneaciones();
+  cargarCitas();
+  cargarDocentes();
 }
 
-function normalizarPlanes(raw){
-  const out=[];if(!raw||!raw.periodos)return out;
-  const MAP={'Aprobada':'aprobada','Con ajustes':'ajustes','Pendiente':'pendiente','Recibida':'enviada'};
-  Object.values(raw.periodos).forEach(sems=>{
-    Object.entries(sems).forEach(([sem,docs])=>{
-      Object.entries(docs).forEach(([nd,planes])=>{
-        planes.forEach(p=>{
-          out.push({
-            planeacionId:p.id||'',
-            nombreDocente:p.NOMBRE_DOCENTE||nd||'—',
-            asignatura:p.ASIGNATURA||'—',
-            grado:p.GRADO||'—',
-            semana:(p.SEMANA||sem||'').toString().trim().toUpperCase(),
-            estadoRevision:MAP[p.REVISION_COORD]||'pendiente',
-            indicador:p.INDICADOR_SEMANAL||'',
-            obsSemAnt:p.OBSERVACIONES_SEMANA_ANTERIOR||'',
-            d1Tema:p.D1_TEMA||'',d1Act:p.D1_ACTIVIDADES||'',
-            d2Tema:p.D2_TEMA||'',d2Act:p.D2_ACTIVIDADES||'',
-            d3Tema:p.D3_TEMA||'',d3Act:p.D3_ACTIVIDADES||'',
-            d4Tema:p.D4_TEMA||'',d4Act:p.D4_ACTIVIDADES||'',
-            d5Tema:p.D5_TEMA||'',d5Act:p.D5_ACTIVIDADES||'',
-            actComp:p.ACT_COMP_DESCRIPCION||'',
-            obsFamilias:p.OBS_FAMILIAS||'',
-            obsCoord:p.OBS_COORDINACION||'',
-            motivoAjuste:p.MOTIVO_AJUSTE||'',
-          });
-        });
-      });
+function cargarPlaneaciones() {
+  apiPlaneaciones('planeacionesUI', { semana: '' })
+    .then(raw => {
+      D.raw = raw;
+      const s6 = normalizarPlaneaciones(raw, 'SEMANA 6');
+      if (s6.length > 0 && !$('tab-s6')) {
+        const b = document.createElement('button');
+        b.className = 'tab-btn';
+        b.id = 'tab-s6';
+        b.textContent = 'Semana 6';
+        b.onclick = () => selSemana('SEMANA 6', b);
+        $('tab-bar').appendChild(b);
+      }
+      selSemana(D.semana, $('tab-s5'));
+      actualizarKpis();
+    })
+    .catch(() => {
+      $('pln-list').innerHTML = '<div class="empty"><p>Error al cargar planeaciones</p></div>';
+      $('alert-list').innerHTML = '<div class="empty"><p>Error de conexión</p></div>';
     });
+}
+
+function cargarCitas() {
+  api('todasCitas', {}).then(r => {
+    if (!r.ok) return;
+    D.citas = r.citas || [];
+    renderCitas();
+    const hoy = fmtISO(new Date());
+    $('k-citas').textContent = D.citas.filter(c => (c.fecha || c.FECHA || '').startsWith(hoy)).length;
+    actualizarPuntosCalendario();
+  }).catch(() => {});
+}
+
+function cargarDocentes() {
+  api('docentes', {}).then(r => {
+    if (!r.ok) return;
+    D.docs = r.docentes || [];
+    $('k-doc').textContent = D.docs.length;
+    renderDocentes();
+  }).catch(() => {});
+}
+
+function actualizarKpis() {
+  const plns = normalizarPlaneaciones(D.raw, D.semana);
+  const total = D.docs.length || plns.length;
+  const entr = plns.filter(p => p.estadoRevision !== 'pendiente').length;
+  const pendRev = plns.filter(p => p.estadoRevision === 'enviada').length;
+
+  $('k-pln').textContent = entr + (total ? '/' + total : '');
+  setTimeout(() => {
+    $('k-pln-bar').style.width = (total > 0 ? Math.round(entr / total * 100) : 0) + '%';
+  }, 200);
+  $('k-rev').textContent = pendRev;
+
+  const dot = $('sb-pend');
+  if (pendRev > 0) { dot.textContent = pendRev; dot.style.display = ''; }
+  else dot.style.display = 'none';
+
+  renderAlertas(plns);
+  // Refrescar vista de docentes ahora que tenemos planeaciones
+  if (D.docs.length) renderDocentes();
+}
+
+function buildCal() {
+  const now = new Date();
+  const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const DIAS_N = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  $('cal-month').textContent = MESES[now.getMonth()] + ' ' + now.getFullYear();
+  $('cal-sem-lbl').textContent = D.semana.replace('SEMANA ', 'Sem ') + ' · P2';
+
+  const dow = now.getDay();
+  const lunOff = dow === 0 ? -6 : 1 - dow;
+  const lun = new Date(now);
+  lun.setDate(now.getDate() + lunOff);
+
+  const hoy = fmtISO(now);
+  const cont = $('cal-days');
+  cont.innerHTML = '';
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(lun);
+    d.setDate(lun.getDate() + i);
+    const ds = fmtISO(d);
+    const el = document.createElement('div');
+    el.className = 'cal-day' + (ds === hoy ? ' today' : '');
+    el.id = 'cd-' + ds;
+    el.innerHTML = `<span class="cal-dn">${DIAS_N[i]}</span><span class="cal-num">${d.getDate()}</span><span class="cal-dot"></span>`;
+    cont.appendChild(el);
+  }
+}
+
+function actualizarPuntosCalendario() {
+  D.citas.forEach(c => {
+    const f = (c.fecha || c.FECHA || '').substring(0, 10);
+    const el = $('cd-' + f);
+    if (el) el.classList.add('has-cita');
   });
-  return out;
 }
 
-function actualizarUI_pln(){
-  const activa='SEMANA '+getSemanaActual();
-  const d=DATA.planeaciones.filter(x=>x.semana===activa);
-  const T=Math.max(d.length,1);
-  const ap=d.filter(x=>x.estadoRevision==='aprobada').length;
-  const en=d.filter(x=>x.estadoRevision==='enviada').length;
-  const aj=d.filter(x=>x.estadoRevision==='ajustes').length;
-  const pe=d.filter(x=>x.estadoRevision==='pendiente').length;
+function renderAlertas(plns) {
+  const sinEntr = plns.filter(p => p.estadoRevision === 'pendiente');
+  const pendRev = plns.filter(p => p.estadoRevision === 'enviada');
+  const conAdj  = plns.filter(p => p.estadoRevision === 'ajustes');
+  const lst = $('alert-list');
 
-  // Stats inicio
-  $('s-pend').textContent=pe;
-  $('s-ajust').textContent=aj;
-  $('s-apro').textContent=ap;
-  $('s-apro-pct').textContent=Math.round(ap/T*100)+'% completado';
-  $('sem-activa-lbl').textContent=activa;
-  $('nb-pln').textContent=aj+pe||'0';
+  if (!sinEntr.length && !pendRev.length && !conAdj.length) {
+    lst.innerHTML = `<div class="alert-row"><div class="alert-dot green"></div><div class="alert-body"><strong>Todo al día</strong><span>Sin alertas pendientes esta semana</span></div></div>`;
+    return;
+  }
+  let html = '';
+  if (sinEntr.length) {
+    html += `<div class="alert-row"><div class="alert-dot red"></div><div class="alert-body"><strong>${sinEntr.length} docente${sinEntr.length > 1 ? 's' : ''} sin entregar planeación</strong><span>${sinEntr.slice(0,5).map(p => p.nombreDocente).join(', ')}${sinEntr.length > 5 ? ' y ' + (sinEntr.length - 5) + ' más' : ''}</span></div></div>`;
+  }
+  if (pendRev.length) {
+    html += `<div class="alert-row"><div class="alert-dot orange"></div><div class="alert-body"><strong>${pendRev.length} planeación${pendRev.length > 1 ? 'es' : ''} esperando tu revisión</strong><span>${pendRev.map(p => p.nombreDocente).join(', ')}</span></div></div>`;
+  }
+  if (conAdj.length) {
+    html += `<div class="alert-row"><div class="alert-dot orange"></div><div class="alert-body"><strong>${conAdj.length} con ajustes solicitados — en espera de corrección</strong><span>${conAdj.map(p => p.nombreDocente).join(', ')}</span></div></div>`;
+  }
+  lst.innerHTML = html;
+}
 
-  // Barras
-  setBar('p-ap','f-ap',ap,T);setBar('p-en','f-en',en,T);
-  setBar('p-aj','f-aj',aj,T);setBar('p-pe','f-pe',pe,T);
+function selSemana(sem, btn) {
+  D.semSel = sem;
+  document.querySelectorAll('#tab-bar .tab-btn').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  D.plns = normalizarPlaneaciones(D.raw, sem);
+  renderPlns();
+  cerrarPanel();
+}
 
-  // Pendientes urgentes
-  const pend=d.filter(x=>x.estadoRevision==='pendiente'||x.estadoRevision==='ajustes');
-  $('pend-urgentes').innerHTML=pend.length?pend.map(x=>{
-    const est=x.estadoRevision;
-    const av=(x.nombreDocente||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
-    const col=est==='ajustes'?'a':'r';
-    return`<div class="lrow" style="cursor:pointer" onclick="goPage('planeaciones',document.getElementById('ni-planeaciones'));setTimeout(()=>selDocente('${x.planeacionId}'),300)">
-      <div class="lav ${col}">${av}</div>
-      <div class="li"><div class="ln">${x.nombreDocente}</div><div class="lm">${x.asignatura} · ${x.grado}</div></div>
-      <span class="bdg bdg-${col}">${est==='ajustes'?'Con ajustes':'Sin entregar'}</span>
+function filtrar(f, btn) {
+  D.filtro = f;
+  document.querySelectorAll('.chips .chip').forEach(c => c.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  renderPlns();
+}
+
+function renderPlns() {
+  // Actualizar contadores en chips
+  const PRIO = { enviada:0, ajustes:1, pendiente:2, aprobada:3 };
+  ['todos','enviada','pendiente','ajustes','aprobada'].forEach(f => {
+    const el = $('cc-' + f);
+    if (!el) return;
+    const cnt = f === 'todos' ? D.plns.length : D.plns.filter(p => p.estadoRevision === f).length;
+    el.textContent = cnt > 0 ? cnt : '';
+  });
+
+  let lista = D.plns;
+  if (D.filtro !== 'todos') lista = lista.filter(p => p.estadoRevision === D.filtro);
+
+  // Ordenar: enviadas primero (necesitan revisión), luego ajustes, pendiente, aprobadas
+  lista = [...lista].sort((a, b) => (PRIO[a.estadoRevision] ?? 99) - (PRIO[b.estadoRevision] ?? 99));
+
+  const semN = D.semSel.replace('SEMANA ', 'Semana ');
+  $('pln-sub').textContent = `Periodo 2 · ${semN} · ${lista.length} planeación${lista.length !== 1 ? 'es' : ''}`;
+
+  if (!lista.length) {
+    $('pln-list').innerHTML = `<div class="empty"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>Sin planeaciones para este filtro</p></div>`;
+    return;
+  }
+
+  const LBL = { aprobada:'Aprobada', pendiente:'Sin entregar', enviada:'Enviada', ajustes:'Con ajustes' };
+  $('pln-list').innerHTML = lista.map((p, i) => {
+    const hue = hashStr(p.nombreDocente) % 360;
+    return `<div class="pln-row" id="pr-${i}" onclick="verPln(${i})">
+      <div class="pln-av" style="background:hsl(${hue},38%,24%);color:hsl(${hue},55%,78%)">${iniciales(p.nombreDocente)}</div>
+      <div class="pln-inf">
+        <div class="pln-name">${p.nombreDocente}</div>
+        <div class="pln-meta">${p.asignatura} · ${p.grado}</div>
+      </div>
+      <span class="bdg ${p.estadoRevision}">${LBL[p.estadoRevision] || p.estadoRevision}</span>
     </div>`;
-  }).join(''):'<div style="color:var(--green);text-align:center;padding:12px 0;font-size:12px">✓ Todos entregaron esta semana</div>';
-
-  // Si hay una semana seleccionada, re-render lista
-  if(PLN_SEM_SEL) renderPlnLista();
-  else{PLN_SEM_SEL=activa;renderPlnLista();}
-  renderSemanaTabs();
-}
-
-function setBar(lbl,fill,val,total){
-  const l=$(lbl),f=$(fill);
-  if(l)l.textContent=val;
-  if(f)f.style.width=total>0?Math.round(val/total*100)+'%':'0%';
-}
-
-// ══ SEMANA TABS ══
-function renderSemanaTabs(){
-  const tabs=$('sem-tabs');if(!tabs)return;
-  const sems=buildSemanas();
-  const activa='SEMANA '+getSemanaActual();
-  if(!PLN_SEM_SEL)PLN_SEM_SEL=activa;
-
-  tabs.innerHTML=sems.map(s=>{
-    const docs=DATA.planeaciones.filter(d=>d.semana===s.id);
-    const pend=docs.filter(d=>d.estadoRevision==='pendiente').length;
-    const isActiva=s.id===activa;
-    const isSel=PLN_SEM_SEL===s.id;
-    return`<button class="sem-tab ${isSel?'on':''} ${isActiva?'activa-badge':''}"
-      onclick="selSemana('${s.id}')">
-      ${s.label}${pend>0?` <span style="background:rgba(240,107,107,.3);color:var(--red);border-radius:8px;padding:0 5px;font-size:9px;margin-left:3px">${pend}</span>`:''}
-      ${isActiva?'<span style="color:var(--green);font-size:9px;margin-left:3px">●</span>':''}
-    </button>`;
   }).join('');
 }
 
-function selSemana(id){
-  PLN_SEM_SEL=id;PLN_DOC_SEL=null;
-  renderSemanaTabs();renderPlnLista();
-  // Reset detalle
-  $('pln-right').innerHTML=`<div class="pln-detail-empty">
-    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    <p>Selecciona un docente</p>
+function verPln(idx) {
+  let lista = D.plns;
+  if (D.filtro !== 'todos') lista = lista.filter(p => p.estadoRevision === D.filtro);
+  const p = lista[idx];
+  if (!p) return;
+  D.selPln = p;
+
+  document.querySelectorAll('.pln-row').forEach(r => r.classList.remove('sel'));
+  const row = $('pr-' + idx);
+  if (row) row.classList.add('sel');
+
+  const hue = hashStr(p.nombreDocente) % 360;
+  const ap = p.estadoRevision === 'aprobada';
+  const LBL = { aprobada:'Aprobada', pendiente:'Sin entregar', enviada:'Enviada', ajustes:'Con ajustes' };
+
+  let diasHtml = '';
+  const nd = parseInt(p.diasIntensidad) || 5;
+  for (let d = 1; d <= nd; d++) {
+    const t = p['d' + d + 'Tema'], a = p['d' + d + 'Act'];
+    if (t || a) {
+      diasHtml += `<div class="day-block">
+        <div class="day-block-t">Día ${d}</div>
+        ${t ? '<div class="day-block-tema">' + t + '</div>' : ''}
+        ${a ? '<div class="day-block-act">' + a + '</div>' : ''}
+      </div>`;
+    }
+  }
+
+  $('dp').innerHTML = `
+    <div class="dp-head">
+      <div class="dp-teacher">
+        <div class="dp-av" style="background:hsl(${hue},38%,24%);color:hsl(${hue},55%,78%)">${iniciales(p.nombreDocente)}</div>
+        <div style="flex:1;min-width:0">
+          <div class="dp-name">${p.nombreDocente}</div>
+          <div class="dp-sub">${p.asignatura} · ${p.grado}</div>
+        </div>
+        <button class="dp-close" onclick="cerrarPanel()">&#x2715;</button>
+      </div>
+      <span class="bdg ${p.estadoRevision}" style="font-size:13px;padding:5px 12px">${LBL[p.estadoRevision] || p.estadoRevision}</span>
+    </div>
+    <div class="dp-body">
+      ${p.indicador ? '<div class="dp-st">Indicador semanal</div><div class="dp-text">' + p.indicador + '</div>' : ''}
+      ${diasHtml ? '<div class="dp-st">Actividades por día</div>' + diasHtml : ''}
+      ${p.obsFamilias ? '<div class="dp-st">Mensaje a familias</div><div class="dp-text">' + p.obsFamilias + '</div>' : ''}
+      ${p.actComp ? '<div class="dp-st">Actividad complementaria</div><div class="dp-text">' + p.actComp + '</div>' : ''}
+      ${p.grupos ? '<div class="dp-st">Grupos destino</div><div class="dp-text">' + p.grupos + '</div>' : ''}
+      ${!p.indicador && !diasHtml ? '<div class="empty" style="padding:24px"><p>Sin detalle de actividades</p></div>' : ''}
+    </div>
+    <div class="dp-actions">
+      ${ap
+        ? '<div style="width:100%;text-align:center;font-size:14px;color:#1a7d42;font-weight:600">Ya aprobada</div>'
+        : '<button class="btn-ok" id="dp-btn-ok" onclick="aprobar()">Aprobar</button><button class="btn-adj" id="dp-btn-adj" onclick="abrirModal()">Con ajustes</button>'
+      }
+    </div>`;
+
+  $('dp').classList.add('on');
+  if (window.innerWidth <= 768) $('dp-ov').classList.add('on');
+}
+
+function cerrarPanel() {
+  $('dp').classList.remove('on');
+  $('dp-ov').classList.remove('on');
+  document.querySelectorAll('.pln-row').forEach(r => r.classList.remove('sel'));
+  D.selPln = null;
+}
+
+function aprobar() {
+  const p = D.selPln;
+  if (!p) return;
+  const ok = $('dp-btn-ok'), adj = $('dp-btn-adj');
+  if (!ok) return;
+
+  // Primer clic: armar confirmación inline
+  if (!ok.dataset.armed) {
+    ok.dataset.armed = '1';
+    ok.textContent = 'Confirmar aprobación';
+    ok.style.background = '#1a7d42';
+    if (adj) { adj.textContent = 'Cancelar'; adj.onclick = desarmarAprobar; }
+    ok._autoCancel = setTimeout(desarmarAprobar, 5000);
+    return;
+  }
+
+  // Segundo clic: ejecutar
+  clearTimeout(ok._autoCancel);
+  desarmarAprobar();
+  ok.disabled = true; ok.textContent = 'Guardando…';
+  if (adj) adj.disabled = true;
+
+  apiPlaneacionesPost({
+    accion: 'revisarPlaneacion',
+    planeacionId: p.planeacionId,
+    revision: 'Aprobada',
+    motivoAjuste: '',
+    obsCoordinacion: '',
+  }).then(r => {
+    if (r && r.ok === false) {
+      toast(r.mensaje || 'Error al aprobar', 'er');
+      if (ok) { ok.disabled = false; ok.textContent = 'Aprobar'; }
+      if (adj) { adj.disabled = false; adj.textContent = 'Con ajustes'; adj.onclick = abrirModal; }
+    } else {
+      toast('Planeacion aprobada', 'ok');
+      p.estadoRevision = 'aprobada';
+      renderPlns();
+      actualizarKpis();
+      cerrarPanel();
+    }
+  }).catch(() => {
+    toast('Error de conexión', 'er');
+    if (ok) { ok.disabled = false; ok.textContent = 'Aprobar'; }
+    if (adj) { adj.disabled = false; adj.textContent = 'Con ajustes'; adj.onclick = abrirModal; }
+  });
+}
+
+function desarmarAprobar() {
+  const ok = $('dp-btn-ok'), adj = $('dp-btn-adj');
+  if (ok) { ok.dataset.armed = ''; ok.textContent = 'Aprobar'; ok.style.background = ''; ok.disabled = false; }
+  if (adj) { adj.textContent = 'Con ajustes'; adj.onclick = abrirModal; adj.disabled = false; }
+}
+
+function abrirModal() {
+  const p = D.selPln;
+  const titulo = $('modal-adj').querySelector('.modal-title');
+  if (titulo) titulo.textContent = p ? 'Ajustes para ' + p.nombreDocente : 'Solicitar ajustes';
+  $('modal-adj').classList.add('on');
+}
+function cerrarModal() {
+  $('modal-adj').querySelector('.modal-title').textContent = 'Solicitar ajustes';
+  $('modal-adj').classList.remove('on');
+}
+
+function enviarAjustes() {
+  const p = D.selPln;
+  if (!p) return;
+  const sel = [...document.querySelectorAll('#modal-adj input[type=checkbox]:checked')].map(c => c.value);
+  const obs = $('modal-obs').value.trim();
+  if (!sel.length && !obs) { toast('Selecciona al menos una razón', ''); return; }
+
+  const btn = $('btn-send-adj');
+  btn.disabled = true; btn.textContent = 'Enviando…';
+
+  apiPlaneacionesPost({
+    accion: 'revisarPlaneacion',
+    planeacionId: p.planeacionId,
+    revision: 'Con ajustes',
+    motivoAjuste: sel.join(' | '),
+    obsCoordinacion: obs,
+  }).then(r => {
+    if (r && r.ok === false) {
+      toast(r.mensaje || 'Error al enviar', 'er');
+    } else {
+      toast('Ajustes enviados al docente', 'ok');
+      p.estadoRevision = 'ajustes';
+      cerrarModal();
+      document.querySelectorAll('#modal-adj input[type=checkbox]').forEach(c => c.checked = false);
+      $('modal-obs').value = '';
+      renderPlns();
+      actualizarKpis();
+      cerrarPanel();
+    }
+    btn.disabled = false; btn.textContent = 'Enviar ajustes';
+  }).catch(() => {
+    toast('Error de conexión', 'er');
+    btn.disabled = false; btn.textContent = 'Enviar ajustes';
+  });
+}
+
+function renderCitas() {
+  const hoy = fmtISO(new Date());
+  const hoyList  = D.citas.filter(c => (c.fecha || c.FECHA || '').startsWith(hoy));
+  const proxList = D.citas.filter(c => (c.fecha || c.FECHA || '').substring(0,10) > hoy).slice(0,10);
+
+  const now = new Date();
+  const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  $('citas-sub').textContent = 'Hoy, ' + now.getDate() + ' de ' + MESES[now.getMonth()];
+
+  $('citas-hoy').innerHTML = hoyList.length
+    ? hoyList.map(c => citaHtml(c, false)).join('')
+    : '<div class="empty"><p>Sin citas programadas para hoy</p></div>';
+
+  $('citas-prox').innerHTML = proxList.length
+    ? proxList.map(c => citaHtml(c, true)).join('')
+    : '<div class="empty"><p>Sin citas próximas</p></div>';
+}
+
+function citaHtml(c, showDate) {
+  const hora  = c.hora  || c.HORA  || '';
+  const nom   = c.nombre || c.NOMBRE || c.NOMBRE_ACUDIENTE || '—';
+  const tipo  = c.tipo  || c.TIPO  || c.MOTIVO || '';
+  const estado = c.estado || c.ESTADO || '';
+  const fecha  = (c.fecha || c.FECHA || '').substring(0, 10);
+  const prefix = showDate && fecha ? fmtFecha(fecha) + ' ' : '';
+  return `<div class="cita-row">
+    <div class="cita-time">${prefix}${hora}</div>
+    <div class="cita-sep"></div>
+    <div class="cita-inf">
+      <div class="cita-name">${nom}</div>
+      <div class="cita-desc">${tipo}</div>
+    </div>
+    ${estado ? '<span class="bdg enviada" style="font-size:11px">' + estado + '</span>' : ''}
   </div>`;
 }
 
-function filtrarPln(f,el){
-  PLN_FILTRO=f;
-  document.querySelectorAll('.pf').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');
-  renderPlnLista();
-}
+function renderDocentes() {
+  const plns = D.raw ? normalizarPlaneaciones(D.raw, D.semana) : [];
+  const plnMap = {};
+  plns.forEach(p => {
+    if (!plnMap[p.nombreDocente]) plnMap[p.nombreDocente] = [];
+    plnMap[p.nombreDocente].push(p);
+  });
 
-function renderPlnLista(){
-  let docs=DATA.planeaciones.filter(d=>d.semana===PLN_SEM_SEL);
-  if(PLN_FILTRO!=='todos')docs=docs.filter(d=>(d.estadoRevision||'pendiente')===PLN_FILTRO);
-  docs.sort((a,b)=>a.nombreDocente.localeCompare(b.nombreDocente));
-
-  $('pln-list-title').textContent=PLN_SEM_SEL||'—';
-  $('pln-list-cnt').textContent=docs.length+' docente'+(docs.length!==1?'s':'');
-
-  const LABELS={aprobada:'Aprobada',enviada:'En revisión',ajustes:'Con ajustes',pendiente:'Sin entregar'};
-  const BC={aprobada:'g',enviada:'b',ajustes:'a',pendiente:'r'};
-
-  $('pln-docentes').innerHTML=docs.length?docs.map(d=>{
-    const est=d.estadoRevision||'pendiente';
-    const av=(d.nombreDocente||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
-    const isSel=PLN_DOC_SEL===d.planeacionId;
-    return`<div class="pln-item ${isSel?'sel':''}" onclick="selDocente('${d.planeacionId}')">
-      <div class="pln-item-av lav ${BC[est]}">${av}</div>
-      <div class="pln-item-info">
-        <div class="pln-item-nombre">${d.nombreDocente}</div>
-        <div class="pln-item-meta">${d.asignatura} · ${d.grado}</div>
-      </div>
-      <div class="pln-item-est"><span class="bdg bdg-${BC[est]}">${LABELS[est]}</span></div>
-    </div>`;
-  }).join(''):`<div class="empty" style="padding:32px 20px">Sin planeaciones${PLN_FILTRO!=='todos'?' para este filtro':' esta semana'}</div>`;
-}
-
-function selDocente(pid){
-  PLN_DOC_SEL=pid;
-  renderPlnLista();
-  const d=DATA.planeaciones.find(x=>x.planeacionId===pid);
-  if(!d){$('pln-right').innerHTML=`<div class="pln-detail-empty"><p>No encontrado</p></div>`;return;}
-  renderPlnDetalle(d);
-}
-
-function renderPlnDetalle(d){
-  const est=d.estadoRevision||'pendiente';
-  const LABELS={aprobada:'Aprobada',enviada:'En revisión',ajustes:'Con ajustes',pendiente:'Sin entregar'};
-  const BC={aprobada:'bdg-g',enviada:'bdg-b',ajustes:'bdg-a',pendiente:'bdg-r'};
-
-  const clases=[];
-  for(let i=1;i<=5;i++){
-    const t=d[`d${i}Tema`],a=d[`d${i}Act`];
-    if(t||a)clases.push({n:i,t,a});
+  if (!D.docs.length) {
+    $('doc-list').innerHTML = '<div class="empty"><p>Sin docentes registrados</p></div>';
+    return;
   }
 
-  const sinContenido=est==='pendiente';
-
-  $('pln-right').innerHTML=`
-    <div class="pln-detail-header">
-      <div style="flex:1;min-width:0">
-        <div class="pln-detail-nombre">${d.nombreDocente}</div>
-        <div class="pln-detail-meta">
-          <span class="bdg bdg-x">${d.asignatura}</span>
-          <span class="bdg bdg-x">${d.grado}</span>
-          <span class="bdg bdg-x">${d.semana}</span>
-          <span class="bdg ${BC[est]}">${LABELS[est]}</span>
-        </div>
+  const LBL = { aprobada:'Aprobada', pendiente:'Sin entregar', enviada:'Enviada', ajustes:'Con ajustes' };
+  $('doc-list').innerHTML = D.docs.map(doc => {
+    const nom  = doc.nombre || doc.NOMBRE || '—';
+    const area = doc.area   || doc.AREA   || doc.asignatura || '';
+    const hue  = hashStr(nom) % 360;
+    const dp   = plnMap[nom] || [];
+    const est  = dp.length ? dp[0].estadoRevision : 'pendiente';
+    return `<div class="doc-row">
+      <div class="doc-av" style="background:hsl(${hue},38%,24%);color:hsl(${hue},55%,78%)">${iniciales(nom)}</div>
+      <div class="doc-inf">
+        <div class="doc-name">${nom}</div>
+        <div class="doc-area">${area}</div>
       </div>
-    </div>
-
-    <div class="pln-detail-body">
-      ${sinContenido?`<div class="empty" style="padding:40px 0">
-        <div style="font-size:32px;margin-bottom:8px">📭</div>
-        <div>Este docente aún no ha entregado la planeación</div>
-      </div>`:`
-        ${d.indicador?`<div class="pln-sec"><div class="pln-sec-lbl">Indicador de desempeño</div><div class="pln-sec-val">${d.indicador}</div></div>`:''}
-        ${d.obsSemAnt?`<div class="pln-sec"><div class="pln-sec-lbl">Observaciones semana anterior</div><div class="pln-sec-val">${d.obsSemAnt}</div></div>`:''}
-        ${clases.length?`<div class="pln-sec"><div class="pln-sec-lbl">Clases</div>
-          ${clases.map(c=>`<div class="clase-block">
-            <div class="clase-n">Clase ${c.n}</div>
-            ${c.t?`<div class="clase-row"><div class="clase-lb">Tema</div><div class="clase-val">${c.t}</div></div>`:''}
-            ${c.a?`<div class="clase-row"><div class="clase-lb">Actividades</div><div class="clase-val">${c.a}</div></div>`:''}
-          </div>`).join('')}
-        </div>`:''}
-        ${d.actComp?`<div class="pln-sec"><div class="pln-sec-lbl">Actividad complementaria</div><div class="pln-sec-val">${d.actComp}</div></div>`:''}
-        ${d.obsFamilias?`<div class="pln-sec"><div class="pln-sec-lbl">Comunicación a familias</div><div class="pln-sec-val">${d.obsFamilias}</div></div>`:''}
-        ${d.obsCoord?`<div class="pln-sec"><div class="pln-sec-lbl" style="color:var(--amber)">Observación coordinación</div><div class="pln-sec-val" style="border-left:2px solid var(--amber);padding-left:10px">${d.obsCoord}</div></div>`:''}
-      `}
-
-      <!-- Form ajustes inline -->
-      <div class="ajustes-form" id="ajustes-form">
-        <div class="ajustes-title">Selecciona los motivos del ajuste</div>
-        <div class="motivos-grid">
-          ${MOTIVOS_AJUSTE.map((m,i)=>`<button class="motivo-opt" onclick="toggleMotivo(${i},this)" data-motivo="${m}">
-            <div class="motivo-check"><svg viewBox="0 0 12 12"><polyline points="2 6 5 9 10 3"/></svg></div>
-            <span class="motivo-txt">${m}</span>
-          </button>`).join('')}
-        </div>
-        <textarea class="ajustes-obs" id="ajustes-obs" placeholder="Observación para el docente (opcional, pero recomendado)..." rows="3"></textarea>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button class="btn btn-a" style="flex:1;justify-content:center" onclick="enviarAjustes('${d.planeacionId}')">
-            Enviar ajustes al docente
-          </button>
-          <button class="btn" onclick="cerrarAjustes()">Cancelar</button>
-        </div>
+      <div class="doc-right">
+        <span class="bdg ${est}">${LBL[est] || est}</span>
+        ${dp.length > 1 ? '<span class="doc-count">' + dp.length + ' asignaturas</span>' : ''}
       </div>
-    </div>
-
-    <div class="pln-detail-actions">
-      ${est!=='aprobada'&&!sinContenido?`
-        <button class="btn btn-g" onclick="aprobarPlaneacion('${d.planeacionId}')">
-          <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-          Aprobar
-        </button>
-        <button class="btn btn-a" id="btn-ajustes-toggle" onclick="abrirAjustes()">
-          Enviar ajustes
-        </button>
-      `:''}
-      ${est==='aprobada'?`<div style="font-size:11px;color:var(--green);display:flex;align-items:center;gap:5px"><svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M20 6L9 17l-5-5"/></svg>Planeación aprobada</div>`:''}
     </div>`;
-
-  motSeleccionados.clear();
+  }).join('');
 }
-
-function toggleMotivo(idx,el){
-  const m=MOTIVOS_AJUSTE[idx];
-  if(motSeleccionados.has(m)){motSeleccionados.delete(m);el.classList.remove('sel');}
-  else{motSeleccionados.add(m);el.classList.add('sel');}
-}
-
-function abrirAjustes(){
-  const f=$('ajustes-form');if(!f)return;
-  f.classList.add('on');
-  f.scrollIntoView({behavior:'smooth',block:'nearest'});
-  $('btn-ajustes-toggle').style.display='none';
-}
-function cerrarAjustes(){
-  const f=$('ajustes-form');if(f)f.classList.remove('on');
-  const b=$('btn-ajustes-toggle');if(b)b.style.display='';
-  motSeleccionados.clear();
-  document.querySelectorAll('.motivo-opt').forEach(el=>el.classList.remove('sel'));
-}
-
-function aprobarPlaneacion(pid){
-  const btn=document.querySelector('#pln-right .btn-g');
-  if(btn){btn.innerHTML='<span class="spin"></span>';btn.disabled=true;}
-  api('aprobarPlaneacion',{planeacionId:pid,quien:ST.correo}).then(r=>{
-    if(r.ok){
-      const d=DATA.planeaciones.find(x=>x.planeacionId===pid);
-      if(d)d.estadoRevision='aprobada';
-      toast('Planeación aprobada ✔','ok');
-      renderPlnDetalle(d);renderPlnLista();actualizarUI_pln();
-    }else toast(r.mensaje||'Error','er');
-  }).catch(()=>toast('Error de conexión','er'));
-}
-
-function enviarAjustes(pid){
-  if(motSeleccionados.size===0){toast('Selecciona al menos un motivo','er');return;}
-  const obs=($('ajustes-obs')&&$('ajustes-obs').value||'').trim();
-  const motivo=Array.from(motSeleccionados).join(' | ');
-  const btn=document.querySelector('#ajustes-form .btn-a');
-  if(btn){btn.innerHTML='<span class="spin"></span>';btn.disabled=true;}
-  api('ajustesPlaneacion',{planeacionId:pid,motivo,obs,quien:ST.correo}).then(r=>{
-    if(r.ok){
-      const d=DATA.planeaciones.find(x=>x.planeacionId===pid);
-      if(d){d.estadoRevision='ajustes';d.obsCoord=obs;d.motivoAjuste=motivo;}
-      toast('Ajustes enviados al docente','ok');
-      cerrarAjustes();renderPlnDetalle(d);renderPlnLista();actualizarUI_pln();
-    }else toast(r.mensaje||'Error','er');
-  }).catch(()=>toast('Error de conexión','er'));
-}
-
-// ══════════════════════════════════════════════
-// CITAS
-// ══════════════════════════════════════════════
-function cargarCitas(){
-  api('todasCitas',{filtros:{}}).then(citas=>{
-    DATA.citas=Array.isArray(citas)?citas:[];
-    actualizarUI_citas();
-  }).catch(()=>{});
-}
-
-function actualizarUI_citas(){
-  const hoy=fmtISO(new Date());
-  const conf=DATA.citas.filter(c=>c.estado==='confirmada');
-  const hoyC=DATA.citas.filter(c=>c.fecha===hoy);
-  const can=DATA.citas.filter(c=>c.estado==='cancelada');
-
-  $('s-citas').textContent=hoyC.length;
-  $('s-citas-sub').textContent=hoyC.filter(c=>c.estado==='confirmada').length+' confirmadas';
-  $('nb-citas').textContent=hoyC.length||'0';
-  $('c-total').textContent=DATA.citas.length;
-  $('c-conf').textContent=conf.length;
-  $('c-hoy').textContent=hoyC.length;
-  $('c-can').textContent=can.length;
-
-  renderCitasHoy();
-  renderCitasList('todas');
-  renderCalendario();renderCalendario2();
-}
-
-function renderCitasHoy(){
-  const hoy=fmtISO(new Date());
-  const ch=DATA.citas.filter(c=>c.fecha===hoy).sort((a,b)=>a.horaInicio.localeCompare(b.horaInicio)).slice(0,5);
-  $('citas-hoy-list').innerHTML=ch.length?ch.map(c=>{
-    const b=c.estado==='confirmada'?'g':'r';
-    return`<div class="lrow">
-      <div class="lav ${b}" style="font-size:11px">${c.horaInicio}</div>
-      <div class="li"><div class="ln">${c.padreNombre||''} ${c.padreApellido||''}</div><div class="lm">${c.docenteNombre||''} · ${c.grado||''}</div></div>
-      <span class="bdg bdg-${b}">${c.estado==='confirmada'?'✓':c.estado}</span>
-    </div>`;
-  }).join(''):'<div class="empty">Sin citas para hoy</div>';
-}
-
-function filtrarCitas(f,el){
-  document.querySelectorAll('#p-citas .sem-tab').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');renderCitasList(f);
-}
-
-function renderCitasList(f){
-  const hoy=fmtISO(new Date());
-  let citas=[...DATA.citas];
-  if(f==='confirmada')citas=citas.filter(c=>c.estado==='confirmada');
-  else if(f==='cancelada')citas=citas.filter(c=>c.estado==='cancelada');
-  else if(f==='hoy')citas=citas.filter(c=>c.fecha===hoy);
-  else if(f==='proximas')citas=citas.filter(c=>c.fecha>=hoy&&c.estado==='confirmada');
-  citas.sort((a,b)=>(a.fecha+a.horaInicio).localeCompare(b.fecha+b.horaInicio));
-
-  $('citas-list').innerHTML=citas.length?citas.map(c=>{
-    const b=c.estado==='confirmada'?'g':'r';
-    return`<div class="lrow" style="cursor:pointer" onclick="verCita('${c.id}')">
-      <div class="lav ${b}">${c.horaInicio||'—'}</div>
-      <div class="li">
-        <div class="ln">${c.padreNombre||''} ${c.padreApellido||''}</div>
-        <div class="lm">${c.docenteNombre||''} · ${c.grado||''} · ${fmtFecha(c.fecha)}</div>
-      </div>
-      <span class="bdg bdg-${b}">${c.estado==='confirmada'?'Confirmada':c.estado}</span>
-    </div>`;
-  }).join(''):'<div class="empty">Sin citas para este filtro</div>';
-}
-
-function verCita(id){
-  const c=DATA.citas.find(x=>x.id===id);if(!c)return;
-  $('cita-content').innerHTML=`
-    <div class="sh-title">${c.padreNombre||''} ${c.padreApellido||''}</div>
-    <div class="sh-sub">
-      <span class="sh-tag">${fmtFecha(c.fecha)}</span>
-      <span class="sh-tag">${c.horaInicio} – ${c.horaFin}</span>
-      <span class="bdg bdg-${c.estado==='confirmada'?'g':'r'}">${c.estado}</span>
-    </div>
-    <div class="info-row"><span class="info-lb">Docente</span><span class="info-val">${c.docenteNombre||'—'}</span></div>
-    <div class="info-row"><span class="info-lb">Estudiante</span><span class="info-val">${c.estudianteNombre||'—'}</span></div>
-    <div class="info-row"><span class="info-lb">Grado</span><span class="info-val">${c.grado||'—'}</span></div>
-    <div class="info-row"><span class="info-lb">Correo</span><span class="info-val" style="font-size:11px;word-break:break-all">${c.padreCorreo||'—'}</span></div>
-    <div class="info-row"><span class="info-lb">Teléfono</span><span class="info-val">${c.padreTelefono||'—'}</span></div>
-    <div class="info-row"><span class="info-lb">Motivo</span><span class="info-val">${c.motivos||'—'}</span></div>
-    ${c.estado==='cancelada'?`<div class="info-row"><span class="info-lb">Cancelación</span><span class="info-val">${c.notasCancelacion||'—'}</span></div>`:''}
-    <div style="margin-top:16px">
-      <button class="btn" style="width:100%;justify-content:center" onclick="closeCita()">Cerrar</button>
-    </div>`;
-  $('cita-ov').classList.add('on');$('cita-sheet').classList.add('on');
-}
-function closeCita(){$('cita-ov').classList.remove('on');$('cita-sheet').classList.remove('on');}
-
-// ══════════════════════════════════════════════
-// CALENDARIOS
-// ══════════════════════════════════════════════
-function renderCalBase(y,m,gridId,titId,onClick){
-  const meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  $(titId).textContent=meses[m]+' '+y;
-  const hoy=new Date();hoy.setHours(0,0,0,0);
-  let pd=new Date(y,m,1).getDay();pd=pd===0?6:pd-1;
-  const dim=new Date(y,m+1,0).getDate();
-  const dias=['L','M','X','J','V','S','D'];
-  let html=dias.map(d=>`<div class="mcal-hd">${d}</div>`).join('');
-  for(let i=0;i<pd;i++)html+='<div></div>';
-  for(let d=1;d<=dim;d++){
-    const f=new Date(y,m,d);f.setHours(0,0,0,0);
-    const fs=fmtISO(f);
-    const isHoy=f.getTime()===hoy.getTime();
-    const has=Array.isArray(DATA.citas)&&DATA.citas.some(c=>c.fecha===fs&&c.estado!=='cancelada');
-    html+=`<div class="mcal-day${isHoy?' today':''}${has?' has':''}" onclick="${onClick}('${fs}')">${d}</div>`;
-  }
-  $(gridId).innerHTML=html;
-}
-function renderCalendario(){renderCalBase(calDate.getFullYear(),calDate.getMonth(),'cal-grid','cal-tit','calClick');}
-function renderCalendario2(){renderCalBase(calDate2.getFullYear(),calDate2.getMonth(),'cal2-grid','cal2-tit','calClick2');}
-function navCal(d){calDate.setMonth(calDate.getMonth()+d);renderCalendario();}
-function navCal2(d){calDate2.setMonth(calDate2.getMonth()+d);renderCalendario2();}
-
-function calClickBase(fecha,evsId){
-  const evs=(Array.isArray(DATA.citas)?DATA.citas:[]).filter(c=>c.fecha===fecha&&c.estado!=='cancelada').sort((a,b)=>a.horaInicio.localeCompare(b.horaInicio));
-  $(evsId).innerHTML=evs.length?evs.slice(0,4).map(e=>`<div class="cal-ev">
-    <div class="cev-t">${e.horaInicio}</div>
-    <div class="cev-bar ${e.estado==='confirmada'?'g':''}"></div>
-    <div class="cev-i"><div class="cev-n">${e.padreNombre||''} ${e.padreApellido||''}</div><div class="cev-m">${e.docenteNombre||''}</div></div>
-  </div>`).join('')+(evs.length>4?`<div style="font-size:9px;color:var(--ink4);padding:3px 0">+${evs.length-4} más</div>`:'')
-  :`<div style="font-size:10px;color:var(--ink4);text-align:center;padding:5px 0">Sin citas</div>`;
-}
-function calClick(f){calClickBase(f,'cal-evs');}
-function calClick2(f){calClickBase(f,'cal2-evs');}
-
-// ══════════════════════════════════════════════
-// NAV
-// ══════════════════════════════════════════════
-const TITLES={inicio:'Inicio',planeaciones:'Planeaciones',citas:'Citas'};
-function goPage(id,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
-  const p=$('p-'+id);if(p)p.classList.add('on');
-  if(el)el.classList.add('on');
-  $('top-title').textContent=TITLES[id]||id;
-  closeSB();
-  if(id==='planeaciones'&&!PLN_SEM_SEL){PLN_SEM_SEL='SEMANA '+getSemanaActual();renderPlnLista();}
-}
-function bnavOn(el){document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
-function toggleSB(){$('sidebar').classList.toggle('open');$('sb-ov').classList.toggle('on');}
-function closeSB(){$('sidebar').classList.remove('open');$('sb-ov').classList.remove('on');}
-function doLogout(){localStorage.removeItem('lp_user');window.location.href='/';}
 </script>
 </body>
 </html>
