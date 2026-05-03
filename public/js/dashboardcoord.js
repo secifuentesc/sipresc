@@ -1432,23 +1432,34 @@ if (!planeacionId) {
     if (state.view === "docentes") renderDocentes();
   }
 
+   function ocultarSplashCoord() {
+  const splash = document.getElementById("coordSplash");
+  if (!splash) return;
+
+  splash.classList.add("fade-out");
+
+  setTimeout(() => {
+    splash.style.display = "none";
+  }, 550);
+}
+
   async function cargarDashboard() {
-    paintHeaderUser();
-    paintPeriodLabel();
-    buildWeekSelect();
-    renderSemana();
+  paintHeaderUser();
+  paintPeriodLabel();
+  buildWeekSelect();
+  renderSemana();
 
-    // Citas en paralelo (son útiles en KPI "Citas hoy")
-    ensureCitas();
+  // Citas en paralelo porque alimentan el KPI "Citas de hoy".
+  ensureCitas();
 
-    const data = await cargarPlaneacionesCoordinacion();
-    renderInicio(data);
-    renderPlnRoot();
+  const data = await cargarPlaneacionesCoordinacion();
+  renderInicio(data);
+  renderPlnRoot();
 
-    // Quitar bootloader
-    $("#coordBoot").setAttribute("aria-hidden", "true");
-    document.body.dataset.loading = "false";
-  }
+  // Quitar splash inicial.
+  ocultarSplashCoord();
+  document.body.dataset.loading = "false";
+}
 
   /* ------------------------------------------------------
      EVENTOS GLOBALES
