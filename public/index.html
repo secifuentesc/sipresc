@@ -52,19 +52,19 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
   height:78px;
   border-radius:24px;
   background:
-    linear-gradient(145deg, rgba(30,77,183,.96), rgba(15,38,87,.98)),
-    #0f2657;
+    radial-gradient(circle at 35% 18%, rgba(255,255,255,.12), transparent 32%),
+    linear-gradient(145deg, #102a5f 0%, #0b1d42 52%, #07152f 100%);
   display:flex;
   align-items:center;
   justify-content:center;
   margin-bottom:22px;
   position:relative;
   z-index:1;
-  border:1px solid rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.12);
   box-shadow:
-    0 24px 70px rgba(0,0,0,.48),
-    0 0 0 1px rgba(255,255,255,.07) inset,
-    0 0 38px rgba(30,77,183,.38);
+    0 28px 80px rgba(0,0,0,.58),
+    0 0 0 1px rgba(255,255,255,.045) inset,
+    0 0 36px rgba(26,66,138,.34);
   overflow:hidden;
   animation:loginLogoFloat 2.8s ease-in-out infinite;
 }
@@ -127,12 +127,12 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
       0 0 38px rgba(30,77,183,.38);
   }
   50%{
-    transform:translateY(-5px);
-    box-shadow:
-      0 32px 82px rgba(0,0,0,.56),
-      0 0 0 1px rgba(255,255,255,.09) inset,
-      0 0 52px rgba(30,77,183,.5);
-  }
+  transform:translateY(-5px);
+  box-shadow:
+    0 34px 90px rgba(0,0,0,.66),
+    0 0 0 1px rgba(255,255,255,.07) inset,
+    0 0 48px rgba(26,66,138,.42);
+}
 }
 
 /* Card glassmorphism */
@@ -915,13 +915,15 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
   
 
 <!-- LOGIN -->
-<div class="lp-logo">
-  <img src="/logo.png" class="logo-img"
-    onerror="this.style.display='none';this.parentNode.innerHTML='<span style=&quot;color:#fff;font-size:34px;font-weight:800;font-family:-apple-system,sans-serif&quot;>S</span>'">
-</div>
+<div id="s-login" class="screen">
+  <div class="lp-logo">
+    <img src="/logo.png" class="logo-img"
+      onerror="this.style.display='none';this.parentNode.innerHTML='<span style=&quot;color:#fff;font-size:34px;font-weight:800;font-family:-apple-system,sans-serif&quot;>S</span>'">
+  </div>
 
-<div class="lp-title">SIPRESC</div>
-<div class="lp-sub">Sistema Institucional de Gestión Académica</div>
+  <div class="lp-title">SIPRESC</div>
+  <div class="lp-sub">Sistema Institucional de Gestión Académica</div>
+
 
   <div class="lp-card">
     <div class="lp-info">Ingreso al sistema institucional</div>
