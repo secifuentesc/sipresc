@@ -1473,3 +1473,53 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   outline: 2px solid var(--c-azul);
   outline-offset: 2px;
 }
+
+
+.coord-plan-self{
+  height:38px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:0 14px;
+  border-radius:999px;
+  text-decoration:none;
+  color:var(--c-azul-oscuro);
+  background:rgba(255,255,255,.72);
+  border:1px solid rgba(33,20,95,.10);
+  box-shadow:
+    0 10px 24px rgba(33,20,95,.08),
+    inset 0 1px 0 rgba(255,255,255,.8);
+  font-size:12.5px;
+  font-weight:700;
+  letter-spacing:-.1px;
+  white-space:nowrap;
+  transition:transform .16s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease;
+}
+
+.coord-plan-self svg{
+  width:17px;
+  height:17px;
+  flex-shrink:0;
+}
+
+.coord-plan-self:hover{
+  transform:translateY(-1px);
+  background:#fff;
+  border-color:rgba(33,20,95,.18);
+  box-shadow:
+    0 14px 30px rgba(33,20,95,.12),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.coord-plan-self:active{
+  transform:scale(.98);
+}
+
+@media (max-width: 760px){
+  .coord-plan-self{
+    width:100%;
+    height:42px;
+    margin-top:4px;
+  }
+}
