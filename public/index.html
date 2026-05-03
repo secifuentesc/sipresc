@@ -1613,6 +1613,19 @@ async function verificarCodigoLogin(){
   mostrarSplashDocente('Preparando panel');
 
   setTimeout(() => {
+  if (r.rol === 'coordinador') {
+    window.location.href = '/dashboardcoord/';
+    return;
+  }
+
+  if (r.rol === 'admin') {
+    window.location.href = '/dashboardadmin/';
+    return;
+  }
+
+  mostrarSplashDocente('Preparando panel');
+
+  setTimeout(() => {
     iniciarApp();
 
     setTimeout(() => {
