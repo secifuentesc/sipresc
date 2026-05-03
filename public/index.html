@@ -1235,8 +1235,10 @@ if(MODO_DOCENTE){
 }
 
   if(MODO_DOCENTE){
-  loadMisCitas();
-  loadHorarios();
+  if(ST.docenteId){
+    loadMisCitas();
+    loadHorarios();
+  }
 } else {
   loadDash();
 
