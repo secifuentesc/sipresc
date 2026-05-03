@@ -662,6 +662,57 @@ tr:hover td { background: var(--surface-2); }
   .filter-tab { white-space: nowrap; }
   .docentes-grid { grid-template-columns: 1fr; }
 }
+
+.week-calendar {
+  margin-bottom: 20px;
+}
+
+.week-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.week-days {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.week-day {
+  min-width: 60px;
+  padding: 10px 8px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.week-day:hover {
+  background: var(--surface-3);
+}
+
+.week-day.active {
+  background: var(--brand);
+  color: white;
+  border-color: var(--brand);
+  box-shadow: 0 4px 12px rgba(26,66,138,0.3);
+}
+
+.week-day span {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.week-day strong {
+  font-size: 16px;
+  font-weight: 700;
+}
 </style>
 </head>
 <body>
@@ -753,8 +804,9 @@ tr:hover td { background: var(--surface-2); }
 
       <!-- Welcome card -->
       <div class="welcome-card anim-in">
-        <h2 id="welcomeTitle">Buenos días, Coordinación 👋</h2>
-        <p id="welcomeDate">Cargando fecha…</p>
+        <h2 id="welcomeTitle"></h2>
+<p id="welcomeDate"></p>
+<p id="welcomePriority" style="margin-top:6px; font-weight:600;"></p>
         <div class="welcome-card-actions">
           <button class="btn-white-solid" onclick="navTo('planeaciones')">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -781,6 +833,18 @@ tr:hover td { background: var(--surface-2); }
           <div class="kpi-label">Planeaciones de la semana</div>
           <div class="prog-bar"><div class="prog-fill" id="progTotal" style="width:0%"></div></div>
         </div>
+
+        <div class="week-calendar">
+
+  <div class="week-header">
+
+    <span id="weekLabel"></span>
+
+  </div>
+
+  <div class="week-days" id="weekDays"></div>
+
+</div>
 
         <div class="kpi-card kpi-c-green anim-in">
           <div class="kpi-top">
@@ -1037,9 +1101,12 @@ async function cargarDashboard() {
   const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   const h = hoy.getHours();
   const saludo = h < 12 ? 'Buenos días' : h < 18 ? 'Buenas tardes' : 'Buenas noches';
-  document.getElementById('welcomeTitle').textContent = `${saludo}, Coordinación 👋`;
+  const nombre = "Coordinación"; // luego lo puedes hacer dinámico
+
+document.getElementById('welcomeTitle').textContent = `${saludo}, ${nombre} 👋`;
   document.getElementById('welcomeDate').textContent =
     `${dias[hoy.getDay()]} ${hoy.getDate()} de ${meses[hoy.getMonth()]} de ${hoy.getFullYear()}`;
+  document.getElementById('welcomePriority').textContent = getPrioridad();
 
   const [rP, rC] = await Promise.all([
     apiPlaneaciones('/api/planeaciones/semana'),
@@ -1049,7 +1116,7 @@ async function cargarDashboard() {
   if (rC?.data?.length) todasCitas = rC.data;
   if (!planeacionesUI.length) cargarDemo();
 
-  renderKPIs();
+  renderSemana();
   renderAlertas();
   renderCitasHoy();
   renderDocentesAten();
@@ -1345,6 +1412,58 @@ function toggleSidebar() {
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
+}
+
+function getPrioridad(){
+  const pendientes = planeacionesUI.filter(p => p.estado === 'pendiente').length;
+  const ajustes = planeacionesUI.filter(p => p.estado === 'ajustes').length;
+
+  if(pendientes > 0){
+    return `Hoy debes revisar ${pendientes} planeaciones pendientes`;
+  }
+
+  if(ajustes > 0){
+    return `Tienes ${ajustes} planeaciones con ajustes`;
+  }
+
+  return `Todo está al día. Excelente trabajo`;
+}
+
+function renderSemana() {
+  const hoy = new Date();
+  const dia = hoy.getDay();
+
+  const inicioSemana = new Date(hoy);
+  inicioSemana.setDate(hoy.getDate() - dia + 1);
+
+  const dias = ['L','M','X','J','V'];
+  let html = '';
+
+  for(let i=0; i<5; i++){
+    const fecha = new Date(inicioSemana);
+    fecha.setDate(inicioSemana.getDate() + i);
+
+    const esHoy = fecha.toDateString() === hoy.toDateString();
+
+    html += `
+      <div class="week-day ${esHoy ? 'active' : ''}">
+        <span>${dias[i]}</span>
+        <strong>${fecha.getDate()}</strong>
+      </div>
+    `;
+  }
+
+  document.getElementById('weekDays').innerHTML = html;
+
+  const semana = getSemanaActual();
+  document.getElementById('weekLabel').textContent = `Semana ${semana}`;
+}
+
+function getSemanaActual(){
+  const hoy = new Date();
+  const inicio = new Date(hoy.getFullYear(),0,1);
+  const dias = Math.floor((hoy - inicio) / (1000*60*60*24));
+  return Math.ceil((dias + inicio.getDay()+1)/7);
 }
 
 /* ══════ INIT ══════ */
