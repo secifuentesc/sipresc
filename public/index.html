@@ -46,40 +46,93 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
   pointer-events:none
 }
 
-/* Logo — icono app premium */
+/* Logo — recuadro premium igual a coordinación/docente */
 .lp-logo{
-  width:80px;height:80px;
-  border-radius:22px;
-  background:linear-gradient(145deg,#1c3f7a 0%,#2046a0 50%,#1a3890 100%);
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:20px;position:relative;z-index:1;
+  width:78px;
+  height:78px;
+  border-radius:24px;
+  background:
+    linear-gradient(145deg, rgba(30,77,183,.96), rgba(15,38,87,.98)),
+    #0f2657;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:22px;
+  position:relative;
+  z-index:1;
+  border:1px solid rgba(255,255,255,.18);
   box-shadow:
-    0 20px 50px rgba(20,50,160,.5),
-    0 4px 12px rgba(0,0,0,.4),
-    inset 0 1px 0 rgba(255,255,255,.2),
-    inset 0 -1px 0 rgba(0,0,0,.2);
-  overflow:hidden
+    0 24px 70px rgba(0,0,0,.48),
+    0 0 0 1px rgba(255,255,255,.07) inset,
+    0 0 38px rgba(30,77,183,.38);
+  overflow:hidden;
+  animation:loginLogoFloat 2.8s ease-in-out infinite;
 }
-.lp-logo::after{
-  content:'';position:absolute;
-  top:0;left:0;right:0;height:50%;
-  background:linear-gradient(180deg,rgba(255,255,255,.12) 0%,transparent 100%);
-  border-radius:22px 22px 0 0
-}
-.logo-img{width:48px;filter:brightness(10);position:relative;z-index:1}
 
-/* Títulos */
+.lp-logo::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.14) 0%, transparent 48%),
+    radial-gradient(circle at 50% 20%, rgba(255,255,255,.16), transparent 42%);
+  pointer-events:none;
+}
+
+.logo-img{
+  width:48px;
+  height:48px;
+  object-fit:contain;
+  filter:brightness(10);
+  position:relative;
+  z-index:1;
+}
+
+/* Títulos premium */
 .lp-title{
   font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
-  font-size:26px;font-weight:700;letter-spacing:-.6px;
-  color:#ffffff;margin-bottom:5px;text-align:center;
-  position:relative;z-index:1
+  font-size:27px;
+  font-weight:800;
+  letter-spacing:7px;
+  text-indent:7px;
+  color:#ffffff;
+  margin-bottom:7px;
+  text-align:center;
+  position:relative;
+  z-index:1;
+  text-shadow:0 10px 28px rgba(0,0,0,.36);
 }
+
 .lp-sub{
-  font-size:13px;color:rgba(255,255,255,.28);
-  margin-bottom:38px;text-align:center;
+  font-size:11px;
+  color:rgba(255,255,255,.46);
+  margin-bottom:38px;
+  text-align:center;
   font-family:-apple-system,'Helvetica Neue',sans-serif;
-  position:relative;z-index:1;letter-spacing:.2px
+  position:relative;
+  z-index:1;
+  letter-spacing:2.4px;
+  text-transform:uppercase;
+  font-weight:600;
+  max-width:320px;
+  line-height:1.45;
+}
+
+@keyframes loginLogoFloat{
+  0%,100%{
+    transform:translateY(0);
+    box-shadow:
+      0 24px 70px rgba(0,0,0,.48),
+      0 0 0 1px rgba(255,255,255,.07) inset,
+      0 0 38px rgba(30,77,183,.38);
+  }
+  50%{
+    transform:translateY(-5px);
+    box-shadow:
+      0 32px 82px rgba(0,0,0,.56),
+      0 0 0 1px rgba(255,255,255,.09) inset,
+      0 0 52px rgba(30,77,183,.5);
+  }
 }
 
 /* Card glassmorphism */
@@ -862,16 +915,16 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
   
 
 <!-- LOGIN -->
-<div id="s-login" class="screen">
-  <div class="lp-logo">
-    <img src="/logo.png" class="logo-img"
-      onerror="this.style.display='none';this.parentNode.innerHTML='<span style=&quot;color:#fff;font-size:30px;font-weight:700;font-family:-apple-system,sans-serif&quot;>S</span>'">
-  </div>
-  <div class="lp-title">SIPRESC</div>
-  <div class="lp-sub">La Presentación · Girardota</div>
+<div class="lp-logo">
+  <img src="/logo.png" class="logo-img"
+    onerror="this.style.display='none';this.parentNode.innerHTML='<span style=&quot;color:#fff;font-size:34px;font-weight:800;font-family:-apple-system,sans-serif&quot;>S</span>'">
+</div>
+
+<div class="lp-title">SIPRESC</div>
+<div class="lp-sub">Sistema Institucional de Gestión Académica</div>
 
   <div class="lp-card">
-    <div class="lp-info">Acceso institucional</div>
+    <div class="lp-info">Ingreso al sistema institucional</div>
     <div class="lp-err" id="lerr"></div>
 
     <!-- Step 1: usuario -->
