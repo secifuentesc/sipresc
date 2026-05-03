@@ -1269,3 +1269,49 @@ svg { display: block; flex-shrink: 0; }
 .faltantes-list { list-style: none; margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
 .faltantes-list li { font-size: 0.76rem; color: var(--color-red); padding-left: 12px; position: relative; }
 .faltantes-list li::before { content: '·'; position: absolute; left: 0; }
+
+.admin-plan-btn{
+  height:38px;
+  padding:0 14px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  text-decoration:none;
+  color:rgba(255,255,255,.82);
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.09);
+  font-size:12px;
+  font-weight:500;
+  letter-spacing:-.01em;
+  transition:background .18s ease, border-color .18s ease, transform .18s ease, color .18s ease;
+}
+
+.admin-plan-btn svg{
+  width:16px;
+  height:16px;
+  opacity:.78;
+}
+
+.admin-plan-btn:hover{
+  color:#fff;
+  background:rgba(255,255,255,.085);
+  border-color:rgba(255,255,255,.16);
+  transform:translateY(-1px);
+}
+
+.admin-plan-btn:active{
+  transform:scale(.98);
+}
+
+@media(max-width:768px){
+  .admin-plan-btn{
+    width:38px;
+    padding:0;
+  }
+
+  .admin-plan-btn span{
+    display:none;
+  }
+}s
