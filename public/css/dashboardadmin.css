@@ -1314,10 +1314,12 @@ svg { display: block; flex-shrink: 0; }
   .admin-plan-btn span{
     display:none;
   }
-}s
+}
 
+/* ══════════════════════════════════════
+   SIDEBAR COLAPSADA — FIX ADMIN
+══════════════════════════════════════ */
 
-/* BOTÓN PARA ABRIR/CERRAR SIDEBAR */
 .sidebar-collapse-btn{
   width:32px;
   height:32px;
@@ -1331,6 +1333,7 @@ svg { display: block; flex-shrink: 0; }
   cursor:pointer;
   transition:all .18s ease;
   flex-shrink:0;
+  z-index:60;
 }
 
 .sidebar-collapse-btn svg{
@@ -1344,46 +1347,77 @@ svg { display: block; flex-shrink: 0; }
   color:#fff;
 }
 
-/* Cuando la barra está comprimida, el botón queda visible */
-.sidebar.collapsed .sidebar-collapse-btn{
-  position:absolute;
-  top:16px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:50;
-  background:rgba(255,255,255,.08);
+.sidebar.collapsed{
+  width:var(--sidebar-w-collapsed);
+  min-width:var(--sidebar-w-collapsed);
 }
 
-/* Ocultar textos al comprimir */
+.main-content.sidebar-collapsed{
+  margin-left:var(--sidebar-w-collapsed);
+}
+
+.sidebar.collapsed .sidebar-header{
+  justify-content:center;
+  padding:16px 0 50px;
+  position:relative;
+}
+
+.sidebar.collapsed .sidebar-logo{
+  width:32px;
+  height:32px;
+}
+
+.sidebar.collapsed .sidebar-collapse-btn{
+  position:absolute;
+  top:54px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,.075);
+}
+
+.sidebar.collapsed .sidebar-collapse-btn svg{
+  transform:rotate(180deg);
+}
+
 .sidebar.collapsed .sidebar-brand,
 .sidebar.collapsed .nav-label,
 .sidebar.collapsed .nav-section-label,
 .sidebar.collapsed .sidebar-user-info,
-.sidebar.collapsed .nav-badge{
-  display:none;
-}
-
-/* Centrar elementos al comprimir */
-.sidebar.collapsed .sidebar-header{
-  justify-content:center;
-  padding-top:58px;
+.sidebar.collapsed .nav-badge:not(.live-dot){
+  display:none !important;
 }
 
 .sidebar.collapsed .sidebar-nav{
   align-items:center;
+  padding-top:10px;
 }
 
 .sidebar.collapsed .nav-item{
   justify-content:center;
-  padding-left:0;
-  padding-right:0;
+  width:44px;
+  height:44px;
+  padding:0;
+  margin:4px auto;
+  border-radius:12px;
+}
+
+.sidebar.collapsed .nav-item.active::before{
+  display:none;
 }
 
 .sidebar.collapsed .nav-icon{
   margin:0;
 }
 
-/* Girar icono cuando está comprimida */
-.sidebar.collapsed .sidebar-collapse-btn svg{
-  transform:rotate(180deg);
+.sidebar.collapsed .sidebar-footer{
+  justify-content:center;
+  padding:12px 0;
+}
+
+.sidebar.collapsed .sidebar-user{
+  justify-content:center;
+}
+
+.sidebar.collapsed .sidebar-logout-btn{
+  display:none;
 }
