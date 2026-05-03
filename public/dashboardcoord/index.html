@@ -719,6 +719,15 @@ tr:hover td { background: var(--surface-2); }
   font-weight: 700;
 }
 
+.welcome-card h2 {
+  font-size: 20px;
+}
+
+.welcome-card p {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
 
 </style>
 </head>
@@ -812,19 +821,7 @@ tr:hover td { background: var(--surface-2); }
       <!-- Welcome card -->
       <div class="welcome-card anim-in">
         <h2 id="welcomeTitle"></h2>
-<p id="welcomeDate"></p>
-<p id="welcomePriority" style="margin-top:6px; font-weight:600;"></p>
-        <div class="welcome-card-actions">
-          <button class="btn-white-solid" onclick="navTo('planeaciones')">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            Revisar planeaciones
-          </button>
-          <button class="btn-white" onclick="navTo('citas')">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            Citas de hoy
-          </button>
-        </div>
-        <div class="quick-stats" id="quickStats"></div>
+        <p id="welcomeDate"></p>
       </div>
 
       <!-- KPIs -->
@@ -1106,11 +1103,27 @@ async function cargarDashboard() {
   const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   const h = hoy.getHours();
   const saludo = h < 12 ? 'Buenos días' : h < 18 ? 'Buenas tardes' : 'Buenas noches';
-  const nombre = "Coordinación"; // luego lo puedes hacer dinámico
+  function obtenerNombreUsuario() {
+  const usuarioGuardado = localStorage.getItem("usuario");
+
+  if (usuarioGuardado) {
+    const usuario = JSON.parse(usuarioGuardado);
+    return usuario.nombre.split(" ")[0]; // solo primer nombre
+  }
+
+  return "Usuario";
+}
+
+const nombre = obtenerNombreUsuario();
 
 document.getElementById('welcomeTitle').textContent = `${saludo}, ${nombre} 👋`;
-  document.getElementById('welcomeDate').textContent =
-    `${dias[hoy.getDay()]} ${hoy.getDate()} de ${meses[hoy.getMonth()]} de ${hoy.getFullYear()}`;
+  const hora = hoy.toLocaleTimeString('es-CO', {
+  hour: '2-digit',
+  minute: '2-digit'
+});
+
+document.getElementById('welcomeDate').textContent =
+  `${dias[hoy.getDay()]} ${hoy.getDate()} de ${meses[hoy.getMonth()]} · ${hora}`;
   document.getElementById('welcomePriority').textContent = getPrioridad();
 
   const [rP, rC] = await Promise.all([
