@@ -1179,7 +1179,7 @@ function iniciarApp(){
   if(hf){const d=new Date();hf.textContent=d.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});}
 
   let navs=[];
-const ROL_UI = ST.rol;
+const ROL_UI = MODO_DOCENTE ? 'docente' : ST.rol;
 
 if(ROL_UI === 'docente'){
     navs=[
@@ -1214,14 +1214,16 @@ if(ROL_UI === 'docente'){
   // Admin y coordinadora → dashboard completo
   // Admin y coordinadora entran a su dashboard completo,
 // excepto cuando vienen explícitamente en modo docente.
-if(ST.rol === 'admin'){
-  window.location.href = '/dashboardadmin/';
-  return;
-}
+if(!MODO_DOCENTE){
+  if(ST.rol === 'admin'){
+    window.location.href = '/dashboardadmin/';
+    return;
+  }
 
-if(ST.rol === 'coordinador'){
-  window.location.href = '/dashboardcoord/';
-  return;
+  if(ST.rol === 'coordinador'){
+    window.location.href = '/dashboardcoord/';
+    return;
+  }
 }
 
 $('s-login').classList.remove('on');
@@ -1644,14 +1646,16 @@ async function verificarCodigoLogin(){
 
       setTimeout(() => {
 
-      if(r.rol === 'admin'){
-  window.location.href = '/dashboardadmin/';
-  return;
-}
+      if(!MODO_DOCENTE){
+  if(r.rol === 'admin'){
+    window.location.href = '/dashboardadmin/';
+    return;
+  }
 
-if(r.rol === 'coordinador'){
-  window.location.href = '/dashboardcoord/';
-  return;
+  if(r.rol === 'coordinador'){
+    window.location.href = '/dashboardcoord/';
+    return;
+  }
 }
 
         mostrarSplashDocente('Preparando panel');
@@ -1725,14 +1729,16 @@ function mostrarPantallaInicial(){
           ST.nombre = r.nombre;
           ST.docenteId = r.docenteId;
 
-         if(r.rol === 'admin'){
-  window.location.href = '/dashboardadmin/';
-  return;
-}
+         if(!MODO_DOCENTE){
+  if(r.rol === 'admin'){
+    window.location.href = '/dashboardadmin/';
+    return;
+  }
 
-if(r.rol === 'coordinador'){
-  window.location.href = '/dashboardcoord/';
-  return;
+  if(r.rol === 'coordinador'){
+    window.location.href = '/dashboardcoord/';
+    return;
+  }
 }
 
 iniciarApp();
