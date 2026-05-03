@@ -73,7 +73,7 @@ body{
 }
 .logo-img-top{width:18px;filter:brightness(10)}
 .topbar h1{
-  font-family:-apple-system,\'Helvetica Neue\',sans-serif;
+  font-family:-apple-system,'Helvetica Neue',sans-serif;
   font-size:15px;font-weight:600;letter-spacing:-.2px;
   flex:1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
 }
@@ -829,29 +829,32 @@ const API = "/api/planeaciones";
 
 window.addEventListener("DOMContentLoaded", () => {
   const correo = obtenerCorreo();
-  if(!correo){ window.location.href = "/"; return; }
+
+  if(!correo){
+    window.location.href = "/";
+    return;
+  }
 
   const sesion = obtenerSesion();
   const rolVista = document.getElementById("rolVista");
+
   if(rolVista && sesion?.rol){
     rolVista.textContent = String(sesion.rol).toUpperCase();
   }
 
   ST.correo = correo;
-  cargarMaterias();window.addEventListener("DOMContentLoaded", () => {
-  const correo = obtenerCorreo();
-  if(!correo){ window.location.href = "/"; return; }
 
-  const sesion = obtenerSesion();
-  const rolVista = document.getElementById("rolVista");
-  if(rolVista && sesion?.rol){
-    rolVista.textContent = String(sesion.rol).toUpperCase();
-  }
-
-  ST.correo = correo;
   cargarMaterias();
+
   const cache = localStorage.getItem("lp_user_data");
-  if(cache){ try{ ST.data = JSON.parse(cache); pintarMaterias(ST.data); }catch(e){ console.error(e); } }
+  if(cache){
+    try{
+      ST.data = JSON.parse(cache);
+      pintarMaterias(ST.data);
+    }catch(e){
+      console.error(e);
+    }
+  }
 });
 
 const CACHE_KEY = "materias_cache_v1";
