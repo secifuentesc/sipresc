@@ -1686,16 +1686,26 @@ function mostrarPantallaInicial(){
     api('loginGoogle', { correo: obj.correo })
       .then(r => {
         if(r.ok){
-          ST.rol = r.rol;
-          ST.nombre = r.nombre;
-          ST.docenteId = r.docenteId;
+  ST.rol = r.rol;
+  ST.nombre = r.nombre;
+  ST.docenteId = r.docenteId;
 
-          iniciarApp();
+  if (r.rol === 'coordinador') {
+    window.location.href = '/dashboardcoord/';
+    return;
+  }
 
-          setTimeout(() => {
-            ocultarSplashDocente();
-          }, 450);
-        }else{
+  if (r.rol === 'admin') {
+    window.location.href = '/dashboardadmin/';
+    return;
+  }
+
+  iniciarApp();
+
+  setTimeout(() => {
+    ocultarSplashDocente();
+  }, 450);
+}else{
           localStorage.removeItem('lp_user');
           $('s-login').classList.add('on');
           ocultarSplashDocente();
