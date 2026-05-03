@@ -1221,37 +1221,126 @@ input, select, textarea { font-family: inherit; }
 }
 
 /* =========================================================
-   BOOT LOADER
+   BOOT LOADER — Premium oscuro SIPRESC
    ========================================================= */
 .coord-bootloader {
-  position: fixed; inset: 0; z-index: 300;
-  background: var(--c-white);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 20px;
-  transition: opacity .3s var(--ease);
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(26,66,138,.34) 0%, rgba(26,66,138,.10) 26%, transparent 52%),
+    radial-gradient(circle at 15% 15%, rgba(33,20,95,.35) 0%, transparent 34%),
+    linear-gradient(135deg, #030712 0%, #050816 42%, #071A3D 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  transition: opacity .45s var(--ease), visibility .45s var(--ease);
+  overflow: hidden;
 }
-.coord-bootloader[aria-hidden="true"] { opacity: 0; pointer-events: none; }
-.coord-bootloader img { width: 56px; height: 56px; border-radius: 12px; }
+
+.coord-bootloader::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(255,255,255,.035), transparent),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.05), transparent 42%);
+  opacity: .75;
+  pointer-events: none;
+}
+
+.coord-bootloader[aria-hidden="true"] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Recuadro premium para la S */
+.coord-bootloader img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  padding: 14px;
+  border-radius: 20px;
+  background:
+    linear-gradient(145deg, rgba(26,66,138,.95), rgba(33,20,95,.98)),
+    #0B1742;
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow:
+    0 22px 60px rgba(0,0,0,.42),
+    0 0 0 1px rgba(255,255,255,.06) inset,
+    0 0 34px rgba(26,66,138,.28);
+  animation: coordLogoFloat 2.8s ease-in-out infinite;
+}
+
+.coord-bootloader::after {
+  content: "SIPRESC";
+  display: block;
+  margin-top: 4px;
+  color: #FFFFFF;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 7px;
+  text-indent: 7px;
+  text-shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+
+/* Línea de carga */
 .coord-bootloader__bar {
-  width: 180px; height: 3px;
-  background: var(--c-border-soft);
-  border-radius: 999px; overflow: hidden;
+  width: 190px;
+  height: 3px;
+  margin-top: 2px;
+  background: rgba(255,255,255,.10);
+  border-radius: 999px;
+  overflow: hidden;
   position: relative;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.06);
 }
+
 .coord-bootloader__bar span {
   position: absolute;
-  top: 0; left: 0; bottom: 0;
-  width: 40%;
-  background: linear-gradient(90deg, var(--c-azul) 0%, var(--c-azul-oscuro) 100%);
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 42%;
+  background: linear-gradient(90deg, #21145F 0%, #1A428A 48%, #60A5FA 100%);
   border-radius: 999px;
-  animation: coordLoadBar 1.2s infinite var(--ease);
+  box-shadow: 0 0 18px rgba(96,165,250,.5);
+  animation: coordLoadBar 1.25s infinite var(--ease);
 }
+
+.coord-bootloader p {
+  margin: -4px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.52);
+}
+
 @keyframes coordLoadBar {
-  0%   { transform: translateX(-100%); }
+  0%   { transform: translateX(-110%); }
   100% { transform: translateX(350%); }
 }
-.coord-bootloader p { margin: 0; font-size: 13px; color: var(--c-text-2); }
 
+@keyframes coordLogoFloat {
+  0%, 100% {
+    transform: translateY(0);
+    box-shadow:
+      0 22px 60px rgba(0,0,0,.42),
+      0 0 0 1px rgba(255,255,255,.06) inset,
+      0 0 34px rgba(26,66,138,.28);
+  }
+  50% {
+    transform: translateY(-5px);
+    box-shadow:
+      0 30px 72px rgba(0,0,0,.50),
+      0 0 0 1px rgba(255,255,255,.08) inset,
+      0 0 46px rgba(26,66,138,.42);
+  }
+}
 /* =========================================================
    RESPONSIVE
    ========================================================= */
