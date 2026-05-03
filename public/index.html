@@ -1133,6 +1133,7 @@ const FB_CFG={apiKey:"AIzaSyDJ_9HlZGOG6JSaeD35uzPvvkkWQ0Cbj9k",authDomain:"sipre
 firebase.initializeApp(FB_CFG);
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 const API="/api/proxy";
+const MODO_DOCENTE = new URLSearchParams(window.location.search).get('modo') === 'docente';
 const IS_GAS=typeof google!=='undefined'&&google.script&&google.script.run;
 function api(action,payload){
   return new Promise((resolve,reject)=>{
@@ -1209,9 +1210,14 @@ function iniciarApp(){
 
   // 🆕 Admin → redirige directo al dashboard completo
   // Admin y coordinadora → dashboard completo
+  // Admin y coordinadora entran a su dashboard completo,
+// excepto cuando vienen explícitamente en modo docente.
+if(!MODO_DOCENTE){
   if(ST.rol==='admin') { window.location.href = '/dashboardadmin/'; return; }
   if(ST.rol==='coordinador') { window.location.href = '/dashboardcoord/'; return; }
-  goTab('home',document.getElementById('ni-home'));
+}
+
+goTab('home', document.getElementById('ni-home') || document.querySelector('.ni'));
 
   loadDash();
   if(ST.rol==='docente'){loadMisCitas();loadHorarios();}
@@ -1610,15 +1616,17 @@ async function verificarCodigoLogin(){
 
       setTimeout(() => {
 
-        if(r.rol === 'coordinador'){
-          window.location.href = '/dashboardcoord/';
-          return;
-        }
+        if(!MODO_DOCENTE){
+  if(r.rol === 'coordinador'){
+    window.location.href = '/dashboardcoord/';
+    return;
+  }
 
-        if(r.rol === 'admin'){
-          window.location.href = '/dashboardadmin/';
-          return;
-        }
+  if(r.rol === 'admin'){
+    window.location.href = '/dashboardadmin/';
+    return;
+  }
+}
 
         mostrarSplashDocente('Preparando panel');
 
@@ -1691,17 +1699,19 @@ function mostrarPantallaInicial(){
           ST.nombre = r.nombre;
           ST.docenteId = r.docenteId;
 
-          if(r.rol === 'coordinador'){
-            window.location.href = '/dashboardcoord/';
-            return;
-          }
+          if(!MODO_DOCENTE){
+  if(r.rol === 'coordinador'){
+    window.location.href = '/dashboardcoord/';
+    return;
+  }
 
-          if(r.rol === 'admin'){
-            window.location.href = '/dashboardadmin/';
-            return;
-          }
+  if(r.rol === 'admin'){
+    window.location.href = '/dashboardadmin/';
+    return;
+  }
+}
 
-          iniciarApp();
+iniciarApp();
 
           setTimeout(() => {
             ocultarSplashDocente();
