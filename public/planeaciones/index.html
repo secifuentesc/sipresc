@@ -476,6 +476,57 @@ body{
 }
 
 #paso1{position:relative;z-index:1;overflow:visible}
+/* ── BOTÓN VOLVER AL PANEL ── */
+.back-panel-btn{
+  position:fixed;
+  left:18px;
+  top:72px;
+  z-index:60;
+  height:36px;
+  padding:0 13px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.055);
+  color:rgba(255,255,255,.72);
+  font-family:-apple-system,'Helvetica Neue',sans-serif;
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);
+  box-shadow:0 10px 28px rgba(0,0,0,.22);
+  transition:all .18s ease;
+}
+
+.back-panel-btn svg{
+  width:15px;
+  height:15px;
+}
+
+.back-panel-btn:hover{
+  background:rgba(255,255,255,.09);
+  border-color:rgba(255,255,255,.16);
+  color:#fff;
+  transform:translateY(-1px);
+}
+
+.back-panel-btn:active{
+  transform:scale(.97);
+}
+
+@media(max-width:520px){
+  .back-panel-btn{
+    top:62px;
+    left:14px;
+    height:34px;
+    padding:0 11px;
+    font-size:11px;
+  }
+}
 </style>
 </head>
 <body>
@@ -490,13 +541,20 @@ body{
 
 <!-- TOPBAR Apple glass -->
 <div class="topbar">
-  <a href="/" class="topbar-logo">
+  <a href="javascript:void(0)" onclick="volverPanel()" class="topbar-logo">
     <img src="/logo.png" class="logo-img-top" onerror="this.style.display='none'">
   </a>
   <h1>SIPRESC — Planeaciones</h1>
-  <span class="topbar-rol">DOCENTE</span>
+  <span class="topbar-rol" id="rolVista">DOCENTE</span>
   <button class="logout-btn" onclick="cerrarSesion()">Salir</button>
 </div>
+
+<button class="back-panel-btn" onclick="volverPanel()" type="button">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+    <path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span>Volver al panel</span>
+</button>
 
 <div class="progress-bar">
   <div id="progressFill"></div>
@@ -772,6 +830,24 @@ const API = "/api/planeaciones";
 window.addEventListener("DOMContentLoaded", () => {
   const correo = obtenerCorreo();
   if(!correo){ window.location.href = "/"; return; }
+
+  const sesion = obtenerSesion();
+  const rolVista = document.getElementById("rolVista");
+  if(rolVista && sesion?.rol){
+    rolVista.textContent = String(sesion.rol).toUpperCase();
+  }
+
+  ST.correo = correo;
+  cargarMaterias();window.addEventListener("DOMContentLoaded", () => {
+  const correo = obtenerCorreo();
+  if(!correo){ window.location.href = "/"; return; }
+
+  const sesion = obtenerSesion();
+  const rolVista = document.getElementById("rolVista");
+  if(rolVista && sesion?.rol){
+    rolVista.textContent = String(sesion.rol).toUpperCase();
+  }
+
   ST.correo = correo;
   cargarMaterias();
   const cache = localStorage.getItem("lp_user_data");
@@ -1178,7 +1254,26 @@ function activarValidacionInputs(){
   inputs.forEach(input => { input.addEventListener("input",()=>validarBotonEnviar()); input.addEventListener("keyup",()=>validarBotonEnviar()); });
 }
 
-function volverInicio(){ window.location.href = "/"; }
+function volverPanel(){
+  const sesion = obtenerSesion();
+  const rol = String(sesion?.rol || "").toLowerCase().trim();
+
+  if(rol === "admin"){
+    window.location.href = "/dashboardadmin/";
+    return;
+  }
+
+  if(rol === "coordinador" || rol === "coordinacion"){
+    window.location.href = "/dashboardcoord/";
+    return;
+  }
+
+  window.location.href = "/";
+}
+
+function volverInicio(){
+  volverPanel();
+}
 function mostrarExito(){ const modal=document.getElementById("modalExito"); modal.style.opacity="1"; modal.style.pointerEvents="auto"; }
 function nuevaPlaneacion(){ const key=getClavePlaneacion(); if(key)localStorage.removeItem(key); location.reload(); }
 
