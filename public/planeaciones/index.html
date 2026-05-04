@@ -1170,34 +1170,61 @@ function calcularSemanaActual(){
 function generarSemanas(){
   const box = document.getElementById("semanaOptions");
   const actual = calcularSemanaActual();
+  const correo = obtenerCorreo();
+
+  const semanasPermitidasPorCorreo = {
+    "sistemas@lapresentaciongirardota.edu.co": [5],
+    "coord.academica@lapresentaciongirardota.edu.co": [5]
+  };
+
+  const semanasPermitidas = semanasPermitidasPorCorreo[correo] || [];
+
   box.innerHTML = "";
+
   for(let i = 1; i <= 10; i++){
     const div = document.createElement("div");
     div.textContent = "Semana " + i;
-    if(i < actual){ div.style.opacity = "0.4"; div.style.pointerEvents = "none"; }
+
+    if(i < actual && !semanasPermitidas.includes(i)){
+      div.style.opacity = "0.4";
+      div.style.pointerEvents = "none";
+    }
+
     if(i === actual){
       const texto = "Semana " + i;
       document.getElementById("semanaText").textContent = texto;
       ST.semana = texto;
+
       if(ST.materia && ST.grado) guardarAuto();
-      setTimeout(() => { if(ST.materia && ST.grado && ST.semana) restaurarBorradorCompleto(); }, 300);
+
+      setTimeout(() => {
+        if(ST.materia && ST.grado && ST.semana) restaurarBorradorCompleto();
+      }, 300);
     }
+
     div.onclick = () => {
       ST._restaurado = false;
+
       const texto = "Semana " + i;
       document.getElementById("semanaText").textContent = texto;
       ST.semana = texto;
+
       box.style.display = "none";
+
       guardarAuto();
       activarBloque("b-observacion");
       actualizarProgreso();
-      setTimeout(() => { if(ST.materia && ST.grado && ST.semana) restaurarBorradorCompleto(); }, 300);
+
+      setTimeout(() => {
+        if(ST.materia && ST.grado && ST.semana) restaurarBorradorCompleto();
+      }, 300);
+
       window.scrollTo({ top:0, behavior:"smooth" });
     };
+
     box.appendChild(div);
   }
 }
-
 function setObs(valor, el){
   ST.observacionActiva = valor;
   document.querySelectorAll("#b-observacion .btn-opcion").forEach(b => b.classList.remove("activa"));
