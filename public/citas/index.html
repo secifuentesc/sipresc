@@ -774,7 +774,7 @@ html,body{
   </div>
   <div class="gate-title">Módulo de Citas</div>
   <div class="gate-sub">Próximamente disponible para todos los docentes</div>
-  <div class="gate-badge">⚙ EN DESARROLLO</div>
+  <div class="gate-badge">EN DESARROLLO</div>
   <div class="gate-card">
     <div class="gate-lbl">Acceso de administrador</div>
     <input type="password" id="gateInp" class="gate-inp" placeholder="••••••••" maxlength="20"
@@ -1529,20 +1529,17 @@ function enviarSolCierre(){
 // ARRANQUE
 // ══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
-  $('dev-gate').style.display='none';
-  $('splash').style.display='none';
-  $('app').classList.add('on');
-  const data=localStorage.getItem('lp_user');
-  if(data){
-    try{
-      const obj=JSON.parse(data);
-      ST.correo=obj.correo;
-      ST.nombre=obj.nombre||obj.correo.split('@')[0];
-      ST.docenteId=obj.docenteId||obj.correo;
-      ST.rol=obj.rol||'docente';
-    }catch{}
+  $('splash').style.display = 'none';
+  $('app').classList.remove('on');
+
+  const accesoDev = localStorage.getItem(DEV_KEY);
+
+  if(accesoDev === '1'){
+    $('dev-gate').style.display = 'none';
+    boot();
+  } else {
+    $('dev-gate').style.display = 'flex';
   }
-  iniciar();
 });
 </script>
 </body>
