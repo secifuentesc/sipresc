@@ -728,15 +728,26 @@ if (/recib/.test(s) || /revis/.test(s) || /pend/.test(s)) return "por_revisar";
 
       renderMateriasDocente(d);
 
-      const wrap = $("#coordPln");
-      if (wrap) {
-        wrap.classList.add("has-docente");
-        wrap.classList.remove("has-detalle");
+const wrap = $("#coordPln");
+if (wrap) {
+  wrap.classList.add("has-docente");
+  wrap.classList.remove("has-detalle");
 
-        if (wrap.dataset) {
-          wrap.dataset.mobileStep = "materias";
-        }
-      }
+  if (wrap.dataset) {
+    wrap.dataset.mobileStep = "materias";
+  }
+}
+
+setTimeout(() => {
+  const materias = document.getElementById("coordPlnMateriasList");
+
+  if (materias) {
+    materias.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+}, 120);
     });
 
     list.appendChild(row);
