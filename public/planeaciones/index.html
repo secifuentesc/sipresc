@@ -791,7 +791,123 @@ async function corregirTodo(){
   evaluarErroresGlobal();
   btn.classList.remove("cargando");
 }
+async function cargarPlaneacionParaEditar(planeacionId){
 
+  try{
+
+    const estado = document.getElementById("estadoGuardado");
+    if(estado) estado.textContent = "Cargando planeación para edición...";
+
+    const res = await fetch(`${API}?accion=obtenerPlaneacionPorId&planeacionId=${encodeURIComponent(planeacionId)}`);
+    const json = await res.json();
+
+    if(!json.ok || !json.data){
+      alert(json.error || "No se pudo cargar la planeación.");
+      return;
+    }
+
+    const p = json.data;
+
+    ST.modoEdicion = true;
+    ST.planeacionId = p.planeacionId || planeacionId;
+
+    ST.materia = p.asignatura || "";
+    ST.grado = p.grado || "";
+    ST.semana = p.semana || "";
+    ST.intensidad = Number(p.intensidad || 1);
+
+    ST.grupos = p.gruposDestino
+      ? String(p.gruposDestino).split(",").map(g => g.trim()).filter(Boolean)
+      : [];
+
+    document.getElementById("materiaText").textContent = ST.materia || "Seleccionar materia...";
+    document.getElementById("gradoText").textContent = ST.grado || "Seleccionar grado...";
+    document.getElementById("semanaText").textContent = ST.semana || "Seleccionar semana...";
+
+    if(ST.grupos.length){
+      mostrar("b-grupos");
+
+      document.querySelectorAll("#b-grupos .btn-opcion").forEach(btn => {
+        const grupo = btn.textContent.trim();
+        if(ST.grupos.includes(grupo)){
+          btn.classList.add("activa");
+        }else{
+          btn.classList.remove("activa");
+        }
+      });
+    }
+
+    mostrar("b-grado");
+    mostrar("b-semana");
+    mostrar("b-observacion");
+    mostrar("b-intensidad");
+
+    generarPlaneacion();
+    irPaso2();
+
+    setTimeout(() => {
+
+      const indicador = document.getElementById("indicadorInput");
+      if(indicador) indicador.value = p.indicador || "";
+
+      for(let i = 1; i <= 5; i++){
+        const tema = document.getElementById("tema_" + i);
+        const act = document.getElementById("act_" + i);
+
+        if(tema) tema.value = p["d" + i + "_tema"] || "";
+        if(act) act.value = p["d" + i + "_act"] || "";
+      }
+
+      if(p.observacion){
+        ST.observacionActiva = "si";
+        const obsBox = document.getElementById("obsInputBox");
+        const obsInput = document.getElementById("observacionInput");
+
+        if(obsBox) obsBox.classList.remove("oculto");
+        if(obsInput) obsInput.value = p.observacion || "";
+      }
+
+      if(p.comp_obligatoria){
+        ST.compActiva = "si";
+        const compBox = document.getElementById("compBox");
+        const compInput = document.getElementById("compObligatoria");
+
+        if(compBox) compBox.classList.remove("oculto");
+        if(compInput) compInput.value = p.comp_obligatoria || "";
+      }
+
+      if(p.fam_obs){
+        ST.famActiva = "si";
+        const famBox = document.getElementById("famBox");
+        const famInput = document.getElementById("famObs");
+
+        if(famBox) famBox.classList.remove("oculto");
+        if(famInput) famInput.value = p.fam_obs || "";
+      }
+
+      document.querySelectorAll("textarea").forEach(t => {
+        t.dispatchEvent(new Event("input"));
+      });
+
+      const title = document.querySelector(".title-main");
+      if(title) title.textContent = "Ajusta tu Planeación";
+
+      const subtitle = document.querySelector(".subtitle-main");
+      if(subtitle) subtitle.textContent = "SIPRESC · Planeación devuelta por Coordinación";
+
+      if(estado){
+        estado.innerHTML = "Modo edición activo · Corrige y reenvía la planeación";
+      }
+
+      validarBotonEnviar();
+
+    }, 250);
+
+  }catch(error){
+    console.error(error);
+    alert("Ocurrió un error al cargar la planeación.");
+  }
+}
 async function importarPlaneacion(){
   const correo = obtenerCorreo();
   if(!correo){ alert("No se pudo identificar el docente"); return; }
@@ -824,7 +940,19 @@ function obtenerCorreo(){
   return sesion?.correo || null;
 }
 
-let ST = { materia:null, grado:null, dispActivo:"no", compActiva:"no", famActiva:"no", enviarCopia:false };
+let ST = { 
+  materia:null, 
+  grado:null, 
+  semana:null,
+  intensidad:null,
+  grupos:[],
+  planeacionId:null,
+  modoEdicion:false,
+  dispActivo:"no", 
+  compActiva:"no", 
+  famActiva:"no", 
+  enviarCopia:false 
+};
 const API = "/api/planeaciones";
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -844,6 +972,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
   ST.correo = correo;
 
+  const params = new URLSearchParams(window.location.search);
+  const editar = params.get("editar");
+  const planeacionId = params.get("planeacionId");
+
   cargarMaterias();
 
   const cache = localStorage.getItem("lp_user_data");
@@ -854,6 +986,15 @@ window.addEventListener("DOMContentLoaded", () => {
     }catch(e){
       console.error(e);
     }
+  }
+
+  if(editar === "1" && planeacionId){
+    ST.modoEdicion = true;
+    ST.planeacionId = planeacionId;
+
+    setTimeout(() => {
+      cargarPlaneacionParaEditar(planeacionId);
+    }, 700);
   }
 });
 
@@ -1133,8 +1274,11 @@ async function enviarPlaneacion(){
   loaderSuccess.style.opacity = "0";
   estado.textContent = "Enviando...";
   const payload = {
-    accion:"guardarFinal", correo,
-    asignatura:ST.materia||"", grado:ST.grado||"",
+    accion:"guardarFinal", 
+    correo,
+    planeacionId:ST.planeacionId || "",
+    asignatura:ST.materia||"", 
+    grado:ST.grado||"",
     gruposDestino:(ST.grupos||[]).join(","),
     semana:(ST.semana||"").toUpperCase(),
     indicador:document.getElementById("indicadorInput")?.value||"",
