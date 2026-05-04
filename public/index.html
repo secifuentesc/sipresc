@@ -971,11 +971,20 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
 <div id="s-app" class="screen">
 
   <div class="topbar">
-    <div class="topbar-logo"><img src="/logo.png" class="logo-img-top"></div>
-    <h1>SIPRESC - La Presentación</h1>
-    <span class="topbar-rol" id="tp-rol">—</span>
-    <button class="logout-btn" onclick="doLogout()">Salir</button>
-  </div>
+  <div class="topbar-logo"><img src="/logo.png" class="logo-img-top"></div>
+  <h1>SIPRESC - La Presentación</h1>
+
+  <button 
+    id="btnVolverPanel" 
+    class="logout-btn" 
+    style="display:none;color:#e8b84b"
+    onclick="volverPanelPrincipal()">
+    Volver
+  </button>
+
+  <span class="topbar-rol" id="tp-rol">—</span>
+  <button class="logout-btn" onclick="doLogout()">Salir</button>
+</div>
 
   <!-- HOME (docente) -->
   <div class="tab" id="t-home">
@@ -1165,11 +1174,35 @@ function doLogout(){
     calFecha:new Date(),calSel:null,horarios:{},grados:[],todasCitas:[]};
   FB_DONE=false;$('s-app').classList.remove('on');$('bnav').style.display='none';
   $('s-login').classList.add('on');}
+  
+function volverPanelPrincipal(){
+  if(ST.rol === 'admin'){
+    window.location.href = '/dashboardadmin/';
+    return;
+  }
+
+  if(ST.rol === 'coordinador'){
+    window.location.href = '/dashboardcoord/';
+    return;
+  }
+
+  window.location.href = '/';
+}
 
 // ── INICIAR APP ──────────────────────────────────────────────
 function iniciarApp(){
   $('s-login').classList.remove('on');$('s-app').classList.add('on');
   $('bnav').style.display='flex';$('tp-rol').textContent=(ST.rol||'').toUpperCase();
+  const btnVolver = document.getElementById('btnVolverPanel');
+
+if(btnVolver){
+  if(MODO_DOCENTE && (ST.rol === 'admin' || ST.rol === 'coordinador')){
+    btnVolver.style.display = 'inline-flex';
+    btnVolver.textContent = ST.rol === 'admin' ? 'Volver a admin' : 'Volver a coordinación';
+  } else {
+    btnVolver.style.display = 'none';
+  }
+}
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   const nombre=(ST.nombre||'').split(' ')[0];
   const nd=document.getElementById('nombre-docente');
