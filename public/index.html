@@ -1192,7 +1192,7 @@ function volverPanelPrincipal(){
 // ── INICIAR APP ──────────────────────────────────────────────
 function iniciarApp(){
   $('s-login').classList.remove('on');$('s-app').classList.add('on');
-  $('bnav').style.display='flex';$('tp-rol').textContent=(ST.rol||'').toUpperCase();
+  $('bnav').style.display='none';$('tp-rol').textContent=(ST.rol||'').toUpperCase();
   const btnVolver = document.getElementById('btnVolverPanel');
 
 if(btnVolver){
