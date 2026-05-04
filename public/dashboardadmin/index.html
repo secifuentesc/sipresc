@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080808" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="SIPRESC — Panel de Administración Institucional" />
+  <title>SIPRESC Admin</title>
+
+  <!-- PWA Manifest -->
+ <!-- <link rel="manifest" href="/manifest.admin.json" /> -->
+  <link rel="icon" href="/logo.png" />
+  <link rel="apple-touch-icon" href="/logo.png" />
+
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/dashboardadmin.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     SPLASH / LOADER INICIAL
+══════════════════════════════════════════════ -->
+<div id="splash" class="splash">
+  <div class="splash-inner">
+    <img src="/logo.png" alt="Logo IPNSG" class="splash-logo" />
+    <div class="splash-name">SIPRESC</div>
+    <div class="splash-sub">Panel de Administración</div>
+    <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     WRAPPER PRINCIPAL
+══════════════════════════════════════════════ -->
+<div id="app" class="app hidden">
+
+  <!-- ── SIDEBAR (escritorio) ── -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <img src="/logo.png" alt="Logo" class="sidebar-logo" />
+      <div class="sidebar-brand">
+        <span class="sidebar-brand-name">SIPRESC</span>
+        <span class="sidebar-brand-sub">Administración</span>
+      </div>
+      <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Expandir / colapsar menú" type="button">
+  <svg id="sidebarCollapseIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M15 18l-6-6 6-6"/>
+  </svg>
+</button>
+    </div>
+
+    <nav class="sidebar-nav" id="sidebarNav">
+      <div class="nav-section-label">Principal</div>
+
+      <button class="nav-item active" data-module="inicio">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </span>
+        <span class="nav-label">Centro de control</span>
+        <span class="nav-badge" id="badge-inicio" style="display:none"></span>
+      </button>
+
+      <button class="nav-item" data-module="live">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><path d="M5.64 5.64l2.12 2.12M16.24 16.24l2.12 2.12M5.64 18.36l2.12-2.12M16.24 7.76l2.12-2.12"/></svg>
+        </span>
+        <span class="nav-label">Panel en vivo</span>
+        <span class="nav-badge live-dot" id="badge-live"></span>
+      </button>
+
+      <div class="nav-section-label">Académico</div>
+      <div class="nav-section-label">Mi espacio</div>
+
+<a class="nav-item nav-link-item" href="/?modo=docente&from=admin" title="Ir al panel docente">
+  <span class="nav-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M4 5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5z"/>
+      <path d="M14 3v5h5"/>
+      <path d="M8 13h8M8 17h5"/>
+    </svg>
+  </span>
+  <span class="nav-label">Modo docente</span>
+</a>
+
+      <button class="nav-item" data-module="planeaciones">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12h6M9 8h6M9 16h4"/><path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/></svg>
+        </span>
+        <span class="nav-label">Planeaciones</span>
+        <span class="nav-badge" id="badge-planeaciones" style="display:none"></span>
+      </button>
+
+      <button class="nav-item" data-module="publicaciones">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </span>
+        <span class="nav-label">Publicaciones</span>
+        <span class="nav-badge" id="badge-publicaciones" style="display:none"></span>
+      </button>
+
+      <button class="nav-item" data-module="citas">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        </span>
+        <span class="nav-label">Citas</span>
+        <span class="nav-badge" id="badge-citas" style="display:none"></span>
+      </button>
+
+      <div class="nav-section-label">Personal</div>
+
+      <button class="nav-item" data-module="docentes">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </span>
+        <span class="nav-label">Docentes</span>
+        <span class="nav-badge" id="badge-docentes" style="display:none"></span>
+      </button>
+
+      <button class="nav-item" data-module="horarios">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        </span>
+        <span class="nav-label">Horarios</span>
+        <span class="nav-badge" id="badge-horarios" style="display:none"></span>
+      </button>
+
+      <div class="nav-section-label">Sistema</div>
+
+      <button class="nav-item" data-module="estadisticas">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        </span>
+        <span class="nav-label">Estadísticas</span>
+      </button>
+
+      <button class="nav-item" data-module="alertas">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </span>
+        <span class="nav-label">Alertas</span>
+        <span class="nav-badge alert-badge" id="badge-alertas" style="display:none"></span>
+      </button>
+
+      <button class="nav-item" data-module="auditoria">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </span>
+        <span class="nav-label">Auditoría</span>
+      </button>
+
+      <button class="nav-item" data-module="logs">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
+        </span>
+        <span class="nav-label">Logs</span>
+      </button>
+
+      <button class="nav-item" data-module="configuracion">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </span>
+        <span class="nav-label">Configuración</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebarAvatar">SA</div>
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name" id="sidebarUserName">Administrador</span>
+          <span class="sidebar-user-role">Administrador</span>
+        </div>
+      </div>
+      <button class="sidebar-logout-btn" id="logoutBtn" title="Cerrar sesión">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── CONTENIDO PRINCIPAL ── -->
+  <main class="main-content" id="mainContent">
+
+    <!-- TOP BAR -->
+    <header class="topbar" id="topbar">
+      <button class="topbar-menu-btn" id="mobileMenuBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      <div class="topbar-title" id="topbarTitle">Centro de control</div>
+      <div class="topbar-actions">
+
+  <a href="/planeaciones/" class="admin-plan-btn" title="Crear planeación">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M12 5v14M5 12h14"/>
+    </svg>
+    <span>Crear planeación</span>
+  </a>
+
+  <button class="topbar-action-btn" id="refreshBtn" title="Actualizar datos">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+  </button>
+
+  <div class="topbar-status" id="topbarStatus">
+    <span class="status-dot online"></span>
+    <span class="status-label">Sistema activo</span>
+  </div>
+</div>
+    </header>
+
+    <!-- MÓDULOS -->
+    <div class="module-container" id="moduleContainer">
+
+      <!-- ══════════════════════════════════════
+           MÓDULO 1: INICIO / CENTRO DE CONTROL
+      ══════════════════════════════════════════ -->
+      <section class="module" id="mod-inicio">
+
+        <!-- Encabezado de bienvenida -->
+        <div class="greeting-block">
+          <div class="greeting-left">
+            <div class="greeting-text" id="greetingText">Buenos días</div>
+            <h1 class="greeting-name" id="greetingName">Administrador</h1>
+            <div class="greeting-meta">
+              <span id="greetingDate"></span>
+              <span class="meta-sep">·</span>
+              <span id="greetingPeriodo">Cargando periodo...</span>
+              <span class="meta-sep">·</span>
+              <span id="greetingSemana">Cargando semana...</span>
+            </div>
+          </div>
+          <div class="greeting-right">
+            <div class="system-status-card" id="systemStatusCard">
+              <div class="status-indicator online" id="statusIndicator"></div>
+              <div>
+                <div class="status-title" id="statusTitle">Sistema operativo</div>
+                <div class="status-sub" id="statusSub">Todos los servicios activos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPIs Grid -->
+        <div class="kpi-section">
+          <div class="section-header">
+            <h2 class="section-title">Indicadores en tiempo real</h2>
+            <span class="section-updated" id="kpiUpdated">Actualizando...</span>
+          </div>
+
+          <div class="kpi-grid" id="kpiGrid">
+            <!-- Planeaciones -->
+            <div class="kpi-card skeleton" data-module="planeaciones" data-filter="recibidas" id="kpi-pln-recibidas">
+              <div class="kpi-icon kpi-icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12h6M9 8h6M9 16h4"/><path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/></svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-value" id="kv-pln-recibidas">—</div>
+                <div class="kpi-label">Planeaciones recibidas</div>
+              </div>
+              <div class="kpi-trend" id="kt-pln-recibidas"></div>
+            </div>
+
+            <div class="kpi-card skeleton" data-module="planeaciones" data-filter="aprobadas" id="kpi-pln-aprobadas">
+              <div class="kpi-icon kpi-icon-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-value" id="kv-pln-aprobadas">—</div>
+                <div class="kpi-label">Aprobadas</div>
+              </div>
+              <div class="kpi-trend" id="kt-pln-aprobadas"></div>
+            </div>
+
+            <div class="kpi-card skeleton" data-module="planeaciones" data-filter="ajustes" id="kpi-pln-ajustes">
+              <div class="kpi-icon kpi-icon-yellow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-value" id="kv-pln-ajustes">—</div>
+                <div class="kpi-label">Con ajustes</div>
+              </div>
+              <div class="kpi-trend" id="kt-pln-ajustes"></div>
+            </div>
+
+            <div class="kpi-card skeleton" data-module="planeaciones" data-filter="por-revisar" id="kpi-pln-revisar">
+              <div class="kpi-icon kpi-icon-purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-value" id="kv-pln-revisar">—</div>
+                <div class="kpi-label">Por revisar</div>
+              </div>
+              <div class="kpi-trend" id="kt-pln-revisar"></div>
+            </div>
+
+            <div class="kpi-card skeleton" data-module="planeaciones" data-filter="no-enviadas" id="kpi-pln-noenviadas">
+              <div class="kpi-icon kpi-icon-red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-value" id="kv-pln-noenviadas">—</div>
+                <div class="kpi-label">No enviadas</div>
+              </div>
+              <div class="kpi-trend" id="kt-pln-noenviadas"></div>
+            </div>
+
+            <!-- Citas -->
+            <div class="kpi-card skeleton" data-module="citas" data-filter="hoy" id="kpi-citas-hoy">
+              <div class="kpi-icon kpi-icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-value" id="kv-citas-hoy">—</div>
+                <div class="kpi-label">Citas hoy</div>
+              </div>
+              <div class="kpi-trend" id="kt-citas-hoy"></div>
+            </div>
+
+            <div class="kpi-card skeleton" data-module="citas" data-filter="confirmadas" id="kpi-citas-confirmadas">
+              <div class="kpi-icon kpi-icon-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-value" id="kv-citas-confirmadas">—</div>
+                <div class="kpi-label">Confirmadas</div>
+              </div>
+              <div class="kpi-trend" id="kt-citas-confirmadas"></div>
+            </div>
+
+            <div class="kpi-card skeleton" data-module="citas" data-filter="cierres" id="kpi-citas-cierres">
+              <div class="kpi-icon kpi-icon-yellow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-value" id="kv-citas-cierres">—</div>
+                <div class="kpi-label">Cierres pendientes</div>
+              </div>
+              <div class="kpi-trend" id="kt-citas-cierres"></div>
+            </div>
+
+            <!-- Docentes -->
+            <div class="kpi-card skeleton" data-module="docentes" data-filter="activos" id="kpi-doc-activos">
+              <div class="kpi-icon kpi-icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-value" id="kv-doc-activos">—</div>
+                <div class="kpi-label">Docentes activos</div>
+              </div>
+              <div class="kpi-trend" id="kt-doc-activos"></div>
+            </div>
+
+            <div class="kpi-card skeleton" data-module="docentes" data-filter="incompletos" id="kpi-doc-incompletos">
+              <div class="kpi-icon kpi-icon-red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-value" id="kv-doc-incompletos">—</div>
+                <div class="kpi-label">Sin planeación</div>
+              </div>
+              <div class="kpi-trend" id="kt-doc-incompletos"></div>
+            </div>
+
+            <!-- Live -->
+            <div class="kpi-card skeleton" data-module="live" id="kpi-live">
+              <div class="kpi-icon kpi-icon-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-value" id="kv-live">—</div>
+                <div class="kpi-label">Usuarios en vivo</div>
+              </div>
+              <span class="live-pulse"></span>
+            </div>
+
+            <div class="kpi-card skeleton" data-module="publicaciones" data-filter="pendientes" id="kpi-pub-pendientes">
+              <div class="kpi-icon kpi-icon-purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-value" id="kv-pub-pendientes">—</div>
+                <div class="kpi-label">Publicaciones pendientes</div>
+              </div>
+              <div class="kpi-trend" id="kt-pub-pendientes"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fila: Actividad reciente + Mini calendario + Alertas -->
+        <div class="home-grid">
+
+          <!-- Actividad reciente -->
+          <div class="home-card home-card-lg">
+            <div class="card-header">
+              <h3 class="card-title">Actividad reciente</h3>
+              <button class="card-action-btn" data-module="auditoria">Ver todo</button>
+            </div>
+            <ul class="activity-list" id="activityList">
+              <li class="activity-skeleton"></li>
+              <li class="activity-skeleton"></li>
+              <li class="activity-skeleton"></li>
+              <li class="activity-skeleton"></li>
+              <li class="activity-skeleton"></li>
+            </ul>
+          </div>
+
+          <!-- Alertas críticas -->
+          <div class="home-card">
+            <div class="card-header">
+              <h3 class="card-title">Alertas activas</h3>
+              <button class="card-action-btn" data-module="alertas">Ver todas</button>
+            </div>
+            <ul class="alerts-mini-list" id="alertsMiniList">
+              <li class="activity-skeleton"></li>
+              <li class="activity-skeleton"></li>
+              <li class="activity-skeleton"></li>
+            </ul>
+          </div>
+
+          <!-- Mini estadística de planeaciones -->
+          <div class="home-card">
+            <div class="card-header">
+              <h3 class="card-title">Planeaciones — semana actual</h3>
+              <button class="card-action-btn" data-module="planeaciones">Ver detalle</button>
+            </div>
+            <canvas id="chartPlaneacionesMini" height="160"></canvas>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           MÓDULO 2: PANEL EN VIVO
+      ══════════════════════════════════════════ -->
+      <section class="module hidden" id="mod-live">
+        <div class="module-header">
+          <h2 class="module-title">Panel en vivo</h2>
+          <div class="module-actions">
+            <span class="live-indicator"><span class="live-pulse-sm"></span> Actualizando cada 30 s</span>
+          </div>
+        </div>
+
+        <div class="live-stats-row">
+          <div class="live-stat-card">
+            <div class="live-stat-value" id="liveTotal">0</div>
+            <div class="live-stat-label">Sesiones activas</div>
+          </div>
+          <div class="live-stat-card">
+            <div class="live-stat-value" id="liveAdmins">0</div>
+            <div class="live-stat-label">Administradores</div>
+          </div>
+          <div class="live-stat-card">
+            <div class="live-stat-value" id="liveCoords">0</div>
+            <div class="live-stat-label">Coordinadores</div>
+          </div>
+          <div class="live-stat-card">
+            <div class="live-stat-value" id="liveDocentes">0</div>
+            <div class="live-stat-label">Docentes</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table" id="liveTable">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Rol</th>
+                <th>Módulo actual</th>
+                <th>Inicio sesión</th>
+                <th>Última actividad</th>
+                <th>Tiempo activo</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="liveTableBody">
+              <tr class="skeleton-row"><td colspan="7"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           MÓDULO 3: PLANEACIONES
+      ══════════════════════════════════════════ -->
+      <section class="module hidden" id="mod-planeaciones">
+        <div class="module-header">
+          <h2 class="module-title">Planeaciones</h2>
+          <div class="module-actions">
+            <select class="select-control" id="plnPeriodo">
+              <option value="">Periodo...</option>
+            </select>
+            <select class="select-control" id="plnSemana">
+              <option value="">Semana...</option>
+            </select>
+            <select class="select-control" id="plnEstado">
+              <option value="">Todos los estados</option>
+              <option value="Con ajustes">Con ajustes</option>
+              <option value="Por revisar">Por revisar</option>
+              <option value="Recibida">Recibida</option>
+              <option value="Aprobada">Aprobada</option>
+              <option value="No enviada">No enviada</option>
+              <option value="Publicada">Publicada</option>
+            </select>
+            <input type="text" class="input-control" id="plnBuscar" placeholder="Buscar docente..." />
+          </div>
+        </div>
+
+        <!-- Layout tipo Calendly: 3 columnas -->
+        <div class="pln-layout">
+          <!-- Col 1: Docentes -->
+          <div class="pln-col pln-col-docentes">
+            <div class="pln-col-header">Docentes</div>
+            <div class="pln-docente-list" id="plnDocenteList">
+              <!-- generado por JS -->
+            </div>
+          </div>
+
+          <!-- Col 2: Asignaciones del docente -->
+          <div class="pln-col pln-col-asignaciones" id="plnColAsignaciones">
+            <div class="pln-col-header">
+              <span id="plnDocenteSelected">Selecciona un docente</span>
+            </div>
+            <div class="pln-asignacion-list" id="plnAsignacionList">
+              <div class="pln-empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6M9 8h6M9 16h4"/><path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/></svg>
+                <p>Selecciona un docente para ver sus planeaciones</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Col 3: Detalle de planeación -->
+          <div class="pln-col pln-col-detalle" id="plnColDetalle">
+            <div class="pln-col-header">
+              <span id="plnMatSelected">Detalle</span>
+              <div class="pln-detail-actions hidden" id="plnDetailActions">
+                <button class="btn btn-success btn-sm" id="btnAprobar">Aprobar</button>
+                <button class="btn btn-warning btn-sm" id="btnAjustes">Solicitar ajustes</button>
+              </div>
+            </div>
+            <div class="pln-detalle-body" id="plnDetalleBody">
+              <div class="pln-empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+                <p>Selecciona una planeación para ver el detalle</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           MÓDULO 4: PUBLICACIONES
+      ══════════════════════════════════════════ -->
+      <section class="module hidden" id="mod-publicaciones">
+        <div class="module-header">
+          <h2 class="module-title">Control de publicaciones</h2>
+          <div class="module-actions">
+            <select class="select-control" id="pubPeriodo">
+              <option value="">Periodo...</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Configuración de reglas -->
+        <div class="pub-config-row" id="pubConfigRow">
+          <div class="config-chip-group">
+            <span class="config-chip-label">Regla de publicación:</span>
+            <select class="select-control select-sm" id="pubRegla">
+              <option value="aprobadas">Solo aprobadas</option>
+              <option value="aprobadas_recibidas">Aprobadas + recibidas</option>
+              <option value="todas">Todas las recibidas</option>
+            </select>
+          </div>
+          <div class="config-chip-group">
+            <span class="config-chip-label">Umbral alerta faltantes:</span>
+            <input type="number" class="input-control input-sm" id="pubUmbral" value="3" min="1" max="30" />
+          </div>
+          <button class="btn btn-ghost btn-sm" id="btnGuardarConfigPub">Guardar configuración</button>
+        </div>
+
+        <!-- Calendario de semanas -->
+        <div class="pub-calendar" id="pubCalendar">
+          <!-- generado por JS -->
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           MÓDULO 5: CITAS
+      ══════════════════════════════════════════ -->
+      <section class="module hidden" id="mod-citas">
+        <div class="module-header">
+          <h2 class="module-title">Gestión de citas</h2>
+          <div class="module-actions">
+            <button class="btn btn-ghost btn-sm" id="btnExportarCitas">Exportar CSV</button>
+            <button class="btn btn-danger btn-sm" id="btnCerrarAgenda">Cerrar agenda</button>
+            <button class="btn btn-success btn-sm" id="btnAbrirAgenda">Abrir agenda</button>
+          </div>
+        </div>
+
+        <div class="citas-kpis" id="citasKpis">
+          <!-- generado por JS -->
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" id="citasTabs">
+          <button class="tab active" data-tab="hoy">Hoy</button>
+          <button class="tab" data-tab="semana">Esta semana</button>
+          <button class="tab" data-tab="todas">Todas</button>
+          <button class="tab" data-tab="cierres">Cierres pendientes</button>
+        </div>
+
+        <div class="table-wrap" id="citasTableWrap">
+          <table class="data-table" id="citasTable">
+            <thead>
+              <tr>
+                <th>Docente</th>
+                <th>Padre/Madre</th>
+                <th>Estudiante</th>
+                <th>Grado</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="citasTableBody">
+              <tr class="skeleton-row"><td colspan="8"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           MÓDULO 6: DOCENTES
+      ══════════════════════════════════════════ -->
+      <section class="module hidden" id="mod-docentes">
+        <div class="module-header">
+          <h2 class="module-title">Gestión de docentes</h2>
+          <div class="module-actions">
+            <input type="text" class="input-control" id="docBuscar" placeholder="Buscar docente..." />
+            <select class="select-control" id="docFiltroEstado">
+              <option value="">Todos los estados</option>
+              <option value="activo">Activos</option>
+              <option value="suspendido">Suspendidos</option>
+              <option value="inactivo">Inactivos</option>
+            </select>
+            <button class="btn btn-primary btn-sm" id="btnNuevoDocente">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nuevo docente
+            </button>
+          </div>
+        </div>
+
+        <div class="docentes-grid" id="docentesGrid">
+          <!-- generado por JS -->
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           MÓDULO 7: HORARIOS
+      ══════════════════════════════════════════ -->
+      <section class="module hidden" id="mod-horarios">
+        <div class="module-header">
+          <h2 class="module-title">Control de horarios</h2>
+          <div class="module-actions">
+            <button class="btn btn-success btn-sm" id="btnAbrirHorarios">Abrir edición global</button>
+            <button class="btn btn-danger btn-sm" id="btnCerrarHorarios">Cerrar edición global</button>
+          </div>
+        </div>
+
+        <!-- Estado global -->
+        <div class="horarios-global-card" id="horariosGlobalCard">
+          <div class="horarios-global-info">
+            <div class="horarios-global-status" id="horariosGlobalStatus">
+              <span class="status-dot" id="horariosStatusDot"></span>
+              <span id="horariosStatusLabel">Cargando estado...</span>
+            </div>
+            <div class="horarios-global-meta" id="horariosGlobalMeta"></div>
+          </div>
+          <div class="horarios-global-form hidden" id="horariosGlobalForm">
+            <input type="datetime-local" class="input-control input-sm" id="horariosDesde" />
+            <input type="datetime-local" class="input-control input-sm" id="horariosHasta" />
+            <input type="text" class="input-control input-sm" id="horariosMotivo" placeholder="Motivo..." />
+            <button class="btn btn-primary btn-sm" id="btnGuardarHorariosGlobal">Guardar</button>
+          </div>
+        </div>
+
+        <!-- Solicitudes pendientes -->
+        <div class="section-header" style="margin-top:2rem">
+          <h3 class="section-title">Solicitudes de cambio de horario</h3>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="solicitudesHorariosTable">
+            <thead>
+              <tr>
+                <th>Docente</th>
+                <th>Correo</th>
+                <th>Fecha solicitud</th>
+                <th>Motivo</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="solicitudesHorariosBody">
+              <tr class="skeleton-row"><td colspan="6"></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Permisos individuales -->
+        <div class="section-header" style="margin-top:2rem">
+          <h3 class="section-title">Permisos individuales de horario</h3>
+        </div>
+        <div class="docentes-horarios-list" id="docentesHorariosList">
+          <!-- generado por JS -->
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           MÓDULO 8: ESTADÍSTICAS
+      ══════════════════════════════════════════ -->
+      <section class="module hidden" id="mod-estadisticas">
+        <div class="module-header">
+          <h2 class="module-title">Estadísticas institucionales</h2>
+          <div class="module-actions">
+            <select class="select-control" id="statsPeriodo">
+              <option value="">Todo el periodo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <!-- Dona: estados de planeaciones -->
+          <div class="chart-card chart-card-sm">
+            <div class="chart-card-header">
+              <h4 class="chart-title">Planeaciones por estado</h4>
+            </div>
+            <canvas id="chartEstados" height="220"></canvas>
+          </div>
+
+          <!-- Barras: cumplimiento por docente -->
+          <div class="chart-card chart-card-lg">
+            <div class="chart-card-header">
+              <h4 class="chart-title">Cumplimiento por docente</h4>
+            </div>
+            <canvas id="chartDocentes" height="220"></canvas>
+          </div>
+
+          <!-- Línea: citas por mes -->
+          <div class="chart-card chart-card-md">
+            <div class="chart-card-header">
+              <h4 class="chart-title">Citas por mes</h4>
+            </div>
+            <canvas id="chartCitasMes" height="220"></canvas>
+          </div>
+
+          <!-- Barras: citas por día -->
+          <div class="chart-card chart-card-sm">
+            <div class="chart-card-header">
+              <h4 class="chart-title">Citas por día de la semana</h4>
+            </div>
+            <canvas id="chartCitasDia" height="220"></canvas>
+          </div>
+
+          <!-- Barras: cumplimiento por grado -->
+          <div class="chart-card chart-card-md">
+            <div class="chart-card-header">
+              <h4 class="chart-title">Cumplimiento por grado</h4>
+            </div>
+            <canvas id="chartGrados" height="220"></canvas>
+          </div>
+
+          <!-- Ranking: docentes con más ajustes -->
+          <div class="chart-card chart-card-sm">
+            <div class="chart-card-header">
+              <h4 class="chart-title">Docentes con más ajustes</h4>
+            </div>
+            <div class="ranking-list" id="rankingAjustes"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           MÓDULO 9: CONFIGURACIÓN
+      ══════════════════════════════════════════ -->
+      <section class="module hidden" id="mod-configuracion">
+        <div class="module-header">
+          <h2 class="module-title">Configuración del sistema</h2>
+          <div class="module-actions">
+            <button class="btn btn-primary btn-sm" id="btnGuardarConfig">Guardar todos los cambios</button>
+          </div>
+        </div>
+
+        <div class="config-sections">
+
+          <!-- Citas -->
+          <div class="config-group">
+            <div class="config-group-header">
+              <h3 class="config-group-title">Configuración de citas</h3>
+            </div>
+            <div class="config-fields">
+              <div class="config-field">
+                <label class="config-label">Duración de cita (minutos)</label>
+                <input type="number" class="input-control" id="cfgDuracion" min="5" max="120" />
+              </div>
+              <div class="config-field">
+                <label class="config-label">Mínimo de horas antes de reserva</label>
+                <input type="number" class="input-control" id="cfgMinHoras" min="0" max="72" />
+              </div>
+              <div class="config-field">
+                <label class="config-label">Máximo de días de adelanto</label>
+                <input type="number" class="input-control" id="cfgMaxDias" min="1" max="90" />
+              </div>
+              <div class="config-field config-field-toggle">
+                <label class="config-label">Agenda global</label>
+                <label class="toggle">
+                  <input type="checkbox" id="cfgAgendaAbierta" />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label" id="cfgAgendaLabel">Cerrada</span>
+              </div>
+              <div class="config-field">
+                <label class="config-label">Correo de coordinación</label>
+                <input type="email" class="input-control" id="cfgCorreoCoord" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Planeaciones -->
+          <div class="config-group">
+            <div class="config-group-header">
+              <h3 class="config-group-title">Configuración de planeaciones</h3>
+            </div>
+            <div class="config-fields">
+              <div class="config-field">
+                <label class="config-label">Periodo actual</label>
+                <input type="text" class="input-control" id="cfgPeriodo" placeholder="Ej: 2025-1" />
+              </div>
+              <div class="config-field">
+                <label class="config-label">Semana actual</label>
+                <input type="text" class="input-control" id="cfgSemana" placeholder="Ej: Semana 12" />
+              </div>
+              <div class="config-field config-field-toggle">
+                <label class="config-label">Publicación automática</label>
+                <label class="toggle">
+                  <input type="checkbox" id="cfgAutoPublicacion" />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label" id="cfgAutoPublicacionLabel">Inactiva</span>
+              </div>
+              <div class="config-field">
+                <label class="config-label">Umbral de alerta por faltantes</label>
+                <input type="number" class="input-control" id="cfgUmbralFaltantes" min="1" max="50" />
+              </div>
+              <div class="config-field">
+                <label class="config-label">Correos que reciben alertas</label>
+                <input type="text" class="input-control" id="cfgCorreosAlertas" placeholder="correo1@..., correo2@..." />
+              </div>
+              <div class="config-field config-field-toggle">
+                <label class="config-label">Notificar aprobaciones al docente</label>
+                <label class="toggle">
+                  <input type="checkbox" id="cfgNotifAprobacion" />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label" id="cfgNotifAprobacionLabel">Inactiva</span>
+              </div>
+              <div class="config-field config-field-toggle">
+                <label class="config-label">Notificar ajustes al docente</label>
+                <label class="toggle">
+                  <input type="checkbox" id="cfgNotifAjustes" />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label" id="cfgNotifAjustesLabel">Inactiva</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sistema -->
+          <div class="config-group">
+            <div class="config-group-header">
+              <h3 class="config-group-title">Sistema</h3>
+            </div>
+            <div class="config-fields">
+              <div class="config-field config-field-toggle">
+                <label class="config-label">Modo mantenimiento</label>
+                <label class="toggle">
+                  <input type="checkbox" id="cfgMantenimiento" />
+                  <span class="toggle-slider toggle-danger"></span>
+                </label>
+                <span class="toggle-label" id="cfgMantenimientoLabel">Inactivo</span>
+              </div>
+              <div class="config-field">
+                <label class="config-label">Mensaje de mantenimiento</label>
+                <textarea class="input-control textarea-control" id="cfgMsgMantenimiento" rows="2" placeholder="El sistema estará en mantenimiento..."></textarea>
+              </div>
+              <div class="config-field config-field-toggle">
+                <label class="config-label">Auditoría extendida</label>
+                <label class="toggle">
+                  <input type="checkbox" id="cfgAuditoria" />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label" id="cfgAuditoriaLabel">Inactiva</span>
+              </div>
+              <div class="config-field">
+                <label class="config-label">Tiempo de expiración de sesión (días)</label>
+                <input type="number" class="input-control" id="cfgExpiracion" min="1" max="30" value="14" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           MÓDULO 10: ALERTAS
+      ══════════════════════════════════════════ -->
+      <section class="module hidden" id="mod-alertas">
+        <div class="module-header">
+          <h2 class="module-title">Alertas del sistema</h2>
+          <div class="module-actions">
+            <select class="select-control" id="alertasFiltro">
+              <option value="">Todas las alertas</option>
+              <option value="critica">Críticas</option>
+              <option value="advertencia">Advertencias</option>
+              <option value="info">Informativas</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" id="btnMarcarTodasVistas">Marcar todas como vistas</button>
+          </div>
+        </div>
+        <div class="alertas-list" id="alertasList">
+          <!-- generado por JS -->
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           MÓDULO 11: AUDITORÍA
+      ══════════════════════════════════════════ -->
+      <section class="module hidden" id="mod-auditoria">
+        <div class="module-header">
+          <h2 class="module-title">Auditoría del sistema</h2>
+        </div>
+
+        <!-- Filtros -->
+        <div class="audit-filters">
+          <input type="text" class="input-control" id="auditBuscar" placeholder="Buscar docente, correo, módulo..." />
+          <select class="select-control" id="auditRol">
+            <option value="">Todos los roles</option>
+            <option value="admin">Admin</option>
+            <option value="coordinador">Coordinador</option>
+            <option value="docente">Docente</option>
+          </select>
+          <select class="select-control" id="auditResultado">
+            <option value="">Todos los resultados</option>
+            <option value="OK">OK</option>
+            <option value="WARN">Advertencia</option>
+            <option value="ERROR">Error</option>
+          </select>
+          <input type="date" class="input-control" id="auditDesde" />
+          <input type="date" class="input-control" id="auditHasta" />
+          <button class="btn btn-primary btn-sm" id="btnBuscarAudit">Buscar</button>
+        </div>
+
+        <!-- Tabs: Timeline / Tabla -->
+        <div class="tabs" id="auditTabs">
+          <button class="tab active" data-tab="timeline">Timeline por usuario</button>
+          <button class="tab" data-tab="tabla">Tabla de eventos</button>
+        </div>
+
+        <div id="auditTimeline" class="audit-timeline">
+          <!-- generado por JS -->
+        </div>
+        <div id="auditTabla" class="table-wrap hidden">
+          <table class="data-table" id="auditTable">
+            <thead>
+              <tr>
+                <th>Fecha/Hora</th>
+                <th>Usuario</th>
+                <th>Rol</th>
+                <th>Módulo</th>
+                <th>Acción</th>
+                <th>Resultado</th>
+                <th>Detalle</th>
+              </tr>
+            </thead>
+            <tbody id="auditTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           MÓDULO 12: LOGS
+      ══════════════════════════════════════════ -->
+      <section class="module hidden" id="mod-logs">
+        <div class="module-header">
+          <h2 class="module-title">Logs del sistema</h2>
+          <div class="module-actions">
+            <select class="select-control" id="logsFuente">
+              <option value="citas">Backend Citas</option>
+              <option value="planeaciones">Backend Planeaciones</option>
+            </select>
+            <input type="text" class="input-control" id="logsBuscar" placeholder="Buscar en logs..." />
+            <button class="btn btn-ghost btn-sm" id="btnRefreshLogs">Actualizar</button>
+          </div>
+        </div>
+        <div class="logs-terminal" id="logsTerminal">
+          <div class="logs-loading">Cargando logs...</div>
+        </div>
+      </section>
+
+    </div><!-- /moduleContainer -->
+  </main><!-- /mainContent -->
+
+  <!-- ── BOTTOM NAV (móvil) ── -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="bottom-nav-item active" data-module="inicio">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      <span>Inicio</span>
+    </button>
+    <button class="bottom-nav-item" data-module="planeaciones">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12h6M9 8h6M9 16h4"/><path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/></svg>
+      <span>Planes</span>
+    </button>
+    <button class="bottom-nav-item" data-module="citas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span>Citas</span>
+    </button>
+    <button class="bottom-nav-item" data-module="alertas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span>Alertas</span>
+      <span class="bottom-nav-badge hidden" id="bottomAlertBadge"></span>
+    </button>
+    <button class="bottom-nav-item" data-module="configuracion">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span>Config</span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- ══════════════════════════════════════
+     OVERLAY MOBILE SIDEBAR
+══════════════════════════════════════════ -->
+<div class="sidebar-overlay hidden" id="sidebarOverlay"></div>
+
+<!-- ══════════════════════════════════════
+     MODAL GENÉRICO
+══════════════════════════════════════════ -->
+<div class="modal-backdrop hidden" id="modalBackdrop">
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle">Confirmación</h3>
+      <button class="modal-close" id="modalClose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter">
+      <button class="btn btn-ghost" id="modalCancel">Cancelar</button>
+      <button class="btn btn-primary" id="modalConfirm">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DOCENTE -->
+<div class="modal-backdrop hidden" id="modalDocenteBackdrop">
+  <div class="modal modal-lg" id="modalDocente">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalDocenteTitle">Nuevo docente</h3>
+      <button class="modal-close" id="modalDocenteClose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalDocenteBody">
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="input-control" id="docNombre" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Apellido</label>
+          <input type="text" class="input-control" id="docApellido" />
+        </div>
+        <div class="form-field form-field-full">
+          <label class="form-label">Correo institucional</label>
+          <input type="email" class="input-control" id="docCorreo" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Rol</label>
+          <select class="select-control" id="docRol">
+            <option value="docente">Docente</option>
+            <option value="coordinador">Coordinador</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Estado</label>
+          <select class="select-control" id="docEstado">
+            <option value="1">Activo</option>
+            <option value="0">Inactivo</option>
+          </select>
+        </div>
+        <div class="form-field form-field-full">
+          <label class="form-label">Observación admin</label>
+          <textarea class="input-control textarea-control" id="docObsAdmin" rows="2"></textarea>
+        </div>
+      </div>
+
+      <!-- Carga académica -->
+      <div class="carga-section" id="cargaSection" style="display:none">
+        <div class="section-header">
+          <h4 class="section-title">Carga académica</h4>
+          <button class="btn btn-ghost btn-sm" id="btnAgregarCarga">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Agregar asignación
+          </button>
+        </div>
+        <div id="cargaList"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="modalDocenteCancel">Cancelar</button>
+      <button class="btn btn-primary" id="modalDocenteSave">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AJUSTES PLANEACIÓN -->
+<div class="modal-backdrop hidden" id="modalAjustesBackdrop">
+  <div class="modal modal-md" id="modalAjustes">
+    <div class="modal-header">
+      <h3 class="modal-title">Solicitar ajustes</h3>
+      <button class="modal-close" id="modalAjustesClose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="form-label" style="margin-bottom:.75rem">Motivos de ajuste (seleccionar uno o varios)</p>
+      <div class="checkbox-group" id="ajustesMotivos">
+        <label class="checkbox-item"><input type="checkbox" value="Indicador incompleto" /> Indicador incompleto</label>
+        <label class="checkbox-item"><input type="checkbox" value="Temas sin desarrollar" /> Temas sin desarrollar</label>
+        <label class="checkbox-item"><input type="checkbox" value="Actividades insuficientes" /> Actividades insuficientes</label>
+        <label class="checkbox-item"><input type="checkbox" value="Faltan actividades complementarias" /> Faltan actividades complementarias</label>
+        <label class="checkbox-item"><input type="checkbox" value="Sin anexos" /> Sin anexos</label>
+        <label class="checkbox-item"><input type="checkbox" value="Sin comunicación a familias" /> Sin comunicación a familias</label>
+        <label class="checkbox-item"><input type="checkbox" value="Grupos destino incorrectos" /> Grupos destino incorrectos</label>
+        <label class="checkbox-item"><input type="checkbox" value="Otro" /> Otro</label>
+      </div>
+      <div class="form-field" style="margin-top:1rem">
+        <label class="form-label">Observación adicional (opcional)</label>
+        <textarea class="input-control textarea-control" id="ajustesObs" rows="3" placeholder="Escribe aquí las observaciones para el docente..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="modalAjustesCancel">Cancelar</button>
+      <button class="btn btn-warning" id="modalAjustesConfirm">Solicitar ajustes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PUBLICAR SEMANA -->
+<div class="modal-backdrop hidden" id="modalPublicarBackdrop">
+  <div class="modal modal-md" id="modalPublicar">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalPublicarTitle">Publicar semana</h3>
+      <button class="modal-close" id="modalPublicarClose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalPublicarBody">
+      <!-- generado por JS -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="modalPublicarCancel">Cancelar</button>
+      <button class="btn btn-primary" id="modalPublicarConfirm">Publicar ahora</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<!-- SCRIPTS -->
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+<script src="/js/core.js"></script>
+<script src="/js/dashboardadmin.js"></script>
+</body>
+</html>

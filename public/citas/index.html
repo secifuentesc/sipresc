@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#050e1d">
+<title>Mis Citas — La Presentación</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --s0:#050e1d;
+  --s1:#0a1628;
+  --s2:#0f1f3a;
+  --gold:#c9962a;
+  --gold2:#e8b84b;
+  --green:#2dd4a0;
+  --red:#f06b6b;
+  --blue:#3b82f6;
+  --purple:#8b84f8;
+  --tx:#f0f4ff;
+  --mt:#6b7fa3;
+  --mt2:#8a9dc0;
+  --br:rgba(255,255,255,.07);
+  --br2:rgba(255,255,255,.12);
+  --royal:#0f2657;
+  --cobalt:#1e4db7;
+}
+
+html,body{
+  height:100%;height:100svh;
+  font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
+  background:var(--s0);color:var(--tx);
+  overflow:hidden;-webkit-text-size-adjust:100%
+}
+
+/* ══════════════════════════════════
+   DEV GATE
+══════════════════════════════════ */
+#dev-gate{
+  position:fixed;inset:0;z-index:999;
+  background:var(--s0);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 28px;
+  background-image:
+    radial-gradient(ellipse 100% 50% at 50% 0%,rgba(30,77,183,.3) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 40% at 20% 100%,rgba(201,150,42,.08) 0%,transparent 60%)
+}
+.gate-logo{
+  width:72px;height:72px;border-radius:20px;
+  background:linear-gradient(145deg,#1a3a6b,#2046a0);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;
+  box-shadow:0 20px 50px rgba(20,50,160,.4),inset 0 1px 0 rgba(255,255,255,.15)
+}
+.gate-logo img{width:42px;filter:brightness(10)}
+.gate-logo span{color:#fff;font-size:26px;font-weight:700}
+.gate-title{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.4px;margin-bottom:6px;text-align:center}
+.gate-sub{font-size:13px;color:var(--mt2);text-align:center;margin-bottom:8px;line-height:1.5;max-width:240px}
+.gate-badge{
+  font-size:10px;color:var(--gold2);
+  background:rgba(201,150,42,.1);border:1px solid rgba(201,150,42,.2);
+  border-radius:20px;padding:4px 12px;letter-spacing:.8px;margin-bottom:28px
+}
+.gate-card{
+  width:100%;max-width:300px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;padding:20px;
+  box-shadow:0 24px 60px rgba(0,0,0,.3)
+}
+.gate-lbl{font-size:11px;color:var(--mt);margin-bottom:7px;letter-spacing:.3px}
+.gate-inp{
+  width:100%;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);border-radius:11px;
+  color:#fff;padding:13px;font-size:22px;letter-spacing:8px;text-align:center;
+  outline:none;-webkit-appearance:none;margin-bottom:11px;
+  transition:border-color .2s,box-shadow .2s
+}
+.gate-inp:focus{border-color:rgba(201,150,42,.5);box-shadow:0 0 0 3px rgba(201,150,42,.1)}
+.gate-btn{
+  width:100%;padding:13px;border-radius:11px;border:none;
+  background:linear-gradient(135deg,#9a7220,var(--gold2));
+  color:#000;font-size:14px;font-weight:700;cursor:pointer;
+  transition:opacity .15s,transform .1s
+}
+.gate-btn:active{transform:scale(.98);opacity:.9}
+.gate-err{
+  font-size:12px;color:var(--red);text-align:center;
+  margin-top:8px;min-height:16px;transition:opacity .2s
+}
+
+/* ══════════════════════════════════
+   SPLASH
+══════════════════════════════════ */
+#splash{
+  position:fixed;inset:0;background:var(--s0);
+  display:flex;align-items:center;justify-content:center;
+  z-index:200;flex-direction:column;gap:10px
+}
+#splash p{font-size:12px;color:var(--mt);letter-spacing:.5px}
+.spin-w{
+  width:22px;height:22px;
+  border:2.5px solid rgba(255,255,255,.1);
+  border-top-color:rgba(255,255,255,.6);
+  border-radius:50%;animation:rot .7s linear infinite
+}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ══════════════════════════════════
+   APP SHELL
+══════════════════════════════════ */
+#app{
+  position:fixed;inset:0;
+  display:none;flex-direction:column;
+  background:var(--s0)
+}
+#app.on{display:flex}
+
+/* ══════════════════════════════════
+   TOPBAR — igual al sistema
+══════════════════════════════════ */
+.topbar{
+  flex-shrink:0;
+  position:sticky;top:0;z-index:20;
+  background:rgba(5,14,29,.75);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding:10px 18px;
+  padding-top:calc(10px + env(safe-area-inset-top,0));
+  display:flex;align-items:center;gap:10px;
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)
+}
+.tb-logo{
+  width:30px;height:30px;border-radius:9px;
+  background:linear-gradient(140deg,#1c3f7a,#2557c7);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(20,60,180,.4)
+}
+.tb-logo img{width:18px;filter:brightness(10)}
+.tb-logo span{color:#fff;font-size:13px;font-weight:700}
+.tb-title{
+  font-size:15px;font-weight:600;letter-spacing:-.2px;
+  flex:1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.tb-btn{
+  background:none;border:none;
+  color:rgba(255,255,255,.35);font-size:12px;cursor:pointer;
+  padding:4px 6px;font-family:-apple-system,sans-serif;
+  flex-shrink:0;transition:color .15s
+}
+.tb-btn:hover{color:rgba(255,255,255,.7)}
+
+/* ══════════════════════════════════
+   BOTTOM NAV — estilo sistema
+══════════════════════════════════ */
+.bnav{
+  flex-shrink:0;
+  position:relative;z-index:20;
+  background:rgba(5,14,29,.8);
+  border-top:1px solid rgba(255,255,255,.07);
+  display:flex;
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 4px)
+}
+.ni{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:10px 2px;cursor:pointer;border:none;background:none;
+  color:rgba(255,255,255,.3);font-size:9px;
+  font-family:-apple-system,sans-serif;
+  gap:4px;transition:color .15s;letter-spacing:.2px
+}
+.ni svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.5;fill:none}
+.ni.on{color:rgba(255,255,255,.9)}
+.ni.on svg{stroke-width:2}
+
+/* ══════════════════════════════════
+   SCROLL
+══════════════════════════════════ */
+.scroll{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding-bottom:calc(20px + env(safe-area-inset-bottom,0))
+}
+
+/* ══════════════════════════════════
+   VISTAS
+══════════════════════════════════ */
+.view{display:none}
+.view.on{display:block;animation:slideUp .28s cubic-bezier(.34,1.3,.64,1) both}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════════════
+   VISTA REUNIONES
+══════════════════════════════════ */
+
+/* Hero saludo */
+.hero{
+  padding:24px 20px 8px
+}
+.hero-greeting{
+  font-size:13px;color:var(--mt2);font-weight:500;
+  letter-spacing:.2px;margin-bottom:4px
+}
+.hero-name{
+  font-size:30px;font-weight:700;letter-spacing:-.8px;
+  line-height:1.1;margin-bottom:18px
+}
+.hero-name span{color:var(--gold2)}
+
+/* Stats row — estilo Fitness rings */
+.stats-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  margin-bottom:6px
+}
+.stat-card{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;padding:14px 12px;
+  position:relative;overflow:hidden;
+  transition:transform .15s
+}
+.stat-card:active{transform:scale(.97)}
+.stat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:18px 18px 0 0
+}
+.stat-card.s-green::before{background:var(--green)}
+.stat-card.s-gold::before{background:var(--gold)}
+.stat-card.s-red::before{background:var(--red)}
+.stat-num{
+  font-size:28px;font-weight:700;letter-spacing:-.5px;line-height:1;margin-bottom:4px
+}
+.stat-card.s-green .stat-num{color:var(--green)}
+.stat-card.s-gold .stat-num{color:var(--gold2)}
+.stat-card.s-red .stat-num{color:var(--red)}
+.stat-lbl{font-size:10px;color:var(--mt2);line-height:1.3;font-weight:500}
+
+/* Sección header */
+.sec-header{
+  display:flex;align-items:baseline;justify-content:space-between;
+  padding:20px 20px 10px
+}
+.sec-title{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.sec-link{font-size:13px;color:var(--gold2);font-weight:500}
+
+/* Filtro chips */
+.filter-row{
+  display:flex;gap:6px;padding:0 20px 14px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch
+}
+.filter-row::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;padding:6px 14px;border-radius:20px;
+  background:rgba(255,255,255,.06);border:1px solid var(--br2);
+  color:var(--mt2);font-size:12px;font-weight:500;cursor:pointer;
+  transition:all .18s;white-space:nowrap;
+  font-family:-apple-system,sans-serif
+}
+.chip.on{
+  background:rgba(201,150,42,.15);border-color:rgba(201,150,42,.35);
+  color:var(--gold2);font-weight:600
+}
+
+/* Cita card — premium */
+.cita-card{
+  margin:0 16px 12px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:22px;overflow:hidden;
+  cursor:pointer;transition:all .2s;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)
+}
+.cita-card:active{transform:scale(.98);opacity:.85}
+
+/* Banda de color + hora */
+.cita-band{
+  padding:14px 16px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,.06)
+}
+.cita-hora-wrap{display:flex;align-items:center;gap:10px}
+.cita-hora-dot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 8px currentColor
+}
+.cita-hora{
+  font-size:16px;font-weight:700;letter-spacing:-.2px;
+  font-variant-numeric:tabular-nums
+}
+.cita-dur{
+  font-size:11px;color:var(--mt2);font-weight:500;
+  background:rgba(255,255,255,.07);border-radius:20px;padding:3px 9px
+}
+
+/* Cuerpo de la card */
+.cita-body{padding:12px 16px 14px}
+.cita-fecha-lbl{
+  font-size:11px;color:var(--mt);font-weight:600;
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px
+}
+.cita-nombre{font-size:17px;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
+.cita-info{font-size:13px;color:var(--mt2);margin-bottom:10px;line-height:1.5}
+.cita-footer{display:flex;align-items:center;justify-content:space-between}
+.cita-badge{
+  font-size:10px;font-weight:600;border-radius:20px;padding:4px 10px;
+  letter-spacing:.3px
+}
+.cita-badge.confirmada{
+  background:rgba(45,212,160,.12);color:var(--green);
+  border:1px solid rgba(45,212,160,.2)
+}
+.cita-badge.cancelada{
+  background:rgba(240,107,107,.1);color:var(--red);
+  border:1px solid rgba(240,107,107,.18)
+}
+.cita-acta{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;color:var(--gold2);font-weight:500
+}
+.cita-acta-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+
+/* ── MINI CALENDARIO SEMANAL ── */
+.week-cal{
+  padding:14px 16px 10px;
+  background:rgba(255,255,255,.02);
+  border-bottom:1px solid var(--br)
+}
+.week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.week-nav-lbl{font-size:14px;font-weight:700;letter-spacing:-.2px}
+.week-nav-btns{display:flex;gap:4px}
+.week-nav-btn{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,.06);border:none;
+  color:var(--mt2);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .15s
+}
+.week-nav-btn:hover{background:rgba(255,255,255,.12)}
+.week-nav-btn svg{width:12px;height:12px;stroke:currentColor;stroke-width:2.5;fill:none}
+.week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.week-day{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:6px 2px;border-radius:12px;cursor:pointer;transition:background .15s
+}
+.week-day:active{transform:scale(.93)}
+.week-day-lbl{font-size:9px;color:var(--mt);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.week-day-num{
+  width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:600;color:var(--mt2);transition:all .18s
+}
+.week-day.tiene .week-day-num{color:#fff}
+.week-day.hoy .week-day-num{color:var(--gold2);font-weight:700}
+.week-day.sel .week-day-num{
+  background:var(--gold);color:#000;font-weight:700;
+  box-shadow:0 3px 10px rgba(201,150,42,.4)
+}
+.week-dot{width:4px;height:4px;border-radius:50%;background:var(--green);opacity:0}
+.week-day.tiene .week-dot{opacity:1}
+.week-day.sel .week-dot{background:rgba(0,0,0,.4)}
+
+/* ── LISTA CITAS — Fantastical style ── */
+.dia-header{
+  padding:14px 20px 8px;
+  display:flex;align-items:baseline;gap:8px
+}
+.dia-header-fecha{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.dia-header-cnt{font-size:12px;color:var(--mt2)}
+.dia-header-hoy{color:var(--green)}
+
+.citas-lista{padding:0 16px}
+
+/* Fila de cita — Apple Calendar style */
+.cita-row{
+  display:flex;align-items:stretch;gap:0;
+  margin-bottom:1px;cursor:pointer;
+  border-radius:14px;overflow:hidden;
+  transition:opacity .15s
+}
+.cita-row:active{opacity:.7}
+
+/* Barra lateral de color */
+.cita-bar{
+  width:4px;flex-shrink:0;border-radius:4px 0 0 4px
+}
+.cita-bar.confirmada{background:var(--green)}
+.cita-bar.cancelada{background:var(--red);opacity:.5}
+
+/* Contenido */
+.cita-content{
+  flex:1;padding:12px 14px 12px 12px;
+  background:rgba(255,255,255,.04);
+  border-top:1px solid rgba(255,255,255,.05);
+  display:flex;align-items:center;gap:12px
+}
+.cita-row:first-child .cita-content{border-top:none}
+
+/* Hora */
+.cita-time-col{
+  flex-shrink:0;width:52px;text-align:right
+}
+.cita-time-ini{
+  font-size:14px;font-weight:700;color:var(--tx);
+  font-variant-numeric:tabular-nums;line-height:1.2
+}
+.cita-time-fin{
+  font-size:11px;color:var(--mt);
+  font-variant-numeric:tabular-nums
+}
+
+/* Divider vertical */
+.cita-divider{
+  width:1px;background:rgba(255,255,255,.08);
+  flex-shrink:0;margin:2px 0
+}
+
+/* Info principal */
+.cita-main{flex:1;min-width:0}
+.cita-main-nombre{
+  font-size:15px;font-weight:600;letter-spacing:-.2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  margin-bottom:3px
+}
+.cita-main-meta{
+  font-size:12px;color:var(--mt2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+
+/* Derecha */
+.cita-right{
+  flex-shrink:0;display:flex;flex-direction:column;
+  align-items:flex-end;gap:5px
+}
+.cita-status-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0
+}
+.cita-status-dot.confirmada{background:var(--green)}
+.cita-status-dot.cancelada{background:var(--red);opacity:.5}
+.cita-acta-pill{
+  font-size:9px;color:var(--gold2);
+  background:rgba(201,150,42,.1);border:1px solid rgba(201,150,42,.18);
+  border-radius:20px;padding:2px 6px;white-space:nowrap
+}
+.cita-chevron{
+  color:rgba(255,255,255,.2);font-size:14px;font-weight:300
+}
+
+/* Agrupador fecha */
+.date-group{padding:6px 20px 4px}
+.date-group-lbl{font-size:13px;font-weight:700;color:var(--mt2);letter-spacing:-.1px}
+.date-group-lbl.hoy-lbl{color:var(--green)}
+
+/* Empty state */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;
+  padding:48px 32px;text-align:center;gap:12px
+}
+.empty-ico{
+  width:64px;height:64px;border-radius:20px;
+  background:rgba(255,255,255,.05);border:1px solid var(--br);
+  display:flex;align-items:center;justify-content:center;margin-bottom:4px
+}
+.empty-ico svg{width:28px;height:28px;stroke:var(--mt);stroke-width:1.5;fill:none}
+.empty-title{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.empty-sub{font-size:13px;color:var(--mt2);line-height:1.6;max-width:220px}
+
+/* ══════════════════════════════════
+   VISTA DISPONIBILIDAD
+══════════════════════════════════ */
+
+/* Hero disponibilidad */
+.avail-hero{
+  padding:24px 20px 20px;
+  background:linear-gradient(180deg,rgba(30,77,183,.15) 0%,transparent 100%)
+}
+.avail-hero-top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.avail-avatar{
+  width:54px;height:54px;border-radius:16px;
+  background:linear-gradient(135deg,var(--royal),var(--cobalt));
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:700;color:var(--gold2);flex-shrink:0;
+  box-shadow:0 8px 20px rgba(14,36,90,.5)
+}
+.avail-info{flex:1}
+.avail-nombre{font-size:18px;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
+.avail-status{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mt2)}
+.avail-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* Info pills */
+.avail-pills{display:flex;gap:8px;flex-wrap:wrap}
+.avail-pill{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.06);border:1px solid var(--br2);
+  border-radius:12px;padding:8px 12px;font-size:12px;font-weight:500
+}
+.avail-pill svg{width:14px;height:14px;stroke:var(--gold2);stroke-width:2;fill:none;flex-shrink:0}
+
+/* Sección días — Calendly style */
+.avail-section{padding:0 20px;margin-bottom:16px;max-width:850px;margin-left:auto;margin-right:auto}
+.avail-sec-title{
+  font-size:13px;font-weight:600;color:var(--mt);
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:0
+}
+.avail-days-wrap{
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--br);
+  border-radius:16px;overflow:hidden;margin-top:12px
+}
+
+/* Día row — lista plana estilo Calendly */
+.dia-row{
+  background:transparent;border:none;
+  border-bottom:1px solid var(--br);
+  border-radius:0;margin-bottom:0;overflow:hidden
+}
+.dia-row:last-child{border-bottom:none}
+.dia-row.active{background:transparent}
+.dia-row-header{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;transition:background .15s;
+  min-height:56px
+}
+.dia-row-header:active{background:rgba(255,255,255,.03)}
+
+/* Círculo letra del día — estilo Calendly */
+.dia-circle{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;letter-spacing:-.2px;
+  background:rgba(255,255,255,.07);color:var(--mt2);
+  transition:all .2s
+}
+.dia-row.active .dia-circle{
+  background:var(--green);color:#000
+}
+
+/* Toggle iOS — igual a Calendly */
+.toggle{
+  position:relative;width:40px;height:22px;
+  background:rgba(255,255,255,.15);border-radius:11px;
+  cursor:pointer;transition:background .25s;flex-shrink:0
+}
+.toggle.on{background:#1a73e8}
+.toggle-thumb{
+  position:absolute;top:2px;left:2px;
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  transition:transform .22s cubic-bezier(.34,1.3,.64,1);
+  box-shadow:0 1px 4px rgba(0,0,0,.3)
+}
+.toggle.on .toggle-thumb{transform:translateX(18px)}
+
+.dia-nombre{font-size:14px;font-weight:500;flex:1;color:var(--tx)}
+.dia-row.active .dia-nombre{font-weight:600}
+.dia-indisponible{font-size:13px;color:var(--mt)}
+
+/* Slots — estilo Calendly con inputs inline */
+.dia-slots{
+  padding:0 16px 14px 62px;
+  display:none
+}
+.dia-row.active .dia-slots{display:block}
+.slot-row{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px
+}
+.time-range{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;padding:8px 12px;flex:1
+}
+.time-range input[type="time"]{
+  background:none;border:none;color:#fff;
+  font-size:14px;font-weight:500;outline:none;
+  -webkit-appearance:none;font-family:-apple-system,sans-serif;
+  width:68px
+}
+.time-range-sep{color:var(--mt);font-size:13px;padding:0 2px}
+.slot-add{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,.08);border:1px solid var(--br2);
+  color:var(--mt2);font-size:18px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all .15s
+}
+.slot-add:hover{background:rgba(255,255,255,.14);color:#fff}
+.slot-del{
+  width:28px;height:28px;border-radius:50%;
+  background:none;border:1px solid var(--br);
+  color:var(--mt);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all .15s
+}
+.slot-del:hover{border-color:var(--red);color:var(--red)}
+
+/* Readonly slots */
+.slot-readonly{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px
+}
+.slot-readonly-time{
+  background:rgba(255,255,255,.05);border:1px solid var(--br);
+  border-radius:8px;padding:8px 14px;
+  font-size:14px;font-weight:500;color:var(--tx);
+  font-variant-numeric:tabular-nums
+}
+.slot-readonly-sep{color:var(--mt);font-size:13px}
+
+/* Botón guardar fijo */
+.save-fab{
+  position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0));
+  left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,#7a5a14,var(--gold));
+  color:#000;font-size:15px;font-weight:700;
+  border:none;border-radius:14px;padding:15px 32px;
+  cursor:pointer;white-space:nowrap;
+  box-shadow:0 8px 28px rgba(201,150,42,.35);
+  display:none;align-items:center;gap:8px;
+  transition:all .2s;font-family:-apple-system,sans-serif;
+  z-index:30
+}
+.save-fab.on{display:flex}
+.save-fab:active{transform:translateX(-50%) scale(.97)}
+
+/* Modificación y cierre */
+.action-section{padding:0 20px 20px;max-width:850px;margin-left:auto;margin-right:auto}
+.action-card{
+  background:rgba(255,255,255,.04);border:1px solid var(--br);
+  border-radius:18px;padding:16px;margin-bottom:10px
+}
+.action-card-title{
+  font-size:15px;font-weight:700;margin-bottom:4px;
+  display:flex;align-items:center;gap:8px
+}
+.action-card-desc{font-size:13px;color:var(--mt2);line-height:1.6;margin-bottom:12px}
+.action-btn{
+  width:100%;padding:12px;border-radius:12px;border:none;
+  font-size:14px;font-weight:600;cursor:pointer;
+  font-family:-apple-system,sans-serif;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:6px
+}
+.action-btn:active{transform:scale(.98)}
+.ab-ghost{background:rgba(255,255,255,.07);border:1px solid var(--br2);color:var(--tx)}
+.ab-danger{background:rgba(240,107,107,.1);border:1px solid rgba(240,107,107,.18);color:var(--red)}
+
+/* ══════════════════════════════════
+   SHEET — full sheet iOS
+══════════════════════════════════ */
+.ov{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;
+  display:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)
+}
+.ov.on{display:block}
+.sheet{
+  position:fixed;bottom:0;left:0;right:0;z-index:41;
+  background:#0c1b34;
+  border-top:1px solid rgba(255,255,255,.1);
+  border-radius:24px 24px 0 0;
+  padding-bottom:calc(32px + env(safe-area-inset-bottom,0));
+  max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.32,1.2,.64,1)
+}
+.sheet.on{transform:translateY(0)}
+.sh-handle{
+  width:36px;height:4px;background:rgba(255,255,255,.18);
+  border-radius:2px;margin:14px auto 0
+}
+.sh-content{padding:20px 20px 0}
+.sh-eyebrow{
+  font-size:11px;font-weight:600;color:var(--mt);
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px
+}
+.sh-title{font-size:22px;font-weight:700;letter-spacing:-.4px;margin-bottom:4px}
+.sh-meta{font-size:13px;color:var(--mt2);margin-bottom:20px;line-height:1.4}
+
+.sh-info-card{
+  background:rgba(255,255,255,.04);border:1px solid var(--br);
+  border-radius:16px;padding:4px 0;margin-bottom:18px
+}
+.sh-row{
+  display:flex;gap:12px;padding:11px 16px;
+  border-bottom:1px solid var(--br);font-size:13px;align-items:flex-start
+}
+.sh-row:last-child{border-bottom:none}
+.sh-lb{color:var(--mt);width:76px;flex-shrink:0;font-size:12px;padding-top:1px;font-weight:500}
+.sh-val{flex:1;line-height:1.4}
+
+/* Acta section */
+.acta-wrap{
+  background:rgba(201,150,42,.05);border:1px solid rgba(201,150,42,.15);
+  border-radius:16px;padding:16px;margin-bottom:16px
+}
+.acta-eyebrow{
+  font-size:10px;font-weight:700;color:var(--gold2);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;
+  display:flex;align-items:center;gap:6px
+}
+.acta-dot-ind{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.acta-preview{
+  font-size:13px;line-height:1.7;color:var(--tx);
+  background:rgba(255,255,255,.04);border-radius:10px;
+  padding:12px;margin-bottom:10px
+}
+.acta-textarea{
+  width:100%;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;
+  color:#fff;padding:12px;font-size:14px;line-height:1.6;
+  font-family:-apple-system,sans-serif;outline:none;
+  resize:none;min-height:100px;-webkit-appearance:none;
+  transition:border-color .2s
+}
+.acta-textarea:focus{border-color:rgba(201,150,42,.4)}
+.acta-hint{font-size:11px;color:var(--mt);margin-bottom:10px;line-height:1.5}
+
+/* Botones del sheet */
+.sh-btns{display:flex;flex-direction:column;gap:8px}
+.sh-btn{
+  width:100%;padding:14px;border-radius:13px;border:none;
+  font-size:15px;font-weight:600;cursor:pointer;
+  font-family:-apple-system,sans-serif;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  -webkit-appearance:none
+}
+.sh-btn:active{transform:scale(.98)}
+.sh-btn-green{
+  background:linear-gradient(135deg,#059669,var(--green));
+  color:#000;box-shadow:0 6px 20px rgba(45,212,160,.25)
+}
+.sh-btn-gold{
+  background:linear-gradient(135deg,#7a5a14,var(--gold));
+  color:#000;box-shadow:0 6px 20px rgba(201,150,42,.2)
+}
+.sh-btn-danger{background:rgba(240,107,107,.1);border:1px solid rgba(240,107,107,.2);color:var(--red)}
+.sh-btn-ghost{background:rgba(255,255,255,.07);border:1px solid var(--br2);color:var(--mt2)}
+
+/* Form */
+.fg{margin-bottom:12px}
+.fl{display:block;font-size:11px;color:var(--mt);margin-bottom:6px;
+  letter-spacing:.4px;text-transform:uppercase;font-weight:600}
+.fi,.fta{
+  width:100%;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;
+  color:#fff;padding:13px;font-size:15px;line-height:1.4;
+  font-family:-apple-system,sans-serif;outline:none;
+  -webkit-appearance:none;transition:border-color .2s,box-shadow .2s
+}
+.fi:focus,.fta:focus{border-color:rgba(201,150,42,.4);box-shadow:0 0 0 3px rgba(201,150,42,.08)}
+.fta{resize:vertical;min-height:88px}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:calc(80px + env(safe-area-inset-bottom,0));
+  left:50%;transform:translateX(-50%) translateY(120px);
+  background:#1a2f52;border:1px solid rgba(255,255,255,.15);
+  border-radius:13px;padding:12px 20px;font-size:13px;font-weight:500;
+  max-width:300px;width:calc(100% - 36px);text-align:center;
+  z-index:200;transition:transform .32s cubic-bezier(.34,1.4,.64,1)
+}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(45,212,160,.35);color:var(--green)}
+.toast.er{border-color:rgba(240,107,107,.35);color:var(--red)}
+
+/* Spinner btn */
+.spin-btn{width:16px;height:16px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:rot .7s linear infinite;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- ══ DEV GATE ══ -->
+<div id="dev-gate">
+  <div class="gate-logo">
+    <img src="/logo.png" onerror="this.style.display='none';this.parentNode.innerHTML='<span>S</span>'">
+  </div>
+  <div class="gate-title">Módulo de Citas</div>
+  <div class="gate-sub">Próximamente disponible para todos los docentes</div>
+  <div class="gate-badge">EN DESARROLLO</div>
+  <div class="gate-card">
+    <div class="gate-lbl">Acceso de administrador</div>
+    <input type="password" id="gateInp" class="gate-inp" placeholder="••••••••" maxlength="20"
+      onkeydown="if(event.key==='Enter')checkGate()">
+    <button class="gate-btn" onclick="checkGate()">Continuar →</button>
+    <div class="gate-err" id="gateErr"> </div>
+  </div>
+</div>
+
+<!-- ══ SPLASH ══ -->
+<div id="splash">
+  <div class="spin-w"></div>
+  <p>Validando sesión...</p>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+
+  <!-- Topbar igual al sistema -->
+  <div class="topbar">
+    <div class="tb-logo">
+      <img src="/logo.png" onerror="this.style.display='none';this.parentNode.innerHTML='<span>S</span>'">
+    </div>
+    <h1 style="font-family:-apple-system,'Helvetica Neue',sans-serif;font-size:15px;font-weight:600;letter-spacing:-.2px;flex:1;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="topbarTitle">Reuniones</h1>
+    <button class="tb-btn" onclick="window.location.href='/'">Inicio</button>
+    <button class="tb-btn" onclick="doLogout()">Salir</button>
+  </div>
+
+  <!-- Scroll area -->
+  <div class="scroll" id="scrollArea">
+
+    <!-- ════ VISTA REUNIONES ════ -->
+    <div class="view on" id="v-meet">
+
+      <!-- Mini calendario semanal -->
+      <div class="week-cal">
+        <div class="week-nav">
+          <div class="week-nav-lbl" id="weekNavLbl">—</div>
+          <div class="week-nav-btns">
+            <button class="week-nav-btn" onclick="navSemana(-1)">
+              <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="week-nav-btn" onclick="navSemana(1)">
+              <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="week-row" id="weekRow"></div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="filter-row" style="padding:12px 16px 0">
+        <button class="chip on" onclick="filtrar('proximas',this)">Próximas</button>
+        <button class="chip" onclick="filtrar('hoy',this)">Hoy</button>
+        <button class="chip" onclick="filtrar('pasadas',this)">Pasadas</button>
+        <button class="chip" onclick="filtrar('todas',this)">Todas</button>
+      </div>
+
+      <!-- Lista citas -->
+      <div id="citasList" style="padding-bottom:80px">
+        <div class="empty-state">
+          <div class="empty-ico"><div class="spin-w"></div></div>
+          <div class="empty-sub">Cargando reuniones...</div>
+        </div>
+      </div>
+
+    </div><!-- /v-meet -->
+
+    <!-- ════ VISTA DISPONIBILIDAD ════ -->
+    <div class="view" id="v-avail">
+
+      <!-- Hero perfil -->
+      <div class="avail-hero">
+        <div class="avail-hero-top">
+          <div class="avail-avatar" id="availAvatar">—</div>
+          <div class="avail-info">
+            <div class="avail-nombre" id="availNombre">—</div>
+            <div class="avail-status">
+              <div class="avail-dot" id="availDot" style="background:var(--mt)"></div>
+              <span id="availStatusLbl">Cargando...</span>
+            </div>
+          </div>
+        </div>
+        <div class="avail-pills">
+          <div class="avail-pill">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            30 min por cita
+          </div>
+          <div class="avail-pill">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+            Solo padres de familia
+          </div>
+        </div>
+      </div>
+
+      <!-- Días -->
+      <div class="avail-section" style="padding-top:16px">
+        <div class="avail-sec-title">Horas semanales</div>
+        <div class="avail-days-wrap" id="diasGrid"></div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="action-section" id="actionSection" style="display:none">
+        <div class="action-card">
+          <div class="action-card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Modificar horario
+          </div>
+          <div class="action-card-desc">Los cambios de horario requieren autorización del administrador. La coordinadora también es notificada.</div>
+          <button class="action-btn ab-ghost" onclick="abrirSolHorario()">Solicitar cambio →</button>
+        </div>
+        <div class="action-card">
+          <div class="action-card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Cerrar agenda
+          </div>
+          <div class="action-card-desc">Bloquea tu agenda para fechas específicas. La coordinadora es notificada y el administrador autoriza.</div>
+          <button class="action-btn ab-danger" onclick="abrirSolCierre()">Solicitar cierre</button>
+        </div>
+      </div>
+
+      <div style="height:100px"></div>
+    </div><!-- /v-avail -->
+
+  </div><!-- /scroll -->
+
+  <!-- Bottom nav estilo sistema -->
+  <div class="bnav">
+    <button class="ni on" id="ni-meet" onclick="goView('meet',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="8" cy="15" r="1" fill="currentColor"/><circle cx="12" cy="15" r="1" fill="currentColor"/><circle cx="16" cy="15" r="1" fill="currentColor"/></svg>
+      <span>Reuniones</span>
+    </button>
+    <button class="ni" id="ni-avail" onclick="goView('avail',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <span>Disponibilidad</span>
+    </button>
+  </div>
+
+  <!-- FAB guardar -->
+  <button class="save-fab" id="saveFab" onclick="guardarHorario()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    Guardar horario
+  </button>
+
+</div><!-- /app -->
+
+<!-- Sheets -->
+<div class="ov" id="ov1" onclick="closeSheet('sh1','ov1')"></div>
+<div class="sheet" id="sh1">
+  <div class="sh-handle"></div>
+  <div class="sh-content" id="sh1c"></div>
+</div>
+
+<div class="ov" id="ov2" onclick="closeSheet('sh2','ov2')"></div>
+<div class="sheet" id="sh2">
+  <div class="sh-handle"></div>
+  <div class="sh-content" id="sh2c"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONSTANTES Y UTILS
+// ══════════════════════════════════════════════
+const CLAVE_DEV = '1624Scc$';
+const DEV_KEY   = 'sipresc_citas_dev';
+const API       = '/api/proxy';
+const DIAS      = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const MESES     = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES_CORTO = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+// — IMPORTANTE: $ debe declararse PRIMERO —
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,'0');
+
+let ST = {correo:null,nombre:null,docenteId:null,rol:null,citas:[],horarios:{},yaGuardado:false};
+let filtroCitas = 'proximas';
+
+// ══════════════════════════════════════════════
+// DEV GATE
+// ══════════════════════════════════════════════
+function checkGate(){
+  if($('gateInp').value === CLAVE_DEV){
+    localStorage.setItem(DEV_KEY,'1');
+    $('dev-gate').style.display = 'none';
+    boot();
+  } else {
+    $('gateErr').textContent = 'Clave incorrecta';
+    $('gateInp').value = '';
+    setTimeout(()=>$('gateErr').textContent=' ', 1800);
+  }
+}
+
+// ══════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════
+function boot(){
+  $('splash').style.display = 'flex';
+  const data = localStorage.getItem('lp_user');
+  if(!data){ go('/'); return; }
+  try{
+    const obj = JSON.parse(data);
+    if(Date.now() - obj.loginTime > 14*864e5){ localStorage.removeItem('lp_user'); go('/'); return; }
+    ST.correo = obj.correo;
+    api('loginGoogle',{correo:obj.correo}).then(r=>{
+      if(!r.ok){ localStorage.removeItem('lp_user'); go('/'); return; }
+      ST.rol=r.rol; ST.nombre=r.nombre; ST.docenteId=r.docenteId;
+      $('splash').style.display='none';
+      $('app').classList.add('on');
+      iniciar();
+    }).catch(()=>{ $('splash').style.display='none'; go('/'); });
+  }catch{ go('/'); }
+}
+
+function go(url){ window.location.href = url; }
+function doLogout(){ localStorage.removeItem('lp_user'); localStorage.removeItem(DEV_KEY); go('/'); }
+
+function iniciar(){
+  const ini = (ST.nombre||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
+  if($('availAvatar')) $('availAvatar').textContent = ini||'—';
+  if($('availNombre')) $('availNombre').textContent = ST.nombre||'—';
+  cargarCitas();
+  cargarHorarios();
+  renderSemana();
+}
+
+// ══════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════
+function goView(id, el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('on'));
+  $('v-'+id).classList.add('on');
+  el.classList.add('on');
+  $('scrollArea').scrollTop = 0;
+  // Actualizar título topbar
+  const titles = {meet:'Reuniones', avail:'Disponibilidad'};
+  $('topbarTitle').textContent = titles[id]||'Mis Citas';
+  // FAB solo en disponibilidad si no tiene horario
+  $('saveFab').classList.toggle('on', id==='avail' && !ST.yaGuardado);
+}
+
+// ══════════════════════════════════════════════
+// API
+// ══════════════════════════════════════════════
+function api(action, payload){
+  return new Promise((res,rej)=>{
+    const body={action,...(payload||{})};
+    if(ST.correo) body.correo=ST.correo;
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+      .then(r=>r.json()).then(res).catch(rej);
+  });
+}
+
+function toast(msg,tipo){
+  const t=$('toast'); t.textContent=msg;
+  t.className='toast on '+(tipo||'');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.className='toast',3000);
+}
+function openSheet(s,o){$(o).classList.add('on');$(s).classList.add('on');}
+function closeSheet(s,o){$(o).classList.remove('on');$(s).classList.remove('on');}
+function spinBtn(btn){
+  const o=btn.innerHTML; btn.innerHTML='<span class="spin-btn"></span>'; btn.disabled=true;
+  return t=>{btn.innerHTML=t||o; btn.disabled=false;};
+}
+
+// ══════════════════════════════════════════════
+// MINI CALENDARIO SEMANAL
+// ══════════════════════════════════════════════
+let semanaBase = new Date();
+let diaSeleccionado = null;
+
+function getLunes(fecha){
+  const d = new Date(fecha);
+  const day = d.getDay();
+  const diff = day===0 ? -6 : 1-day;
+  d.setDate(d.getDate()+diff);
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function navSemana(delta){
+  semanaBase.setDate(semanaBase.getDate() + delta*7);
+  diaSeleccionado = null;
+  renderSemana();
+  renderCitas(filtroCitas);
+}
+
+function renderSemana(){
+  const lunes = getLunes(semanaBase);
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const diasNom = ['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+  // Label del mes
+  const fin = new Date(lunes); fin.setDate(fin.getDate()+6);
+  if(lunes.getMonth()===fin.getMonth()){
+    $('weekNavLbl').textContent = `${MESES[lunes.getMonth()]} ${lunes.getFullYear()}`;
+  } else {
+    $('weekNavLbl').textContent = `${meses[lunes.getMonth()]} – ${meses[fin.getMonth()]} ${fin.getFullYear()}`;
+  }
+
+  // Citas agrupadas por fecha para mostrar dots
+  const cpf = {};
+  (ST.citas||[]).forEach(c=>{ if(!cpf[c.fecha]) cpf[c.fecha]=[]; cpf[c.fecha].push(c); });
+
+  let html = '';
+  for(let i=0;i<7;i++){
+    const d = new Date(lunes); d.setDate(lunes.getDate()+i);
+    const fs = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+    const esHoy = d.getTime()===hoy.getTime();
+    const esSel = diaSeleccionado===fs;
+    const tieneCitas = (cpf[fs]||[]).some(c=>c.estado==='confirmada');
+
+    let cls = 'week-day';
+    if(esHoy) cls+=' hoy';
+    if(esSel) cls+=' sel';
+    if(tieneCitas) cls+=' tiene';
+
+    html+=`<div class="${cls}" onclick="selDiaSemana('${fs}')">
+      <div class="week-day-lbl">${diasNom[i]}</div>
+      <div class="week-day-num">${d.getDate()}</div>
+      <div class="week-dot"></div>
+    </div>`;
+  }
+  $('weekRow').innerHTML = html;
+}
+
+function selDiaSemana(fs){
+  diaSeleccionado = diaSeleccionado===fs ? null : fs;
+  renderSemana();
+  if(diaSeleccionado){
+    // Cambiar a filtro del día seleccionado
+    mostrarCitasDia(diaSeleccionado);
+  } else {
+    renderCitas(filtroCitas);
+  }
+}
+
+function mostrarCitasDia(fs){
+  const citas = (ST.citas||[]).filter(c=>c.fecha===fs);
+  const d = new Date(fs+'T12:00:00');
+  const diasSemana=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const esHoy = fs===new Date().toISOString().split('T')[0];
+  const lbl = `${diasSemana[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+
+  if(!citas.length){
+    $('citasList').innerHTML=`
+      <div class="dia-header">
+        <div class="dia-header-fecha ${esHoy?'dia-header-hoy':''}">${lbl}</div>
+      </div>
+      <div class="empty-state" style="padding:24px 32px">
+        <div class="empty-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        </div>
+        <div class="empty-sub">Sin reuniones para este día</div>
+      </div>`;
+    return;
+  }
+
+  const sorted = [...citas].sort((a,b)=>a.horaInicio.localeCompare(b.horaInicio));
+  $('citasList').innerHTML=`
+    <div class="dia-header">
+      <div class="dia-header-fecha ${esHoy?'dia-header-hoy':''}">${lbl}</div>
+      <div class="dia-header-cnt">${sorted.length} reunión${sorted.length>1?'es':''}</div>
+    </div>
+    <div class="citas-lista">
+      ${sorted.map(c=>renderCitaRow(c)).join('')}
+    </div>`;
+}
+
+function renderCitaRow(c){
+  return `<div class="cita-row" onclick="verCita('${c.id}')">
+    <div class="cita-bar ${c.estado}"></div>
+    <div class="cita-content">
+      <div class="cita-time-col">
+        <div class="cita-time-ini">${c.horaInicio}</div>
+        <div class="cita-time-fin">${c.horaFin}</div>
+      </div>
+      <div class="cita-divider"></div>
+      <div class="cita-main">
+        <div class="cita-main-nombre">${c.padreNombre||''} ${c.padreApellido||''}</div>
+        <div class="cita-main-meta">👤 ${c.estudianteNombre||''} · ${c.grado||''} · ${c.motivos||''}</div>
+      </div>
+      <div class="cita-right">
+        <div class="cita-status-dot ${c.estado}"></div>
+        ${c.acta?'<div class="cita-acta-pill">📝 Acta</div>':''}
+        <div class="cita-chevron">›</div>
+      </div>
+    </div>
+  </div>`;
+}
+function cargarCitas(){
+  api('misCitas',{docenteId:ST.docenteId}).then(citas=>{
+    ST.citas = citas||[];
+    renderSemana();
+    renderCitas(filtroCitas);
+  }).catch(()=>{
+    $('citasList').innerHTML=`<div class="empty-state">
+      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01" stroke-width="2"/><circle cx="12" cy="12" r="9" stroke-width="1.5"/></svg></div>
+      <div class="empty-title">Sin conexión</div>
+      <div class="empty-sub">No se pudieron cargar las citas</div>
+    </div>`;
+  });
+}
+
+function filtrar(f, el){
+  filtroCitas = f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  renderCitas(f);
+}
+
+function renderCitas(filtro){
+  diaSeleccionado = null;
+  renderSemana();
+  const hoyStr = new Date().toISOString().split('T')[0];
+  let citas = [...ST.citas];
+
+  if(filtro==='proximas') citas = citas.filter(c=>c.fecha>=hoyStr&&c.estado==='confirmada');
+  else if(filtro==='hoy')  citas = citas.filter(c=>c.fecha===hoyStr);
+  else if(filtro==='pasadas') citas = citas.filter(c=>c.fecha<hoyStr);
+
+  citas.sort((a,b)=>a.fecha===b.fecha?a.horaInicio.localeCompare(b.horaInicio):a.fecha.localeCompare(b.fecha));
+
+  if(!citas.length){
+    const msgs = {proximas:'No tienes citas próximas',hoy:'No tienes citas para hoy',pasadas:'Sin citas pasadas',todas:'No hay citas registradas'};
+    $('citasList').innerHTML=`<div class="empty-state">
+      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+      <div class="empty-title">Sin reuniones</div>
+      <div class="empty-sub">${msgs[filtro]||''}</div>
+    </div>`;
+    return;
+  }
+
+  const grupos = {};
+  citas.forEach(c=>{ if(!grupos[c.fecha]) grupos[c.fecha]=[]; grupos[c.fecha].push(c); });
+
+  let html = '';
+  const diasSemana=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  Object.keys(grupos).sort().forEach(fecha=>{
+    const d = new Date(fecha+'T12:00:00');
+    const esHoy = fecha===hoyStr;
+    const esMañana = fecha===new Date(Date.now()+864e5).toISOString().split('T')[0];
+    let lbl = `${diasSemana[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+    if(esHoy) lbl = 'Hoy · '+lbl;
+    else if(esMañana) lbl = 'Mañana · '+lbl;
+
+    html+=`<div class="dia-header">
+      <div class="dia-header-fecha ${esHoy?'dia-header-hoy':''}">${lbl}</div>
+      <div class="dia-header-cnt">${grupos[fecha].length} reunión${grupos[fecha].length>1?'es':''}</div>
+    </div>
+    <div class="citas-lista">${grupos[fecha].map(c=>renderCitaRow(c)).join('')}</div>`;
+  });
+
+  $('citasList').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════
+// DETALLE CITA
+// ══════════════════════════════════════════════
+function verCita(id){
+  const c = ST.citas.find(x=>x.id===id);
+  if(!c) return;
+  const tieneActa = c.acta&&c.acta.trim().length>0;
+  const d = new Date(c.fecha+'T12:00:00');
+  const diasSemana=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const fechaLegible = `${diasSemana[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+
+  $('sh1c').innerHTML = `
+    <div class="sh-eyebrow">Reunión presencial · 30 min</div>
+    <div class="sh-title">${c.padreNombre||''} ${c.padreApellido||''}</div>
+    <div class="sh-meta">${fechaLegible} · ${c.horaInicio} – ${c.horaFin}</div>
+
+    <div class="sh-info-card">
+      <div class="sh-row"><span class="sh-lb">Estudiante</span><span class="sh-val">${c.estudianteNombre||'—'}</span></div>
+      <div class="sh-row"><span class="sh-lb">Grado</span><span class="sh-val">${c.grado||'—'}</span></div>
+      <div class="sh-row"><span class="sh-lb">Correo</span><span class="sh-val" style="font-size:12px;word-break:break-all">${c.padreCorreo||'—'}</span></div>
+      <div class="sh-row"><span class="sh-lb">Motivo</span><span class="sh-val">${c.motivos||'—'}${c.motivoExtra?' · '+c.motivoExtra:''}</span></div>
+      <div class="sh-row" style="border:none"><span class="sh-lb">Estado</span>
+        <span class="cita-badge ${c.estado}" style="margin:0;font-size:11px">${c.estado==='confirmada'?'✓ Confirmada':'✕ Cancelada'}</span>
+      </div>
+    </div>
+
+    ${c.estado==='confirmada'?`
+    <div class="acta-wrap">
+      <div class="acta-eyebrow">
+        <div class="acta-dot-ind"></div>
+        ACTA DE REUNIÓN
+      </div>
+      ${tieneActa?`
+        <div class="acta-preview" id="actaPreview">${c.acta}</div>
+        <div id="actaEditWrap" style="display:none">
+          <textarea class="acta-textarea" id="actaTxt">${c.acta}</textarea>
+          <button class="sh-btn sh-btn-gold" style="margin-top:10px" onclick="guardarActa('${c.id}')">Guardar cambios</button>
+        </div>
+        <button class="sh-btn sh-btn-ghost" style="margin-top:8px" onclick="toggleActaEdit()">✏ Editar acta</button>
+      `:`
+        <div class="acta-hint">Escribe un breve resumen de la reunión. Se enviará copia al correo del padre/madre.</div>
+        <textarea class="acta-textarea" id="actaTxt" placeholder="Ej: Se revisó el rendimiento académico en matemáticas. Se acordó refuerzo en casa tres veces por semana..."></textarea>
+        <button class="sh-btn sh-btn-gold" style="margin-top:10px" onclick="guardarActa('${c.id}')">
+          📤 Enviar y guardar acta
+        </button>
+      `}
+    </div>
+    <div class="sh-btns" style="margin-top:12px">
+      <button class="sh-btn sh-btn-danger" onclick="pedirCancelacion('${c.id}')">Cancelar cita</button>
+    </div>
+    `:''}
+
+    <div class="sh-btns" style="margin-top:8px">
+      <button class="sh-btn sh-btn-ghost" onclick="closeSheet('sh1','ov1')">Cerrar</button>
+    </div>
+    <div style="height:12px"></div>
+  `;
+  openSheet('sh1','ov1');
+}
+
+function toggleActaEdit(){
+  const w=$('actaEditWrap'), p=$('actaPreview');
+  const show = w.style.display==='none';
+  w.style.display = show?'block':'none';
+  if(p) p.style.display = show?'none':'block';
+  if(show) $('actaTxt').focus();
+}
+
+function guardarActa(citaId){
+  const txt=($('actaTxt')&&$('actaTxt').value||'').trim();
+  if(txt.length<10){toast('Escribe al menos 10 caracteres','er');return;}
+  const btn=document.querySelector('#sh1c .sh-btn-gold');
+  const rest=spinBtn(btn);
+  api('guardarActa',{citaId,acta:txt,docenteId:ST.docenteId}).then(r=>{
+    rest();
+    if(r.ok){
+      const c=ST.citas.find(x=>x.id===citaId);
+      if(c) c.acta=txt;
+      toast('Acta guardada y enviada al padre ✔','ok');
+      closeSheet('sh1','ov1');
+      renderCitas(filtroCitas);
+    } else toast(r.mensaje||'Error','er');
+  }).catch(()=>{rest();toast('Error de conexión','er');});
+}
+
+function pedirCancelacion(citaId){
+  $('sh2c').innerHTML=`
+    <div class="sh-title">Cancelar reunión</div>
+    <div class="sh-meta">El padre/madre recibirá una notificación por correo.</div>
+    <div class="fg">
+      <label class="fl">Motivo de cancelación</label>
+      <textarea class="fta" id="motCan" placeholder="Explica el motivo..."></textarea>
+    </div>
+    <div class="sh-btns">
+      <button class="sh-btn sh-btn-danger" onclick="confirmarCancelacion('${citaId}')">Confirmar cancelación</button>
+      <button class="sh-btn sh-btn-ghost" onclick="closeSheet('sh2','ov2')">Volver</button>
+    </div>
+    <div style="height:12px"></div>
+  `;
+  openSheet('sh2','ov2');
+}
+
+function confirmarCancelacion(citaId){
+  const mot=($('motCan')&&$('motCan').value||'').trim();
+  if(!mot){toast('El motivo es obligatorio','er');return;}
+  const btn=document.querySelector('#sh2c .sh-btn-danger');
+  const rest=spinBtn(btn);
+  api('cancelarCita',{citaId,motivo:mot,docenteId:ST.docenteId}).then(r=>{
+    rest();
+    if(r.ok){
+      toast('Cita cancelada','ok');
+      closeSheet('sh2','ov2');closeSheet('sh1','ov1');
+      cargarCitas();
+    } else toast(r.mensaje||'Error','er');
+  }).catch(()=>{rest();toast('Error de conexión','er');});
+}
+
+// ══════════════════════════════════════════════
+// HORARIOS
+// ══════════════════════════════════════════════
+function cargarHorarios(){
+  api('misHorarios',{docenteId:ST.docenteId}).then(hs=>{
+    ST.horarios={};
+    (hs||[]).forEach(h=>{
+      if(!ST.horarios[h.dia]) ST.horarios[h.dia]=[];
+      ST.horarios[h.dia].push({ini:h.horaInicio,fin:h.horaFin});
+    });
+    ST.yaGuardado = hs&&hs.length>0;
+    renderDisponibilidad();
+  }).catch(()=>{});
+}
+
+function renderDisponibilidad(){
+  const ya = ST.yaGuardado;
+  $('availDot').style.background = ya ? 'var(--green)' : 'var(--red)';
+  $('availStatusLbl').textContent = ya ? 'Horario activo · Disponible para reservas' : 'Sin horario configurado';
+  $('actionSection').style.display = ya ? 'block' : 'none';
+  $('saveFab').classList.toggle('on', !ya);
+
+  const iniciales = {'Lunes':'L','Martes':'M','Miércoles':'X','Jueves':'J','Viernes':'V','Sábado':'S'};
+
+  let html='';
+  DIAS.forEach(dia=>{
+    const sid=dia.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const bloques=ST.horarios[dia]||[];
+    const activo=bloques.length>0;
+    const ini=iniciales[dia]||dia[0];
+
+    html+=`<div class="dia-row ${activo?'active':''}" id="dr-${sid}">
+      <div class="dia-row-header" ${!ya?`onclick="toggleDia('${dia}','${sid}')"`:''} style="${ya?'cursor:default':'cursor:pointer'}">
+        <div class="dia-circle">${ini}</div>
+        <div class="dia-nombre">${dia}</div>
+        ${activo?'':'<span class="dia-indisponible">Indisponible</span>'}
+        <div class="toggle ${activo?'on':''}" id="tog-${sid}" ${!ya?`onclick="event.stopPropagation();toggleDia('${dia}','${sid}')"`:''}>
+          <div class="toggle-thumb"></div>
+        </div>
+      </div>
+      ${activo?`<div class="dia-slots">
+        ${bloques.map((b,i)=>ya?renderSlotReadonly(b):renderSlotEditable(dia,i,b,i===bloques.length-1)).join('')}
+      </div>`:''}
+    </div>`;
+  });
+
+  $('diasGrid').innerHTML=html;
+}
+
+function renderSlotReadonly(b){
+  return `<div class="slot-readonly">
+    <span class="slot-readonly-time">${b.ini}</span>
+    <span class="slot-readonly-sep">–</span>
+    <span class="slot-readonly-time">${b.fin}</span>
+  </div>`;
+}
+
+function renderSlotEditable(dia,idx,b,esUltimo){
+  return `<div class="slot-row">
+    <div class="time-range">
+      <input type="time" value="${b.ini||'09:00'}" onchange="updSlot('${dia}',${idx},'ini',this.value)">
+      <span class="time-range-sep">–</span>
+      <input type="time" value="${b.fin||'17:00'}" onchange="updSlot('${dia}',${idx},'fin',this.value)">
+    </div>
+    <button class="slot-del" onclick="delSlot('${dia}',${idx})">×</button>
+    ${esUltimo?`<button class="slot-add" onclick="addSlot('${dia}')">+</button>`:'<div style="width:28px"></div>'}
+  </div>`;
+}
+
+function toggleDia(dia,sid){
+  if(!ST.horarios[dia]) ST.horarios[dia]=[];
+  const activo=ST.horarios[dia].length>0;
+  if(activo){
+    ST.horarios[dia]=[];
+  } else {
+    ST.horarios[dia]=[{ini:'07:00',fin:'17:00'}];
+  }
+  renderDisponibilidad();
+}
+
+function addSlot(dia,sid){
+  if(!ST.horarios[dia]) ST.horarios[dia]=[];
+  ST.horarios[dia].push({ini:'07:00',fin:'17:00'});
+  renderDisponibilidad();
+}
+function updSlot(dia,idx,k,v){ if(ST.horarios[dia]&&ST.horarios[dia][idx]) ST.horarios[dia][idx][k]=v; }
+function delSlot(dia,idx){ if(ST.horarios[dia]) ST.horarios[dia].splice(idx,1); renderDisponibilidad(); }
+
+function guardarHorario(){
+  const h=[];
+  DIAS.forEach(dia=>(ST.horarios[dia]||[]).forEach(b=>{if(b.ini&&b.fin)h.push({dia,horaInicio:b.ini,horaFin:b.fin});}));
+  if(!h.length){toast('Activa al menos un día con horario','er');return;}
+  const btn=$('saveFab');
+  const orig=btn.innerHTML; btn.innerHTML='<span class="spin-w" style="width:18px;height:18px"></span> Guardando...'; btn.disabled=true;
+  api('guardarHorarios',{docenteId:ST.docenteId,horarios:h}).then(r=>{
+    btn.innerHTML=orig; btn.disabled=false;
+    if(r.ok){ toast('Horario guardado ✔','ok'); ST.yaGuardado=true; renderDisponibilidad(); $('saveFab').classList.remove('on'); }
+    else toast(r.mensaje||'Error','er');
+  }).catch(()=>{btn.innerHTML=orig;btn.disabled=false;toast('Error de conexión','er');});
+}
+
+// ══════════════════════════════════════════════
+// SOLICITUDES
+// ══════════════════════════════════════════════
+function abrirSolHorario(){
+  $('sh1c').innerHTML=`
+    <div class="sh-title">Solicitar cambio de horario</div>
+    <div class="sh-meta">El administrador recibirá la solicitud. La coordinadora también será notificada.</div>
+    <div class="fg">
+      <label class="fl">Describe el cambio</label>
+      <textarea class="fta" id="solTxt" placeholder="Ej: Necesito cambiar los martes de 2–4pm a 3–5pm por reunión de área..."></textarea>
+    </div>
+    <div class="sh-btns">
+      <button class="sh-btn sh-btn-gold" onclick="enviarSolHorario()">Enviar solicitud</button>
+      <button class="sh-btn sh-btn-ghost" onclick="closeSheet('sh1','ov1')">Cancelar</button>
+    </div>
+    <div style="height:12px"></div>
+  `;
+  openSheet('sh1','ov1');
+}
+
+function enviarSolHorario(){
+  const txt=($('solTxt')&&$('solTxt').value||'').trim();
+  if(txt.length<10){toast('Describe el cambio requerido','er');return;}
+  const btn=document.querySelector('#sh1c .sh-btn-gold');
+  const rest=spinBtn(btn);
+  api('solicitarCambioHorario',{docenteId:ST.docenteId,descripcion:txt,nombre:ST.nombre}).then(r=>{
+    rest();
+    if(r.ok){toast('Solicitud enviada ✔','ok');closeSheet('sh1','ov1');}
+    else toast(r.mensaje||'Error','er');
+  }).catch(()=>{rest();toast('Error de conexión','er');});
+}
+
+function abrirSolCierre(){
+  const hoy=new Date().toISOString().split('T')[0];
+  $('sh1c').innerHTML=`
+    <div class="sh-title">Solicitar cierre de agenda</div>
+    <div class="sh-meta">Define las fechas. La coordinadora recibirá la notificación y el administrador autorizará.</div>
+    <div class="fg">
+      <label class="fl">Fecha inicio</label>
+      <input type="date" class="fi" id="cieIni" min="${hoy}">
+    </div>
+    <div class="fg">
+      <label class="fl">Fecha fin</label>
+      <input type="date" class="fi" id="cieFin" min="${hoy}">
+    </div>
+    <div class="fg">
+      <label class="fl">Motivo</label>
+      <textarea class="fta" id="cieMot" placeholder="Explica brevemente..."></textarea>
+    </div>
+    <div class="sh-btns">
+      <button class="sh-btn sh-btn-danger" onclick="enviarSolCierre()">Enviar solicitud</button>
+      <button class="sh-btn sh-btn-ghost" onclick="closeSheet('sh1','ov1')">Cancelar</button>
+    </div>
+    <div style="height:12px"></div>
+  `;
+  openSheet('sh1','ov1');
+}
+
+function enviarSolCierre(){
+  const ini=($('cieIni')&&$('cieIni').value)||'';
+  const fin=($('cieFin')&&$('cieFin').value)||'';
+  const mot=($('cieMot')&&$('cieMot').value||'').trim();
+  if(!ini||!fin||!mot){toast('Completa todos los campos','er');return;}
+  if(fin<ini){toast('La fecha fin debe ser posterior al inicio','er');return;}
+  const btn=document.querySelector('#sh1c .sh-btn-danger');
+  const rest=spinBtn(btn);
+  api('solicitarCierre',{docenteId:ST.docenteId,ini,fin,motivo:mot,nombre:ST.nombre}).then(r=>{
+    rest();
+    if(r.ok){toast('Solicitud enviada ✔','ok');closeSheet('sh1','ov1');}
+    else toast(r.mensaje||'Error','er');
+  }).catch(()=>{rest();toast('Error de conexión','er');});
+}
+
+// ══════════════════════════════════════════════
+// ARRANQUE
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  $('splash').style.display = 'none';
+  $('app').classList.remove('on');
+
+  const accesoDev = localStorage.getItem(DEV_KEY);
+
+  if(accesoDev === '1'){
+    $('dev-gate').style.display = 'none';
+    boot();
+  } else {
+    $('dev-gate').style.display = 'flex';
+  }
+});
+</script>
+</body>
+</html>
