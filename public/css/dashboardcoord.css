@@ -98,10 +98,21 @@ input, select, textarea { font-family: inherit; }
 }
 .coord-brand:hover { background: var(--c-border-soft); }
 .coord-brand__logo {
-  width: 36px; height: 36px; border-radius: 9px;
-  object-fit: contain; background: #fff;
-  box-shadow: var(--shadow-1);
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  object-fit: contain;
+  padding: 7px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.055) 0%, transparent 38%),
+    linear-gradient(145deg, #142447 0%, #0b1832 48%, #071122 100%);
+  border: 1px solid rgba(255,255,255,.095);
+  box-shadow:
+    0 10px 24px rgba(33,20,95,.18),
+    0 1px 0 rgba(255,255,255,.08) inset,
+    0 -1px 0 rgba(0,0,0,.35) inset;
 }
+
 .coord-brand__text { display: flex; flex-direction: column; line-height: 1.1; }
 .coord-brand__text strong {
   font-size: 14px; font-weight: 700;
@@ -195,7 +206,26 @@ input, select, textarea { font-family: inherit; }
   display: flex; align-items: center; gap: 10px;
   text-decoration: none; color: var(--c-text);
 }
-.coord-mheader__brand img { width: 32px; height: 32px; border-radius: 8px; }
+.coord-mheader__brand img {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  object-fit: contain;
+  padding: 7px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.055) 0%, transparent 38%),
+    linear-gradient(145deg, #142447 0%, #0b1832 48%, #071122 100%);
+  border: 1px solid rgba(255,255,255,.095);
+  box-shadow:
+    0 10px 24px rgba(33,20,95,.16),
+    0 1px 0 rgba(255,255,255,.08) inset,
+    0 -1px 0 rgba(0,0,0,.35) inset;
+}
+
+.coord-brand__logo,
+.coord-mheader__brand img {
+  filter: none;
+}
 .coord-mheader__brand strong {
   display: block; font-size: 13px; color: var(--c-azul-oscuro);
   letter-spacing: .4px;
