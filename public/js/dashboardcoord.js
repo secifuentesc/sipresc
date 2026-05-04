@@ -713,16 +713,25 @@
         <span class="coord-status" data-estado="${est}">${escHTML(estadoLabel(est))}</span>
       `;
       row.addEventListener("click", () => {
-        state.pln.docenteSel = id;
-        state.pln.asignacionSel = null;
-        $$('#coordPlnDocentesList .coord-doc-row').forEach(r =>
-          r.classList.toggle("is-selected", r.dataset.id === id));
-        renderMateriasDocente(d);
-        const wrap = $("#coordPln");
-        if (wrap.dataset) wrap.dataset.mobileStep = "materias";
-      });
-      list.appendChild(row);
-    });
+  state.pln.docenteSel = id;
+  state.pln.asignacionSel = null;
+
+  $$('#coordPlnDocentesList .coord-doc-row').forEach(r =>
+    r.classList.toggle("is-selected", r.dataset.id === id)
+  );
+
+  renderMateriasDocente(d);
+
+  const wrap = $("#coordPln");
+  if (wrap) {
+    wrap.classList.add("has-docente");
+    wrap.classList.remove("has-detalle");
+
+    if (wrap.dataset) {
+      wrap.dataset.mobileStep = "materias";
+    }
+  }
+});
 
     // Si hay docente seleccionado, mantenerlo
     if (state.pln.docenteSel) {
@@ -796,16 +805,25 @@
         <span class="coord-status" data-estado="${est}">${escHTML(estadoLabel(est))}</span>
       `;
       row.addEventListener("click", () => {
-        state.pln.asignacionSel = a.key;
-        $$('#coordPlnMateriasList .coord-mat-row').forEach(r =>
-          r.classList.toggle("is-selected", r.dataset.key === a.key));
-        renderDetallePlaneacion(a, doc);
-        const wrap = $("#coordPln");
-        if (wrap.dataset) wrap.dataset.mobileStep = "detalle";
-      });
-      list.appendChild(row);
-    });
+  state.pln.asignacionSel = a.key;
+
+  $$('#coordPlnMateriasList .coord-mat-row').forEach(r =>
+    r.classList.toggle("is-selected", r.dataset.key === a.key)
+  );
+
+  renderDetallePlaneacion(a, doc);
+
+  const wrap = $("#coordPln");
+  if (wrap) {
+    wrap.classList.add("has-docente");
+    wrap.classList.add("has-detalle");
+
+    if (wrap.dataset) {
+      wrap.dataset.mobileStep = "detalle";
+    }
   }
+});
+
 
   /* ------------------------------------------------------
      PLANEACIONES · detalle
