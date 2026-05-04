@@ -115,8 +115,9 @@
     const s = String(raw || "").toLowerCase().trim();
     if (!s) return "no_enviada";
     if (/^aprob/.test(s))            return "aprobada";
-    if (/ajust/.test(s))             return "ajustes";
-    if (/recib/.test(s) || /revis/.test(s) || /pend/.test(s)) return "por_revisar";
+if (/ajust/.test(s))             return "ajustes";
+if (/reenvi/.test(s))            return "por_revisar";
+if (/recib/.test(s) || /revis/.test(s) || /pend/.test(s)) return "por_revisar";
     if (/^complet/.test(s))          return "completa";
     if (/^incomplet/.test(s))        return "incompleta";
     return s.replace(/\s+/g, "_");
