@@ -1532,3 +1532,101 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     margin-top:4px;
   }
 }
+
+
+/* =========================================================
+   SIPRESC · Ajuste dinámico tipo Calendly para Planeaciones
+   Pegar al final del CSS
+   ========================================================= */
+
+/* Transición suave entre columnas */
+.coord-pln {
+  transition: grid-template-columns 0.28s var(--ease);
+}
+
+.coord-pln__col {
+  min-width: 0;
+  transition: all 0.25s var(--ease);
+}
+
+/* Estado inicial: docentes amplio, materias normal, detalle amplio */
+.coord-pln {
+  grid-template-columns: 390px 320px 1fr;
+}
+
+/* Cuando ya se seleccionó docente */
+.coord-pln.has-docente {
+  grid-template-columns: 270px 420px 1fr;
+}
+
+/* Cuando ya se seleccionó materia: detalle más protagonista */
+.coord-pln.has-detalle {
+  grid-template-columns: 230px 360px minmax(560px, 1fr);
+}
+
+/* Compacta visualmente la columna de docentes cuando se está revisando detalle */
+.coord-pln.has-detalle .coord-doc-row {
+  padding: 10px;
+  gap: 9px;
+}
+
+.coord-pln.has-detalle .coord-doc-row__avatar {
+  width: 32px;
+  height: 32px;
+  font-size: 11px;
+}
+
+.coord-pln.has-detalle .coord-doc-row__name {
+  font-size: 12.5px;
+  -webkit-line-clamp: 1;
+}
+
+.coord-pln.has-detalle .coord-doc-row__sub,
+.coord-pln.has-detalle .coord-doc-row > .coord-status {
+  display: none;
+}
+
+/* Da más presencia al detalle */
+.coord-pln.has-detalle .coord-pln__col--detalle {
+  background: #fff;
+}
+
+.coord-pln.has-detalle .coord-pln__detail {
+  padding: 26px;
+}
+
+/* Mantiene materias visibles y cómodas */
+.coord-pln.has-detalle .coord-mat-row {
+  padding: 13px;
+}
+
+/* Tablet: conserva tu lógica existente sin dañarla */
+@media (max-width: 1100px) {
+  .coord-pln,
+  .coord-pln.has-docente,
+  .coord-pln.has-detalle {
+    grid-template-columns: 280px 1fr;
+  }
+}
+
+/* Mobile: manda el diseño progresivo por pasos */
+@media (max-width: 760px) {
+  .coord-pln,
+  .coord-pln.has-docente,
+  .coord-pln.has-detalle {
+    grid-template-columns: 1fr;
+  }
+
+  .coord-pln.has-detalle .coord-doc-row__sub,
+  .coord-pln.has-detalle .coord-doc-row > .coord-status {
+    display: initial;
+  }
+
+  .coord-pln.has-detalle .coord-doc-row__name {
+    -webkit-line-clamp: 2;
+  }
+
+  .coord-pln.has-detalle .coord-pln__detail {
+    padding: 22px;
+  }
+}
