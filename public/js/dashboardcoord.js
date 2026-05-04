@@ -647,99 +647,108 @@
   }
 
   function renderDocentesPln() {
-    const list = $("#coordPlnDocentesList");
-    list.innerHTML = "";
+  const list = $("#coordPlnDocentesList");
+  list.innerHTML = "";
 
-    const docs = state.pln.docentes.slice();
+  const docs = state.pln.docentes.slice();
 
-    // Ordenar
-    docs.sort((a, b) => {
-      const ea = ESTADO_PRIORIDAD[normEstado(a.estadoGlobal)] || 99;
-      const eb = ESTADO_PRIORIDAD[normEstado(b.estadoGlobal)] || 99;
-      if (ea !== eb) return ea - eb;
-      return (a.nombreDocente || "").localeCompare(b.nombreDocente || "", "es");
-    });
+  docs.sort((a, b) => {
+    const ea = ESTADO_PRIORIDAD[normEstado(a.estadoGlobal)] || 99;
+    const eb = ESTADO_PRIORIDAD[normEstado(b.estadoGlobal)] || 99;
+    if (ea !== eb) return ea - eb;
+    return (a.nombreDocente || "").localeCompare(b.nombreDocente || "", "es");
+  });
 
-    // Filtrar
-    const q = state.pln.query.toLowerCase().trim();
-    const filtered = docs.filter(d => {
-      const est = normEstado(d.estadoGlobal);
-      if (state.pln.filterEstado !== "todos") {
-        if (state.pln.filterEstado === "incompleta" && !["incompleta","no_enviada"].includes(est)) return false;
-        if (state.pln.filterEstado !== "incompleta" && est !== state.pln.filterEstado) return false;
-      }
-      if (q) {
-        const hay = (d.nombreDocente || "") + " " + (d.correo || "");
-        if (!hay.toLowerCase().includes(q)) return false;
-      }
-      return true;
-    });
+  const q = state.pln.query.toLowerCase().trim();
 
-    $("#coordPlnDocentesCount").textContent =
-      `${filtered.length} docente${filtered.length === 1 ? "" : "s"} · Periodo ${state.periodo} · Semana ${state.semana}`;
+  const filtered = docs.filter(d => {
+    const est = normEstado(d.estadoGlobal);
 
-    if (!filtered.length) {
-      list.innerHTML = `
-        <div class="coord-empty coord-empty--soft">
-          <div class="coord-empty__icon">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-          </div>
-          <h4>Sin resultados</h4>
-          <p>Ajusta el filtro o la búsqueda para ver más docentes.</p>
-        </div>`;
-      // limpiar siguiente columna
-      renderMateriasDocente(null);
-      return;
+    if (state.pln.filterEstado !== "todos") {
+      if (state.pln.filterEstado === "incompleta" && !["incompleta", "no_enviada"].includes(est)) return false;
+      if (state.pln.filterEstado !== "incompleta" && est !== state.pln.filterEstado) return false;
     }
 
-    filtered.forEach(d => {
-      const id = d.docenteId || d.correo;
-      const est = normEstado(d.estadoGlobal);
-      const sub = (d.asignaciones && d.asignaciones[0]?.asignatura)
-        ? `${d.asignaciones.length} asignacion${d.asignaciones.length===1?"":"es"}`
-        : (d.correo || "");
+    if (q) {
+      const hay = (d.nombreDocente || "") + " " + (d.correo || "");
+      if (!hay.toLowerCase().includes(q)) return false;
+    }
 
-      const row = el("button", {
-        type: "button",
-        class: "coord-doc-row" + (id === state.pln.docenteSel ? " is-selected" : ""),
-        "data-id": id
-      });
-      row.innerHTML = `
-        <span class="coord-doc-row__avatar">${escHTML(initials(d.nombreDocente))}</span>
-        <div class="coord-doc-row__body">
-          <div class="coord-doc-row__name">${escHTML(d.nombreDocente || "—")}</div>
-          <div class="coord-doc-row__sub">${escHTML(sub)}</div>
+    return true;
+  });
+
+  $("#coordPlnDocentesCount").textContent =
+    `${filtered.length} docente${filtered.length === 1 ? "" : "s"} · Periodo ${state.periodo} · Semana ${state.semana}`;
+
+  if (!filtered.length) {
+    list.innerHTML = `
+      <div class="coord-empty coord-empty--soft">
+        <div class="coord-empty__icon">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
         </div>
-        <span class="coord-status" data-estado="${est}">${escHTML(estadoLabel(est))}</span>
-      `;
-      row.addEventListener("click", () => {
-  state.pln.docenteSel = id;
-  state.pln.asignacionSel = null;
+        <h4>Sin resultados</h4>
+        <p>Ajusta el filtro o la búsqueda para ver más docentes.</p>
+      </div>`;
 
-  $$('#coordPlnDocentesList .coord-doc-row').forEach(r =>
-    r.classList.toggle("is-selected", r.dataset.id === id)
-  );
-
-  renderMateriasDocente(d);
-
-  const wrap = $("#coordPln");
-  if (wrap) {
-    wrap.classList.add("has-docente");
-    wrap.classList.remove("has-detalle");
-
-    if (wrap.dataset) {
-      wrap.dataset.mobileStep = "materias";
-    }
+    renderMateriasDocente(null);
+    return;
   }
-});
 
-    // Si hay docente seleccionado, mantenerlo
-    if (state.pln.docenteSel) {
-      const sel = filtered.find(d => (d.docenteId || d.correo) === state.pln.docenteSel);
-      if (sel) renderMateriasDocente(sel);
-      else renderMateriasDocente(null);
-    }
+  filtered.forEach(d => {
+    const id = d.docenteId || d.correo;
+    const est = normEstado(d.estadoGlobal);
+
+    const sub = (d.asignaciones && d.asignaciones[0]?.asignatura)
+      ? `${d.asignaciones.length} asignacion${d.asignaciones.length === 1 ? "" : "es"}`
+      : (d.correo || "");
+
+    const row = el("button", {
+      type: "button",
+      class: "coord-doc-row" + (id === state.pln.docenteSel ? " is-selected" : ""),
+      "data-id": id
+    });
+
+    row.innerHTML = `
+      <span class="coord-doc-row__avatar">${escHTML(initials(d.nombreDocente))}</span>
+      <div class="coord-doc-row__body">
+        <div class="coord-doc-row__name">${escHTML(d.nombreDocente || "—")}</div>
+        <div class="coord-doc-row__sub">${escHTML(sub)}</div>
+      </div>
+      <span class="coord-status" data-estado="${est}">${escHTML(estadoLabel(est))}</span>
+    `;
+
+    row.addEventListener("click", () => {
+      state.pln.docenteSel = id;
+      state.pln.asignacionSel = null;
+
+      $$('#coordPlnDocentesList .coord-doc-row').forEach(r =>
+        r.classList.toggle("is-selected", r.dataset.id === id)
+      );
+
+      renderMateriasDocente(d);
+
+      const wrap = $("#coordPln");
+      if (wrap) {
+        wrap.classList.add("has-docente");
+        wrap.classList.remove("has-detalle");
+
+        if (wrap.dataset) {
+          wrap.dataset.mobileStep = "materias";
+        }
+      }
+    });
+
+    list.appendChild(row);
+  });
+
+  if (state.pln.docenteSel) {
+    const sel = filtered.find(d => (d.docenteId || d.correo) === state.pln.docenteSel);
+    if (sel) renderMateriasDocente(sel);
+    else renderMateriasDocente(null);
+  } else {
+    renderMateriasDocente(null);
   }
+}
 
   function renderMateriasDocente(doc) {
     const list = $("#coordPlnMateriasList");
@@ -822,6 +831,9 @@
       wrap.dataset.mobileStep = "detalle";
     }
   }
+});
+
+list.appendChild(row);
 });
 
 
