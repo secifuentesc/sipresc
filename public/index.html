@@ -1178,7 +1178,7 @@ function iniciarHeartbeat(){
       correo: ST.correo,
       nombre: ST.nombre || '',
       rol: ST.rol || 'docente',
-      modulo: window.location.pathname || 'panel-docente',
+      modulo: obtenerModuloDocenteActual(),
       session_id: ST.sessionId,
       user_agent: navigator.userAgent,
       timestamp: new Date().toISOString()
@@ -1854,16 +1854,52 @@ iniciarApp();
     ocultarSplashDocente();
   }
 }
+function obtenerModuloDocenteActual(){
+  if(window.SIPRESC_MODULO) return window.SIPRESC_MODULO;
 
+  const path = window.location.pathname.toLowerCase();
+
+  if(path.includes('planeaciones')) return 'Docente · Planeaciones';
+  if(path.includes('citas')) return 'Docente · Citas';
+  if(path.includes('horarios')) return 'Docente · Horarios';
+  if(path.includes('evaluaciones')) return 'Docente · Evaluaciones';
+  if(path.includes('prompts')) return 'Docente · Prompts IA';
+
+  return 'Docente · Panel principal';
+}
+
+function actualizarModuloEnVivo(modulo){
+  if(modulo){
+    window.SIPRESC_MODULO = modulo;
+  }
+
+  const sesion = JSON.parse(localStorage.getItem('lp_user') || '{}');
+
+  if(!sesion || !sesion.correo) return;
+
+  fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: 'heartbeat',
+      correo: sesion.correo,
+      nombre: sesion.nombre || ST.nombre || '',
+      rol: sesion.rol || ST.rol || 'docente',
+      modulo: obtenerModuloDocenteActual(),
+      session_id: getSessionIdDocente(),
+      user_agent: navigator.userAgent,
+      timestamp: new Date().toISOString()
+    })
+  }).catch(() => {});
+}
+  
 function abrirModulo(modulo){
   const nombres = {
-    planeaciones: 'Planeaciones',
-    evaluaciones: 'Evaluaciones',
-    prompts: 'Prompts IA',
-    citas: 'Citas'
+    planeaciones: 'Docente · Planeaciones',
+    evaluaciones: 'Docente · Evaluaciones',
+    prompts: 'Docente · Prompts IA',
+    citas: 'Docente · Citas'
   };
-
-  actualizarModuloEnVivo(nombres[modulo] || modulo);
 
   const rutas = {
     planeaciones: '/planeaciones/',
@@ -1872,12 +1908,20 @@ function abrirModulo(modulo){
     citas: '/citas/'
   };
 
-  if(rutas[modulo]){
-    window.location.href = rutas[modulo];
+  if(!rutas[modulo]){
+    toast('Módulo no disponible','er');
     return;
   }
 
-  toast('Módulo no disponible','er');
+  window.SIPRESC_MODULO = nombres[modulo] || 'Docente';
+
+  try{
+    actualizarModuloEnVivo(window.SIPRESC_MODULO);
+  }catch(e){
+    console.warn('No se pudo actualizar el módulo en vivo:', e);
+  }
+
+  window.location.href = rutas[modulo];
 }
 function mostrarSplashDocente(mensaje){
   const splash = document.getElementById('splash');
@@ -2270,7 +2314,7 @@ function iniciarHeartbeatDocente(){
         correo: sesion.correo,
         nombre: sesion.nombre || "",
         rol: sesion.rol || "docente",
-        modulo: "panel docente",
+        modulo: obtenerModuloDocenteActual(),
         session_id: getSessionIdDocente(),
         user_agent: navigator.userAgent,
         timestamp: new Date().toISOString()
