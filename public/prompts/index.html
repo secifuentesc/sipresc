@@ -401,7 +401,7 @@ body{
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <a href="/" class="topbar-logo">
+  <a href="javascript:void(0)" onclick="volverPanel()" class="topbar-logo">
   <img src="/logo.png" class="logo-img-top">
 </a>
 
@@ -438,7 +438,101 @@ body{
 
 <script>
 
-window.SIPRESC_MODULO = 'Prompts IA';
+window.SIPRESC_MODULO = "Docente · Prompts IA";
+
+let heartbeatPromptsTimer = null;
+
+function getSessionIdPrompts(){
+
+  let id = sessionStorage.getItem("lp_session_id_prompts");
+
+  if(!id){
+
+    id = "prompts_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8);
+
+    sessionStorage.setItem("lp_session_id_prompts", id);
+
+  }
+
+  return id;
+
+}
+
+function iniciarHeartbeatPrompts(){
+
+  if(heartbeatPromptsTimer) clearInterval(heartbeatPromptsTimer);
+
+  const enviar = () => {
+
+    let sesion = {};
+
+    try{
+
+      sesion = JSON.parse(localStorage.getItem("lp_user") || "{}");
+
+    }catch(e){
+
+      sesion = {};
+
+    }
+
+    if(!sesion || !sesion.correo) return;
+
+    fetch("/api/proxy", {
+
+      method: "POST",
+
+      headers: { "Content-Type": "application/json" },
+
+      cache: "no-store",
+
+      keepalive: true,
+
+      body: JSON.stringify({
+
+        action: "heartbeat",
+
+        correo: sesion.correo,
+
+        nombre: sesion.nombre || "",
+
+        rol: sesion.rol || "docente",
+
+        modulo: "Docente · Prompts IA",
+
+        session_id: getSessionIdPrompts(),
+
+        user_agent: navigator.userAgent,
+
+        timestamp: new Date().toISOString()
+
+      })
+
+    }).catch(() => {});
+
+  };
+
+  enviar();
+
+  heartbeatPromptsTimer = setInterval(enviar, 30000);
+
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  iniciarHeartbeatPrompts();
+
+  const sesion = JSON.parse(localStorage.getItem("lp_user") || "{}");
+
+  const rol = document.getElementById("tp-rol");
+
+  if(rol && sesion.rol){
+
+    rol.textContent = String(sesion.rol).toUpperCase();
+
+  }
+
+});
 
 const CATEGORIAS = [
   {nombre:"Todos", activa:false},
@@ -814,13 +908,9 @@ function guardarValor(el, valor, key){
 }
 
 function doLogout(){
-  firebase.auth().signOut();
-  localStorage.removeItem('lp_user');
-
-  document.getElementById('s-app').classList.remove('on');
-  document.getElementById('s-login').classList.add('on');
-
-  document.getElementById('bnav').style.display='none';
+  localStorage.removeItem("lp_user");
+  sessionStorage.removeItem("lp_session_id_prompts");
+  window.location.href = "/";
 }
 
 function showToast(msg="Copiado"){
@@ -831,6 +921,23 @@ function showToast(msg="Copiado"){
   setTimeout(()=>{
     t.classList.remove("show");
   },1500);
+}
+
+function volverPanel(){
+  const sesion = JSON.parse(localStorage.getItem("lp_user") || "{}");
+  const rol = String(sesion.rol || "").toLowerCase().trim();
+
+  if(rol === "admin"){
+    window.location.href = "/dashboardadmin/";
+    return;
+  }
+
+  if(rol === "coordinador" || rol === "coordinacion"){
+    window.location.href = "/dashboardcoord/";
+    return;
+  }
+
+  window.location.href = "/";
 }
 
 </script>
