@@ -128,12 +128,13 @@ function verificarAcceso(rolesPermitidos = []) {
         // ── Registrar presencia en SESIONES para el panel en vivo ──
         // Se llama sin await para no bloquear la carga de la página.
         // Si falla silenciosamente, no afecta nada.
-        api('registrarAcceso', {
-          correo: r.correo || sesion.correo,
-          nombre: r.nombre || '',
-          rol:    r.rol    || '',
-          modulo: window.SIPRESC_MODULO || document.title || '',
-        }).catch(() => {});
+        // ── Registrar presencia en vivo ──
+iniciarPresenciaEnVivo({
+  correo: r.correo || sesion.correo,
+  nombre: r.nombre || '',
+  rol: r.rol || '',
+  modulo: window.SIPRESC_MODULO || document.title || 'Sistema'
+});
 
         resolve(r);
       })
@@ -270,6 +271,65 @@ function toast(msg, tipo) {
   t.className = 'toast on ' + (tipo || '');
   clearTimeout(t._to);
   t._to = setTimeout(() => { t.className = 'toast'; }, 3500);
+}
+
+// ══ PRESENCIA EN VIVO ═════════════════════════════════
+
+let PRESENCIA_TIMER = null;
+
+function obtenerSessionIdPresencia() {
+  let id = sessionStorage.getItem('sipresc_session_id');
+
+  if (!id) {
+    id = `web_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+    sessionStorage.setItem('sipresc_session_id', id);
+  }
+
+  return id;
+}
+
+function iniciarPresenciaEnVivo(datos = {}) {
+  if (!datos.correo) return;
+
+  const enviar = () => {
+    const moduloActual =
+      window.SIPRESC_MODULO ||
+      document.body?.dataset?.module ||
+      document.title ||
+      'Sistema';
+
+    api('heartbeat', {
+      correo: datos.correo,
+      nombre: datos.nombre || '',
+      rol: datos.rol || '',
+      modulo: moduloActual,
+      session_id: obtenerSessionIdPresencia(),
+      user_agent: navigator.userAgent,
+      timestamp: new Date().toISOString()
+    }).catch(() => {});
+  };
+
+  enviar();
+
+  if (PRESENCIA_TIMER) clearInterval(PRESENCIA_TIMER);
+  PRESENCIA_TIMER = setInterval(enviar, 30000);
+}
+
+function actualizarModuloEnVivo(modulo) {
+  window.SIPRESC_MODULO = modulo || document.title || 'Sistema';
+
+  const sesion = leerSesion();
+  if (!sesion || !ST.correo) return;
+
+  api('heartbeat', {
+    correo: ST.correo,
+    nombre: ST.nombre || sesion.nombre || '',
+    rol: ST.rol || sesion.rol || '',
+    modulo: window.SIPRESC_MODULO,
+    session_id: obtenerSessionIdPresencia(),
+    user_agent: navigator.userAgent,
+    timestamp: new Date().toISOString()
+  }).catch(() => {});
 }
 
 // ══ SIDEBAR HELPERS ══════════════════════════════════
