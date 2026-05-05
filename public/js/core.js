@@ -333,9 +333,6 @@ function iniciarPresenciaEnVivo(datos = {}) {
 }
 
 function actualizarModuloEnVivo(modulo) {
-  window.SIPRESC_MODULO = modulo || document.title || 'Sistema';
-
-  function actualizarModuloEnVivo(modulo) {
   if (modulo) {
     window.SIPRESC_MODULO = modulo;
   }
