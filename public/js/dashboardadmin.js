@@ -565,7 +565,7 @@ async function actualizarLive() {
           <div style="font-size:.68rem;color:var(--text-tertiary)">${esc(s.CORREO || s.correo)}</div>
         </td>
         <td><span class="badge ${badgeRol(s.ROL || s.rol)}">${esc(s.ROL || s.rol)}</span></td>
-        <td>${esc(s.MODULO_ACTUAL || s.modulo || '—')}</td>
+        <td>${esc(formatearModuloLive(s.MODULO_ACTUAL || s.modulo || '—'))}</td>
         <td style="font-size:.76rem">${formatFechaHora(inicio)}</td>
         <td style="font-size:.76rem">${formatFechaHora(ultima)}</td>
         <td style="font-size:.76rem">${calcularTiempoActivo(inicio)}</td>
@@ -592,6 +592,25 @@ function calcularTiempoActivo(inicioStr) {
   if (diff < 60)   return `${diff}s`;
   if (diff < 3600) return `${Math.floor(diff / 60)}m`;
   return `${Math.floor(diff / 3600)}h ${Math.floor((diff % 3600) / 60)}m`;
+}
+
+function formatearModuloLive(modulo) {
+  const m = String(modulo || '').trim();
+
+  if (!m || m === '—') return '—';
+
+  if (m === '/') return 'Docente · Inicio';
+  if (m === '/?modo=docente') return 'Docente · Inicio';
+
+  if (m.includes('planeaciones')) return 'Docente · Planeaciones';
+  if (m.includes('citas')) return 'Docente · Citas';
+  if (m.includes('horarios')) return 'Docente · Horarios';
+  if (m.includes('evaluaciones')) return 'Docente · Evaluaciones';
+  if (m.includes('prompts')) return 'Docente · Prompts IA';
+  if (m.includes('dashboardcoord')) return 'Coordinación · Panel principal';
+  if (m.includes('dashboardadmin')) return 'Administración · Panel principal';
+
+  return m;
 }
 
 // ══════════════════════════════════════════════════════════════════
