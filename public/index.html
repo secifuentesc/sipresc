@@ -1158,6 +1158,36 @@ function api(action,payload){
 let ST={rol:null,correo:null,nombre:null,docenteId:null,citas:[],filtroEstado:'todas',
   calFecha:new Date(),calSel:null,horarios:{},grados:[],todasCitas:[]};
 let calVista='mes',calFilDoc=null,FB_DONE=false;
+let HEARTBEAT_TIMER = null;
+
+function generarSessionId(){
+  return `web_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
+}
+
+function iniciarHeartbeat(){
+  if(HEARTBEAT_TIMER) clearInterval(HEARTBEAT_TIMER);
+
+  if(!ST.sessionId){
+    ST.sessionId = generarSessionId();
+  }
+
+  const enviar = () => {
+    if(!ST.correo) return;
+
+    api('heartbeat', {
+      correo: ST.correo,
+      nombre: ST.nombre || '',
+      rol: ST.rol || 'docente',
+      modulo: window.location.pathname || 'panel-docente',
+      session_id: ST.sessionId,
+      user_agent: navigator.userAgent,
+      timestamp: new Date().toISOString()
+    }).catch(() => {});
+  };
+
+  enviar();
+  HEARTBEAT_TIMER = setInterval(enviar, 30000);
+}
 const $=id=>document.getElementById(id);
 function toast(msg,tipo){const t=$('toast');t.textContent=msg;
   t.className='toast on '+(tipo||'');clearTimeout(t._to);t._to=setTimeout(()=>t.className='toast',3500);}
@@ -1306,6 +1336,9 @@ if(MODO_DOCENTE){
     loadAdmin();
   }
 }
+
+  iniciarHeartbeat();
+  
   const data=JSON.parse(localStorage.getItem('lp_user')||'{}');
   data.loginTime=Date.now();localStorage.setItem('lp_user',JSON.stringify(data));
 }
