@@ -276,6 +276,8 @@ function toast(msg, tipo) {
 
 // ══ PRESENCIA EN VIVO ═════════════════════════════════
 
+// ══ PRESENCIA EN VIVO ═════════════════════════════════
+
 let PRESENCIA_TIMER = null;
 
 function obtenerSessionIdPresencia() {
@@ -289,22 +291,28 @@ function obtenerSessionIdPresencia() {
   return id;
 }
 
-function obtenerModuloActual() {
-  if (window.SIPRESC_MODULO) return window.SIPRESC_MODULO;
+function obtenerModuloActual(moduloForzado = '') {
+  if (moduloForzado && moduloForzado !== '/') return moduloForzado;
+
+  if (window.SIPRESC_MODULO && window.SIPRESC_MODULO !== '/') {
+    return window.SIPRESC_MODULO;
+  }
 
   const path = window.location.pathname.toLowerCase();
+  const params = new URLSearchParams(window.location.search);
+
+  if (path === '/' || path === '') {
+    if (params.get('modo') === 'docente') return 'Docente · Inicio';
+    return 'Inicio';
+  }
 
   if (path.includes('planeaciones')) return 'Docente · Planeaciones';
   if (path.includes('citas')) return 'Docente · Citas';
   if (path.includes('horarios')) return 'Docente · Horarios';
   if (path.includes('evaluaciones')) return 'Docente · Evaluaciones';
   if (path.includes('prompts')) return 'Docente · Prompts IA';
-  if (path.includes('dashboardcoord')) return 'Coordinación';
-  if (path.includes('dashboardadmin')) return 'Administración';
-
-  const params = new URLSearchParams(window.location.search);
-
-  if (params.get('modo') === 'docente') return 'Docente · Inicio';
+  if (path.includes('dashboardcoord')) return 'Coordinación · Panel principal';
+  if (path.includes('dashboardadmin')) return 'Administración · Panel principal';
 
   return document.title || 'SIPRESC';
 }
@@ -313,7 +321,7 @@ function iniciarPresenciaEnVivo(datos = {}) {
   if (!datos.correo) return;
 
   const enviar = () => {
-    const moduloActual = obtenerModuloActual();
+    const moduloActual = obtenerModuloActual(datos.modulo);
 
     api('heartbeat', {
       correo: datos.correo,
@@ -338,13 +346,16 @@ function actualizarModuloEnVivo(modulo) {
   }
 
   const sesion = leerSesion();
-  if (!sesion || !ST.correo) return;
+  if (!sesion) return;
+
+  const correo = ST.correo || sesion.correo;
+  if (!correo) return;
 
   api('heartbeat', {
-    correo: ST.correo,
+    correo: correo,
     nombre: ST.nombre || sesion.nombre || '',
     rol: ST.rol || sesion.rol || '',
-    modulo: obtenerModuloActual(),
+    modulo: obtenerModuloActual(modulo),
     session_id: obtenerSessionIdPresencia(),
     user_agent: navigator.userAgent,
     timestamp: new Date().toISOString()
