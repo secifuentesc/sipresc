@@ -1341,6 +1341,8 @@ if(MODO_DOCENTE){
   
   const data=JSON.parse(localStorage.getItem('lp_user')||'{}');
   data.loginTime=Date.now();localStorage.setItem('lp_user',JSON.stringify(data));
+
+  iniciarHeartbeatDocente();
 }
 
 function goTab(id,el){
@@ -2224,6 +2226,46 @@ function activarVerificando(){
   btn.disabled = true;
 }
 
+let heartbeatDocenteTimer = null;
+
+function getSessionIdDocente(){
+  let id = sessionStorage.getItem("lp_session_id");
+
+  if(!id){
+    id = "ses_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8);
+    sessionStorage.setItem("lp_session_id", id);
+  }
+
+  return id;
+}
+
+function iniciarHeartbeatDocente(){
+  if(heartbeatDocenteTimer) clearInterval(heartbeatDocenteTimer);
+
+  const enviar = () => {
+    const sesion = JSON.parse(localStorage.getItem("lp_user") || "{}");
+
+    if(!sesion || !sesion.correo) return;
+
+    fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "heartbeat",
+        correo: sesion.correo,
+        nombre: sesion.nombre || "",
+        rol: sesion.rol || "docente",
+        modulo: "panel docente",
+        session_id: getSessionIdDocente(),
+        user_agent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+      })
+    }).catch(() => {});
+  };
+
+  enviar();
+  heartbeatDocenteTimer = setInterval(enviar, 30000);
+}
 
 </script>
 </body>
