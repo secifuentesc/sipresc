@@ -220,6 +220,37 @@ if (/recib/.test(s) || /revis/.test(s) || /pend/.test(s)) return "por_revisar";
     } catch (_) { return null; }
   }
 
+function iniciarPresenciaCoordinacion() {
+  if (!state.user || !state.user.correo) return;
+
+  const sessionId =
+    localStorage.getItem("sipresc_coord_session_id") ||
+    ("coord_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8));
+
+  localStorage.setItem("sipresc_coord_session_id", sessionId);
+
+  const enviar = () => {
+    apiPost(API, {
+      action: "heartbeat",
+      correo: state.user.correo,
+      nombre: state.user.nombre || "",
+      rol: state.user.rol || "coordinador",
+      modulo: window.SIPRESC_MODULO || "Panel de coordinación",
+      session_id: sessionId,
+      user_agent: navigator.userAgent,
+      timestamp: new Date().toISOString()
+    }).catch(() => {});
+  };
+
+  enviar();
+
+  if (window.__coordHeartbeatTimer) {
+    clearInterval(window.__coordHeartbeatTimer);
+  }
+
+  window.__coordHeartbeatTimer = setInterval(enviar, 30000);
+}
+
   async function validarSesion() {
     const u = readSession();
     if (!u || !u.correo) {
@@ -355,6 +386,15 @@ if (/recib/.test(s) || /revis/.test(s) || /pend/.test(s)) return "por_revisar";
   ------------------------------------------------------ */
   function setView(v) {
     state.view = v;
+     
+     window.SIPRESC_MODULO = "Coordinación · " + ({
+  inicio: "Inicio",
+  planeaciones: "Planeaciones",
+  citas: "Citas",
+  solicitudes: "Solicitudes",
+  docentes: "Docentes"
+}[v] || v);
+   
     $$('.coord-view').forEach(s => s.classList.toggle("is-active", s.dataset.view === v));
     $$('.coord-nav__item').forEach(b => b.classList.toggle("is-active", b.dataset.view === v));
     $$('.coord-bottomnav__item').forEach(b => b.classList.toggle("is-active", b.dataset.view === v));
@@ -1587,12 +1627,15 @@ if (!planeacionId) {
      BOOT
   ------------------------------------------------------ */
   async function boot() {
-    bindEvents();
-    const u = await validarSesion();
-    if (!u) return;
-    state.user = u;
-    await cargarDashboard();
-  }
+  bindEvents();
+  const u = await validarSesion();
+  if (!u) return;
+  state.user = u;
+
+  iniciarPresenciaCoordinacion();
+
+  await cargarDashboard();
+}
 
   document.addEventListener("DOMContentLoaded", boot);
 
