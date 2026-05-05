@@ -1856,14 +1856,29 @@ iniciarApp();
 }
 
 function abrirModulo(modulo){
+  const nombres = {
+    planeaciones: 'Planeaciones',
+    evaluaciones: 'Evaluaciones',
+    prompts: 'Prompts IA',
+    citas: 'Citas'
+  };
+
+  actualizarModuloEnVivo(nombres[modulo] || modulo);
+
   const rutas = {
-  planeaciones: '/planeaciones/',
-  evaluaciones: '/evaluaciones/',
-  prompts: '/prompts/',
-  citas: '/citas/'
-};
-  if(rutas[modulo]){window.location.href=rutas[modulo];return;}
-  toast('Módulo no disponible','er');}
+    planeaciones: '/planeaciones/',
+    evaluaciones: '/evaluaciones/',
+    prompts: '/prompts/',
+    citas: '/citas/'
+  };
+
+  if(rutas[modulo]){
+    window.location.href = rutas[modulo];
+    return;
+  }
+
+  toast('Módulo no disponible','er');
+}
 function mostrarSplashDocente(mensaje){
   const splash = document.getElementById('splash');
   const msg = document.getElementById('splashMsg');
