@@ -8,12 +8,62 @@
 <link rel="icon" type="image/png" href="/logo.png">
 <!-- fuentes Apple system -->
 <script>
+
+window.SIPRESC_MODULO = 'Docente · Planeaciones';
+
+let heartbeatPlaneacionesTimer = null;
+
+function getSessionIdPlaneaciones(){
+  let id = sessionStorage.getItem("lp_session_id");
+
+  if(!id){
+    id = "ses_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8);
+    sessionStorage.setItem("lp_session_id", id);
+  }
+
+  return id;
+}
+
+function iniciarHeartbeatPlaneaciones(){
+  if(heartbeatPlaneacionesTimer) clearInterval(heartbeatPlaneacionesTimer);
+
+  const enviar = () => {
+    let sesion = {};
+
+try{
+  sesion = JSON.parse(localStorage.getItem("lp_user") || "{}");
+}catch(e){
+  sesion = {};
+}
+
+if(!sesion || !sesion.correo) return;
+
+    fetch("/api/proxy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "heartbeat",
+        correo: sesion.correo,
+        nombre: sesion.nombre || "",
+        rol: sesion.rol || "docente",
+        modulo: "Docente · Planeaciones",
+        session_id: getSessionIdPlaneaciones(),
+        user_agent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+      })
+    }).catch(() => {});
+  };
+
+  enviar();
+  heartbeatPlaneacionesTimer = setInterval(enviar, 30000);
+}
 const AUTO_GUARD = false;
 const AUTO_RESTORE = false;
 
 function setMateriaText(texto){
   const display = document.getElementById("materiaText");
-  if(ST.materia) return;
+  if(!display) return;
+  if(typeof ST !== "undefined" && ST.materia) return;
   display.textContent = texto;
 }
   
@@ -25,6 +75,7 @@ function setMateriaText(texto){
     if(!json || !json.correo){ window.location.replace("/"); }
   }catch(e){ window.location.replace("/"); }
 })();
+
 </script>
 <style>
 /* ═══════════════════════════════════════════
@@ -747,8 +798,6 @@ body{
 </div>
 
 <script>
-
-window.SIPRESC_MODULO = 'Planeaciones';
   
 let timersClases = {};
 let timerIA;
@@ -1749,46 +1798,6 @@ function mostrarAvisoIA(){
   setTimeout(()=>toast.classList.remove("activo"),2800);
 }
 
-let heartbeatPlaneacionesTimer = null;
-
-function getSessionIdPlaneaciones(){
-  let id = sessionStorage.getItem("lp_session_id");
-
-  if(!id){
-    id = "ses_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8);
-    sessionStorage.setItem("lp_session_id", id);
-  }
-
-  return id;
-}
-
-function iniciarHeartbeatPlaneaciones(){
-  if(heartbeatPlaneacionesTimer) clearInterval(heartbeatPlaneacionesTimer);
-
-  const enviar = () => {
-    const sesion = JSON.parse(localStorage.getItem("lp_user") || "{}");
-
-    if(!sesion || !sesion.correo) return;
-
-    fetch("/api/proxy", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "heartbeat",
-        correo: sesion.correo,
-        nombre: sesion.nombre || "",
-        rol: sesion.rol || "docente",
-        modulo: "planeaciones",
-        session_id: getSessionIdPlaneaciones(),
-        user_agent: navigator.userAgent,
-        timestamp: new Date().toISOString()
-      })
-    }).catch(() => {});
-  };
-
-  enviar();
-  heartbeatPlaneacionesTimer = setInterval(enviar, 30000);
-}
 </script>
 </body>
 </html>
