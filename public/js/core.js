@@ -116,21 +116,30 @@ function verificarAcceso(rolesPermitidos = []) {
     api('loginGoogle', { correo: sesion.correo })
       .then(r => {
         if (!r.ok) { window.location.href = '/'; return; }
-        ST.rol      = r.rol;
-        ST.nombre   = r.nombre;
+        ST.rol       = r.rol;
+        ST.nombre    = r.nombre;
         ST.docenteId = r.docenteId;
         if (rolesPermitidos.length && !rolesPermitidos.includes(r.rol)) {
           window.location.href = '/';
           return;
         }
-        // refrescar loginTime
         guardarSesion(sesion.correo);
+
+        // ── Registrar presencia en SESIONES para el panel en vivo ──
+        // Se llama sin await para no bloquear la carga de la página.
+        // Si falla silenciosamente, no afecta nada.
+        api('registrarAcceso', {
+          correo: r.correo || sesion.correo,
+          nombre: r.nombre || '',
+          rol:    r.rol    || '',
+          modulo: window.SIPRESC_MODULO || document.title || '',
+        }).catch(() => {});
+
         resolve(r);
       })
       .catch(() => { window.location.href = '/'; reject(); });
   });
 }
-
 // ══ PLANEACIONES — normalización ═════════════════════
 
 /**
