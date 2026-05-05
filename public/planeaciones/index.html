@@ -14,11 +14,11 @@ window.SIPRESC_MODULO = 'Docente · Planeaciones';
 let heartbeatPlaneacionesTimer = null;
 
 function getSessionIdPlaneaciones(){
-  let id = sessionStorage.getItem("lp_session_id");
+  let id = sessionStorage.getItem("lp_session_id_planeaciones");
 
   if(!id){
-    id = "ses_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8);
-    sessionStorage.setItem("lp_session_id", id);
+    id = "planeaciones_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8);
+    sessionStorage.setItem("lp_session_id_planeaciones", id);
   }
 
   return id;
@@ -39,19 +39,21 @@ try{
 if(!sesion || !sesion.correo) return;
 
     fetch("/api/proxy", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "heartbeat",
-        correo: sesion.correo,
-        nombre: sesion.nombre || "",
-        rol: sesion.rol || "docente",
-        modulo: "Docente · Planeaciones",
-        session_id: getSessionIdPlaneaciones(),
-        user_agent: navigator.userAgent,
-        timestamp: new Date().toISOString()
-      })
-    }).catch(() => {});
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  cache: "no-store",
+  keepalive: true,
+  body: JSON.stringify({
+    action: "heartbeat",
+    correo: sesion.correo,
+    nombre: sesion.nombre || "",
+    rol: sesion.rol || "docente",
+    modulo: "Docente · Planeaciones",
+    session_id: getSessionIdPlaneaciones(),
+    user_agent: navigator.userAgent,
+    timestamp: new Date().toISOString()
+  })
+}).catch(() => {});
   };
 
   enviar();
