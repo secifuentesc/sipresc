@@ -129,11 +129,12 @@ function verificarAcceso(rolesPermitidos = []) {
         // Se llama sin await para no bloquear la carga de la página.
         // Si falla silenciosamente, no afecta nada.
         // ── Registrar presencia en vivo ──
+// ── Registrar presencia en vivo ──
 iniciarPresenciaEnVivo({
   correo: r.correo || sesion.correo,
   nombre: r.nombre || '',
   rol: r.rol || '',
-  modulo: window.SIPRESC_MODULO || document.title || 'Sistema'
+  modulo: obtenerModuloActual()
 });
 
         resolve(r);
@@ -288,15 +289,31 @@ function obtenerSessionIdPresencia() {
   return id;
 }
 
+function obtenerModuloActual() {
+  if (window.SIPRESC_MODULO) return window.SIPRESC_MODULO;
+
+  const path = window.location.pathname.toLowerCase();
+
+  if (path.includes('planeaciones')) return 'Docente · Planeaciones';
+  if (path.includes('citas')) return 'Docente · Citas';
+  if (path.includes('horarios')) return 'Docente · Horarios';
+  if (path.includes('evaluaciones')) return 'Docente · Evaluaciones';
+  if (path.includes('prompts')) return 'Docente · Prompts IA';
+  if (path.includes('dashboardcoord')) return 'Coordinación';
+  if (path.includes('dashboardadmin')) return 'Administración';
+
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get('modo') === 'docente') return 'Docente · Inicio';
+
+  return document.title || 'SIPRESC';
+}
+
 function iniciarPresenciaEnVivo(datos = {}) {
   if (!datos.correo) return;
 
   const enviar = () => {
-    const moduloActual =
-      window.SIPRESC_MODULO ||
-      document.body?.dataset?.module ||
-      document.title ||
-      'Sistema';
+    const moduloActual = obtenerModuloActual();
 
     api('heartbeat', {
       correo: datos.correo,
@@ -318,6 +335,11 @@ function iniciarPresenciaEnVivo(datos = {}) {
 function actualizarModuloEnVivo(modulo) {
   window.SIPRESC_MODULO = modulo || document.title || 'Sistema';
 
+  function actualizarModuloEnVivo(modulo) {
+  if (modulo) {
+    window.SIPRESC_MODULO = modulo;
+  }
+
   const sesion = leerSesion();
   if (!sesion || !ST.correo) return;
 
@@ -325,7 +347,7 @@ function actualizarModuloEnVivo(modulo) {
     correo: ST.correo,
     nombre: ST.nombre || sesion.nombre || '',
     rol: ST.rol || sesion.rol || '',
-    modulo: window.SIPRESC_MODULO,
+    modulo: obtenerModuloActual(),
     session_id: obtenerSessionIdPresencia(),
     user_agent: navigator.userAgent,
     timestamp: new Date().toISOString()
