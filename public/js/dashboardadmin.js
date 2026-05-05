@@ -56,38 +56,38 @@ document.addEventListener('DOMContentLoaded', () => { inicializar(); });
 async function inicializar() {
   const sesion = leerSesionAdmin();
   if (!sesion) { window.location.href = '/'; return; }
-try {
-  const login = await apiCitasPost({
-    action: 'loginGoogle',
-    correo: sesion.correo
-  });
+  try {
+    const login = await apiCitasPost({
+      action: 'loginGoogle',
+      correo: sesion.correo
+    });
 
-  if (!login || !login.ok || login.rol !== 'admin') {
+    if (!login || !login.ok || login.rol !== 'admin') {
+      localStorage.removeItem('lp_user');
+      window.location.href = '/';
+      return;
+    }
+
+    ADMIN.sesion = {
+      ...sesion,
+      ...login,
+      correo: login.correo || sesion.correo,
+      rol: login.rol || 'admin',
+      nombre: login.nombre || sesion.nombre || sesion.correo.split('@')[0],
+      loginTime: Date.now()
+    };
+
+    localStorage.setItem('lp_user', JSON.stringify(ADMIN.sesion));
+
+  } catch (error) {
     localStorage.removeItem('lp_user');
     window.location.href = '/';
     return;
   }
 
-  ADMIN.sesion = {
-    ...sesion,
-    ...login,
-    correo: login.correo || sesion.correo,
-    rol: login.rol || 'admin',
-    nombre: login.nombre || sesion.nombre || sesion.correo.split('@')[0],
-    loginTime: Date.now()
-  };
-
-  localStorage.setItem('lp_user', JSON.stringify(ADMIN.sesion));
-
-} catch (error) {
-  localStorage.removeItem('lp_user');
-  window.location.href = '/';
-  return;
-}
-
-ADMIN.sessionId = generarSessionId();
-await new Promise(r => setTimeout(r, 2000));
-iniciarApp();
+  ADMIN.sessionId = generarSessionId();
+  await new Promise(r => setTimeout(r, 2000));
+  iniciarApp();
 }
 
 function leerSesionAdmin() {
@@ -141,6 +141,20 @@ async function iniciarApp() {
 
   auditoria.registrar('dashboard', 'entradaDashboard', 'OK', 'Acceso al panel de administración');
   auditoria.iniciarHeartbeat();
+
+  // ── TIMER GLOBAL DE LIVE ─────────────────────────────────────────
+  // Corre permanentemente cada 20 s desde el arranque.
+  // Si el módulo Live está activo → actualiza tabla completa.
+  // Si está en otro módulo → actualiza solo el KPI y el badge.
+  if (ADMIN.liveTimer) clearInterval(ADMIN.liveTimer);
+  ADMIN.liveTimer = setInterval(() => {
+    if (ADMIN.moduloActual === 'live') {
+      actualizarLive();
+    } else {
+      cargarConteoLive();
+    }
+  }, 20000);
+
   navegarA('inicio');
   actualizarGreeting();
   registrarServiceWorker();
@@ -286,7 +300,6 @@ function configurarSidebar() {
       sidebar.classList.toggle('collapsed', collapsed);
       if (main) main.classList.toggle('sidebar-collapsed', collapsed);
       localStorage.setItem('sidebar_collapsed', collapsed ? 'true' : 'false');
-
       btn.setAttribute('title', collapsed ? 'Expandir menú' : 'Colapsar menú');
       btn.setAttribute('aria-label', collapsed ? 'Expandir menú' : 'Colapsar menú');
     };
@@ -297,7 +310,6 @@ function configurarSidebar() {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-
       const collapsed = !sidebar.classList.contains('collapsed');
       aplicarEstadoSidebar(collapsed);
     });
@@ -308,7 +320,6 @@ function configurarSidebar() {
       sidebar.classList.toggle('mobile-open');
       overlay.classList.toggle('hidden');
     });
-
     overlay.addEventListener('click', cerrarSidebarMobile);
   }
 }
@@ -327,6 +338,8 @@ async function cargarInicio() {
   cargarActividadReciente();
   cargarAlertasMini();
   cargarMiniChartPlaneaciones();
+  // Cargar conteo de usuarios en vivo al abrir el inicio
+  cargarConteoLive();
 }
 
 async function cargarKPIs(forzar = false) {
@@ -492,11 +505,34 @@ async function cargarMiniChartPlaneaciones() {
 // ══════════════════════════════════════════════════════════════════
 
 async function cargarLive() {
-  actualizarLive();
-  if (ADMIN.liveTimer) clearInterval(ADMIN.liveTimer);
-  ADMIN.liveTimer = setInterval(() => {
-    if (ADMIN.moduloActual === 'live') actualizarLive();
-  }, 30000);
+  // Carga inmediata al entrar al módulo (tabla completa)
+  await actualizarLive();
+  // El timer global ya corre desde iniciarApp().
+  // Cuando el módulo Live está activo, el timer llama actualizarLive().
+  // No se crea un timer nuevo aquí para evitar duplicados.
+}
+
+/**
+ * Consulta sesiones activas y actualiza solo el KPI y el badge.
+ * Se llama desde el timer global cuando el módulo Live NO está abierto.
+ */
+async function cargarConteoLive() {
+  try {
+    const res      = await apiCitasPost({ action: 'sesionesActivasExtendidas', correo: ADMIN.sesion.correo });
+    const sesiones = res?.sesiones || [];
+    const total    = sesiones.length;
+
+    setEl('kv-live', total);
+
+    const badge = document.getElementById('badge-live');
+    if (badge) badge.textContent = total;
+
+    // Actualizar contadores del panel live aunque no esté visible
+    setEl('liveTotal',    total);
+    setEl('liveAdmins',   sesiones.filter(s => (s.ROL||s.rol||'').toLowerCase() === 'admin').length);
+    setEl('liveCoords',   sesiones.filter(s => (s.ROL||s.rol||'').toLowerCase() === 'coordinador').length);
+    setEl('liveDocentes', sesiones.filter(s => (s.ROL||s.rol||'').toLowerCase() === 'docente').length);
+  } catch { /* silenciar: es solo un KPI secundario */ }
 }
 
 async function actualizarLive() {
@@ -506,10 +542,10 @@ async function actualizarLive() {
     const res      = await apiCitasPost({ action: 'sesionesActivasExtendidas', correo: ADMIN.sesion.correo });
     const sesiones = res?.sesiones || res?.data || [];
 
-    setEl('liveTotal',   sesiones.length);
-    setEl('liveAdmins',  sesiones.filter(s => s.ROL === 'admin'        || s.rol === 'admin').length);
-    setEl('liveCoords',  sesiones.filter(s => s.ROL === 'coordinador'  || s.rol === 'coordinador').length);
-    setEl('liveDocentes',sesiones.filter(s => s.ROL === 'docente'      || s.rol === 'docente').length);
+    setEl('liveTotal',    sesiones.length);
+    setEl('liveAdmins',   sesiones.filter(s => (s.ROL||s.rol||'').toLowerCase() === 'admin').length);
+    setEl('liveCoords',   sesiones.filter(s => (s.ROL||s.rol||'').toLowerCase() === 'coordinador').length);
+    setEl('liveDocentes', sesiones.filter(s => (s.ROL||s.rol||'').toLowerCase() === 'docente').length);
     setEl('kv-live', sesiones.length);
 
     const badge = document.getElementById('badge-live');
@@ -544,7 +580,10 @@ async function actualizarLive() {
 
 function esActivo(tsStr) {
   if (!tsStr) return false;
-  return (Date.now() - new Date(tsStr).getTime()) < 5 * 60 * 1000;
+  // 35 min — coincide con INACTIVIDAD_MIN_ (30) + margen de 5 min.
+  // registrarAcceso() se llama una sola vez al cargar el dashboard,
+  // no cada 30 s, por eso se necesita un umbral más amplio.
+  return (Date.now() - new Date(tsStr).getTime()) < 35 * 60 * 1000;
 }
 
 function calcularTiempoActivo(inicioStr) {
@@ -1330,8 +1369,8 @@ function abrirModalDocente(d = null, idx = null) {
 
 async function cargarHorarios() {
   auditoria.registrar('horarios', 'abrirHorarios', 'OK');
-  const btnAbrir  = document.getElementById('btnAbrirHorarios');
-  const btnCerrar = document.getElementById('btnCerrarHorarios');
+  const btnAbrir   = document.getElementById('btnAbrirHorarios');
+  const btnCerrar  = document.getElementById('btnCerrarHorarios');
   const btnGuardar = document.getElementById('btnGuardarHorariosGlobal');
 
   if (btnAbrir && !btnAbrir._bound) {
@@ -1394,9 +1433,9 @@ async function cargarDocentesHorarios() {
   const lista = document.getElementById('docentesHorariosList');
   if (!lista) return;
   try {
-    const res  = await apiCitasPost({ action: 'docentes', correo: ADMIN.sesion.correo });
+    const res     = await apiCitasPost({ action: 'docentes', correo: ADMIN.sesion.correo });
     const docsRaw = Array.isArray(res) ? res : (res?.docentes || res?.data || []);
-    const docs = docsRaw.filter(d => d.Activo === true || d.Activo === 1 || d.Activo === 'TRUE' || d.activo === true);
+    const docs    = docsRaw.filter(d => d.Activo === true || d.Activo === 1 || d.Activo === 'TRUE' || d.activo === true);
     lista.innerHTML = docs.map(d => {
       const nombre = `${d.Nombre||''} ${d.Apellido||''}`.trim();
       const correo = d.Correo || d.correo || '';
@@ -1483,7 +1522,6 @@ async function cargarEstadisticas() {
   auditoria.registrar('estadisticas', 'abrirEstadisticas', 'OK');
   if (!window.Chart) { toast('Chart.js no disponible', 'error'); return; }
 
-  // Destruir todos los charts previos
   Object.keys(ADMIN.charts).forEach(k => {
     if (k !== 'planeacionesMini' && ADMIN.charts[k]) {
       ADMIN.charts[k].destroy();
@@ -1503,7 +1541,6 @@ async function cargarEstadisticas() {
     const statsP = resP.status === 'fulfilled' ? resP.value : null;
     const statsC = resC.status === 'fulfilled' ? resC.value : null;
 
-    // Cargar periodos en selector
     if (statsP?.periodos?.length && selP) {
       const val = selP.value;
       selP.innerHTML = '<option value="">Todo el periodo</option>' +
@@ -1511,15 +1548,13 @@ async function cargarEstadisticas() {
       if (val) selP.value = val;
     }
 
-    // Valores por defecto si no hay datos
-    const estados    = statsP?.por_estado || { Aprobada: 0, 'Por revisar': 0, 'Con ajustes': 0, 'No enviada': 0, Publicada: 0 };
-    const docPct     = statsP?.por_docente    || [];
-    const gradoPct   = statsP?.por_grado      || [];
-    const citasMes   = statsC?.por_mes        || [];
-    const citasDia   = statsC?.por_dia        || [];
+    const estados    = statsP?.por_estado    || { Aprobada: 0, 'Por revisar': 0, 'Con ajustes': 0, 'No enviada': 0, Publicada: 0 };
+    const docPct     = statsP?.por_docente   || [];
+    const gradoPct   = statsP?.por_grado     || [];
+    const citasMes   = statsC?.por_mes       || [];
+    const citasDia   = statsC?.por_dia       || [];
     const rankAjustes= statsP?.ranking_ajustes || [];
 
-    // ── Dona: estados de planeaciones ───────────────────────────
     const ctxEst = document.getElementById('chartEstados');
     if (ctxEst) {
       ADMIN.charts.estados = new Chart(ctxEst, {
@@ -1543,7 +1578,6 @@ async function cargarEstadisticas() {
       });
     }
 
-    // ── Barras horizontales: cumplimiento por docente ────────────
     const ctxDoc = document.getElementById('chartDocentes');
     if (ctxDoc && docPct.length) {
       const top = docPct.slice(0, 12);
@@ -1561,10 +1595,7 @@ async function cargarEstadisticas() {
         options: {
           indexAxis: 'y', responsive: true,
           animation: { duration: 900 },
-          plugins: {
-            legend: { display: false },
-            tooltip: { titleFont: { family: 'Sora' }, bodyFont: { family: 'Sora' } },
-          },
+          plugins: { legend: { display: false }, tooltip: { titleFont: { family: 'Sora' }, bodyFont: { family: 'Sora' } } },
           scales: {
             x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a1a1aa', font: { family: 'Sora', size: 11 } }, max: 100 },
             y: { grid: { display: false }, ticks: { color: '#f5f5f7', font: { family: 'Sora', size: 11 } } },
@@ -1573,7 +1604,6 @@ async function cargarEstadisticas() {
       });
     }
 
-    // ── Línea: citas por mes ─────────────────────────────────────
     const ctxMes = document.getElementById('chartCitasMes');
     if (ctxMes && citasMes.length) {
       ADMIN.charts.citasMes = new Chart(ctxMes, {
@@ -1581,20 +1611,14 @@ async function cargarEstadisticas() {
         data: {
           labels: citasMes.map(m => m.mes),
           datasets: [{
-            label: 'Citas',
-            data: citasMes.map(m => m.total),
+            label: 'Citas', data: citasMes.map(m => m.total),
             borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.12)',
-            borderWidth: 2, pointBackgroundColor: '#3b82f6',
-            pointRadius: 4, tension: 0.4, fill: true,
+            borderWidth: 2, pointBackgroundColor: '#3b82f6', pointRadius: 4, tension: 0.4, fill: true,
           }]
         },
         options: {
-          responsive: true,
-          animation: { duration: 900 },
-          plugins: {
-            legend: { display: false },
-            tooltip: { titleFont: { family: 'Sora' }, bodyFont: { family: 'Sora' } },
-          },
+          responsive: true, animation: { duration: 900 },
+          plugins: { legend: { display: false }, tooltip: { titleFont: { family: 'Sora' }, bodyFont: { family: 'Sora' } } },
           scales: {
             x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a1a1aa', font: { family: 'Sora', size: 11 } } },
             y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a1a1aa', font: { family: 'Sora', size: 11 } } },
@@ -1603,27 +1627,17 @@ async function cargarEstadisticas() {
       });
     }
 
-    // ── Barras: citas por día de semana ──────────────────────────
     const ctxDia = document.getElementById('chartCitasDia');
     if (ctxDia && citasDia.length) {
       ADMIN.charts.citasDia = new Chart(ctxDia, {
         type: 'bar',
         data: {
           labels: citasDia.map(d => d.dia),
-          datasets: [{
-            label: 'Citas',
-            data: citasDia.map(d => d.total),
-            backgroundColor: 'rgba(168,85,247,0.7)',
-            borderRadius: 6, borderSkipped: false,
-          }]
+          datasets: [{ label: 'Citas', data: citasDia.map(d => d.total), backgroundColor: 'rgba(168,85,247,0.7)', borderRadius: 6, borderSkipped: false }]
         },
         options: {
-          responsive: true,
-          animation: { duration: 900 },
-          plugins: {
-            legend: { display: false },
-            tooltip: { titleFont: { family: 'Sora' }, bodyFont: { family: 'Sora' } },
-          },
+          responsive: true, animation: { duration: 900 },
+          plugins: { legend: { display: false }, tooltip: { titleFont: { family: 'Sora' }, bodyFont: { family: 'Sora' } } },
           scales: {
             x: { grid: { display: false }, ticks: { color: '#a1a1aa', font: { family: 'Sora', size: 11 } } },
             y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a1a1aa', font: { family: 'Sora', size: 11 } } },
@@ -1632,27 +1646,17 @@ async function cargarEstadisticas() {
       });
     }
 
-    // ── Barras: cumplimiento por grado ───────────────────────────
     const ctxGrad = document.getElementById('chartGrados');
     if (ctxGrad && gradoPct.length) {
       ADMIN.charts.grados = new Chart(ctxGrad, {
         type: 'bar',
         data: {
           labels: gradoPct.map(g => g.grado),
-          datasets: [{
-            label: '% Cumplimiento',
-            data: gradoPct.map(g => g.pct),
-            backgroundColor: 'rgba(59,130,246,0.7)',
-            borderRadius: 6, borderSkipped: false,
-          }]
+          datasets: [{ label: '% Cumplimiento', data: gradoPct.map(g => g.pct), backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 6, borderSkipped: false }]
         },
         options: {
-          responsive: true,
-          animation: { duration: 900 },
-          plugins: {
-            legend: { display: false },
-            tooltip: { titleFont: { family: 'Sora' }, bodyFont: { family: 'Sora' } },
-          },
+          responsive: true, animation: { duration: 900 },
+          plugins: { legend: { display: false }, tooltip: { titleFont: { family: 'Sora' }, bodyFont: { family: 'Sora' } } },
           scales: {
             x: { grid: { display: false }, ticks: { color: '#a1a1aa', font: { family: 'Sora', size: 11 } } },
             y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a1a1aa', font: { family: 'Sora', size: 11 } }, max: 100 },
@@ -1661,7 +1665,6 @@ async function cargarEstadisticas() {
       });
     }
 
-    // ── Ranking: docentes con más ajustes ────────────────────────
     const ranking = document.getElementById('rankingAjustes');
     if (ranking) {
       ranking.innerHTML = rankAjustes.slice(0, 8).map((r, i) => `
@@ -1690,14 +1693,13 @@ async function cargarConfiguracion() {
     btnGuardar._bound = true;
   }
 
-  // Configurar toggles: actualizar label al cambiar
   [
-    ['cfgAgendaAbierta',     'cfgAgendaLabel',              'Abierta',  'Cerrada'],
-    ['cfgAutoPublicacion',   'cfgAutoPublicacionLabel',      'Activa',   'Inactiva'],
-    ['cfgNotifAprobacion',   'cfgNotifAprobacionLabel',      'Activa',   'Inactiva'],
-    ['cfgNotifAjustes',      'cfgNotifAjustesLabel',         'Activa',   'Inactiva'],
-    ['cfgMantenimiento',     'cfgMantenimientoLabel',        'Activo',   'Inactivo'],
-    ['cfgAuditoria',         'cfgAuditoriaLabel',            'Activa',   'Inactiva'],
+    ['cfgAgendaAbierta',   'cfgAgendaLabel',           'Abierta',  'Cerrada'],
+    ['cfgAutoPublicacion', 'cfgAutoPublicacionLabel',   'Activa',   'Inactiva'],
+    ['cfgNotifAprobacion', 'cfgNotifAprobacionLabel',   'Activa',   'Inactiva'],
+    ['cfgNotifAjustes',    'cfgNotifAjustesLabel',      'Activa',   'Inactiva'],
+    ['cfgMantenimiento',   'cfgMantenimientoLabel',     'Activo',   'Inactivo'],
+    ['cfgAuditoria',       'cfgAuditoriaLabel',         'Activa',   'Inactiva'],
   ].forEach(([inputId, labelId, onText, offText]) => {
     const input = document.getElementById(inputId);
     const label = document.getElementById(labelId);
@@ -1720,21 +1722,19 @@ async function cargarDatosConfiguracion() {
     const cfgC = resC.status === 'fulfilled' ? (resC.value?.config || resC.value || {}) : {};
     const cfgP = resP.status === 'fulfilled' ? (resP.value?.config || {}) : {};
 
-    // Citas
-    setInput('cfgDuracion',     cfgC.duracionCita            || cfgC.DURACION_CITA            || '');
-    setInput('cfgMinHoras',     cfgC.horasAntes              || cfgC.HORAS_ANTES              || '');
-    setInput('cfgMaxDias',      cfgC.diasAdelanto            || cfgC.DIAS_ADELANTO            || '');
-    setInput('cfgCorreoCoord',  cfgC.correoCoordinacion      || cfgC.CORREO_COORDINACION      || '');
+    setInput('cfgDuracion',    cfgC.duracionCita       || cfgC.DURACION_CITA       || '');
+    setInput('cfgMinHoras',    cfgC.horasAntes         || cfgC.HORAS_ANTES         || '');
+    setInput('cfgMaxDias',     cfgC.diasAdelanto       || cfgC.DIAS_ADELANTO       || '');
+    setInput('cfgCorreoCoord', cfgC.correoCoordinacion || cfgC.CORREO_COORDINACION || '');
 
     const agendaAbierta = cfgC.agendaAbierta === 'TRUE' || cfgC.agendaAbierta === true || cfgC.AGENDA_ABIERTA === 'TRUE';
     setCheckbox('cfgAgendaAbierta', agendaAbierta);
     setEl('cfgAgendaLabel', agendaAbierta ? 'Abierta' : 'Cerrada');
 
-    // Planeaciones
-    setInput('cfgPeriodo',          cfgP.periodo_actual       || '');
-    setInput('cfgSemana',           cfgP.semana_actual        || '');
-    setInput('cfgUmbralFaltantes',  cfgP.umbral_faltantes     || '3');
-    setInput('cfgCorreosAlertas',   cfgP.correos_alertas      || '');
+    setInput('cfgPeriodo',         cfgP.periodo_actual   || '');
+    setInput('cfgSemana',          cfgP.semana_actual    || '');
+    setInput('cfgUmbralFaltantes', cfgP.umbral_faltantes || '3');
+    setInput('cfgCorreosAlertas',  cfgP.correos_alertas  || '');
 
     const autoPublic = cfgP.auto_publicacion === 'TRUE' || cfgP.auto_publicacion === true;
     setCheckbox('cfgAutoPublicacion', autoPublic);
@@ -1748,7 +1748,6 @@ async function cargarDatosConfiguracion() {
     setCheckbox('cfgNotifAjustes', notifAjust);
     setEl('cfgNotifAjustesLabel', notifAjust ? 'Activa' : 'Inactiva');
 
-    // Sistema (desde config de citas con claves extendidas)
     const mantenim = cfgC.ADMIN_MODO_MANTENIMIENTO === 'TRUE' || cfgC.admin_modo_mantenimiento === true;
     setCheckbox('cfgMantenimiento', mantenim);
     setEl('cfgMantenimientoLabel', mantenim ? 'Activo' : 'Inactivo');
@@ -1771,22 +1770,20 @@ async function guardarConfiguracionCompleta() {
   const btn = document.getElementById('btnGuardarConfig');
   btn.classList.add('loading');
   try {
-    // Config de citas
     const cfgCitas = {
       action: 'actualizarConfig',
       correo: ADMIN.sesion.correo,
-      duracionCita:           getInput('cfgDuracion'),
-      horasAntes:             getInput('cfgMinHoras'),
-      diasAdelanto:           getInput('cfgMaxDias'),
-      correoCoordinacion:     getInput('cfgCorreoCoord'),
-      agendaAbierta:          getCheckbox('cfgAgendaAbierta') ? 'TRUE' : 'FALSE',
+      duracionCita:                   getInput('cfgDuracion'),
+      horasAntes:                     getInput('cfgMinHoras'),
+      diasAdelanto:                   getInput('cfgMaxDias'),
+      correoCoordinacion:             getInput('cfgCorreoCoord'),
+      agendaAbierta:                  getCheckbox('cfgAgendaAbierta') ? 'TRUE' : 'FALSE',
       ADMIN_MODO_MANTENIMIENTO:       getCheckbox('cfgMantenimiento') ? 'TRUE' : 'FALSE',
       ADMIN_MENSAJE_MANTENIMIENTO:    getInput('cfgMsgMantenimiento'),
       ADMIN_AUDITORIA_EXTENDIDA:      getCheckbox('cfgAuditoria') ? 'TRUE' : 'FALSE',
       ADMIN_TIEMPO_EXPIRACION_SESION: getInput('cfgExpiracion'),
     };
 
-    // Config de planeaciones
     const cfgPln = {
       accion: 'guardarConfigPublicacion',
       correo: ADMIN.sesion.correo,
@@ -1799,14 +1796,10 @@ async function guardarConfiguracionCompleta() {
       notificar_ajustes:    getCheckbox('cfgNotifAjustes')    ? 'TRUE' : 'FALSE',
     };
 
-    await Promise.all([
-      apiCitasPost(cfgCitas),
-      apiPlaneacionesPost(cfgPln),
-    ]);
-
+    await Promise.all([ apiCitasPost(cfgCitas), apiPlaneacionesPost(cfgPln) ]);
     toast('Configuración guardada correctamente', 'success');
     auditoria.registrar('configuracion', 'guardarConfig', 'OK');
-    ADMIN.cache.config = null; // Invalidar cache
+    ADMIN.cache.config = null;
   } catch (err) {
     toast('Error al guardar configuración: ' + err.message, 'error');
     auditoria.registrar('configuracion', 'guardarConfig', 'ERROR', err.message);
@@ -1821,10 +1814,7 @@ async function cargarAlertas() {
   auditoria.registrar('alertas', 'abrirAlertas', 'OK');
 
   const filtro = document.getElementById('alertasFiltro');
-  if (filtro && !filtro._bound) {
-    filtro.addEventListener('change', renderAlertasFiltradas);
-    filtro._bound = true;
-  }
+  if (filtro && !filtro._bound) { filtro.addEventListener('change', renderAlertasFiltradas); filtro._bound = true; }
 
   const btnMarcar = document.getElementById('btnMarcarTodasVistas');
   if (btnMarcar && !btnMarcar._bound) {
@@ -1861,8 +1851,6 @@ async function construirAlertas() {
       if (cierres)    alertas.push({ nivel:'advertencia', titulo:`${cierres} solicitudes de cierre pendientes`, desc:'Revisar en módulo de citas', modulo:'citas', filtro:'cierres', ts: new Date() });
       if (incompl)    alertas.push({ nivel:'critica',     titulo:`${incompl} docentes sin planeación`, desc:'Incumplimiento de entrega', modulo:'docentes', ts: new Date() });
     }
-
-    // Alertas del backend de citas
     try {
       const resLog = await apiCitasPost({ action: 'obtenerLog', correo: ADMIN.sesion.correo, limite: 20 });
       const logs   = resLog?.logs || [];
@@ -1871,15 +1859,9 @@ async function construirAlertas() {
         alertas.push({ nivel:'critica', titulo:`${errores.length} error${errores.length!==1?'es':''} recientes en el sistema`, desc: esc(errores[0].Descripcion||errores[0].descripcion||'Ver logs'), modulo:'logs', ts: new Date(errores[0].Timestamp||errores[0].timestamp) });
       }
     } catch { /* silenciar */ }
+  } catch (err) { console.warn('[SIPRESC] Error construyendo alertas:', err.message); }
 
-  } catch (err) {
-    console.warn('[SIPRESC] Error construyendo alertas:', err.message);
-  }
-
-  return alertas.sort((a, b) => {
-    const p = { critica: 0, advertencia: 1, info: 2 };
-    return (p[a.nivel]??2) - (p[b.nivel]??2);
-  });
+  return alertas.sort((a, b) => ({ critica: 0, advertencia: 1, info: 2 }[a.nivel]??2) - ({ critica: 0, advertencia: 1, info: 2 }[b.nivel]??2));
 }
 
 function renderAlertasLista(alertas) {
@@ -1891,12 +1873,12 @@ function renderAlertasLista(alertas) {
     </div>`;
     return;
   }
+  const iconos = {
+    critica:     `<path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>`,
+    advertencia: `<path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="10"/>`,
+    info:        `<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>`,
+  };
   lista.innerHTML = alertas.map((a, i) => {
-    const iconos = {
-      critica:     `<path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>`,
-      advertencia: `<path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="10"/>`,
-      info:        `<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>`,
-    };
     const colorIcon = a.nivel === 'critica' ? 'var(--color-red)' : a.nivel === 'advertencia' ? 'var(--color-yellow)' : 'var(--color-blue)';
     return `<div class="alerta-item ${a.nivel}${a._vista?' vista':''}" data-idx="${i}">
       <svg class="alerta-icon" viewBox="0 0 24 24" fill="none" stroke="${colorIcon}" stroke-width="2">${iconos[a.nivel]||iconos.info}</svg>
@@ -1914,10 +1896,9 @@ function renderAlertasLista(alertas) {
 }
 
 function renderAlertasFiltradas() {
-  const filtro  = document.getElementById('alertasFiltro')?.value || '';
-  const alertas = ADMIN.cache.alertas || [];
-  const filtradas = filtro ? alertas.filter(a => a.nivel === filtro) : alertas;
-  renderAlertasLista(filtradas);
+  const filtro   = document.getElementById('alertasFiltro')?.value || '';
+  const alertas  = ADMIN.cache.alertas || [];
+  renderAlertasLista(filtro ? alertas.filter(a => a.nivel === filtro) : alertas);
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1927,31 +1908,28 @@ function renderAlertasFiltradas() {
 async function cargarAuditoria() {
   auditoria.registrar('auditoria', 'abrirAuditoria', 'OK');
 
-  // Tabs timeline / tabla
   configurarTabs('auditTabs', tab => {
     document.getElementById('auditTimeline').classList.toggle('hidden', tab !== 'timeline');
     document.getElementById('auditTabla').classList.toggle('hidden', tab !== 'tabla');
   });
 
-  // Buscar
   const btnBuscar = document.getElementById('btnBuscarAudit');
   if (btnBuscar && !btnBuscar._bound) {
     btnBuscar.addEventListener('click', ejecutarBusquedaAuditoria);
     btnBuscar._bound = true;
   }
 
-  // Ejecutar búsqueda inicial
   await ejecutarBusquedaAuditoria();
 }
 
 async function ejecutarBusquedaAuditoria() {
   const params = {
-    correo:     ADMIN.sesion.correo,
-    buscar:     document.getElementById('auditBuscar')?.value    || '',
-    rol:        document.getElementById('auditRol')?.value       || '',
-    resultado:  document.getElementById('auditResultado')?.value || '',
-    fecha_ini:  document.getElementById('auditDesde')?.value     || '',
-    fecha_fin:  document.getElementById('auditHasta')?.value     || '',
+    correo:    ADMIN.sesion.correo,
+    buscar:    document.getElementById('auditBuscar')?.value    || '',
+    rol:       document.getElementById('auditRol')?.value       || '',
+    resultado: document.getElementById('auditResultado')?.value || '',
+    fecha_ini: document.getElementById('auditDesde')?.value     || '',
+    fecha_fin: document.getElementById('auditHasta')?.value     || '',
   };
 
   const timelineEl = document.getElementById('auditTimeline');
@@ -1968,7 +1946,6 @@ async function ejecutarBusquedaAuditoria() {
       return;
     }
 
-    // Agrupar por usuario para timeline
     const porUsuario = {};
     eventos.forEach(e => {
       const key = e.CORREO || e.correo || 'desconocido';
@@ -1998,7 +1975,6 @@ async function ejecutarBusquedaAuditoria() {
         </div>
       </div>`).join('');
 
-    // Tabla
     document.getElementById('auditTableBody').innerHTML = eventos.map(e => {
       const res = (e.RESULTADO||e.resultado||'OK').toUpperCase();
       const cls = res === 'OK' ? 'badge-green' : res === 'WARN' ? 'badge-yellow' : 'badge-red';
@@ -2026,13 +2002,13 @@ async function ejecutarBusquedaAuditoria() {
 async function cargarLogs() {
   auditoria.registrar('logs', 'abrirLogs', 'OK');
 
-  const fuente   = document.getElementById('logsFuente');
-  const btnRef   = document.getElementById('btnRefreshLogs');
-  const buscar   = document.getElementById('logsBuscar');
+  const fuente = document.getElementById('logsFuente');
+  const btnRef = document.getElementById('btnRefreshLogs');
+  const buscar = document.getElementById('logsBuscar');
 
-  if (fuente  && !fuente._bound)  { fuente.addEventListener('change',  actualizarLogs); fuente._bound  = true; }
-  if (btnRef  && !btnRef._bound)  { btnRef.addEventListener('click',   actualizarLogs); btnRef._bound  = true; }
-  if (buscar  && !buscar._bound)  { buscar.addEventListener('input',   debounce(filtrarLogsUI, 300)); buscar._bound = true; }
+  if (fuente && !fuente._bound) { fuente.addEventListener('change', actualizarLogs); fuente._bound = true; }
+  if (btnRef && !btnRef._bound) { btnRef.addEventListener('click', actualizarLogs);  btnRef._bound = true; }
+  if (buscar && !buscar._bound) { buscar.addEventListener('input', debounce(filtrarLogsUI, 300)); buscar._bound = true; }
 
   await actualizarLogs();
 }
@@ -2044,7 +2020,6 @@ async function actualizarLogs() {
 
   try {
     let logs = [];
-
     if (fuente === 'citas') {
       const res = await apiCitasPost({ action: 'obtenerLog', correo: ADMIN.sesion.correo });
       logs = res?.logs || res?.log || res?.data || [];
@@ -2053,10 +2028,7 @@ async function actualizarLogs() {
       logs = res?.logs || res?.log || res?.data || [];
     }
 
-    if (!logs.length) {
-      terminal.innerHTML = '<div class="logs-loading">Sin logs disponibles</div>';
-      return;
-    }
+    if (!logs.length) { terminal.innerHTML = '<div class="logs-loading">Sin logs disponibles</div>'; return; }
 
     terminal.innerHTML = logs.map(l => {
       const tipo = (l.Tipo||l.tipo||'info').toLowerCase();
@@ -2069,7 +2041,6 @@ async function actualizarLogs() {
         ${esc(desc)}${usr ? ` <span style="color:var(--text-tertiary)">— ${esc(usr)}</span>` : ''}
       </div>`;
     }).join('');
-
     terminal.scrollTop = terminal.scrollHeight;
 
   } catch (err) {
@@ -2088,92 +2059,58 @@ function filtrarLogsUI() {
 // 17. UI HELPERS — TOAST, MODAL, TABS, CONFIRM
 // ══════════════════════════════════════════════════════════════════
 
-/**
- * Toast premium con tipo y auto-dismiss.
- * @param {string} msg    - Mensaje a mostrar
- * @param {string} tipo   - 'success' | 'error' | 'warning' | 'info'
- * @param {number} ms     - Duración en ms (default 3500)
- */
 function toast(msg, tipo = 'info', ms = 3500) {
-  // Reutilizar toast() de core.js si existe y no es la función nativa
-  if (window.toast && window.toast !== toast) {
-    window.toast(msg, tipo);
-    return;
-  }
-
+  if (window.toast && window.toast !== toast) { window.toast(msg, tipo); return; }
   const container = document.getElementById('toastContainer');
   if (!container) return;
-
   const iconos = {
     success: `<polyline points="20 6 9 17 4 12"/>`,
     error:   `<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>`,
     warning: `<path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>`,
     info:    `<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>`,
   };
-
   const el = document.createElement('div');
   el.className = `toast ${tipo}`;
-  el.innerHTML = `
-    <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${iconos[tipo]||iconos.info}</svg>
-    <span>${msg}</span>`;
+  el.innerHTML = `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${iconos[tipo]||iconos.info}</svg><span>${msg}</span>`;
   container.appendChild(el);
-
-  setTimeout(() => {
-    el.classList.add('exit');
-    setTimeout(() => el.remove(), 300);
-  }, ms);
+  setTimeout(() => { el.classList.add('exit'); setTimeout(() => el.remove(), 300); }, ms);
 }
 
-/**
- * Modal de confirmación reutilizable.
- */
 function confirmar(titulo, htmlBody, onConfirm, labelConfirm = 'Confirmar', peligroso = true) {
-  const backdrop = document.getElementById('modalBackdrop');
-  const modal    = document.getElementById('modal');
+  const backdrop   = document.getElementById('modalBackdrop');
   setEl('modalTitle', titulo);
   document.getElementById('modalBody').innerHTML = htmlBody;
   const btnConfirm = document.getElementById('modalConfirm');
   btnConfirm.textContent = labelConfirm;
-  btnConfirm.className = `btn ${peligroso ? 'btn-danger' : 'btn-primary'}`;
+  btnConfirm.className   = `btn ${peligroso ? 'btn-danger' : 'btn-primary'}`;
   backdrop.classList.remove('hidden');
-
   const cerrar = () => backdrop.classList.add('hidden');
   document.getElementById('modalClose').onclick  = cerrar;
   document.getElementById('modalCancel').onclick = cerrar;
   btnConfirm.onclick = () => { cerrar(); if (onConfirm) onConfirm(); };
 }
 
-/**
- * Modal informativo genérico (sin acción de confirmación).
- */
 function abrirModal(titulo, htmlBody, onConfirm = null, labelConfirm = 'Aceptar', mostrarConfirm = true) {
-  const backdrop = document.getElementById('modalBackdrop');
+  const backdrop   = document.getElementById('modalBackdrop');
   setEl('modalTitle', titulo);
   document.getElementById('modalBody').innerHTML = htmlBody;
   const btnConfirm = document.getElementById('modalConfirm');
   const btnCancel  = document.getElementById('modalCancel');
-  btnConfirm.textContent = labelConfirm;
-  btnConfirm.className   = 'btn btn-primary';
-  btnConfirm.style.display = mostrarConfirm ? '' : 'none';
-  btnCancel.textContent  = mostrarConfirm ? 'Cancelar' : 'Cerrar';
+  btnConfirm.textContent       = labelConfirm;
+  btnConfirm.className         = 'btn btn-primary';
+  btnConfirm.style.display     = mostrarConfirm ? '' : 'none';
+  btnCancel.textContent        = mostrarConfirm ? 'Cancelar' : 'Cerrar';
   backdrop.classList.remove('hidden');
-
   const cerrar = () => backdrop.classList.add('hidden');
   document.getElementById('modalClose').onclick  = cerrar;
   document.getElementById('modalCancel').onclick = cerrar;
   btnConfirm.onclick = () => { cerrar(); if (onConfirm) onConfirm(); };
 }
 
-/**
- * Configurar tabs en un contenedor.
- * @param {string}   containerId  - ID del elemento que contiene los botones .tab
- * @param {Function} onChange     - Callback con el tab activo
- */
 function configurarTabs(containerId, onChange) {
   const container = document.getElementById(containerId);
   if (!container || container._tabsBound) return;
   container._tabsBound = true;
-
   const tabs = container.querySelectorAll('.tab');
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
@@ -2182,8 +2119,6 @@ function configurarTabs(containerId, onChange) {
       if (onChange) onChange(tab.dataset.tab);
     });
   });
-
-  // Disparar el tab activo inicial
   const activo = container.querySelector('.tab.active');
   if (activo && onChange) onChange(activo.dataset.tab);
 }
@@ -2192,13 +2127,8 @@ function configurarTabs(containerId, onChange) {
 // 18. HELPERS DE API (retrocompatibles con core.js)
 // ══════════════════════════════════════════════════════════════════
 
-/**
- * POST al backend de citas (/api/proxy).
- */
 async function apiCitasPost(payload) {
-  // Si core.js tiene su propia función api() la usamos
   if (window.api && typeof window.api === 'function') {
-    // api() de core.js espera (action, payload) — reenvolvemos
     const { action, ...rest } = payload;
     return window.api(action, rest);
   }
@@ -2213,14 +2143,11 @@ async function apiCitasPost(payload) {
   return data;
 }
 
-/**
- * GET al backend de planeaciones (/api/planeaciones?accion=...).
- */
 async function apiPlaneacionesGet(accion, params = {}) {
   if (window.apiPlaneaciones && typeof window.apiPlaneaciones === 'function') {
     return window.apiPlaneaciones(accion, params);
   }
-  const qs = new URLSearchParams({ accion, ...params }).toString();
+  const qs  = new URLSearchParams({ accion, ...params }).toString();
   const res = await fetch(`${ADMIN.API_PLN}?${qs}`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
@@ -2228,9 +2155,6 @@ async function apiPlaneacionesGet(accion, params = {}) {
   return data;
 }
 
-/**
- * POST al backend de planeaciones (/api/planeaciones).
- */
 async function apiPlaneacionesPost(payload) {
   if (window.apiPlaneacionesPost && typeof window.apiPlaneacionesPost === 'function') {
     return window.apiPlaneacionesPost(payload);
@@ -2250,7 +2174,6 @@ async function apiPlaneacionesPost(payload) {
 // 19. HELPERS DE UI Y FORMATO
 // ══════════════════════════════════════════════════════════════════
 
-/** Escapar HTML para evitar XSS */
 function esc(str) {
   if (str === null || str === undefined) return '';
   return String(str)
@@ -2261,35 +2184,22 @@ function esc(str) {
     .replace(/'/g, '&#39;');
 }
 
-/** Reutiliza iniciales() de core.js si existe */
 function iniciales(nombre) {
   if (!nombre) return '?';
-  return nombre
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map(p => p[0].toUpperCase())
-    .join('');
+  return nombre.trim().split(/\s+/).filter(Boolean).slice(0, 2).map(p => p[0].toUpperCase()).join('');
 }
 
-/** Texto relativo: "hace X min" */
 function formatHace(fecha) {
   if (!fecha) return '—';
-
   const d = fecha instanceof Date ? fecha : new Date(fecha);
   if (isNaN(d.getTime())) return '—';
-
   const diff = Math.floor((Date.now() - d.getTime()) / 1000);
-
-  if (diff < 60) return 'ahora';
-  if (diff < 3600) return `hace ${Math.floor(diff / 60)} min`;
+  if (diff < 60)    return 'ahora';
+  if (diff < 3600)  return `hace ${Math.floor(diff / 60)} min`;
   if (diff < 86400) return `hace ${Math.floor(diff / 3600)} h`;
-
   return `hace ${Math.floor(diff / 86400)} d`;
 }
 
-/** Fecha + hora legible */
 function formatFechaHora(ts) {
   if (!ts) return '—';
   const d = ts instanceof Date ? ts : new Date(ts);
@@ -2297,7 +2207,6 @@ function formatFechaHora(ts) {
   return d.toLocaleString('es-CO', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
 }
 
-/** Solo hora */
 function formatHora(ts) {
   if (!ts) return '—';
   const d = ts instanceof Date ? ts : new Date(ts);
@@ -2305,87 +2214,45 @@ function formatHora(ts) {
   return d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
 }
 
-/** Color de punto por estado de planeación */
 function colorEstado(estado) {
   const mapa = {
-    'Con ajustes':  'var(--color-yellow)',
-    'Por revisar':  'var(--color-purple)',
-    'No enviada':   'var(--color-red)',
-    'Recibida':     'var(--color-blue)',
-    'Aprobada':     'var(--color-green)',
-    'Publicada':    '#16a34a',
+    'Con ajustes': 'var(--color-yellow)', 'Por revisar': 'var(--color-purple)',
+    'No enviada':  'var(--color-red)',     'Recibida':    'var(--color-blue)',
+    'Aprobada':    'var(--color-green)',   'Publicada':   '#16a34a',
   };
   return mapa[estado] || 'var(--text-tertiary)';
 }
 
-/** Clase CSS para badge de estado de planeación */
 function claseEstado(estado) {
   const mapa = {
-    'Con ajustes':  'estado-ajustes',
-    'Por revisar':  'estado-revisar',
-    'No enviada':   'estado-noenviada',
-    'Recibida':     'estado-recibida',
-    'Aprobada':     'estado-aprobada',
-    'Publicada':    'estado-publicada',
+    'Con ajustes': 'estado-ajustes', 'Por revisar': 'estado-revisar',
+    'No enviada':  'estado-noenviada','Recibida':    'estado-recibida',
+    'Aprobada':    'estado-aprobada', 'Publicada':   'estado-publicada',
   };
   return mapa[estado] || 'estado-noenviada';
 }
 
-/** Clase de badge por rol */
 function badgeRol(rol) {
-  const mapa = {
-    admin:         'badge-purple',
-    coordinador:   'badge-blue',
-    docente:       'badge-gray',
-  };
-  return mapa[(rol||'').toLowerCase()] || 'badge-gray';
+  return { admin: 'badge-purple', coordinador: 'badge-blue', docente: 'badge-gray' }[(rol||'').toLowerCase()] || 'badge-gray';
 }
 
-/** Clase de badge para estado de solicitud */
 function badgeSolicitud(estado) {
-  const mapa = {
-    Pendiente:  'badge-yellow',
-    Aprobada:   'badge-green',
-    Rechazada:  'badge-red',
-  };
-  return mapa[estado] || 'badge-gray';
+  return { Pendiente: 'badge-yellow', Aprobada: 'badge-green', Rechazada: 'badge-red' }[estado] || 'badge-gray';
 }
 
-/** setEl: atajos para cambiar textContent */
 function setEl(id, val) {
   const el = document.getElementById(id);
   if (el) el.textContent = val ?? '';
 }
 
-/** Valor de input */
-function getInput(id) {
-  return document.getElementById(id)?.value?.trim() || '';
-}
+function getInput(id)        { return document.getElementById(id)?.value?.trim() || ''; }
+function setInput(id, val)   { const el = document.getElementById(id); if (el) el.value = val ?? ''; }
+function getCheckbox(id)     { return document.getElementById(id)?.checked || false; }
+function setCheckbox(id, val){ const el = document.getElementById(id); if (el) el.checked = !!val; }
 
-/** Setear valor de input */
-function setInput(id, val) {
-  const el = document.getElementById(id);
-  if (el) el.value = val ?? '';
-}
-
-/** Valor de checkbox */
-function getCheckbox(id) {
-  return document.getElementById(id)?.checked || false;
-}
-
-/** Setear checkbox */
-function setCheckbox(id, val) {
-  const el = document.getElementById(id);
-  if (el) el.checked = !!val;
-}
-
-/** Debounce genérico */
 function debounce(fn, ms = 300) {
   let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), ms);
-  };
+  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -2394,9 +2261,7 @@ function debounce(fn, ms = 300) {
 
 function registrarServiceWorker() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.admin.js').catch(() => {
-      // Service worker opcional — no bloquea si falla
-    });
+    navigator.serviceWorker.register('/sw.admin.js').catch(() => {});
   }
 }
 
