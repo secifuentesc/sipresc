@@ -2,6 +2,10 @@
    SIPRESC · Panel de Coordinación
    /js/dashboardcoord.js
    ========================================================= */
+
+window.SIPRESC_MODULO = 'Panel de coordinación';
+
+
 (function () {
   "use strict";
 
