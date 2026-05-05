@@ -972,6 +972,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
   ST.correo = correo;
 
+  iniciarHeartbeatPlaneaciones();
+
   const params = new URLSearchParams(window.location.search);
   const editar = params.get("editar");
   const planeacionId = params.get("planeacionId");
@@ -1742,6 +1744,47 @@ function mostrarAvisoIA(){
   btnIA.classList.add("activo");
   btnIA.animate([{transform:"scale(1)"},{transform:"scale(1.2)"},{transform:"scale(1)"}],{duration:600,iterations:2});
   setTimeout(()=>toast.classList.remove("activo"),2800);
+}
+
+let heartbeatPlaneacionesTimer = null;
+
+function getSessionIdPlaneaciones(){
+  let id = sessionStorage.getItem("lp_session_id");
+
+  if(!id){
+    id = "ses_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8);
+    sessionStorage.setItem("lp_session_id", id);
+  }
+
+  return id;
+}
+
+function iniciarHeartbeatPlaneaciones(){
+  if(heartbeatPlaneacionesTimer) clearInterval(heartbeatPlaneacionesTimer);
+
+  const enviar = () => {
+    const sesion = JSON.parse(localStorage.getItem("lp_user") || "{}");
+
+    if(!sesion || !sesion.correo) return;
+
+    fetch("/api/proxy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "heartbeat",
+        correo: sesion.correo,
+        nombre: sesion.nombre || "",
+        rol: sesion.rol || "docente",
+        modulo: "planeaciones",
+        session_id: getSessionIdPlaneaciones(),
+        user_agent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+      })
+    }).catch(() => {});
+  };
+
+  enviar();
+  heartbeatPlaneacionesTimer = setInterval(enviar, 30000);
 }
 </script>
 </body>
