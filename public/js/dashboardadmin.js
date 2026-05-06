@@ -680,8 +680,25 @@ async function refrescarDocentes() {
   lista.innerHTML = '<div class="activity-skeleton" style="margin:8px;border-radius:8px;height:48px"></div>'.repeat(6);
 
   try {
-    const res  = await apiPlaneacionesGet('dashboardCoordinacion', { correo: ADMIN.sesion.correo, periodo, semana });
-    let data   = res?.data || res?.planeaciones || [];
+    const res = await apiPlaneacionesGet('dashboardCoordinacion', {
+  correo: ADMIN.sesion.correo,
+  periodo,
+  semana
+});
+
+console.log('[DATA DASHBOARD COORDINACION]', res);
+
+let data =
+  res?.data ||
+  res?.planeaciones ||
+  res?.registros ||
+  res?.items ||
+  [];
+
+if (!Array.isArray(data)) {
+  console.warn('La respuesta no trae un arreglo de planeaciones:', data);
+  data = [];
+}
 
     const docenteMap = {};
     data.forEach(p => {
@@ -2163,32 +2180,81 @@ async function apiCitasPost(payload) {
 }
 
 async function apiPlaneacionesGet(accion, params = {}) {
-  if (window.apiPlaneaciones && typeof window.apiPlaneaciones === 'function') {
-    return window.apiPlaneaciones(accion, params);
+  const qs = new URLSearchParams({ accion, ...params }).toString();
+  const url = `${ADMIN.API_PLN}?${qs}`;
+
+  console.log('[PLANEACIONES GET]', url);
+
+  const res = await fetch(url, {
+    method: 'GET',
+    cache: 'no-store'
+  });
+
+  const text = await res.text();
+
+  console.log('[PLANEACIONES RAW]', text);
+
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (e) {
+    throw new Error('La API de planeaciones no devolvió JSON válido: ' + text.slice(0, 200));
   }
-  const qs  = new URLSearchParams({ accion, ...params }).toString();
-  const res = await fetch(`${ADMIN.API_PLN}?${qs}`);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  if (data.error) throw new Error(data.error);
+
+  console.log('[PLANEACIONES JSON]', data);
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
+  }
+
+  if (data.ok === false) {
+    throw new Error(data.error || data.mensaje || 'La API respondió ok:false');
+  }
+
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
   return data;
 }
 
 async function apiPlaneacionesPost(payload) {
-  if (window.apiPlaneacionesPost && typeof window.apiPlaneacionesPost === 'function') {
-    return window.apiPlaneacionesPost(payload);
-  }
+  console.log('[PLANEACIONES POST]', payload);
+
   const res = await fetch(ADMIN.API_PLN, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    cache: 'no-store',
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  if (data.error) throw new Error(data.error);
+
+  const text = await res.text();
+
+  console.log('[PLANEACIONES POST RAW]', text);
+
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (e) {
+    throw new Error('La API de planeaciones no devolvió JSON válido: ' + text.slice(0, 200));
+  }
+
+  console.log('[PLANEACIONES POST JSON]', data);
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
+  }
+
+  if (data.ok === false) {
+    throw new Error(data.error || data.mensaje || 'La API respondió ok:false');
+  }
+
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
   return data;
 }
-
 // ══════════════════════════════════════════════════════════════════
 // 19. HELPERS DE UI Y FORMATO
 // ══════════════════════════════════════════════════════════════════
