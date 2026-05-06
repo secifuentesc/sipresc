@@ -677,58 +677,124 @@ async function refrescarDocentes() {
   const semana  = document.getElementById('plnSemana')?.value  || '';
   const estado  = document.getElementById('plnEstado')?.value  || '';
   const lista   = document.getElementById('plnDocenteList');
+
   lista.innerHTML = '<div class="activity-skeleton" style="margin:8px;border-radius:8px;height:48px"></div>'.repeat(6);
 
   try {
     const res = await apiPlaneacionesGet('dashboardCoordinacion', {
-  correo: ADMIN.sesion.correo,
-  periodo,
-  semana
-});
-
-console.log('[DATA DASHBOARD COORDINACION]', res);
-
-let data =
-  res?.data ||
-  res?.planeaciones ||
-  res?.registros ||
-  res?.items ||
-  [];
-
-if (!Array.isArray(data)) {
-  console.warn('La respuesta no trae un arreglo de planeaciones:', data);
-  data = [];
-}
-
-    const docenteMap = {};
-    data.forEach(p => {
-      const key = p.CORREO_DOCENTE || p.correo_docente || p.DOCENTE_ID || '';
-      if (!docenteMap[key]) docenteMap[key] = {
-        correo: key, id: p.DOCENTE_ID || p.docente_id || key,
-        nombre: p.NOMBRE_DOCENTE || p.nombre_docente || key,
-        planeaciones: [],
-      };
-      docenteMap[key].planeaciones.push(p);
+      correo: ADMIN.sesion.correo,
+      periodo,
+      semana
     });
 
+    console.log('[DATA DASHBOARD COORDINACION]', res);
+
+    const docentesRaw = res?.data?.docentes || [];
+
+    if (!Array.isArray(docentesRaw)) {
+      console.warn('La respuesta no trae docentes como arreglo:', docentesRaw);
+      renderDocentesList([]);
+      return;
+    }
+
+    let docentes = docentesRaw.map(d => {
+      const asignaciones = Array.isArray(d.asignaciones) ? d.asignaciones : [];
+
+      const planeaciones = asignaciones.map(a => {
+        const p = a.planeacion || {};
+
+        return {
+          ...p,
+
+          // Datos base de la asignación
+          DOCENTE_ID: d.docenteId || p.DOCENTE_ID || '',
+          NOMBRE_DOCENTE: d.nombreDocente || p.NOMBRE_DOCENTE || '',
+          CORREO_DOCENTE: d.correo || p.CORREO_DOCENTE || '',
+
+          ASIGNATURA: a.asignatura || p.ASIGNATURA || '',
+          GRADO: a.grado || p.GRADO || '',
+          GRUPOS_DESTINO: a.gruposDestino || p.GRUPOS_DESTINO || '',
+          GRADO_TEXTO: a.gradoTexto || '',
+
+          DIAS_INTENSIDAD: a.diasIntensidad || p.DIAS_INTENSIDAD || '',
+
+          // Estado
+          ENTREGADA: a.entregada === true,
+          PLANEACION_ID: a.planeacionId || p.PLANEACION_ID || '',
+          ESTADO_REVISION:
+            a.estadoRevision ||
+            p.REVISION_COORD ||
+            p.ESTADO_REVISION ||
+            (a.entregada ? 'Recibida' : 'No enviada'),
+
+          // Guardamos la asignación original por si se necesita luego
+          _asignacion: a
+        };
+      });
+
+      return {
+        correo: d.correo || '',
+        id: d.docenteId || d.correo || '',
+        nombre: d.nombreDocente || d.correo || 'Sin nombre',
+        planeaciones
+      };
+    });
+
+    if (estado) {
+      docentes = docentes.filter(d =>
+        d.planeaciones.some(p =>
+          normalizarEstadoRevision(p.ESTADO_REVISION || 'No enviada') === estado
+        )
+      );
+    }
+
     const ordenEstado = ['Con ajustes', 'Por revisar', 'No enviada', 'Recibida', 'Aprobada', 'Publicada'];
-    let docentes = Object.values(docenteMap);
-    if (estado) docentes = docentes.filter(d => d.planeaciones.some(p => (p.ESTADO_REVISION || p.estado_revision || 'No enviada') === estado));
-    docentes.sort((a, b) => ordenEstado.indexOf(estadoPrincipal(a.planeaciones)) - ordenEstado.indexOf(estadoPrincipal(b.planeaciones)));
+
+    docentes.sort((a, b) =>
+      ordenEstado.indexOf(estadoPrincipal(a.planeaciones)) -
+      ordenEstado.indexOf(estadoPrincipal(b.planeaciones))
+    );
+
     plnEstado.docentes = docentes;
     renderDocentesList(docentes);
 
   } catch (err) {
+    console.error('[ERROR PLANEACIONES ADMIN]', err);
     lista.innerHTML = `<div style="padding:16px;color:var(--color-red);font-size:.78rem">Error: ${err.message}</div>`;
     auditoria.registrar('planeaciones', 'cargarDocentes', 'ERROR', err.message);
   }
 }
 
+function normalizarEstadoRevision(estado) {
+  const e = String(estado || '').trim();
+
+  if (!e) return 'No enviada';
+
+  const mapa = {
+    'con ajustes': 'Con ajustes',
+    'por revisar': 'Por revisar',
+    'no enviada': 'No enviada',
+    'no enviado': 'No enviada',
+    'recibida': 'Recibida',
+    'recibido': 'Recibida',
+    'aprobada': 'Aprobada',
+    'aprobado': 'Aprobada',
+    'publicada': 'Publicada',
+    'publicado': 'Publicada'
+  };
+
+  return mapa[e.toLowerCase()] || e;
+}
+
 function estadoPrincipal(pls) {
   const orden = ['Con ajustes', 'Por revisar', 'No enviada', 'Recibida', 'Aprobada', 'Publicada'];
+
   for (const e of orden) {
-    if (pls.some(p => (p.ESTADO_REVISION || p.estado_revision || 'No enviada') === e)) return e;
+    if (pls.some(p => normalizarEstadoRevision(p.ESTADO_REVISION || p.estado_revision || 'No enviada') === e)) {
+      return e;
+    }
   }
+
   return 'No enviada';
 }
 
@@ -741,7 +807,11 @@ function renderDocentesList(docentes) {
   lista.innerHTML = docentes.map((d, i) => {
     const estado    = estadoPrincipal(d.planeaciones);
     const dotColor  = colorEstado(estado);
-    const pendientes = d.planeaciones.filter(p => !['Aprobada','Publicada'].includes(p.ESTADO_REVISION || p.estado_revision || 'No enviada')).length;
+    const pendientes = d.planeaciones.filter(p =>
+  !['Aprobada', 'Publicada'].includes(
+    normalizarEstadoRevision(p.ESTADO_REVISION || p.estado_revision || 'No enviada')
+  )
+).length;
     return `<div class="pln-docente-item" data-idx="${i}" onclick="seleccionarDocente(${i})">
       <div class="pln-docente-avatar">${esc(iniciales(d.nombre))}</div>
       <div class="pln-docente-info">
@@ -764,13 +834,13 @@ window.seleccionarDocente = function (idx) {
 
   const ordenEstado = ['Con ajustes', 'Por revisar', 'No enviada', 'Recibida', 'Aprobada', 'Publicada'];
   const sorted = [...docente.planeaciones].sort((a, b) =>
-    ordenEstado.indexOf(a.ESTADO_REVISION || a.estado_revision || 'No enviada') -
-    ordenEstado.indexOf(b.ESTADO_REVISION || b.estado_revision || 'No enviada')
-  );
+  ordenEstado.indexOf(normalizarEstadoRevision(a.ESTADO_REVISION || a.estado_revision || 'No enviada')) -
+  ordenEstado.indexOf(normalizarEstadoRevision(b.ESTADO_REVISION || b.estado_revision || 'No enviada'))
+);
   plnEstado.sortedPlaneaciones = sorted;
 
   document.getElementById('plnAsignacionList').innerHTML = sorted.map((p, i) => {
-    const estado  = p.ESTADO_REVISION || p.estado_revision || 'No enviada';
+    const estado = normalizarEstadoRevision(p.ESTADO_REVISION || p.estado_revision || 'No enviada');
     const grado   = p.GRADO   || p.grado   || '';
     const grupos  = p.GRUPOS_DESTINO || p.grupos_destino || '';
     const asig    = p.ASIGNATURA || p.asignatura || '';
@@ -797,7 +867,7 @@ window.seleccionarPlaneacion = function (idx) {
 
   document.querySelectorAll('.pln-mat-item').forEach((el, i) => el.classList.toggle('active', i === idx));
 
-  const estado  = p.ESTADO_REVISION || p.estado_revision || 'No enviada';
+  const estado = normalizarEstadoRevision(p.ESTADO_REVISION || p.estado_revision || 'No enviada');
   const asig    = p.ASIGNATURA  || p.asignatura  || '—';
   const grado   = p.GRADO       || p.grado       || '—';
   setEl('plnMatSelected', `${asig} · ${grado}`);
@@ -2300,20 +2370,32 @@ function formatHora(ts) {
 }
 
 function colorEstado(estado) {
+  estado = normalizarEstadoRevision(estado);
+
   const mapa = {
-    'Con ajustes': 'var(--color-yellow)', 'Por revisar': 'var(--color-purple)',
-    'No enviada':  'var(--color-red)',     'Recibida':    'var(--color-blue)',
-    'Aprobada':    'var(--color-green)',   'Publicada':   '#16a34a',
+    'Con ajustes': 'var(--color-yellow)',
+    'Por revisar': 'var(--color-purple)',
+    'No enviada':  'var(--color-red)',
+    'Recibida':    'var(--color-blue)',
+    'Aprobada':    'var(--color-green)',
+    'Publicada':   '#16a34a',
   };
+
   return mapa[estado] || 'var(--text-tertiary)';
 }
 
 function claseEstado(estado) {
+  estado = normalizarEstadoRevision(estado);
+
   const mapa = {
-    'Con ajustes': 'estado-ajustes', 'Por revisar': 'estado-revisar',
-    'No enviada':  'estado-noenviada','Recibida':    'estado-recibida',
-    'Aprobada':    'estado-aprobada', 'Publicada':   'estado-publicada',
+    'Con ajustes': 'estado-ajustes',
+    'Por revisar': 'estado-revisar',
+    'No enviada':  'estado-noenviada',
+    'Recibida':    'estado-recibida',
+    'Aprobada':    'estado-aprobada',
+    'Publicada':   'estado-publicada',
   };
+
   return mapa[estado] || 'estado-noenviada';
 }
 
