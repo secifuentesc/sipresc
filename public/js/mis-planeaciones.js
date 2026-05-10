@@ -639,50 +639,61 @@ console.log('RESPUESTA MIS PLANEACIONES:', res);
 
 /* ─── API ─── */
 async function _api(action, payload = {}) {
-  if (!action) {
-    console.error('[MIS PLANEACIONES] ERROR: action llegó vacío:', action, payload);
-    throw new Error('No se recibió acción para la API.');
-  }
-
-  const body = {
+  const finalPayload = {
     ...(payload || {}),
     accion: action
   };
 
-  // Asegura siempre el correo del docente
   if (ST.correo) {
-    body.correo = ST.correo;
+    finalPayload.correo = ST.correo;
   }
 
-  console.log('[MIS PLANEACIONES] POST BODY REAL:', JSON.stringify(body, null, 2));
+  console.log('[MIS PLANEACIONES] PAYLOAD REAL:', JSON.stringify(finalPayload, null, 2));
 
+  // ─────────────────────────────────────
+  // GET para consultar mis planeaciones
+  // ─────────────────────────────────────
+  if (action === 'misPlaneacionesDocente') {
+    const query = new URLSearchParams(finalPayload).toString();
+    const url = `${API}?${query}`;
+
+    console.log('[MIS PLANEACIONES] GET URL:', url);
+
+    const r = await fetch(url, {
+      method: 'GET',
+      cache: 'no-store'
+    });
+
+    const txt = await r.text();
+
+    console.log('[MIS PLANEACIONES] GET RESPUESTA RAW:', txt);
+
+    if (!r.ok) {
+      throw new Error(`HTTP ${r.status}`);
+    }
+
+    return JSON.parse(txt);
+  }
+
+  // ─────────────────────────────────────
+  // POST para reenviar planeaciones
+  // ─────────────────────────────────────
   const r = await fetch(API, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
     cache: 'no-store',
-    body: JSON.stringify(body)
+    body: JSON.stringify(finalPayload)
   });
 
   const txt = await r.text();
 
   console.log('[MIS PLANEACIONES] POST RESPUESTA RAW:', txt);
 
-  let data;
-
-  try {
-    data = JSON.parse(txt);
-  } catch (error) {
-    console.error('[MIS PLANEACIONES] RESPUESTA NO JSON:', txt);
-    throw new Error('La respuesta del servidor no es JSON válido.');
-  }
-
   if (!r.ok) {
-    throw new Error(data.mensaje || data.error || `HTTP ${r.status}`);
+    throw new Error(`HTTP ${r.status}`);
   }
 
-  return data;
+  return JSON.parse(txt);
 }
   /* ─── DOM HELPERS ─── */
   function _setText(id, val) {
