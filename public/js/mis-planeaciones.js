@@ -637,30 +637,52 @@ console.log('RESPUESTA MIS PLANEACIONES:', res);
     }
   }
 
-  /* ─── API ─── */
+/* ─── API ─── */
 async function _api(action, payload = {}) {
+  if (!action) {
+    console.error('[MIS PLANEACIONES] ERROR: action llegó vacío:', action, payload);
+    throw new Error('No se recibió acción para la API.');
+  }
+
   const body = {
-    accion: action,
-    ...(payload || {})
+    ...(payload || {}),
+    accion: action
   };
 
-  if (ST.correo) body.correo = ST.correo;
+  // Asegura siempre el correo del docente
+  if (ST.correo) {
+    body.correo = ST.correo;
+  }
 
-  console.log('[MIS PLANEACIONES] POST BODY:', body);
+  console.log('[MIS PLANEACIONES] POST BODY REAL:', JSON.stringify(body, null, 2));
 
   const r = await fetch(API, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json'
+    },
     cache: 'no-store',
     body: JSON.stringify(body)
   });
 
   const txt = await r.text();
-  console.log('[MIS PLANEACIONES] POST RESPUESTA:', txt);
 
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  console.log('[MIS PLANEACIONES] POST RESPUESTA RAW:', txt);
 
-  return JSON.parse(txt);
+  let data;
+
+  try {
+    data = JSON.parse(txt);
+  } catch (error) {
+    console.error('[MIS PLANEACIONES] RESPUESTA NO JSON:', txt);
+    throw new Error('La respuesta del servidor no es JSON válido.');
+  }
+
+  if (!r.ok) {
+    throw new Error(data.mensaje || data.error || `HTTP ${r.status}`);
+  }
+
+  return data;
 }
   /* ─── DOM HELPERS ─── */
   function _setText(id, val) {
