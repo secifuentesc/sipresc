@@ -329,7 +329,9 @@ const MP = (() => {
       const matchTexto  = semRaw.replace(/\D/g,'') === numStr ||
                           semRaw.includes(`semana ${numStr}`) ||
                           semRaw.includes(`semana${numStr}`);
-      const matchNumero = p.semanaNumero && String(p.semanaNumero) === numStr;
+      const matchNumero =
+  (p.semanaNumero && String(p.semanaNumero) === numStr) ||
+  (p.semanaNum && String(p.semanaNum) === numStr);
       return matchTexto || matchNumero;
     });
 
