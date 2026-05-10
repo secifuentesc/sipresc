@@ -20,7 +20,7 @@
 /* ══════════════════════════════════════
    CONSTANTES
 ══════════════════════════════════════ */
-const API        = '/api/proxy';
+const API = '/api/planeaciones';
 const RUTA_HOME  = '/';
 
 /**
