@@ -1,499 +1,626 @@
 /**
- * mis-planeaciones.js
- * SIPRESC — Módulo Mis Planeaciones (vista docente)
+ * mis-planeaciones.js  —  SIPRESC
+ * Vista docente: mis planeaciones por período y semana
  *
- * Acciones backend requeridas (Google Apps Script):
- *   misPlaneacionesDocente   → lista de planeaciones del docente autenticado
- *   reenviarPlaneacionDocente → reenvío de planeación corregida
+ * Acciones requeridas en el backend (Google Apps Script):
  *
- * Sesión leída desde: localStorage.getItem("lp_user")
- * API proxy:          /api/proxy
+ *   misPlaneacionesDocente
+ *     Recibe:   { docenteId, correo, periodo }
+ *     Devuelve: array de planeaciones del docente (ver estructura abajo)
+ *     Seguridad: validar que docenteId + correo correspondan al mismo docente
+ *
+ *   reenviarPlaneacionDocente
+ *     Recibe:   { planeacionId, docenteId, correo, datosCorregidos }
+ *     Devuelve: { ok: true } o { ok: false, mensaje: '...' }
+ *     Seguridad: validar que la planeación pertenezca al docente
  */
 
+'use strict';
+
 /* ══════════════════════════════════════
-   CONFIG Y ESTADO GLOBAL
+   CONSTANTES
 ══════════════════════════════════════ */
 const API        = '/api/proxy';
-const RUTA_PANEL = '/';
+const RUTA_HOME  = '/';
 
-/** Sesión del docente activo */
-const ST = {
-  correo:     null,
-  nombre:     null,
-  docenteId:  null,
-  rol:        null
+/**
+ * CALENDARIO DE PERÍODOS
+ * Cada período tiene 10 semanas.
+ * Referencia: Período 2, Semana 6 inicia sábado 2026-05-09 (Colombia UTC-5).
+ * Las semanas cambian cada sábado.
+ *
+ * Para ajustar el calendario real, editar PERIODOS_CONFIG.
+ * La clave periodoActivo y semanaBase deben actualizarse cada período.
+ */
+const INICIO_P2_S6 = new Date('2026-05-09T00:00:00-05:00'); // sábado 9 mayo 2026
+
+/**
+ * Calcula el inicio de una semana dada en el período 2.
+ * semana 6 = índice 0 (semana base de referencia).
+ * Cada semana son 7 días.
+ */
+function inicioSemanaP2(numSemana) {
+  const offset = (numSemana - 6) * 7;
+  const d = new Date(INICIO_P2_S6);
+  d.setDate(d.getDate() + offset);
+  return d;
+}
+
+/**
+ * Retorna el inicio de cada período como la semana 1 del mismo.
+ * Período 1: antes de P2. Período 3: después de P2.
+ * Para el MVP, el cálculo exacto de P1, P3, P4 puede completarse
+ * con las fechas reales del calendario institucional.
+ */
+function inicioSemana(periodo, numSemana) {
+  // Período 2 tiene lógica exacta; los demás usan estimaciones.
+  if (periodo === 2) return inicioSemanaP2(numSemana);
+  // Período 1: ~16 semanas antes del inicio de P2 (referencia aprox.)
+  if (periodo === 1) {
+    const base = new Date(INICIO_P2_S6);
+    base.setDate(base.getDate() - (5 - 1) * 7 - (10 * 7));
+    base.setDate(base.getDate() + (numSemana - 1) * 7);
+    return base;
+  }
+  // Período 3: inicia la semana después de que termina P2 semana 10
+  if (periodo === 3) {
+    const baseP3 = inicioSemanaP2(10);
+    baseP3.setDate(baseP3.getDate() + 7 + (numSemana - 1) * 7);
+    return baseP3;
+  }
+  // Período 4: después de P3
+  if (periodo === 4) {
+    const baseP3 = inicioSemanaP2(10);
+    baseP3.setDate(baseP3.getDate() + 7 + 10 * 7 + (numSemana - 1) * 7);
+    return baseP3;
+  }
+  return new Date();
+}
+
+/** Calcula período y semana activos según la fecha actual */
+function calcularActivos() {
+  const ahora = new Date();
+
+  // Buscar en qué semana del período 2 estamos
+  for (let s = 1; s <= 10; s++) {
+    const inicio = inicioSemana(2, s);
+    const fin    = new Date(inicio);
+    fin.setDate(fin.getDate() + 7);
+    if (ahora >= inicio && ahora < fin) {
+      return { periodoActivo: 2, semanaActiva: s };
+    }
+  }
+  // Antes de P2?
+  if (ahora < inicioSemana(2, 1)) {
+    for (let s = 1; s <= 10; s++) {
+      const inicio = inicioSemana(1, s);
+      const fin    = new Date(inicio); fin.setDate(fin.getDate() + 7);
+      if (ahora >= inicio && ahora < fin) return { periodoActivo: 1, semanaActiva: s };
+    }
+    return { periodoActivo: 1, semanaActiva: 1 };
+  }
+  // Después de P2?
+  const finP2 = new Date(inicioSemana(2, 10));
+  finP2.setDate(finP2.getDate() + 7);
+  if (ahora >= finP2) {
+    for (let s = 1; s <= 10; s++) {
+      const inicio = inicioSemana(3, s);
+      const fin    = new Date(inicio); fin.setDate(fin.getDate() + 7);
+      if (ahora >= inicio && ahora < fin) return { periodoActivo: 3, semanaActiva: s };
+    }
+    return { periodoActivo: 3, semanaActiva: 1 };
+  }
+  return { periodoActivo: 2, semanaActiva: 1 };
+}
+
+/** Formatea un rango de fechas: "9 may. – 15 may." */
+function fmtRango(inicioDate) {
+  const fin = new Date(inicioDate);
+  fin.setDate(fin.getDate() + 6);
+  const opts = { day: 'numeric', month: 'short' };
+  const loc  = 'es-CO';
+  return `${inicioDate.toLocaleDateString(loc, opts)} – ${fin.toLocaleDateString(loc, opts)}`;
+}
+
+/** Formatea una fecha ISO como "10/05/2026" */
+function fmtFecha(raw) {
+  if (!raw) return null;
+  try {
+    const d = new Date(raw);
+    if (isNaN(d)) return raw;
+    return d.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } catch { return raw; }
+}
+
+/* ══════════════════════════════════════
+   NORMALIZACIÓN DE ESTADOS
+══════════════════════════════════════ */
+function normEstado(raw) {
+  if (!raw) return 'revision';
+  const v = String(raw).toLowerCase().trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[\s_]+/g,'_');
+  if (v === 'aprobada')                                       return 'aprobada';
+  if (v === 'ajustes' || v === 'con_ajustes')                 return 'ajustes';
+  if (v === 'reenviada')                                      return 'reenviada';
+  return 'revision'; // recibida, enviada, en_revision, pendiente, vacío
+}
+
+const LABEL = {
+  aprobada:  'Aprobada',
+  ajustes:   'Con ajustes',
+  reenviada: 'Reenviada',
+  revision:  'En revisión'
 };
 
-/** Estado del módulo */
-const MIS = (() => {
+function esc(s) {
+  return String(s || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
-  /* Estado interno */
-  let _todas         = [];  // todas las planeaciones cargadas
-  let _filtradas     = [];  // resultado de filtros
-  let _filtroEstado  = 'todas';
-  let _filtroPeriodo = 'todos';
-  let _busqueda      = '';
-  let _planActual    = null; // planeación abierta en el panel
+/* ══════════════════════════════════════
+   ESTADO GLOBAL DEL MÓDULO
+══════════════════════════════════════ */
+const ST = { correo: null, docenteId: null, rol: null, nombre: null };
 
-  /* ─────────────────────────────
-     NORMALIZACIÓN DE ESTADOS
-  ───────────────────────────── */
-  function normalizarEstado(raw) {
-    if (!raw) return 'revision';
-    const v = String(raw).toLowerCase().trim()
-      .replace(/\s+/g, '_')
-      .replace(/á/g,'a').replace(/é/g,'e').replace(/í/g,'i').replace(/ó/g,'o').replace(/ú/g,'u');
-    if (v === 'aprobada')                             return 'aprobada';
-    if (v === 'ajustes' || v === 'con_ajustes')       return 'ajustes';
-    if (v === 'reenviada')                            return 'reenviada';
-    // en_revision, enviada, pendiente, recibida → revision
-    return 'revision';
-  }
+const estado = {
+  periodoSel:  2,
+  semanaSel:   null,
+  semanaActiva: null,
+  periodoActivo: null,
+  planeaciones: [],    // todas las cargadas para el período actual
+  filtradas:    [],    // filtradas por semana + búsqueda
+  busqueda:     '',
+  planActual:   null   // planeación abierta en el panel
+};
 
-  const LABEL_ESTADO = {
-    aprobada:  'Aprobada',
-    ajustes:   'Con ajustes',
-    reenviada: 'Reenviada',
-    revision:  'En revisión'
-  };
+/* ══════════════════════════════════════
+   MÓDULO PRINCIPAL — MP
+══════════════════════════════════════ */
+const MP = (() => {
 
-  /* ─────────────────────────────
-     INICIALIZACIÓN
-  ───────────────────────────── */
+  /* ─── INIT ─── */
   function init() {
     const raw = localStorage.getItem('lp_user');
-    if (!raw) {
-      _mostrarSinSesion();
-      return;
-    }
+    if (!raw) { _sinSesion(); return; }
 
     let user;
-    try { user = JSON.parse(raw); } catch { _mostrarSinSesion(); return; }
+    try { user = JSON.parse(raw); } catch { _sinSesion(); return; }
+    if (!user || !user.correo) { _sinSesion(); return; }
 
-    if (!user || !user.correo) { _mostrarSinSesion(); return; }
-
-    /* Cargar sesión */
     ST.correo    = user.correo;
-    ST.nombre    = user.nombre    || user.correo;
     ST.docenteId = user.docenteId || '';
     ST.rol       = user.rol       || 'docente';
+    ST.nombre    = user.nombre    || '';
 
-    /* Actualizar topbar */
-    const rolEl = document.getElementById('tp-rol');
-    if (rolEl) rolEl.textContent = (ST.rol || 'DOCENTE').toUpperCase();
+    // Rol en topbar
+    const tpRol = document.getElementById('tpRol');
+    if (tpRol) tpRol.textContent = (ST.rol || 'DOCENTE').toUpperCase();
 
-    /* Tarjeta de docente */
-    const avatar = document.getElementById('docenteAvatar');
-    if (avatar) {
-      const iniciales = _iniciales(ST.nombre);
-      avatar.textContent = iniciales;
-    }
-    const nomEl = document.getElementById('docenteNombre');
-    const corEl = document.getElementById('docenteCorreo');
-    if (nomEl) nomEl.textContent = _titleCase(ST.nombre);
-    if (corEl) corEl.textContent = ST.correo;
+    // Calcular período y semana activos
+    const { periodoActivo, semanaActiva } = calcularActivos();
+    estado.periodoActivo = periodoActivo;
+    estado.semanaActiva  = semanaActiva;
+    estado.periodoSel    = periodoActivo; // por defecto el activo
 
-    /* Mostrar contenido */
     document.getElementById('panelSinSesion').style.display = 'none';
     document.getElementById('mainContent').style.display    = '';
 
-    cargar();
+    _renderPeriodos();
+    _renderSemanas();
+    // Precargar planeaciones del período activo en background
+    _cargarPeriodo(estado.periodoSel);
   }
 
-  function _mostrarSinSesion() {
+  function _sinSesion() {
     document.getElementById('panelSinSesion').style.display = '';
     document.getElementById('mainContent').style.display    = 'none';
   }
 
-  /* ─────────────────────────────
-     CARGA DE PLANEACIONES
-  ───────────────────────────── */
-  async function cargar() {
-    _estadoCargando(true);
-    _limpiarGrid();
+  /* ─── PERÍODOS ─── */
+  function _renderPeriodos() {
+    const chips = document.querySelectorAll('.periodo-chip');
+    chips.forEach(c => {
+      const p = parseInt(c.dataset.p);
+      c.classList.toggle('activo', p === estado.periodoSel);
+    });
+  }
 
+  function selPeriodo(p, btn) {
+    if (estado.periodoSel === p) return;
+    estado.periodoSel  = p;
+    estado.planeaciones = [];
+    _renderPeriodos();
+    _renderSemanas();
+    _cargarPeriodo(p);
+  }
+
+  /* ─── SEMANAS ─── */
+  function _renderSemanas() {
+    const grid = document.getElementById('semanasGrid');
+    grid.innerHTML = '';
+
+    for (let s = 1; s <= 10; s++) {
+      const inicio = inicioSemana(estado.periodoSel, s);
+      const esActiva = estado.periodoSel === estado.periodoActivo &&
+                       s === estado.semanaActiva;
+      const rango  = fmtRango(inicio);
+
+      const card = document.createElement('div');
+      card.className = 'semana-card' + (esActiva ? ' es-actual' : '');
+      card.innerHTML = `
+        <div class="sem-num">Semana ${s}</div>
+        <div class="sem-rango">${rango}</div>
+        <div class="sem-ver">Ver planeaciones</div>
+        ${esActiva ? '<div class="sem-badge-actual">Actual</div>' : ''}
+      `;
+      card.addEventListener('click', () => abrirSemana(s));
+      grid.appendChild(card);
+    }
+  }
+
+  /* ─── CARGA DE PLANEACIONES DEL PERÍODO ─── */
+  async function _cargarPeriodo(periodo) {
     try {
       /*
        * ACCIÓN BACKEND: misPlaneacionesDocente
-       * El backend debe validar que docenteId y correo
-       * pertenezcan al mismo docente antes de devolver datos.
-       *
-       * Respuesta esperada: Array de objetos (ver docs).
+       * El backend filtra por DOCENTE_ID + CORREO_DOCENTE + PERIODO.
+       * Devuelve array de planeaciones (ver estructura en comentario al inicio).
        */
       const res = await _api('misPlaneacionesDocente', {
         docenteId: ST.docenteId,
-        correo:    ST.correo
+        correo:    ST.correo,
+        periodo:   periodo
       });
 
-      /* Aceptar array directo o { ok, data } */
       let lista = [];
       if (Array.isArray(res))                  lista = res;
       else if (res && Array.isArray(res.data)) lista = res.data;
-      else if (res && res.ok === false)        throw new Error(res.mensaje || 'Error del servidor');
 
-      /* Normalizar estados */
-      _todas = lista.map(p => ({
+      estado.planeaciones = lista.map(p => ({
         ...p,
-        _estado: normalizarEstado(p.estadoRevision)
+        _estado: normEstado(p.estadoRevision)
       }));
 
-      _calcularKPIs();
-      _aplicarFiltros();
+      // Si había una semana abierta, refrescar su lista
+      if (estado.semanaSel !== null) _filtrarPorSemana();
 
     } catch (err) {
-      console.error('[MIS PLANEACIONES]', err);
-      _estadoCargando(false, 'error');
+      console.error('[MIS PLN] Error cargando período', err);
     }
   }
 
-  /* ─────────────────────────────
-     KPIs
-  ───────────────────────────── */
-  function _calcularKPIs() {
-    const total     = _todas.length;
-    const aprobadas = _todas.filter(p => p._estado === 'aprobada').length;
-    const ajustes   = _todas.filter(p => p._estado === 'ajustes').length;
-    const revision  = _todas.filter(p => p._estado === 'revision' || p._estado === 'reenviada').length;
+  /* ─── ABRIR SEMANA ─── */
+  function abrirSemana(numSemana) {
+    estado.semanaSel = numSemana;
+    estado.busqueda  = '';
 
-    _set('kpiTotal',     total     || '0');
-    _set('kpiAprobadas', aprobadas || '0');
-    _set('kpiAjustes',   ajustes   || '0');
-    _set('kpiRevision',  revision  || '0');
+    const busInput = document.getElementById('busqueda');
+    if (busInput) busInput.value = '';
+
+    // Título y subtítulo
+    const inicio = inicioSemana(estado.periodoSel, numSemana);
+    document.getElementById('semTitulo').textContent = `Semana ${numSemana}`;
+    document.getElementById('semSub').textContent    = `Período ${estado.periodoSel} · ${fmtRango(inicio)}`;
+
+    document.getElementById('vistaInicio').style.display = 'none';
+    document.getElementById('vistaSemana').style.display = '';
+
+    _filtrarPorSemana();
   }
 
-  /* ─────────────────────────────
-     FILTROS
-  ───────────────────────────── */
-  function setEstado(val, btn) {
-    _filtroEstado = val;
-    document.querySelectorAll('#chipsEstado .chip').forEach(c => c.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    _aplicarFiltros();
+  function volverSemanas() {
+    estado.semanaSel = null;
+    document.getElementById('vistaSemana').style.display = 'none';
+    document.getElementById('vistaInicio').style.display = '';
   }
 
-  function setPeriodo(val) {
-    _filtroPeriodo = val;
-    _aplicarFiltros();
-  }
+  /* ─── FILTRO POR SEMANA ─── */
+  function _filtrarPorSemana() {
+    if (estado.semanaSel === null) return;
 
-  function buscar(val) {
-    _busqueda = (val || '').toLowerCase().trim();
-    _aplicarFiltros();
-  }
+    // Número de semana como string con distintas variantes
+    const numStr = String(estado.semanaSel);
 
-  function _aplicarFiltros() {
-    _filtradas = _todas.filter(p => {
-      /* Filtro estado */
-      if (_filtroEstado !== 'todas' && p._estado !== _filtroEstado) return false;
-
-      /* Filtro periodo */
-      if (_filtroPeriodo !== 'todos') {
-        const rawPer = String(p.periodo || '').replace(/\D/g, '');
-        if (rawPer !== String(_filtroPeriodo)) return false;
-      }
-
-      /* Búsqueda libre */
-      if (_busqueda) {
-        const haystack = [p.semana, p.grado, p.asignatura, p.indicadorSemanal]
-          .map(s => (s || '').toLowerCase()).join(' ');
-        if (!haystack.includes(_busqueda)) return false;
-      }
-
-      return true;
+    let result = estado.planeaciones.filter(p => {
+      const semRaw = String(p.semana || p.semanaLabel || '').toLowerCase();
+      // Acepta: "SEMANA 6", "semana6", "6", semanaNumero===6
+      const matchTexto  = semRaw.replace(/\D/g,'') === numStr ||
+                          semRaw.includes(`semana ${numStr}`) ||
+                          semRaw.includes(`semana${numStr}`);
+      const matchNumero = p.semanaNumero && String(p.semanaNumero) === numStr;
+      return matchTexto || matchNumero;
     });
 
-    _renderGrid();
+    if (estado.busqueda) {
+      const q = estado.busqueda.toLowerCase();
+      result = result.filter(p =>
+        (p.asignatura || '').toLowerCase().includes(q) ||
+        (p.grado      || '').toLowerCase().includes(q)
+      );
+    }
+
+    estado.filtradas = result;
+    _renderPlaneaciones();
   }
 
-  /* ─────────────────────────────
-     RENDER DE TARJETAS
-  ───────────────────────────── */
-  function _renderGrid() {
-    const grid = document.getElementById('cardsGrid');
-    const vacio = document.getElementById('estadoVacio');
-    _estadoCargando(false);
+  /* ─── RENDER DE PLANEACIONES ─── */
+  function _renderPlaneaciones() {
+    const listEl    = document.getElementById('plnList');
+    const vaciEl    = document.getElementById('semVacio');
+    const cargEl    = document.getElementById('semCargando');
+    const errEl     = document.getElementById('semError');
 
-    if (!_filtradas.length) {
-      grid.style.display = 'none';
-      vacio.style.display = '';
+    cargEl.style.display = 'none';
+    errEl.style.display  = 'none';
+
+    if (!estado.filtradas.length) {
+      listEl.style.display = 'none';
+      vaciEl.style.display = '';
       return;
     }
 
-    vacio.style.display = 'none';
-    grid.style.display  = '';
-    grid.innerHTML      = '';
+    vaciEl.style.display  = 'none';
+    listEl.style.display  = '';
+    listEl.innerHTML      = '';
 
-    _filtradas.forEach(p => {
-      const card = _crearTarjeta(p);
-      grid.appendChild(card);
+    estado.filtradas.forEach(p => {
+      const card = _crearCard(p);
+      listEl.appendChild(card);
     });
   }
 
-  function _crearTarjeta(p) {
-    const estado = p._estado;
-    const label  = LABEL_ESTADO[estado] || estado;
-
-    /* Fecha formateada */
-    const fecha = _formatFecha(p.fechaEnvio || p.fechaPublicacion || '');
-
-    /* Badge HTML */
-    const badgeHTML = `<div class="badge-estado badge-${estado}">${label}</div>`;
-
-    /* Aviso de ajuste */
-    const avisoHTML = (estado === 'ajustes' && p.motivoAjuste)
-      ? `<div class="card-ajuste-aviso">
-           <div class="aviso-titulo">Requiere ajustes</div>
-           <div class="aviso-motivo">${_esc(p.motivoAjuste)}</div>
-         </div>`
-      : '';
-
-    /* Botón adicional si hay ajustes */
-    const btnCorregirHTML = (estado === 'ajustes')
-      ? `<button class="btn-corregir-card" onclick="event.stopPropagation(); MIS.abrirDetalleConEdicion('${_esc(p.planeacionId)}')">Corregir planeación</button>`
-      : '';
+  function _crearCard(p) {
+    const est    = p._estado;
+    const label  = LABEL[est] || est;
+    const fecha  = p.fechaReenvio
+      ? `Reenviada: ${fmtFecha(p.fechaReenvio)}`
+      : p.fechaEnvio
+        ? `Enviada: ${fmtFecha(p.fechaEnvio)}`
+        : '';
 
     const div = document.createElement('div');
-    div.className = `pln-card estado-${estado}`;
+    div.className = `pln-card e-${est}`;
     div.innerHTML = `
-      <div class="card-head">
-        <div>
-          <div class="card-semana">${_esc(p.semana || '')} · ${_esc(p.periodo || '')}</div>
-          <div class="card-asignatura">${_esc(p.asignatura || '—')}</div>
-          <div class="card-grado">${_esc(p.grado || '')}</div>
-        </div>
-        ${badgeHTML}
+      <div class="pln-info">
+        <div class="pln-asig">${esc(p.asignatura || '—')}</div>
+        <div class="pln-grado">Grado ${esc(p.grado || '—')}</div>
+        ${fecha ? `<div class="pln-fecha">${esc(fecha)}</div>` : ''}
       </div>
-      ${p.indicadorSemanal ? `<div class="card-indicador">${_esc(p.indicadorSemanal)}</div>` : ''}
-      <div class="card-fecha">Enviada: ${fecha}</div>
-      ${avisoHTML}
-      <div class="card-actions">
-        <button class="btn-ver" onclick="event.stopPropagation(); MIS.abrirDetalle('${_esc(p.planeacionId)}')">Ver planeación</button>
-        ${btnCorregirHTML}
+      <div class="pln-right">
+        <span class="badge badge-${est}">${esc(label)}</span>
+        <span class="pln-arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
       </div>
     `;
-
-    /* Clic en la tarjeta también abre detalle */
-    div.addEventListener('click', () => abrirDetalle(p.planeacionId));
+    div.addEventListener('click', () => abrirPanel(p.planeacionId));
     return div;
   }
 
-  /* ─────────────────────────────
-     PANEL DE DETALLE
-  ───────────────────────────── */
-  function abrirDetalle(planeacionId) {
-    const p = _todas.find(x => x.planeacionId === planeacionId);
+  /* ─── BÚSQUEDA ─── */
+  function buscar(val) {
+    estado.busqueda = (val || '').trim().toLowerCase();
+    _filtrarPorSemana();
+  }
+
+  /* ─── CARGA AL ABRIR SEMANA (refresca si no hay datos) ─── */
+  async function cargarSemana() {
+    const listEl  = document.getElementById('plnList');
+    const cargEl  = document.getElementById('semCargando');
+    const errEl   = document.getElementById('semError');
+    const vaciEl  = document.getElementById('semVacio');
+
+    listEl.style.display = 'none';
+    vaciEl.style.display = 'none';
+    errEl.style.display  = 'none';
+    cargEl.style.display = '';
+
+    try {
+      await _cargarPeriodo(estado.periodoSel);
+      cargEl.style.display = 'none';
+      _filtrarPorSemana();
+    } catch {
+      cargEl.style.display = 'none';
+      errEl.style.display  = '';
+    }
+  }
+
+  /* ─── PANEL DE DETALLE ─── */
+  function abrirPanel(planeacionId) {
+    const p = estado.planeaciones.find(x => x.planeacionId === planeacionId);
     if (!p) return;
-    _planActual = p;
+    estado.planActual = p;
 
-    /* Ocultar formulario edición */
-    _toggleEdicion(false);
+    // Ocultar formulario
+    _toggleForm(false);
 
-    /* Rellenar cabecera del panel */
-    _set('pdTitulo', `${p.semana || '—'}`);
+    // Kicker
+    _setText('pkicker', `Semana ${esc(p.semanaLabel || p.semana || '')} · Período ${esc(p.periodo || '')}`);
 
-    const badge = document.getElementById('pdBadge');
+    // Título = Asignatura
+    _setText('pTitulo', p.asignatura || '—');
+
+    // Badge de estado
+    const badge = document.getElementById('pBadge');
     if (badge) {
-      badge.className  = `badge-estado badge-${p._estado}`;
-      badge.textContent = LABEL_ESTADO[p._estado] || p._estado;
+      badge.className   = `badge badge-${p._estado}`;
+      badge.textContent = LABEL[p._estado] || p._estado;
     }
 
-    /* Metadatos */
-    _set('pdGrado',      p.grado      || '—');
-    _set('pdAsignatura', p.asignatura || '—');
-    _set('pdPeriodo',    _limpiarPeriodo(p.periodo));
-    _set('pdFecha',      _formatFecha(p.fechaEnvio || p.fechaPublicacion || ''));
+    // Metadatos
+    _setText('pGrado',      p.grado      || '—');
+    _setText('pAsignatura', p.asignatura || '—');
+    _setText('pPeriodo',    `Período ${p.periodo || '—'}`);
+    const fechaMeta = p.fechaReenvio
+      ? `Reenviada ${fmtFecha(p.fechaReenvio)}`
+      : fmtFecha(p.fechaEnvio) || '—';
+    _setText('pFecha', fechaMeta);
 
-    /* Indicador */
-    _set('pdIndicador', p.indicadorSemanal || 'No registrado.');
+    // Indicador
+    _setText('pIndicador', p.indicadorSemanal || 'No registrado.');
 
-    /* Clases */
-    const clasesWrap = document.getElementById('pdClasesWrap');
+    // Clases
+    const clasesWrap = document.getElementById('pClases');
     clasesWrap.innerHTML = '';
-    const clases = [
+    [
       { num: '1', tema: p.d1Tema, act: p.d1Actividades },
       { num: '2', tema: p.d2Tema, act: p.d2Actividades },
       { num: '3', tema: p.d3Tema, act: p.d3Actividades }
-    ];
-    clases.forEach(c => {
+    ].forEach(c => {
       if (!c.tema && !c.act) return;
-      const bloque = document.createElement('div');
-      bloque.className = 'panel-section';
-      bloque.innerHTML = `
+      const bl = document.createElement('div');
+      bl.className = 'psec';
+      bl.innerHTML = `
         <div class="clase-bloque">
           <div class="clase-num">Clase ${c.num}</div>
-          ${c.tema ? `<div class="clase-tema">${_esc(c.tema)}</div>` : ''}
-          ${c.act  ? `<div class="clase-actividades">${_esc(c.act)}</div>` : ''}
+          ${c.tema ? `<div class="clase-tema">${esc(c.tema)}</div>` : ''}
+          ${c.act  ? `<div class="clase-act">${esc(c.act)}</div>`   : ''}
         </div>
       `;
-      clasesWrap.appendChild(bloque);
+      clasesWrap.appendChild(bl);
     });
 
-    /* Actividad complementaria */
-    const actCompSec = document.getElementById('pdActCompSec');
-    if (p.actCompDescripcion) {
-      _set('pdActComp', p.actCompDescripcion);
-      actCompSec.style.display = '';
+    // Observaciones generales
+    const obsSec = document.getElementById('pObsSec');
+    if (p.observaciones) {
+      _setText('pObs', p.observaciones);
+      obsSec.style.display = '';
     } else {
-      actCompSec.style.display = 'none';
+      obsSec.style.display = 'none';
     }
 
-    /* Observaciones familias */
-    const obsFamSec = document.getElementById('pdObsFamSec');
-    if (p.obsFamilias) {
-      _set('pdObsFam', p.obsFamilias);
-      obsFamSec.style.display = '';
-    } else {
-      obsFamSec.style.display = 'none';
-    }
-
-    /* Revisión de coordinación */
-    const revBox = document.getElementById('pdRevisionBox');
-    revBox.className = 'revision-box';
-    revBox.innerHTML  = '';
+    // Retroalimentación coordinación
+    const revBox = document.getElementById('pRevBox');
+    revBox.className = 'rev-box';
+    revBox.innerHTML = '';
 
     if (p._estado === 'aprobada') {
       revBox.classList.add('aprobada');
       revBox.textContent = 'Tu planeación fue aprobada. Puedes consultarla como apoyo para el desarrollo de tus clases.';
     } else if (p._estado === 'revision') {
       revBox.classList.add('revision');
-      revBox.textContent = 'Tu planeación fue enviada y se encuentra en revisión. Recibirás respuesta pronto.';
+      revBox.textContent = 'Tu planeación fue recibida y está pendiente de revisión. Recibirás respuesta pronto.';
     } else if (p._estado === 'reenviada') {
       revBox.classList.add('reenviada');
       revBox.textContent = 'Tu planeación fue reenviada y está pendiente de nueva revisión.';
     } else if (p._estado === 'ajustes') {
       revBox.classList.add('ajustes');
       let html = 'Coordinación ha solicitado ajustes en tu planeación.';
-      if (p.motivoAjuste) {
-        html += `<div class="rev-motivo"><strong>Motivo:</strong> ${_esc(p.motivoAjuste)}</div>`;
+      if (p.retroalimentacionCoord || p.obsCoordinacion) {
+        html += `<div class="rev-obs">${esc(p.retroalimentacionCoord || p.obsCoordinacion)}</div>`;
       }
-      if (p.observacionCoordinacion || p.obsCoordinacion) {
-        html += `<div class="rev-obs">${_esc(p.observacionCoordinacion || p.obsCoordinacion)}</div>`;
+      if (p.motivoAjuste) {
+        html += `<div class="rev-motivo"><strong>Motivo:</strong> ${esc(p.motivoAjuste)}</div>`;
       }
       revBox.innerHTML = html;
     }
 
-    /* Mostrar botón corregir solo si hay ajustes */
+    // Botón "Corregir y reenviar" solo para ajustes
     const btnCorr = document.getElementById('btnCorregir');
-    if (btnCorr) {
-      btnCorr.style.display = (p._estado === 'ajustes') ? '' : 'none';
-    }
+    if (btnCorr) btnCorr.style.display = p._estado === 'ajustes' ? '' : 'none';
 
-    /* Hacer visible el panel */
-    document.getElementById('panelOverlay').classList.add('visible');
-    document.getElementById('panelDetalle').classList.add('visible');
+    // Abrir panel
+    document.getElementById('overlay').classList.add('open');
+    document.getElementById('panelDetalle').classList.add('open');
     document.getElementById('panelDetalle').setAttribute('aria-hidden', 'false');
-
-    /* Ir al top del panel */
-    const body = document.getElementById('panelBody');
-    if (body) body.scrollTop = 0;
+    document.getElementById('panelBody').scrollTop = 0;
   }
 
-  /* Abrir detalle y directamente mostrar edición */
-  function abrirDetalleConEdicion(planeacionId) {
-    abrirDetalle(planeacionId);
-    setTimeout(() => abrirEdicion(), 80);
+  function cerrarPanel(event) {
+    // Si se llama desde el overlay, solo cerrar si el clic fue en el overlay mismo
+    if (event && event.target !== document.getElementById('overlay')) return;
+    _cerrar();
   }
 
-  function cerrarDetalle(event) {
-    if (event && event.target !== document.getElementById('panelOverlay')) return;
-    _cerrarPanel();
-  }
-
-  function _cerrarPanel() {
-    document.getElementById('panelOverlay').classList.remove('visible');
-    document.getElementById('panelDetalle').classList.remove('visible');
+  function _cerrar() {
+    document.getElementById('overlay').classList.remove('open');
+    document.getElementById('panelDetalle').classList.remove('open');
     document.getElementById('panelDetalle').setAttribute('aria-hidden', 'true');
-    _planActual = null;
+    estado.planActual = null;
+    _toggleForm(false);
   }
 
-  /* ─────────────────────────────
-     MODO EDICIÓN / CORRECCIÓN
-  ───────────────────────────── */
-  function abrirEdicion() {
-    if (!_planActual || _planActual._estado !== 'ajustes') return;
-    const p = _planActual;
+  /* ─── FORMULARIO DE CORRECCIÓN ─── */
+  function abrirForm() {
+    const p = estado.planActual;
+    if (!p || p._estado !== 'ajustes') return;
 
-    /* Prellenar campos */
-    _val('editIndicador', p.indicadorSemanal    || '');
-    _val('editD1Tema',    p.d1Tema              || '');
-    _val('editD1Act',     p.d1Actividades       || '');
-    _val('editD2Tema',    p.d2Tema              || '');
-    _val('editD2Act',     p.d2Actividades       || '');
-    _val('editD3Tema',    p.d3Tema              || '');
-    _val('editD3Act',     p.d3Actividades       || '');
-    _val('editActComp',   p.actCompDescripcion  || '');
-    _val('editObsFam',    p.obsFamilias         || '');
+    // Prellenar
+    _setVal('fIndicador', p.indicadorSemanal    || '');
+    _setVal('fD1Tema',    p.d1Tema              || '');
+    _setVal('fD1Act',     p.d1Actividades       || '');
+    _setVal('fD2Tema',    p.d2Tema              || '');
+    _setVal('fD2Act',     p.d2Actividades       || '');
+    _setVal('fD3Tema',    p.d3Tema              || '');
+    _setVal('fD3Act',     p.d3Actividades       || '');
+    _setVal('fObs',       p.observaciones       || '');
 
-    _toggleEdicion(true);
+    _toggleForm(true);
 
-    /* Scroll hasta el formulario */
-    const panelEdicion = document.getElementById('panelEdicion');
+    // Scroll al formulario
+    const formEl = document.getElementById('panelForm');
     setTimeout(() => {
-      if (panelEdicion) panelEdicion.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
   }
 
-  function _toggleEdicion(mostrar) {
-    const el = document.getElementById('panelEdicion');
+  function _toggleForm(mostrar) {
+    const el = document.getElementById('panelForm');
     if (el) el.style.display = mostrar ? '' : 'none';
   }
 
-  /* ─────────────────────────────
-     REENVIAR PLANEACIÓN
-  ───────────────────────────── */
+  /* ─── REENVIAR ─── */
   async function reenviar() {
-    if (!_planActual) return;
+    if (!estado.planActual) return;
 
     const btn = document.getElementById('btnReenviar');
-    if (btn) { btn.disabled = true; btn.textContent = 'Reenviando…'; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
 
     const datos = {
-      indicadorSemanal:   _getVal('editIndicador'),
-      d1Tema:             _getVal('editD1Tema'),
-      d1Actividades:      _getVal('editD1Act'),
-      d2Tema:             _getVal('editD2Tema'),
-      d2Actividades:      _getVal('editD2Act'),
-      d3Tema:             _getVal('editD3Tema'),
-      d3Actividades:      _getVal('editD3Act'),
-      actCompDescripcion: _getVal('editActComp'),
-      obsFamilias:        _getVal('editObsFam')
+      indicadorSemanal: _getVal('fIndicador'),
+      d1Tema:           _getVal('fD1Tema'),
+      d1Actividades:    _getVal('fD1Act'),
+      d2Tema:           _getVal('fD2Tema'),
+      d2Actividades:    _getVal('fD2Act'),
+      d3Tema:           _getVal('fD3Tema'),
+      d3Actividades:    _getVal('fD3Act'),
+      observaciones:    _getVal('fObs')
     };
 
     try {
       /*
        * ACCIÓN BACKEND: reenviarPlaneacionDocente
-       * El backend debe:
-       *   1. Validar que planeacionId pertenezca al docenteId/correo.
-       *   2. Actualizar los campos en la hoja PLANEACIONES.
-       *   3. Cambiar ESTADO_REVISION a "reenviada".
-       *   4. Registrar FECHA_REENVIO.
-       *   5. Notificar a coordinación si aplica.
-       * Respuesta esperada: { ok: true, mensaje: "Planeación reenviada correctamente" }
+       * Validar que planeacionId pertenezca al docente.
+       * Actualizar hoja PLANEACIONES.
+       * Cambiar ESTADO_REVISION → "reenviada".
+       * Registrar FECHA_REENVIO.
+       * Devolver { ok: true }.
        */
       const res = await _api('reenviarPlaneacionDocente', {
-        planeacionId:     _planActual.planeacionId,
-        docenteId:        ST.docenteId,
-        correo:           ST.correo,
-        datosCorregidos:  datos
+        planeacionId:    estado.planActual.planeacionId,
+        docenteId:       ST.docenteId,
+        correo:          ST.correo,
+        datosCorregidos: datos
       });
 
       if (res && res.ok) {
-        /* Actualizar estado local */
-        _planActual._estado         = 'reenviada';
-        _planActual.estadoRevision  = 'reenviada';
-        Object.assign(_planActual, datos);
+        // Actualizar estado local
+        const p = estado.planActual;
+        Object.assign(p, datos, { _estado: 'reenviada', estadoRevision: 'reenviada' });
 
-        const idx = _todas.findIndex(x => x.planeacionId === _planActual.planeacionId);
-        if (idx !== -1) _todas[idx] = { ..._planActual };
+        // Actualizar en el array global
+        const idx = estado.planeaciones.findIndex(x => x.planeacionId === p.planeacionId);
+        if (idx !== -1) estado.planeaciones[idx] = { ...p };
 
         toast('Planeación reenviada correctamente.', 'ok');
+        _toggleForm(false);
+        _cerrar();
+        _filtrarPorSemana(); // refrescar lista
 
-        _toggleEdicion(false);
-        _calcularKPIs();
-        _aplicarFiltros();
-        _cerrarPanel();
       } else {
-        throw new Error((res && res.mensaje) || 'Respuesta inesperada del servidor.');
+        throw new Error((res && res.mensaje) || 'Respuesta inesperada.');
       }
 
     } catch (err) {
@@ -501,18 +628,15 @@ const MIS = (() => {
       toast('No fue posible reenviar. Intenta nuevamente.', 'er');
       if (btn) {
         btn.disabled = false;
-        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Reenviar planeación`;
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Reenviar planeación`;
       }
     }
   }
 
-  /* ─────────────────────────────
-     API — función central
-  ───────────────────────────── */
+  /* ─── API ─── */
   function _api(action, payload) {
     const body = { action, ...(payload || {}) };
     if (ST.correo) body.correo = ST.correo;
-
     return fetch(API, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -524,14 +648,12 @@ const MIS = (() => {
     });
   }
 
-  /* ─────────────────────────────
-     UTILIDADES DOM / FORMAT
-  ───────────────────────────── */
-  function _set(id, val) {
+  /* ─── DOM HELPERS ─── */
+  function _setText(id, val) {
     const el = document.getElementById(id);
     if (el) el.textContent = val || '—';
   }
-  function _val(id, val) {
+  function _setVal(id, val) {
     const el = document.getElementById(id);
     if (el) el.value = val || '';
   }
@@ -539,72 +661,9 @@ const MIS = (() => {
     const el = document.getElementById(id);
     return el ? el.value.trim() : '';
   }
-  function _esc(s) {
-    return String(s || '')
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  }
-  function _iniciales(nombre) {
-    if (!nombre) return '?';
-    const partes = nombre.trim().split(/\s+/);
-    return partes.slice(0, 2).map(p => p[0].toUpperCase()).join('');
-  }
-  function _titleCase(s) {
-    return (s || '').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-  }
-  function _limpiarPeriodo(s) {
-    const match = String(s || '').match(/\d+/);
-    return match ? `Periodo ${match[0]}` : (s || '—');
-  }
-  function _formatFecha(raw) {
-    if (!raw) return '—';
-    try {
-      const d = new Date(raw);
-      if (isNaN(d)) return raw;
-      return d.toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
-    } catch { return raw; }
-  }
 
-  /* ─────────────────────────────
-     ESTADOS DE CARGA
-  ───────────────────────────── */
-  function _estadoCargando(activo, tipo) {
-    const cargando = document.getElementById('estadoCargando');
-    const error    = document.getElementById('estadoError');
-    const vacio    = document.getElementById('estadoVacio');
-    const grid     = document.getElementById('cardsGrid');
-
-    if (activo) {
-      if (cargando) cargando.style.display = '';
-      if (error)    error.style.display    = 'none';
-      if (vacio)    vacio.style.display    = 'none';
-      if (grid)     grid.style.display     = 'none';
-    } else {
-      if (cargando) cargando.style.display = 'none';
-      if (tipo === 'error') {
-        if (error) error.style.display = '';
-      }
-    }
-  }
-
-  function _limpiarGrid() {
-    const grid = document.getElementById('cardsGrid');
-    if (grid) { grid.innerHTML = ''; grid.style.display = 'none'; }
-  }
-
-  /* API pública del módulo */
-  return {
-    init,
-    cargar,
-    setEstado,
-    setPeriodo,
-    buscar,
-    abrirDetalle,
-    abrirDetalleConEdicion,
-    cerrarDetalle,
-    abrirEdicion,
-    reenviar
-  };
+  /* API pública */
+  return { init, selPeriodo, abrirSemana, volverSemanas, buscar, cargarSemana, abrirPanel, cerrarPanel, abrirForm, reenviar };
 
 })();
 
@@ -617,22 +676,16 @@ function toast(msg, tipo) {
   el.textContent = msg;
   el.className   = `toast ${tipo || ''} show`;
   clearTimeout(el._t);
-  el._t = setTimeout(() => { el.classList.remove('show'); }, 3200);
+  el._t = setTimeout(() => el.classList.remove('show'), 3400);
 }
 
 /* ══════════════════════════════════════
    NAVEGACIÓN
 ══════════════════════════════════════ */
-function volverPanelPrincipal() {
-  window.location.href = RUTA_PANEL;
-}
-
-function doLogout() {
-  localStorage.removeItem('lp_user');
-  window.location.href = RUTA_PANEL;
-}
+function volverPanel()  { window.location.href = RUTA_HOME; }
+function doLogout()     { localStorage.removeItem('lp_user'); window.location.href = RUTA_HOME; }
 
 /* ══════════════════════════════════════
    ARRANQUE
 ══════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => MIS.init());
+document.addEventListener('DOMContentLoaded', () => MP.init());
