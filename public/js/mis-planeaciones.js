@@ -637,18 +637,23 @@ const MP = (() => {
 
   /* ─── API ─── */
   function _api(action, payload) {
-    const body = { action, ...(payload || {}) };
-    if (ST.correo) body.correo = ST.correo;
-    return fetch(API, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      cache:   'no-store',
-      body:    JSON.stringify(body)
-    }).then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return r.json();
-    });
-  }
+  const body = {
+    accion: action,
+    ...(payload || {})
+  };
+
+  if (ST.correo) body.correo = ST.correo;
+
+  return fetch(API, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    cache:   'no-store',
+    body:    JSON.stringify(body)
+  }).then(r => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  });
+}
 
   /* ─── DOM HELPERS ─── */
   function _setText(id, val) {
