@@ -288,8 +288,9 @@ console.log('RESPUESTA MIS PLANEACIONES:', res);
       if (estado.semanaSel !== null) _filtrarPorSemana();
 
     } catch (err) {
-      console.error('[MIS PLN] Error cargando período', err);
-    }
+  console.error('[MIS PLN] Error cargando período', err);
+  toast('No fue posible cargar tus planeaciones. Revisa consola.', 'er');
+}
   }
 
   /* ─── ABRIR SEMANA ─── */
@@ -637,7 +638,32 @@ console.log('RESPUESTA MIS PLANEACIONES:', res);
   }
 
   /* ─── API ─── */
-  function _api(action, payload) {
+async function _api(action, payload = {}) {
+  const params = new URLSearchParams({
+    accion: action,
+    ...payload
+  });
+
+  // Para consultar planeaciones usamos GET porque el backend directo ya confirmó que funciona.
+  if (action === 'misPlaneacionesDocente') {
+    const url = `${API}?${params.toString()}`;
+
+    console.log('[MIS PLANEACIONES] GET:', url);
+
+    const r = await fetch(url, {
+      method: 'GET',
+      cache: 'no-store'
+    });
+
+    const txt = await r.text();
+    console.log('[MIS PLANEACIONES] RESPUESTA:', txt);
+
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+
+    return JSON.parse(txt);
+  }
+
+  // Para reenviar sí usamos POST
   const body = {
     accion: action,
     ...(payload || {})
@@ -645,15 +671,19 @@ console.log('RESPUESTA MIS PLANEACIONES:', res);
 
   if (ST.correo) body.correo = ST.correo;
 
-  return fetch(API, {
-    method:  'POST',
+  const r = await fetch(API, {
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    cache:   'no-store',
-    body:    JSON.stringify(body)
-  }).then(r => {
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return r.json();
+    cache: 'no-store',
+    body: JSON.stringify(body)
   });
+
+  const txt = await r.text();
+  console.log('[MIS PLANEACIONES] POST RESPUESTA:', txt);
+
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+
+  return JSON.parse(txt);
 }
 
   /* ─── DOM HELPERS ─── */
