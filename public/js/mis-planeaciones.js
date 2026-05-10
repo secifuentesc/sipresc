@@ -639,37 +639,14 @@ console.log('RESPUESTA MIS PLANEACIONES:', res);
 
   /* ─── API ─── */
 async function _api(action, payload = {}) {
-  const params = new URLSearchParams({
-    accion: action,
-    ...payload
-  });
-
-  // Para consultar planeaciones usamos GET porque el backend directo ya confirmó que funciona.
-  if (action === 'misPlaneacionesDocente') {
-    const url = `${API}?${params.toString()}`;
-
-    console.log('[MIS PLANEACIONES] GET:', url);
-
-    const r = await fetch(url, {
-      method: 'GET',
-      cache: 'no-store'
-    });
-
-    const txt = await r.text();
-    console.log('[MIS PLANEACIONES] RESPUESTA:', txt);
-
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-
-    return JSON.parse(txt);
-  }
-
-  // Para reenviar sí usamos POST
   const body = {
     accion: action,
     ...(payload || {})
   };
 
   if (ST.correo) body.correo = ST.correo;
+
+  console.log('[MIS PLANEACIONES] POST BODY:', body);
 
   const r = await fetch(API, {
     method: 'POST',
@@ -685,7 +662,6 @@ async function _api(action, payload = {}) {
 
   return JSON.parse(txt);
 }
-
   /* ─── DOM HELPERS ─── */
   function _setText(id, val) {
     const el = document.getElementById(id);
