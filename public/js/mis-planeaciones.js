@@ -269,10 +269,11 @@ const MP = (() => {
        * Devuelve array de planeaciones (ver estructura en comentario al inicio).
        */
       const res = await _api('misPlaneacionesDocente', {
-        docenteId: ST.docenteId,
-        correo:    ST.correo,
-        periodo:   periodo
-      });
+  correo:  ST.correo,
+  periodo: String(periodo)
+});
+
+console.log('RESPUESTA MIS PLANEACIONES:', res);
 
       let lista = [];
       if (Array.isArray(res))                  lista = res;
