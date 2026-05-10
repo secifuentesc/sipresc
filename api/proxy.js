@@ -76,10 +76,13 @@ export default async function handler(req, res) {
         body = {};
       }
 
-      console.log('[PROXY POST BODY]', body);
+      console.log('[PROXY POST BODY ORIGINAL]', body);
+
+      // Compatibilidad: aceptar accion o action.
+      const accion = body.accion || body.action;
 
       // Validación clave.
-      if (!body.accion && !body.action) {
+      if (!accion) {
         return res.status(400).json({
           ok: false,
           mensaje: 'El proxy no recibió accion',
@@ -87,18 +90,28 @@ export default async function handler(req, res) {
         });
       }
 
-      // Compatibilidad: si llega action, lo convierte a accion.
-      if (!body.accion && body.action) {
-        body.accion = body.action;
-      }
+      // 🔥 Body final reforzado.
+      // Enviamos accion y action para que el Apps Script lo pueda leer sí o sí.
+      const bodyFinal = {
+        ...body,
+        accion,
+        action: accion
+      };
 
-      const response = await fetch(GAS_URL, {
+      // 🔥 Clave: también enviamos la acción por URL.
+      // Esto soluciona el error: Acción no válida: undefined
+      const urlPost = `${GAS_URL}?accion=${encodeURIComponent(accion)}`;
+
+      console.log('[PROXY POST URL]', urlPost);
+      console.log('[PROXY POST BODY FINAL]', bodyFinal);
+
+      const response = await fetch(urlPost, {
         method: 'POST',
         redirect: 'follow',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(bodyFinal)
       });
 
       const text = await response.text();
