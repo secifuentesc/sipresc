@@ -1012,6 +1012,21 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
           <div class="home-sub">Planeación semanal</div>
         </div>
 
+        <!-- Mis Planeaciones -->
+<div class="home-card" onclick="abrirModulo('misplaneaciones')">
+  <div class="home-ico" style="background:rgba(96,165,250,.15);border-color:rgba(96,165,250,.2)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(147,197,253,.95)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V7z"/>
+      <path d="M14 2v5h5"/>
+      <path d="M9 13h6"/>
+      <path d="M9 17h4"/>
+      <path d="M9 9h1"/>
+    </svg>
+  </div>
+  <div class="home-name">Mis planeaciones</div>
+  <div class="home-sub">Histórico y estado</div>
+</div>
+
         <!-- Prompts IA -->
         <div class="home-card" onclick="abrirModulo('prompts')">
           <div class="home-ico" style="background:rgba(167,139,250,.15);border-color:rgba(167,139,250,.2)">
@@ -1822,13 +1837,20 @@ iniciarApp();
 
 function abrirModulo(modulo){
   const rutas = {
-  planeaciones: '/planeaciones/',
-  evaluaciones: '/evaluaciones/',
-  prompts: '/prompts/',
-  citas: '/citas/'
-};
-  if(rutas[modulo]){window.location.href=rutas[modulo];return;}
-  toast('Módulo no disponible','er');}
+    planeaciones: '/planeaciones/',
+    misplaneaciones: '/mis-planeaciones/',
+    evaluaciones: '/evaluaciones/',
+    prompts: '/prompts/',
+    citas: '/citas/'
+  };
+
+  if(rutas[modulo]){
+    window.location.href = rutas[modulo];
+    return;
+  }
+
+  toast('Módulo no disponible','er');
+}
 function mostrarSplashDocente(mensaje){
   const splash = document.getElementById('splash');
   const msg = document.getElementById('splashMsg');
