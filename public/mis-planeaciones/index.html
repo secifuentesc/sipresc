@@ -1,1 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Planeaciones — SIPRESC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/mis-planeaciones.css">
+</head>
+<body>
 
+  <!-- ═══════════════════════════════════
+       TOPBAR — idéntica al panel docente
+  ═══════════════════════════════════ -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <img src="/logo.png" class="logo-img-top" alt="Logo" onerror="this.style.display='none'">
+    </div>
+    <h1>SIPRESC — La Presentación</h1>
+    <button id="btnVolverPanel" class="logout-btn" style="color:#e8b84b" onclick="volverPanelPrincipal()">Volver</button>
+    <span class="topbar-rol" id="tp-rol">DOCENTE</span>
+    <button class="logout-btn" onclick="doLogout()">Salir</button>
+  </div>
+
+  <!-- Toast de notificaciones -->
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <!-- ══════════════════════
+       PANTALLA: SIN SESIÓN
+  ══════════════════════ -->
+  <div id="panelSinSesion" class="fullscreen-msg" style="display:none">
+    <div class="fullscreen-inner">
+      <div class="fs-icon">🔒</div>
+      <h2>Sesión no disponible</h2>
+      <p>Para acceder a tus planeaciones debes iniciar sesión desde el panel principal.</p>
+      <button class="btn-primary" onclick="window.location.href='/'">Ir al panel</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════
+       CONTENIDO PRINCIPAL
+  ══════════════════════ -->
+  <main id="mainContent" style="display:none">
+    <div class="wrap">
+
+      <!-- Header del módulo -->
+      <div class="mod-header">
+        <div class="mod-header-left">
+          <h2 class="mod-titulo">Mis planeaciones</h2>
+          <p class="mod-sub">Consulta tu histórico, revisa el estado de tus envíos y accede a tus planeaciones cuando las necesites para clase.</p>
+        </div>
+        <div class="docente-card" id="docenteCard">
+          <div class="docente-avatar" id="docenteAvatar">—</div>
+          <div class="docente-info">
+            <span class="docente-nombre" id="docenteNombre">Cargando…</span>
+            <span class="docente-correo" id="docenteCorreo">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPIs resumen -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-accent" style="background:var(--cobalt)"></div>
+          <div class="kpi-val" id="kpiTotal">—</div>
+          <div class="kpi-label">Total enviadas</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-accent" style="background:var(--green)"></div>
+          <div class="kpi-val" id="kpiAprobadas">—</div>
+          <div class="kpi-label">Aprobadas</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-accent" style="background:var(--red)"></div>
+          <div class="kpi-val" id="kpiAjustes">—</div>
+          <div class="kpi-label">Con ajustes</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-accent" style="background:var(--gold2)"></div>
+          <div class="kpi-val" id="kpiRevision">—</div>
+          <div class="kpi-label">En revisión</div>
+        </div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="filtros-wrap">
+        <div class="chips-scroll" id="chipsEstado">
+          <button class="chip active" data-val="todas"     onclick="MIS.setEstado('todas',this)">Todas</button>
+          <button class="chip"        data-val="aprobada"  onclick="MIS.setEstado('aprobada',this)">Aprobadas</button>
+          <button class="chip"        data-val="ajustes"   onclick="MIS.setEstado('ajustes',this)">Con ajustes</button>
+          <button class="chip"        data-val="reenviada" onclick="MIS.setEstado('reenviada',this)">Reenviadas</button>
+          <button class="chip"        data-val="revision"  onclick="MIS.setEstado('revision',this)">En revisión</button>
+        </div>
+
+        <div class="filtros-secundarios">
+          <select class="filtro-select" id="filtroPeriodo" onchange="MIS.setPeriodo(this.value)">
+            <option value="todos">Todos los periodos</option>
+            <option value="1">Periodo 1</option>
+            <option value="2">Periodo 2</option>
+            <option value="3">Periodo 3</option>
+            <option value="4">Periodo 4</option>
+          </select>
+          <div class="search-wrap">
+            <svg class="search-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="search-input" id="busqueda" placeholder="Buscar por semana, grado o asignatura…" oninput="MIS.buscar(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado: Cargando -->
+      <div id="estadoCargando" class="estado-msg">
+        <div class="spinner"></div>
+        <span>Cargando tus planeaciones…</span>
+      </div>
+
+      <!-- Estado: Error -->
+      <div id="estadoError" class="estado-msg" style="display:none">
+        <div class="estado-ico">⚠️</div>
+        <p>No fue posible cargar tus planeaciones.</p>
+        <button class="btn-reintentar" onclick="MIS.cargar()">Reintentar</button>
+      </div>
+
+      <!-- Estado: Vacío -->
+      <div id="estadoVacio" class="estado-msg" style="display:none">
+        <div class="vacio-ico">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <strong>Aún no tienes planeaciones registradas en este periodo.</strong>
+        <span>Cuando envíes tus planeaciones semanales, aparecerán aquí para que puedas consultarlas en cualquier momento.</span>
+        <a class="btn-primary" href="/planeaciones/">Ir a planeaciones</a>
+      </div>
+
+      <!-- Grid de tarjetas -->
+      <div class="cards-grid" id="cardsGrid" style="display:none"></div>
+
+    </div><!-- /wrap -->
+  </main>
+
+  <!-- ═══════════════════════════════════════
+       PANEL LATERAL — Detalle de planeación
+  ═══════════════════════════════════════ -->
+  <div id="panelOverlay" class="panel-overlay" onclick="MIS.cerrarDetalle(event)"></div>
+
+  <aside id="panelDetalle" class="panel-detalle" aria-hidden="true">
+
+    <div class="panel-header">
+      <div class="panel-header-left">
+        <span class="panel-kicker">Planeación semanal</span>
+        <div class="panel-titulo-row">
+          <h3 class="panel-titulo" id="pdTitulo">—</h3>
+          <div id="pdBadge" class="badge-estado">—</div>
+        </div>
+      </div>
+      <button class="panel-close" onclick="MIS.cerrarDetalle()" aria-label="Cerrar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Fila de metadatos -->
+    <div class="panel-meta-row">
+      <div class="pmeta"><span class="pmeta-k">Grado</span><span class="pmeta-v" id="pdGrado">—</span></div>
+      <div class="pmeta"><span class="pmeta-k">Asignatura</span><span class="pmeta-v" id="pdAsignatura">—</span></div>
+      <div class="pmeta"><span class="pmeta-k">Periodo</span><span class="pmeta-v" id="pdPeriodo">—</span></div>
+      <div class="pmeta"><span class="pmeta-k">Enviada</span><span class="pmeta-v" id="pdFecha">—</span></div>
+    </div>
+
+    <!-- Cuerpo scrolleable -->
+    <div class="panel-body" id="panelBody">
+
+      <!-- Indicador -->
+      <div class="panel-section">
+        <div class="sec-kicker">Indicador de desempeño</div>
+        <p class="sec-content" id="pdIndicador">—</p>
+      </div>
+
+      <!-- Clases (generadas por JS) -->
+      <div id="pdClasesWrap"></div>
+
+      <!-- Actividad complementaria -->
+      <div class="panel-section" id="pdActCompSec" style="display:none">
+        <div class="sec-kicker">Actividad complementaria</div>
+        <p class="sec-content" id="pdActComp">—</p>
+      </div>
+
+      <!-- Observaciones familias -->
+      <div class="panel-section" id="pdObsFamSec" style="display:none">
+        <div class="sec-kicker">Observaciones para familias</div>
+        <p class="sec-content" id="pdObsFam">—</p>
+      </div>
+
+      <!-- Revisión de coordinación -->
+      <div class="panel-section revision-section">
+        <div class="sec-kicker">Revisión de coordinación</div>
+        <div class="revision-box" id="pdRevisionBox">—</div>
+      </div>
+
+      <!-- Formulario de corrección (solo con ajustes) -->
+      <div id="panelEdicion" style="display:none">
+        <div class="edicion-header">
+          <div class="sec-kicker" style="margin:0">Corrección de planeación</div>
+          <p class="edicion-hint">Edita los campos necesarios y reenvía para nueva revisión.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Indicador de desempeño</label>
+          <textarea class="form-textarea" id="editIndicador" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Clase 1 — Tema</label>
+          <input type="text" class="form-input" id="editD1Tema">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Clase 1 — Actividades</label>
+          <textarea class="form-textarea" id="editD1Act" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Clase 2 — Tema</label>
+          <input type="text" class="form-input" id="editD2Tema">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Clase 2 — Actividades</label>
+          <textarea class="form-textarea" id="editD2Act" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Clase 3 — Tema</label>
+          <input type="text" class="form-input" id="editD3Tema">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Clase 3 — Actividades</label>
+          <textarea class="form-textarea" id="editD3Act" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Actividad complementaria</label>
+          <textarea class="form-textarea" id="editActComp" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Observaciones para familias</label>
+          <textarea class="form-textarea" id="editObsFam" rows="2"></textarea>
+        </div>
+        <button class="btn-reenviar" id="btnReenviar" onclick="MIS.reenviar()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Reenviar planeación
+        </button>
+      </div>
+
+    </div><!-- /panel-body -->
+
+    <!-- Footer del panel -->
+    <div class="panel-footer">
+      <button class="btn-corregir" id="btnCorregir" style="display:none" onclick="MIS.abrirEdicion()">
+        Corregir planeación
+      </button>
+      <button class="btn-cerrar-panel" onclick="MIS.cerrarDetalle()">Cerrar</button>
+    </div>
+
+  </aside>
+
+  <script src="/js/mis-planeaciones.js"></script>
+</body>
+</html>
