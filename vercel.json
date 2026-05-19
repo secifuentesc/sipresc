@@ -16,5 +16,11 @@
       "destination": "https://sipresc.co/$1",
       "permanent": true
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/admisiones2027/(.*)",
+      "destination": "/admisiones2027/index.html"
+    }
   ]
 }
