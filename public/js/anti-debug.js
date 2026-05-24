@@ -1,70 +1,211 @@
-// Mensaje estilo SIPRESC cuando intentan inspeccionar
-function mostrarMensajeSipresc() {
-  // Evitar duplicados
-  if (document.getElementById('sipresc-toast-msg')) return;
-  
-  const div = document.createElement('div');
-  div.id = 'sipresc-toast-msg';
-  div.innerHTML = `
-    <div style="
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #0d1f3c;
-      border: 1px solid rgba(201,150,42,0.3);
-      border-radius: 12px;
-      padding: 12px 20px;
-      font-family: -apple-system, 'Helvetica Neue', sans-serif;
-      font-size: 13px;
-      color: #e8edf8;
-      backdrop-filter: blur(20px);
-      background: rgba(13,31,60,0.95);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      z-index: 99999;
-      text-align: center;
-      pointer-events: none;
-      animation: fadeInUp 0.25s ease;
-    ">
-      ¿Necesitas copiar algo? Ctrl + C funciona perfectamente.
-    </div>
-  `;
-  
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(10px);
+// ============================================================
+// anti-debug.js - SIPRESC
+// Bloqueo de inspección + modo admin con tecla secreta
+// ============================================================
+
+(function() {
+  'use strict';
+
+  // ──────────────────────────────────────────────────────────
+  // TECLA SECRETA: Ctrl + Shift (solo para admin)
+  // ──────────────────────────────────────────────────────────
+  let modoAdminTemporal = false;
+  let contadorTecla = 0;
+  let tiempoUltimaTecla = 0;
+
+  document.addEventListener('keydown', (e) => {
+    // Ctrl + Shift (cualquier Shift, izquierda o derecha)
+    if (e.ctrlKey && (e.shiftKey || e.key === 'Shift')) {
+      e.preventDefault();
+      
+      const ahora = Date.now();
+      if (ahora - tiempoUltimaTecla < 500) {
+        contadorTecla++;
+      } else {
+        contadorTecla = 1;
       }
-      to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
+      tiempoUltimaTecla = ahora;
+      
+      if (contadorTecla >= 3) {
+        modoAdminTemporal = !modoAdminTemporal;
+        contadorTecla = 0;
+        
+        // Feedback visual
+        const msg = document.createElement('div');
+        msg.textContent = modoAdminTemporal ? '👑 Modo inspección ACTIVADO' : '🔒 Modo inspección DESACTIVADO';
+        msg.style.cssText = `
+          position: fixed; top: 20px; right: 20px; z-index: 99999;
+          background: #0d1f3c; border: 1px solid #c9962a;
+          border-radius: 12px; padding: 8px 16px;
+          font-family: monospace; font-size: 12px;
+          color: #e8edf8; backdrop-filter: blur(10px);
+          animation: fadeOutMsg 2s ease forwards;
+        `;
+        document.body.appendChild(msg);
+        setTimeout(() => msg.remove(), 2000);
       }
     }
-  `;
-  document.head.appendChild(style);
-  document.body.appendChild(div);
+  });
+
+  // Si el modo admin está activo, NO bloqueamos nada
+  function bloqueoActivo() {
+    return !modoAdminTemporal;
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // MENSAJE ESTILO SIPRESC
+  // ──────────────────────────────────────────────────────────
+  function mostrarMensajeSipresc() {
+    if (!bloqueoActivo()) return;
+    if (document.getElementById('sipresc-toast-msg')) return;
+    
+    const div = document.createElement('div');
+    div.id = 'sipresc-toast-msg';
+    div.innerHTML = `
+      <div style="
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #0d1f3c;
+        border: 1px solid rgba(201,150,42,0.3);
+        border-radius: 12px;
+        padding: 12px 20px;
+        font-family: -apple-system, 'Helvetica Neue', sans-serif;
+        font-size: 13px;
+        color: #e8edf8;
+        backdrop-filter: blur(20px);
+        background: rgba(13,31,60,0.95);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        z-index: 99999;
+        text-align: center;
+        pointer-events: none;
+        animation: fadeInUp 0.25s ease;
+      ">
+        ¿Necesitas copiar algo? Ctrl + C funciona perfectamente.
+      </div>
+    `;
+    
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateX(-50%) translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+      }
+      @keyframes fadeOutMsg {
+        0% { opacity: 1; transform: translateY(0); }
+        70% { opacity: 1; }
+        100% { opacity: 0; transform: translateY(-10px); visibility: hidden; }
+      }
+    `;
+    document.head.appendChild(style);
+    document.body.appendChild(div);
+    
+    setTimeout(() => div.remove(), 4000);
+  }
+
+  // ──────────────────────────────────────────────────────────
+  // CAPA 1: Clic derecho
+  // ──────────────────────────────────────────────────────────
+  document.addEventListener('contextmenu', (e) => {
+    if (!bloqueoActivo()) return;
+    e.preventDefault();
+    mostrarMensajeSipresc();
+  });
+
+  // ──────────────────────────────────────────────────────────
+  // CAPA 2: Teclas de desarrollador
+  // ──────────────────────────────────────────────────────────
+  const teclasProhibidas = ['F12', 'F11', 'F10', 'F9', 'F8', 'F7', 'F6', 'F5'];
   
-  setTimeout(() => {
-    div.remove();
-  }, 4000);
-}
+  document.addEventListener('keydown', (e) => {
+    if (!bloqueoActivo()) return;
+    
+    // Teclas de función
+    if (teclasProhibidas.includes(e.key)) {
+      e.preventDefault();
+      mostrarMensajeSipresc();
+      return;
+    }
+    
+    // Combinaciones con Ctrl
+    if (e.ctrlKey && (
+      e.key === 'u' || e.key === 'U' ||
+      e.key === 'i' || e.key === 'I' ||
+      e.key === 'j' || e.key === 'J' ||
+      e.key === 'c' || e.key === 'C' ||
+      e.key === 's' || e.key === 'S' ||
+      e.key === 'p' || e.key === 'P' ||
+      e.key === 'k' || e.key === 'K'
+    )) {
+      e.preventDefault();
+      mostrarMensajeSipresc();
+    }
+    
+    // Ctrl + Shift + ...
+    if (e.ctrlKey && e.shiftKey && (
+      e.key === 'I' || e.key === 'i' ||
+      e.key === 'J' || e.key === 'j' ||
+      e.key === 'C' || e.key === 'c'
+    )) {
+      e.preventDefault();
+      mostrarMensajeSipresc();
+    }
+  });
 
-// Disparar el mensaje en acciones sospechosas
-document.addEventListener('contextmenu', (e) => {
-  e.preventDefault();
-  mostrarMensajeSipresc();
-});
-
-document.addEventListener('keydown', (e) => {
-  const teclas = ['F12', 'I', 'U', 'J', 'C', 'S'];
-  if (e.ctrlKey && teclas.includes(e.key.toUpperCase())) {
-    e.preventDefault();
-    mostrarMensajeSipresc();
+  // ──────────────────────────────────────────────────────────
+  // CAPA 3: Detección de DevTools
+  // ──────────────────────────────────────────────────────────
+  function detectarDevTools() {
+    if (!bloqueoActivo()) return;
+    
+    const umbral = 160;
+    
+    const medir = () => {
+      const inicio = performance.now();
+      debugger;
+      const fin = performance.now();
+      
+      if (fin - inicio > umbral) {
+        // DevTools detectado
+        mostrarMensajeSipresc();
+        document.body.innerHTML = `
+          <div style="
+            position:fixed;inset:0;
+            background:#0a1628;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-direction:column;
+            z-index:99999;
+            font-family:monospace;
+          ">
+            <div style="
+              background:#1a1a2e;
+              padding:40px;
+              border-radius:20px;
+              text-align:center;
+              border:1px solid #c9962a;
+            ">
+              <div style="font-size:64px;margin-bottom:16px;">⚠️</div>
+              <h2 style="color:#fff;margin-bottom:8px;">Acceso denegado</h2>
+              <p style="color:#888;">Herramientas de desarrollo deshabilitadas</p>
+            </div>
+          </div>
+        `;
+        setTimeout(() => window.location.href = '/', 100);
+      }
+    };
+    
+    setInterval(medir, 1500);
   }
-  if (e.key === 'F12') {
-    e.preventDefault();
-    mostrarMensajeSipresc();
-  }
-});
+  
+  detectarDevTools();
+  
+})();
