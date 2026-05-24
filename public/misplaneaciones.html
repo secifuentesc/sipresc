@@ -40,7 +40,6 @@ body {
   min-height: 100vh;
 }
 
-/* TOPBAR */
 .topbar {
   position: sticky;
   top: 0;
@@ -64,12 +63,7 @@ body {
   cursor: pointer;
 }
 .topbar-logo img { width: 20px; filter: brightness(10); }
-.topbar h1 {
-  font-size: 16px;
-  font-weight: 600;
-  flex: 1;
-  color: white;
-}
+.topbar h1 { font-size: 16px; font-weight: 600; flex: 1; color: white; }
 .topbar-rol {
   font-size: 11px;
   color: var(--gold);
@@ -87,10 +81,7 @@ body {
   border-radius: 8px;
   transition: all 0.2s;
 }
-.logout-btn:hover, .back-btn:hover {
-  color: white;
-  background: rgba(255,255,255,0.05);
-}
+.logout-btn:hover, .back-btn:hover { color: white; background: rgba(255,255,255,0.05); }
 .back-btn {
   display: inline-flex;
   align-items: center;
@@ -111,20 +102,14 @@ body {
   .container { padding-top: 90px; }
 }
 
-/* CONTAINER */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 70px 20px 40px;
 }
-@media (max-width: 640px) {
-  .container { padding: 80px 16px 40px; }
-}
+@media (max-width: 640px) { .container { padding: 80px 16px 40px; } }
 
-/* HEADER */
-.page-header {
-  margin-bottom: 32px;
-}
+.page-header { margin-bottom: 32px; }
 .page-header h1 {
   font-size: 34px;
   font-weight: 700;
@@ -134,13 +119,8 @@ body {
   color: transparent;
   letter-spacing: -0.5px;
 }
-.page-header p {
-  color: var(--text-muted);
-  font-size: 14px;
-  margin-top: 6px;
-}
+.page-header p { color: var(--text-muted); font-size: 14px; margin-top: 6px; }
 
-/* SEGMENTED CONTROL */
 .segment-label {
   font-size: 12px;
   font-weight: 600;
@@ -173,10 +153,7 @@ body {
   box-shadow: 0 4px 12px rgba(37,99,235,0.3);
 }
 
-/* SEMANAS */
-.semanas-section {
-  margin: 28px 0 20px;
-}
+.semanas-section { margin: 28px 0 20px; }
 .semanas-scroll {
   display: flex;
   gap: 12px;
@@ -223,7 +200,6 @@ body {
 }
 .semana-badge.white { background: white; color: #1e4db7; }
 
-/* RESULTS */
 .results-header {
   display: flex;
   justify-content: space-between;
@@ -242,7 +218,6 @@ body {
   font-weight: 500;
 }
 
-/* CARDS GRID */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -250,7 +225,6 @@ body {
 }
 @media (max-width: 480px) { .cards-grid { grid-template-columns: 1fr; } }
 
-/* TARJETA */
 .plan-card {
   background: var(--card-bg);
   backdrop-filter: blur(10px);
@@ -305,7 +279,7 @@ body {
   font-size: 12px;
   color: var(--text-muted);
 }
-.info-chip svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+.info-chip svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; }
 .estado-badge {
   display: inline-flex;
   align-items: center;
@@ -342,7 +316,6 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* MODAL */
 .modal {
   position: fixed;
   inset: 0;
@@ -363,9 +336,7 @@ body {
   overflow: hidden;
   animation: slideUp 0.3s ease;
 }
-@media (min-width: 768px) {
-  .modal-content { border-radius: 28px; animation: zoomIn 0.2s ease; }
-}
+@media (min-width: 768px) { .modal-content { border-radius: 28px; animation: zoomIn 0.2s ease; } }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 @keyframes zoomIn { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .modal-handle {
@@ -516,7 +487,7 @@ body {
 const API_PLN = '/api/planeaciones';
 let ST = { rol: null, correo: null, docenteId: null };
 let materiasRaw = [];
-let planeacionesMap = new Map(); // key: "asignatura|grado"
+let planeacionesMap = new Map();
 let periodoActivo = 'P2';
 let semanaSeleccionada = 8;
 let semanaActual = 8;
@@ -550,7 +521,44 @@ function mostrarToast(msg) {
 }
 
 // ==================================================
-// API (carga paralela para más velocidad)
+// ICONOS IGUALES AL INDEX.HTML (adaptados por materia)
+// ==================================================
+function iconoPorMateria(asignatura) {
+  const a = asignatura.toLowerCase();
+  // Íconos idénticos a los del index.html (Planeaciones, Prompts IA, Citas, Evaluaciones)
+  if (a.includes('matem') || a.includes('mate')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>`;
+  }
+  if (a.includes('españ') || a.includes('lengua') || a.includes('literatura')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a7 7 0 017 7c0 3-1.5 5-4 6.5V17a1 1 0 01-1 1h-4a1 1 0 01-1-1v-1.5C6.5 14 5 12 5 9a7 7 0 017-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>`;
+  }
+  if (a.includes('ciencia') || a.includes('biología') || a.includes('química') || a.includes('física')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>`;
+  }
+  if (a.includes('historia') || a.includes('sociales') || a.includes('geografía')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>`;
+  }
+  if (a.includes('física') || a.includes('educación') || a.includes('deporte')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>`;
+  }
+  if (a.includes('arte') || a.includes('música') || a.includes('dibujo')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
+  }
+  if (a.includes('inglés') || a.includes('english')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`;
+  }
+  if (a.includes('tecnolog') || a.includes('informática') || a.includes('sistemas')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>`;
+  }
+  if (a.includes('religión') || a.includes('ética') || a.includes('valores')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l2.5 5.5 6 .5-4.5 4 1.5 6-5.5-3-5.5 3 1.5-6-4.5-4 6-.5L12 2z"/></svg>`;
+  }
+  // Ícono por defecto (libro)
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h11l3 3v13a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z"/><path d="M9 13h6M9 17h4M14 4v4h5"/></svg>`;
+}
+
+// ==================================================
+// API
 // ==================================================
 async function cargarDatos() {
   const qs = new URLSearchParams({ correo: ST.correo || '' });
@@ -559,9 +567,7 @@ async function cargarDatos() {
     fetch(`${API_PLN}?accion=misPlaneacionesDocente&periodo=${periodoActivo}&${qs}`).then(r => r.json())
   ]);
   
-  if (resMaterias.ok && resMaterias.materias) materiasRaw = resMaterias.materias;
-  else materiasRaw = [];
-  
+  materiasRaw = (resMaterias.ok && resMaterias.materias) ? resMaterias.materias : [];
   planeacionesMap.clear();
   if (resPlaneaciones.ok && resPlaneaciones.data) {
     resPlaneaciones.data.forEach(p => {
@@ -571,9 +577,6 @@ async function cargarDatos() {
   }
 }
 
-// ==================================================
-// RENDER
-// ==================================================
 function getEstado(asignatura, grado) {
   const key = `${asignatura}|${grado}`;
   const p = planeacionesMap.get(key);
@@ -581,6 +584,8 @@ function getEstado(asignatura, grado) {
   const raw = (p.estadoRevision || p.revisionCoord || '').toLowerCase();
   if (raw === 'aprobada' || raw === 'aprobado') return { estado: 'aprobada', label: 'Aprobada', data: p, id: p.planeacionId };
   if (raw.includes('ajuste')) return { estado: 'con_ajustes', label: 'Con ajustes', data: p, id: p.planeacionId };
+  if (raw === 'pendiente' || raw === 'recibida' || raw === 'por revisar') 
+    return { estado: 'pendiente', label: 'En revisión', data: p, id: p.planeacionId };
   return { estado: 'pendiente', label: 'En revisión', data: p, id: p.planeacionId };
 }
 
@@ -598,19 +603,9 @@ function desglosar() {
   return cards;
 }
 
-function iconoAsignatura(asignatura) {
-  const a = asignatura.toLowerCase();
-  if (a.includes('matem')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>`;
-  if (a.includes('españ') || a.includes('lengua')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>`;
-  if (a.includes('ciencia')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M4.93 4.93l2.83 2.83M12 22v-4M19.07 4.93l-2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M19.07 19.07l-2.83-2.83"/></svg>`;
-  if (a.includes('historia')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`;
-  if (a.includes('física') || a.includes('educación')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>`;
-  if (a.includes('arte')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l2.5 5.5 6 .5-4.5 4 1.5 6-5.5-3-5.5 3 1.5-6-4.5-4 6-.5L12 2z"/></svg>`;
-  if (a.includes('inglés')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>`;
-  if (a.includes('tecnolog')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>`;
-  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>`;
-}
-
+// ==================================================
+// RENDER
+// ==================================================
 function renderSemanas() {
   const container = document.getElementById('semanasContainer');
   const semanas = Array.from({ length: 10 }, (_, i) => i + 1);
@@ -663,13 +658,13 @@ function renderCards() {
     return `
       <div class="plan-card" style="animation-delay: ${idx * 0.02}s" onclick="abrirDetalle('${t.asignatura}', '${t.grado}')">
         <div class="card-header">
-          <div class="card-icon">${iconoAsignatura(t.asignatura)}</div>
+          <div class="card-icon">${iconoPorMateria(t.asignatura)}</div>
           <div class="card-chevron">›</div>
         </div>
         <div class="card-title">${t.asignatura}</div>
         <div class="card-sub">Semana ${semanaSeleccionada}</div>
         <div class="card-info">
-          <span class="info-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>${t.grado}</span>
+          <span class="info-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>${t.grado}</span>
           ${e.estado !== 'no_enviada' && fecha ? `<span class="info-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>${fecha}</span>` : ''}
         </div>
         <div class="estado-badge ${estadoClass}"><span>${estadoIcon}</span> ${e.label}</div>
@@ -705,7 +700,7 @@ function abrirDetalle(asignatura, grado) {
         <div class="modal-handle"></div>
         <div class="modal-header">
           <div class="modal-header-info">
-            <div class="modal-icon">${iconoAsignatura(asignatura)}</div>
+            <div class="modal-icon">${iconoPorMateria(asignatura)}</div>
             <div><div class="modal-title">${asignatura}</div><div class="modal-sub">Semana ${p.semana || semanaSeleccionada} — ${grado}</div></div>
           </div>
           <button class="modal-close" onclick="cerrarModal()">✕</button>
