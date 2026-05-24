@@ -1149,7 +1149,12 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:420px">
 
 <!-- Planeaciones — destacada sutilmente -->
-<div class="home-card home-card-main" onclick="window.location.href='/misplaneaciones.html'" id="card-planeaciones">
+<div class="home-card home-card-main" onclick="window.location.href='/misplaneaciones.html'" id="card-planeaciones" style="position:relative; overflow:visible;">
+  <!-- Badge dentro de la tarjeta, arriba a la izquierda -->
+  <div id="badge-estreno" style="position:absolute; top:-12px; left:-8px; background:linear-gradient(135deg, #c9962a, #e8b84b); color:#0a0f1a; font-size:13px; font-weight:700; padding:6px 16px; border-radius:40px; display:flex; align-items:center; gap:8px; box-shadow:0 4px 15px rgba(201,150,42,0.4); z-index:10; font-family:-apple-system, 'Helvetica Neue', sans-serif;">
+    <span style="font-size:18px;">😎</span> 
+    Estreno nueva cara
+  </div>
   <div class="home-ico" style="background:rgba(148,196,255,.15);border-color:rgba(148,196,255,.2)">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(180,220,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>
   </div>
@@ -1157,39 +1162,28 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
   <div class="home-sub">Planeación semanal</div>
 </div>
 
-<!-- Badge flotante fuera de la tarjeta (solo del 26 al 30 de mayo) -->
-<div id="badge-estreno" style="position:fixed; bottom:120px; left:16px; background:linear-gradient(135deg, #c9962a, #e8b84b); color:#0a0f1a; font-size:14px; font-weight:700; padding:8px 20px; border-radius:40px; display:flex; align-items:center; gap:10px; box-shadow:0 6px 20px rgba(201,150,42,0.4); z-index:1000; font-family:-apple-system, 'Helvetica Neue', sans-serif; backdrop-filter:blur(4px);">
-  <span style="font-size:22px;">😎</span> 
-  Estreno nueva cara
-</div>
-
 <script>
-// Badge visible solo del lunes 26 al viernes 30 de mayo
+// Badge visible del 24 al 30 de mayo
 (function() {
   const hoy = new Date();
-  const dia = hoy.getDate();
-  const mes = hoy.getMonth() + 1; // mayo es mes 5
-  const ano = hoy.getFullYear();
-
-  // Fechas: 24 de mayo al 30 de mayo
-const fechaInicio = new Date(2026, 4, 23); // 24 de mayo
-const fechaFin = new Date(2026, 4, 30);    // 31 de mayo
+  const fechaInicio = new Date(2026, 4, 24); // 24 de mayo
+  const fechaFin = new Date(2026, 4, 31);    // 31 de mayo
+  
   const badge = document.getElementById('badge-estreno');
   
-  // Si hoy NO está entre el 26 y 30 de mayo, ocultar badge
   if (hoy < fechaInicio || hoy >= fechaFin) {
     if (badge) badge.style.display = 'none';
   }
   
-  // Al hacer clic en el badge, desaparece suavemente
   if (badge) {
     badge.style.cursor = 'pointer';
-    badge.onclick = function() {
+    badge.onclick = function(e) {
+      e.stopPropagation();
       badge.style.opacity = '0';
-      badge.style.transform = 'translateX(-20px)';
+      badge.style.transform = 'scale(0.8)';
       setTimeout(() => {
         badge.style.display = 'none';
-      }, 300);
+      }, 200);
     };
   }
 })();
