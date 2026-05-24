@@ -722,7 +722,12 @@ function iconoPorMateria(asignatura) {
 // API - CORREGIDO
 // ==================================================
 async function cargarDatos() {
+  // 🔥 TEMPORAL: Limpiar caché para depurar
   const cacheKey = `sipresc_cache_${ST.correo}_${periodoActivo}`;
+  
+  // 🔥 FORZAR RECARGA DESDE API (comenta esta línea después de depurar)
+  sessionStorage.removeItem(cacheKey);
+  
   const cache = sessionStorage.getItem(cacheKey);
   
   if (cache) {
@@ -748,83 +753,126 @@ async function cargarDatos() {
       fetch(`${API_PLN}?accion=misPlaneacionesDocente&${qs}`).then(r => r.json())
     ]);
     
-    console.log('📚 Respuesta materias:', resMaterias);
-    console.log('📋 Respuesta planeaciones:', resPlaneaciones);
+    console.log('📚 Respuesta materias COMPLETA:', JSON.stringify(resMaterias, null, 2));
+    console.log('📋 Respuesta planeaciones COMPLETA:', JSON.stringify(resPlaneaciones, null, 2));
     
-    // CORREGIDO: Verificar la estructura correcta de la respuesta
-    if (resMaterias.success && resMaterias.data) {
+    // Extraer materias correctamente
+    if (resMaterias.success && Array.isArray(resMaterias.data)) {
       materiasRaw = resMaterias.data;
-      console.log('✅ Materias cargadas:', materiasRaw.length);
-    } else if (resMaterias.ok && resMaterias.materias) {
+      console.log('✅ Materias cargadas (desde data):', materiasRaw.length);
+    } else if (resMaterias.ok && Array.isArray(resMaterias.materias)) {
       materiasRaw = resMaterias.materias;
+      console.log('✅ Materias cargadas (desde materias):', materiasRaw.length);
+    } else if (Array.isArray(resMaterias)) {
+      materiasRaw = resMaterias;
+      console.log('✅ Materias cargadas (array directo):', materiasRaw.length);
     } else {
-      console.warn('⚠️ Estructura de materias no reconocida:', resMaterias);
+      console.error('❌ Estructura de materias no reconocida:', resMaterias);
       materiasRaw = [];
     }
     
-    planeacionesMap.clear();
-    
-    if (resPlaneaciones.success && resPlaneaciones.data) {
-      console.log('📋 Planeaciones recibidas:', resPlaneaciones.data.length);
-      
-      resPlaneaciones.data.forEach(p => {
-        console.log(`🔍 Planeación: ${p.asignatura} | Grado: ${p.grado} | Semana: ${p.semana} | Período original: ${p.periodo}`);
-        
-        const periodoNorm = normalizarPeriodo(p.periodo);
-        console.log(`   Período normalizado: ${periodoNorm} | Activo: ${periodoActivo} | Coincide: ${periodoNorm === periodoActivo}`);
-        
-        if (periodoNorm === periodoActivo) {
-          const semanaNum = parseInt(p.semana?.match(/\d+/)?.[0] || '0');
-          if (semanaNum === 0) return;
-          
-          const asignaturaNorm = normalizar(p.asignatura);
-          const gradoNorm = normalizar(p.grado || '').replace(/[ab]$/i, '');
-          
-          let gruposDestino = [];
-          if (p.gruposDestino && p.gruposDestino !== '') {
-            gruposDestino = String(p.gruposDestino).split(',').map(g => g.trim().toUpperCase()).filter(g => g === 'A' || g === 'B');
-          }
-          
-          console.log(`   Grupos destino: ${gruposDestino.length ? gruposDestino.join(',') : 'SIN_GRUPO'}`);
-          
-          if (gruposDestino.length === 0) {
-            const key = `${asignaturaNorm}|${gradoNorm}|${semanaNum}|SIN_GRUPO`;
-            planeacionesMap.set(key, p);
-            console.log(`   ✅ Guardado SIN_GRUPO: ${key}`);
-          } else {
-            gruposDestino.forEach(grupo => {
-              const key = `${asignaturaNorm}|${gradoNorm}|${semanaNum}|${grupo}`;
-              planeacionesMap.set(key, p);
-              console.log(`   ✅ Guardado con grupo ${grupo}: ${key}`);
-            });
-          }
-        }
-      });
-    } else if (resPlaneaciones.ok && resPlaneaciones.data) {
-      // Fallback para otra estructura
-      resPlaneaciones.data.forEach(p => {
-        const periodoNorm = normalizarPeriodo(p.periodo);
-        if (periodoNorm === periodoActivo) {
-          const semanaNum = parseInt(p.semana?.match(/\d+/)?.[0] || '0');
-          const key = `${normalizar(p.asignatura)}|${normalizar(p.grado).replace(/[ab]$/i, '')}|${semanaNum}|SIN_GRUPO`;
-          planeacionesMap.set(key, p);
-        }
-      });
+    // Extraer planeaciones correctamente
+    let planeacionesRaw = [];
+    if (resPlaneaciones.success && Array.isArray(resPlaneaciones.data)) {
+      planeacionesRaw = resPlaneaciones.data;
+      console.log('✅ Planeaciones cargadas (desde data):', planeacionesRaw.length);
+    } else if (resPlaneaciones.ok && Array.isArray(resPlaneaciones.data)) {
+      planeacionesRaw = resPlaneaciones.data;
+      console.log('✅ Planeaciones cargadas (desde ok.data):', planeacionesRaw.length);
+    } else if (Array.isArray(resPlaneaciones)) {
+      planeacionesRaw = resPlaneaciones;
+      console.log('✅ Planeaciones cargadas (array directo):', planeacionesRaw.length);
+    } else {
+      console.error('❌ Estructura de planeaciones no reconocida:', resPlaneaciones);
     }
     
-    console.log('📊 Total planeaciones en mapa:', planeacionesMap.size);
+    // Limpiar mapa
+    planeacionesMap.clear();
+    
+    // Procesar cada planeación
+    if (planeacionesRaw.length === 0) {
+      console.warn('⚠️ No hay planeaciones para procesar');
+    }
+    
+    planeacionesRaw.forEach((p, idx) => {
+      console.log(`\n🔍 Planeación ${idx + 1}:`, {
+        asignatura: p.asignatura,
+        grado: p.grado,
+        semana: p.semana,
+        periodo: p.periodo,
+        gruposDestino: p.gruposDestino,
+        estado: p.estadoRevision || p.revisionCoord || p.estado
+      });
+      
+      const periodoNorm = normalizarPeriodo(p.periodo);
+      console.log(`   Período original: ${p.periodo} → Normalizado: ${periodoNorm}`);
+      console.log(`   Período activo: ${periodoActivo} → Coinciden: ${periodoNorm === periodoActivo}`);
+      
+      if (periodoNorm === periodoActivo) {
+        // Extraer número de semana
+        let semanaNum = 0;
+        if (typeof p.semana === 'number') {
+          semanaNum = p.semana;
+        } else if (typeof p.semana === 'string') {
+          const match = p.semana.match(/\d+/);
+          semanaNum = match ? parseInt(match[0]) : 0;
+        }
+        
+        if (semanaNum === 0) {
+          console.warn(`   ⚠️ Semana inválida: ${p.semana}`);
+          return;
+        }
+        
+        const asignaturaNorm = normalizar(p.asignatura);
+        const gradoNorm = normalizar(p.grado || '').replace(/[ab]$/i, '');
+        
+        // Determinar grupos destino
+        let gruposDestino = [];
+        if (p.gruposDestino && p.gruposDestino !== '') {
+          gruposDestino = String(p.gruposDestino)
+            .split(',')
+            .map(g => g.trim().toUpperCase())
+            .filter(g => g === 'A' || g === 'B');
+        }
+        
+        console.log(`   Asignatura normalizada: ${asignaturaNorm}`);
+        console.log(`   Grado normalizado: ${gradoNorm}`);
+        console.log(`   Grupos destino: ${gruposDestino.length ? gruposDestino.join(',') : 'SIN_GRUPO'}`);
+        
+        // Guardar en mapa
+        if (gruposDestino.length === 0) {
+          const key = `${asignaturaNorm}|${gradoNorm}|${semanaNum}|SIN_GRUPO`;
+          planeacionesMap.set(key, p);
+          console.log(`   ✅ Guardado: ${key}`);
+        } else {
+          gruposDestino.forEach(grupo => {
+            const key = `${asignaturaNorm}|${gradoNorm}|${semanaNum}|${grupo}`;
+            planeacionesMap.set(key, p);
+            console.log(`   ✅ Guardado: ${key}`);
+          });
+        }
+      } else {
+        console.log(`   ⏭️ Saltada por período (no coincide con ${periodoActivo})`);
+      }
+    });
+    
+    console.log(`\n📊 TOTAL: ${planeacionesMap.size} planeaciones guardadas en mapa`);
     console.log('🔑 Claves del mapa:', Array.from(planeacionesMap.keys()));
     
-    // Guardar en caché
-    const cacheData = {
-      materias: materiasRaw,
-      planeacionesMapData: Array.from(planeacionesMap.entries())
-    };
-    sessionStorage.setItem(cacheKey, JSON.stringify(cacheData));
-    console.log('💾 Caché guardado');
-    
-    // Auto-expiración
-    setTimeout(() => sessionStorage.removeItem(cacheKey), 10 * 60 * 1000);
+    // Guardar en caché SOLO si hay datos
+    if (materiasRaw.length > 0 || planeacionesMap.size > 0) {
+      const cacheData = {
+        materias: materiasRaw,
+        planeacionesMapData: Array.from(planeacionesMap.entries())
+      };
+      sessionStorage.setItem(cacheKey, JSON.stringify(cacheData));
+      console.log('💾 Caché guardado');
+      
+      // Auto-expiración
+      setTimeout(() => sessionStorage.removeItem(cacheKey), 10 * 60 * 1000);
+    } else {
+      console.warn('⚠️ No se guardó caché porque no hay datos');
+    }
     
   } catch (error) {
     console.error('❌ Error cargando datos:', error);
