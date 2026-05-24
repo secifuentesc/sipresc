@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a1628">
+<title>Mis planeaciones — SIPRESC</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<style>
+/* ==================================================
+   RESET Y VARIABLES
+================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --ink: #0a1628;
+  --blue: #1a3a6b;
+  --royal: #0f2657;
+  --cobalt: #1e4db7;
+  --gold: #c9962a;
+  --gold2: #e8b84b;
+  --s0: #050e1d;
+  --s1: #0d1f3c;
+  --s2: #122449;
+  --s3: #182e58;
+  --br: rgba(255,255,255,0.07);
+  --br2: rgba(255,255,255,0.13);
+  --tx: #e8edf8;
+  --mt: #7a8fb0;
+  --green: #4ade80;
+  --emerald: #10b981;
+  --sky: #38bdf8;
+  --amber: #f59e0b;
+  --slate: #64748b;
+  --mono: -apple-system, 'SF Mono', monospace;
+  --sans: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+
+body {
+  background: #0a1628;
+  color: var(--tx);
+  font-family: var(--sans);
+  min-height: 100vh;
+}
+
+/* ==================================================
+   SCROLLBAR HORIZONTAL
+================================================== */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* ==================================================
+   TOPBAR (igual al sistema)
+================================================== */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(5,14,29,0.75);
+  border-bottom: 1px solid var(--br);
+  padding: 10px 18px;
+  padding-top: calc(10px + env(safe-area-inset-top, 0));
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(24px);
+}
+.topbar-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: linear-gradient(140deg, #1c3f7a, #2557c7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+.logo-img-top {
+  width: 18px;
+  filter: brightness(10);
+}
+.topbar h1 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  flex: 1;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.topbar-rol {
+  font-size: 10px;
+  color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--br);
+  padding: 3px 10px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+.logout-btn, .back-panel-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-family: var(--sans);
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+.logout-btn:hover, .back-panel-btn:hover {
+  color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.05);
+}
+.back-panel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: fixed;
+  left: 18px;
+  top: 65px;
+  z-index: 60;
+  backdrop-filter: blur(18px);
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+}
+@media (max-width: 520px) {
+  .back-panel-btn {
+    top: 58px;
+    left: 12px;
+    padding: 5px 11px;
+    font-size: 11px;
+  }
+}
+
+/* ==================================================
+   CONTAINER PRINCIPAL
+================================================== */
+.container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 80px 16px 40px;
+}
+@media (max-width: 640px) {
+  .container {
+    padding-top: 70px;
+  }
+}
+
+/* ==================================================
+   HEADER
+================================================== */
+.page-header {
+  margin-bottom: 28px;
+}
+.page-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fff, rgba(255,255,255,0.6));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  letter-spacing: -0.5px;
+}
+.page-header p {
+  color: rgba(255,255,255,0.4);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* ==================================================
+   SELECTOR PERÍODO (Segmented Control iOS)
+================================================== */
+.segment-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 10px;
+}
+.segmented-control {
+  display: inline-flex;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--br);
+  border-radius: 12px;
+  padding: 4px;
+}
+.segmented-btn {
+  position: relative;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.segmented-btn.active {
+  color: white;
+}
+.segmented-btn.active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #1e4db7, #2563eb);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+  z-index: 0;
+}
+.segmented-btn span {
+  position: relative;
+  z-index: 1;
+}
+
+/* ==================================================
+   SELECTOR SEMANAS
+================================================== */
+.weeks-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-top: 12px;
+}
+.week-btn {
+  flex-shrink: 0;
+  min-width: 85px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--br);
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.week-btn:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+.week-btn.active {
+  background: linear-gradient(135deg, #1e4db7, #2563eb);
+  border-color: transparent;
+  box-shadow: 0 6px 16px rgba(37,99,235,0.35);
+}
+.week-label {
+  font-size: 11px;
+  opacity: 0.6;
+}
+.week-number {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.week-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #10b981;
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+.week-badge.white {
+  background: white;
+  color: #1e4db7;
+}
+
+/* ==================================================
+   RESULTADOS
+================================================== */
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 24px 0 18px;
+}
+.results-count {
+  color: rgba(255,255,255,0.4);
+  font-size: 13px;
+}
+.semana-actual-badge {
+  background: rgba(16,185,129,0.15);
+  color: #10b981;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+}
+
+/* ==================================================
+   GRID DE TARJETAS
+================================================== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+@media (min-width: 768px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ==================================================
+   TARJETA DE PLANEACIÓN
+================================================== */
+.planeacion-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  border: 1px solid var(--br);
+  border-radius: 24px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  overflow: hidden;
+}
+.planeacion-card:hover {
+  transform: scale(1.02);
+  border-color: rgba(255,255,255,0.2);
+  box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5);
+}
+.planeacion-card:active {
+  transform: scale(0.98);
+}
+.card-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(59,130,246,0.08), transparent);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+.planeacion-card:hover .card-glow {
+  opacity: 1;
+}
+.card-content {
+  position: relative;
+  z-index: 2;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.card-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+.card-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+}
+.card-subtitle {
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 2px;
+}
+.chevron {
+  color: rgba(255,255,255,0.3);
+  font-size: 20px;
+  transition: all 0.2s;
+}
+.planeacion-card:hover .chevron {
+  color: rgba(255,255,255,0.7);
+  transform: translateX(3px);
+}
+.card-info {
+  display: flex;
+  gap: 14px;
+  margin: 12px 0;
+}
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-aprobada {
+  background: rgba(16,185,129,0.15);
+  color: #10b981;
+  border: 1px solid rgba(16,185,129,0.3);
+}
+.badge-pendiente {
+  background: rgba(56,189,248,0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56,189,248,0.3);
+}
+.badge-ajustes {
+  background: rgba(245,158,11,0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245,158,11,0.3);
+}
+.badge-no_enviada {
+  background: rgba(100,116,139,0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(100,116,139,0.3);
+}
+
+/* ==================================================
+   TARJETA VACÍA
+================================================== */
+.card-empty {
+  background: linear-gradient(135deg, rgba(30,41,59,0.5), rgba(15,23,42,0.5));
+  border: 2px dashed rgba(255,255,255,0.15);
+  text-align: center;
+  padding: 32px 20px;
+  cursor: default;
+}
+.card-empty:hover {
+  transform: none;
+}
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 28px;
+}
+.empty-title {
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 4px;
+}
+.empty-text {
+  font-size: 13px;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 18px;
+}
+.btn-create {
+  background: linear-gradient(135deg, #1e4db7, #2563eb);
+  border: none;
+  border-radius: 40px;
+  padding: 10px 22px;
+  color: white;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+.btn-create:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(37,99,235,0.3);
+}
+
+/* ==================================================
+   LOADING
+================================================== */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==================================================
+   MODAL / SHEET (iOS Style)
+================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .modal-backdrop {
+    align-items: center;
+  }
+}
+.modal-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  background: linear-gradient(135deg, #1a2a4a, #0f1d32);
+  border-radius: 28px 28px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease;
+}
+@media (min-width: 768px) {
+  .modal-sheet {
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,0.1);
+    max-height: 85vh;
+    animation: zoomIn 0.2s ease;
+  }
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.modal-handle {
+  width: 40px;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  margin: 12px auto 8px;
+}
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.modal-header-info {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.modal-icon {
+  width: 52px;
+  height: 52px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+.modal-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: white;
+}
+.modal-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 3px;
+}
+.modal-close {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(255,255,255,0.6);
+  transition: all 0.2s;
+}
+.modal-close:hover {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+.modal-badge-row {
+  padding: 12px 20px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+.modal-section {
+  margin-bottom: 24px;
+}
+.modal-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 10px;
+}
+.modal-section-content {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 14px;
+}
+.modal-section-content p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.85);
+}
+.clase-item {
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.clase-number {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  background: rgba(59,130,246,0.2);
+  color: #60a5fa;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  margin-right: 10px;
+}
+.clase-tema {
+  font-weight: 600;
+  font-size: 14px;
+  color: white;
+  margin-bottom: 8px;
+  display: inline;
+}
+.clase-act {
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.5;
+  margin-left: 34px;
+}
+.modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.modal-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.modal-btn-primary {
+  background: linear-gradient(135deg, #f59e0b, #ea580c);
+  border: none;
+  color: white;
+}
+.modal-btn-primary:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 16px rgba(245,158,11,0.3);
+}
+.modal-btn-secondary {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.8);
+}
+.modal-btn-secondary:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+/* ==================================================
+   TOAST
+================================================== */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #1a2a3a;
+  border: 1px solid rgba(201,150,42,0.3);
+  border-radius: 40px;
+  padding: 10px 20px;
+  font-size: 13px;
+  color: white;
+  z-index: 1100;
+  transition: transform 0.25s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="javascript:void(0)" onclick="volverPanel()" class="topbar-logo">
+    <img src="/logo.png" class="logo-img-top" onerror="this.style.display='none'">
+  </a>
+  <h1>SIPRESC — Mis planeaciones</h1>
+  <span class="topbar-rol" id="rolVista">DOCENTE</span>
+  <button class="logout-btn" onclick="cerrarSesion()">Salir</button>
+</div>
+
+<button class="back-panel-btn" onclick="volverPanel()">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span>Volver al panel</span>
+</button>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="container">
+  <div class="page-header">
+    <h1>Mis planeaciones</h1>
+    <p>Historial de planeaciones enviadas</p>
+  </div>
+
+  <!-- Selector de período -->
+  <div style="margin-bottom: 28px;">
+    <div class="segment-label">Período académico</div>
+    <div class="segmented-control" id="periodoSelector">
+      <button class="segmented-btn" data-periodo="P1"><span>P1</span></button>
+      <button class="segmented-btn" data-periodo="P2"><span>P2</span></button>
+      <button class="segmented-btn" data-periodo="P3"><span>P3</span></button>
+      <button class="segmented-btn" data-periodo="P4"><span>P4</span></button>
+    </div>
+  </div>
+
+  <!-- Selector de semanas -->
+  <div style="margin-bottom: 20px;">
+    <div class="segment-label">Semana</div>
+    <div class="weeks-scroll scrollbar-hide" id="semanasContainer"></div>
+  </div>
+
+  <!-- Resultados -->
+  <div class="results-header">
+    <span class="results-count" id="resultadosCount">Cargando...</span>
+    <span id="semanaActualBadge"></span>
+  </div>
+
+  <!-- Grid de tarjetas -->
+  <div class="cards-grid" id="cardsGrid">
+    <div class="loading-spinner"><div class="spinner"></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toastMsg">📋 Copiado</div>
+
+<script>
+// ==================================================
+// CONFIGURACIÓN
+// ==================================================
+const API_BASE = window.location.origin;
+const API = API_BASE + '/api/proxy';
+const API_PLN = API_BASE + '/api/planeaciones';
+
+let ST = {
+  rol: null,
+  correo: null,
+  nombre: null,
+  docenteId: null
+};
+
+let planeacionesData = [];
+let periodoActivo = 'P2';
+let semanaSeleccionada = 8;
+let semanaActualCalculada = 8;
+let planeacionSeleccionada = null;
+
+// ==================================================
+// FUNCIONES DE UTILIDAD
+// ==================================================
+function obtenerSesion() {
+  try {
+    const data = localStorage.getItem('lp_user');
+    if (!data) return null;
+    return JSON.parse(data);
+  } catch { return null; }
+}
+
+function cerrarSesion() {
+  localStorage.removeItem('lp_user');
+  window.location.href = '/';
+}
+
+function volverPanel() {
+  const sesion = obtenerSesion();
+  const rol = String(sesion?.rol || '').toLowerCase().trim();
+  if (rol === 'admin') {
+    window.location.href = '/dashboardadmin/';
+  } else if (rol === 'coordinador') {
+    window.location.href = '/dashboardcoord/';
+  } else {
+    window.location.href = '/';
+  }
+}
+
+function calcularSemanaActual() {
+  const inicioBase = new Date('2026-04-25T00:30:00-05:00');
+  const ahora = new Date();
+  const unaSemana = 7 * 24 * 60 * 60 * 1000;
+  const diffSemanas = Math.floor((ahora.getTime() - inicioBase.getTime()) / unaSemana);
+  let semana = 5 + diffSemanas;
+  semana = ((semana - 1) % 10 + 10) % 10 + 1;
+  return semana;
+}
+
+function mostrarToast(mensaje) {
+  const toast = document.getElementById('toastMsg');
+  toast.textContent = mensaje;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ==================================================
+// API
+// ==================================================
+async function apiPlaneaciones(accion, params = {}) {
+  const qs = new URLSearchParams({ accion, correo: ST.correo || '', ...params });
+  const res = await fetch(`${API_PLN}?${qs}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  return res.json();
+}
+
+async function cargarPlaneaciones() {
+  try {
+    const res = await apiPlaneaciones('misPlaneacionesDocente', {
+      periodo: periodoActivo,
+      correo: ST.correo
+    });
+    
+    if (res.ok && res.data) {
+      planeacionesData = res.data;
+    } else {
+      planeacionesData = [];
+      console.warn('Error cargando planeaciones:', res.error);
+    }
+  } catch (err) {
+    console.error('Error:', err);
+    planeacionesData = [];
+  }
+  renderizarTodo();
+}
+
+// ==================================================
+// RENDERIZADO
+// ==================================================
+function renderizarSelectorSemanas() {
+  const container = document.getElementById('semanasContainer');
+  const semanas = Array.from({ length: 10 }, (_, i) => i + 1);
+  
+  container.innerHTML = semanas.map(semana => {
+    const esActual = semana === semanaActualCalculada;
+    const esSeleccionada = semana === semanaSeleccionada;
+    return `
+      <button class="week-btn ${esSeleccionada ? 'active' : ''}" data-semana="${semana}">
+        <div class="week-label">Semana</div>
+        <div class="week-number">${semana}</div>
+        ${esActual ? `<span class="week-badge ${esSeleccionada ? 'white' : ''}">Actual</span>` : ''}
+      </button>
+    `;
+  }).join('');
+  
+  document.querySelectorAll('.week-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const semana = parseInt(btn.dataset.semana);
+      semanaSeleccionada = semana;
+      renderizarSelectorSemanas();
+      renderizarCards();
+    });
+  });
+}
+
+function renderizarSelectorPeriodo() {
+  const btns = document.querySelectorAll('.segmented-btn');
+  btns.forEach(btn => {
+    const periodo = btn.dataset.periodo;
+    if (periodo === periodoActivo) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+    btn.onclick = () => {
+      periodoActivo = periodo;
+      renderizarSelectorPeriodo();
+      cargarPlaneaciones();
+    };
+  });
+}
+
+function getEstadoConfig(estado) {
+  const estadoMap = {
+    'aprobada': { label: 'Aprobada', className: 'badge-aprobada', icon: '✓' },
+    'aprobado': { label: 'Aprobada', className: 'badge-aprobada', icon: '✓' },
+    'con ajustes': { label: 'Con ajustes', className: 'badge-ajustes', icon: '⚠' },
+    'ajustes': { label: 'Con ajustes', className: 'badge-ajustes', icon: '⚠' },
+    'pendiente': { label: 'En revisión', className: 'badge-pendiente', icon: '⏳' },
+    'recibida': { label: 'En revisión', className: 'badge-pendiente', icon: '⏳' },
+    'por revisar': { label: 'En revisión', className: 'badge-pendiente', icon: '⏳' },
+    'no_enviada': { label: 'Sin enviar', className: 'badge-no_enviada', icon: '✗' },
+    'reenviada': { label: 'Reenviada', className: 'badge-pendiente', icon: '⏳' }
+  };
+  const key = String(estado || 'no_enviada').toLowerCase();
+  return estadoMap[key] || estadoMap['pendiente'];
+}
+
+function getAsignaturaIcon(asignatura) {
+  const icons = {
+    'matemáticas': '📐',
+    'matematicas': '📐',
+    'español': '📖',
+    'lengua': '📖',
+    'ciencias naturales': '🔬',
+    'ciencias': '🔬',
+    'historia': '🏛️',
+    'educación física': '⚽',
+    'arte': '🎨',
+    'inglés': '🌎',
+    'ingles': '🌎'
+  };
+  return icons[String(asignatura || '').toLowerCase()] || '📚';
+}
+
+function renderizarCards() {
+  const grid = document.getElementById('cardsGrid');
+  const filtradas = planeacionesData.filter(p => (p.semanaNum === semanaSeleccionada || p.semana === semanaSeleccionada));
+  
+  document.getElementById('resultadosCount').textContent = 
+    `${filtradas.length} planeación${filtradas.length !== 1 ? 'es' : ''}`;
+  
+  if (semanaSeleccionada === semanaActualCalculada) {
+    document.getElementById('semanaActualBadge').innerHTML = 
+      '<span class="semana-actual-badge">📅 Semana actual</span>';
+  } else {
+    document.getElementById('semanaActualBadge').innerHTML = '';
+  }
+  
+  if (filtradas.length === 0) {
+    grid.innerHTML = `
+      <div class="planeacion-card card-empty">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">Sin planeación</div>
+        <div class="empty-text">No has enviado planeación para esta semana</div>
+        <button class="btn-create" onclick="crearPlaneacion()">
+          <span>+</span> Crear planeación
+        </button>
+      </div>
+    `;
+    return;
+  }
+  
+  grid.innerHTML = filtradas.map((p, idx) => {
+    const estadoConfig = getEstadoConfig(p.estadoRevision || p.revisionCoord);
+    const fechaEnvio = p.timestamp ? new Date(p.timestamp).toLocaleDateString('es-CO') : '';
+    return `
+      <div class="planeacion-card" style="animation: fadeInUp 0.4s ease-out backwards; animation-delay: ${idx * 0.05}s" onclick="abrirModal('${p.planeacionId}')">
+        <div class="card-glow"></div>
+        <div class="card-content">
+          <div class="card-header">
+            <div class="card-icon">${getAsignaturaIcon(p.asignatura)}</div>
+            <div class="chevron">›</div>
+          </div>
+          <div class="card-title">${p.asignatura || 'Asignatura'}</div>
+          <div class="card-subtitle">Semana ${p.semana || p.semanaNum}</div>
+          <div class="card-info">
+            <div class="info-item">🎓 ${p.grado || '—'}</div>
+            ${fechaEnvio ? `<div class="info-item">📅 ${fechaEnvio}</div>` : ''}
+          </div>
+          <div class="badge ${estadoConfig.className}">
+            <span>${estadoConfig.icon}</span> ${estadoConfig.label}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderizarTodo() {
+  renderizarSelectorSemanas();
+  renderizarSelectorPeriodo();
+  renderizarCards();
+}
+
+// ==================================================
+// MODAL Y ACCIONES
+// ==================================================
+function abrirModal(planeacionId) {
+  const planeacion = planeacionesData.find(p => p.planeacionId === planeacionId);
+  if (!planeacion) return;
+  
+  planeacionSeleccionada = planeacion;
+  const estadoConfig = getEstadoConfig(planeacion.estadoRevision || planeacion.revisionCoord);
+  
+  // Generar clases HTML
+  let clasesHtml = '';
+  for (let i = 1; i <= 5; i++) {
+    const tema = planeacion[`d${i}Tema`];
+    const act = planeacion[`d${i}Actividades`];
+    if (!tema && !act) continue;
+    clasesHtml += `
+      <div class="clase-item">
+        <div><span class="clase-number">${i}</span> <span class="clase-tema">${tema || 'Tema'}</span></div>
+        <div class="clase-act">${act || '—'}</div>
+      </div>
+    `;
+  }
+  
+  if (!clasesHtml) clasesHtml = '<div class="modal-section-content"><p>—</p></div>';
+  
+  const modalHTML = `
+    <div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this) cerrarModal()">
+      <div class="modal-sheet" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+          <div class="modal-header-info">
+            <div class="modal-icon">${getAsignaturaIcon(planeacion.asignatura)}</div>
+            <div>
+              <div class="modal-title">${planeacion.asignatura || 'Asignatura'}</div>
+              <div class="modal-sub">Semana ${planeacion.semana || planeacion.semanaNum} — ${planeacion.grado || ''}</div>
+            </div>
+          </div>
+          <button class="modal-close" onclick="cerrarModal()">✕</button>
+        </div>
+        <div class="modal-badge-row">
+          <div class="badge ${estadoConfig.className}">
+            <span>${estadoConfig.icon}</span> ${estadoConfig.label}
+          </div>
+          ${planeacion.timestamp ? `<div class="info-item" style="background:transparent">📅 Enviada: ${new Date(planeacion.timestamp).toLocaleDateString('es-CO')}</div>` : ''}
+        </div>
+        <div class="modal-body">
+          <div class="modal-section">
+            <div class="modal-section-label">Indicador de desempeño</div>
+            <div class="modal-section-content">
+              <p>${planeacion.indicadorSemanal || '—'}</p>
+            </div>
+          </div>
+          <div class="modal-section">
+            <div class="modal-section-label">Clases planificadas</div>
+            ${clasesHtml}
+          </div>
+          ${planeacion.actCompDescripcion ? `
+          <div class="modal-section">
+            <div class="modal-section-label">Actividad complementaria</div>
+            <div class="modal-section-content"><p>${planeacion.actCompDescripcion}</p></div>
+          </div>
+          ` : ''}
+          ${planeacion.obsFamilias ? `
+          <div class="modal-section">
+            <div class="modal-section-label">Comunicación a familias</div>
+            <div class="modal-section-content"><p>${planeacion.obsFamilias}</p></div>
+          </div>
+          ` : ''}
+          ${planeacion.observacionCoordinacion ? `
+          <div class="modal-section">
+            <div class="modal-section-label" style="color: #f59e0b;">Observación del coordinador</div>
+            <div class="modal-section-content" style="background:rgba(245,158,11,0.05); border-color:rgba(245,158,11,0.2);">
+              <p style="color: #fbbf24;">${planeacion.observacionCoordinacion}</p>
+            </div>
+          </div>
+          ` : ''}
+        </div>
+        <div class="modal-footer">
+          ${estadoConfig.label === 'Con ajustes' ? `
+            <button class="modal-btn modal-btn-primary" onclick="editarPlaneacion('${planeacion.planeacionId}')">
+              ✏️ Editar y reenviar
+            </button>
+          ` : `
+            <button class="modal-btn modal-btn-secondary" onclick="cerrarModal()">Cerrar</button>
+          `}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarModal() {
+  const modal = document.getElementById('modalBackdrop');
+  if (modal) modal.remove();
+  document.body.style.overflow = '';
+  planeacionSeleccionada = null;
+}
+
+function crearPlaneacion() {
+  window.location.href = '/planeaciones/';
+}
+
+function editarPlaneacion(planeacionId) {
+  window.location.href = `/planeaciones/?editar=1&planeacionId=${planeacionId}`;
+}
+
+// ==================================================
+// INICIALIZACIÓN
+// ==================================================
+async function init() {
+  const sesion = obtenerSesion();
+  if (!sesion || !sesion.correo) {
+    window.location.href = '/';
+    return;
+  }
+  
+  ST.correo = sesion.correo;
+  ST.nombre = sesion.nombre || '';
+  ST.rol = sesion.rol || 'docente';
+  ST.docenteId = sesion.docenteId;
+  
+  const rolSpan = document.getElementById('rolVista');
+  if (rolSpan) rolSpan.textContent = String(ST.rol).toUpperCase();
+  
+  semanaActualCalculada = calcularSemanaActual();
+  semanaSeleccionada = semanaActualCalculada;
+  
+  await cargarPlaneaciones();
+}
+
+init();
+</script>
+</body>
+</html>
