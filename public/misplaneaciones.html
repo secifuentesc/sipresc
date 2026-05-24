@@ -722,25 +722,34 @@ function iconoPorMateria(asignatura) {
 // API
 // ==================================================
 async function cargarDatos() {
-  // 🔥 Verificar si ya tenemos datos en sesión
   const cacheKey = `sipresc_cache_${ST.correo}_${periodoActivo}`;
   const cache = sessionStorage.getItem(cacheKey);
   
   if (cache) {
-    const { materias, planeacionesMapData } = JSON.parse(cache);
-    materiasRaw = materias;
-    planeacionesMap = new Map(planeacionesMapData);
-    console.log('⚡ Datos cargados desde caché');
-    return;
+    try {
+      const { materias, planeacionesMapData } = JSON.parse(cache);
+      materiasRaw = materias;
+      planeacionesMap = new Map(planeacionesMapData);
+      console.log('⚡ Datos cargados desde caché');
+      console.log('📊 Planeaciones en mapa:', planeacionesMap.size);
+      return;
+    } catch(e) {
+      console.error('Error al leer caché:', e);
+      sessionStorage.removeItem(cacheKey);
+    }
   }
   
   const qs = new URLSearchParams({ correo: ST.correo || '' });
   
   try {
+    console.log('🔄 Cargando datos desde API...');
     const [resMaterias, resPlaneaciones] = await Promise.all([
       fetch(`${API_PLN}?accion=cargaDocente&${qs}`).then(r => r.json()),
       fetch(`${API_PLN}?accion=misPlaneacionesDocente&periodo=${periodoActivo}&${qs}`).then(r => r.json())
     ]);
+    
+    console.log('📚 Materias recibidas:', resMaterias.materias?.length || 0);
+    console.log('📋 Planeaciones recibidas:', resPlaneaciones.data?.length || 0);
     
     materiasRaw = (resMaterias.ok && resMaterias.materias) ? resMaterias.materias : [];
     planeacionesMap.clear();
@@ -750,18 +759,35 @@ async function cargarDatos() {
         const periodoNorm = normalizarPeriodo(p.periodo);
         if (periodoNorm === periodoActivo) {
           const semanaNum = parseInt(p.semana?.match(/\d+/)?.[0] || '0');
-          const gradoNormalizado = String(p.grado || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          const key = `${normalizar(p.asignatura)}|${gradoNormalizado}|${semanaNum}`;
-          planeacionesMap.set(key, p);
+          const gradoNorm = String(p.grado || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          
+          let gruposDestino = [];
+          if (p.gruposDestino) {
+            gruposDestino = String(p.gruposDestino).split(',').map(g => g.trim().toUpperCase()).filter(g => g === 'A' || g === 'B');
+          }
+          
+          if (gruposDestino.length === 0) {
+            const key = `${normalizar(p.asignatura)}|${gradoNorm}|${semanaNum}|SIN_GRUPO`;
+            planeacionesMap.set(key, p);
+          } else {
+            gruposDestino.forEach(grupo => {
+              const key = `${normalizar(p.asignatura)}|${gradoNorm}|${semanaNum}|${grupo}`;
+              planeacionesMap.set(key, p);
+            });
+          }
         }
       });
     }
     
-    // 🔥 Guardar en caché para próxima vez (10 minutos)
-    sessionStorage.setItem(cacheKey, JSON.stringify({
+    console.log('📊 Planeaciones guardadas en mapa:', planeacionesMap.size);
+    
+    // Guardar en caché
+    const cacheData = {
       materias: materiasRaw,
       planeacionesMapData: Array.from(planeacionesMap.entries())
-    }));
+    };
+    sessionStorage.setItem(cacheKey, JSON.stringify(cacheData));
+    console.log('💾 Caché guardado');
     
     setTimeout(() => sessionStorage.removeItem(cacheKey), 10 * 60 * 1000);
     
