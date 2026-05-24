@@ -769,6 +769,33 @@ body{
   }
 }
 
+/* Loader premium tipo Apple */
+.loader-premium {
+  display: inline-block;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #c9962a, #e8b84b, #fff, #c9962a);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 7px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), #000 calc(100% - 7px));
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
+}
+
+.loader-text-premium {
+  font-size: 14px;
+  font-weight: 500;
+  background: linear-gradient(90deg, #c9962a, #e8b84b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: pulse-text 1.5s ease infinite;
+}
+
+@keyframes pulse-text {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
 
 </style>
 </head>
@@ -776,9 +803,9 @@ body{
 
 <div id="overlayEnviar">
   <div class="loader-box">
-    <div class="loader-ring"></div>
-    <div id="loaderText">Enviando planeación</div>
-    <div id="loaderSuccess">✔</div>
+    <div class="loader-premium"></div>
+    <div id="loaderText" class="loader-text-premium">Iniciando...</div>
+    <div id="loaderSuccess"></div>
   </div>
 </div>
 
@@ -1584,9 +1611,27 @@ async function enviarPlaneacion() {
   setTimeout(() => btn.style.transform = "scale(1)", 120);
   document.querySelector(".form-app").classList.add("blur");
   overlay.classList.add("activo");
-  loaderText.textContent = "Enviando...";
+  
+  // ✨ ANIMACIÓN DE PASOS (para que parezca más rápido)
+  const pasos = [
+    "Verificando datos...",
+    "Subiendo archivos...",
+    "Guardando en el sistema...",
+    "Confirmando registro...",
+    "¡Casi listo!"
+  ];
+  
+  let pasoActual = 0;
+  loaderText.textContent = pasos[0];
   loaderSuccess.style.opacity = "0";
   estado.textContent = "Enviando...";
+  
+  const intervalPasos = setInterval(() => {
+    pasoActual++;
+    if (pasoActual < pasos.length) {
+      loaderText.textContent = pasos[pasoActual];
+    }
+  }, 900);
 
   const payload = {
     accion: "guardarFinal",
@@ -1635,6 +1680,7 @@ async function enviarPlaneacion() {
       
       if (json && json.ok) {
         // ÉXITO
+        clearInterval(intervalPasos);
         loaderText.textContent = "Enviado";
         loaderSuccess.style.opacity = "1";
         loaderSuccess.style.transform = "scale(1.2)";
@@ -1667,6 +1713,7 @@ async function enviarPlaneacion() {
         setTimeout(intentarEnvio, 2000);
       } else {
         // FALLO DEFINITIVO
+        clearInterval(intervalPasos);
         mostrarNotificacionProfesional(
           `No se pudo enviar tu planeación. Motivo: ${error.message}. El sistema guardó un respaldo automático. Por favor, intenta de nuevo más tarde o contacta a soporte.`,
           'error'
