@@ -865,23 +865,25 @@ function abrirDetalle(asignatura, grado, semana) {
           </div>`;
   }
   
-  if (p.actCompDescripcion) {
+     // 🔥 ACTIVIDAD COMPLEMENTARIA (siempre mostrar si hay descripción O link)
+  if (p.actCompDescripcion || p.actCompAnexoUrl) {
     html += `
           <div style="margin-bottom:24px;">
             <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Actividad complementaria</div>
             <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:14px; font-size:14px; line-height:1.5;">
-              ${escapeHtml(p.actCompDescripcion)}
+              ${escapeHtml(p.actCompDescripcion) || 'Sin descripción'}
               ${p.actCompAnexoUrl ? `<div style="margin-top:10px;"><a href="${p.actCompAnexoUrl}" target="_blank" style="color:var(--gold); text-decoration:none;">📎 Ver anexo de actividad complementaria</a></div>` : ''}
             </div>
           </div>`;
   }
   
-  if (p.obsFamilias) {
+  // 🔥 COMUNICACIÓN A FAMILIAS (siempre mostrar si hay observación O link)
+  if (p.obsFamilias || p.anexoFamiliasUrl) {
     html += `
           <div style="margin-bottom:24px;">
             <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Comunicación a familias</div>
             <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:14px; font-size:14px; line-height:1.5;">
-              ${escapeHtml(p.obsFamilias)}
+              ${escapeHtml(p.obsFamilias) || 'Sin comunicación registrada'}
               ${p.anexoFamiliasUrl ? `<div style="margin-top:10px;"><a href="${p.anexoFamiliasUrl}" target="_blank" style="color:var(--gold); text-decoration:none;">📎 Ver anexo de comunicación a familias</a></div>` : ''}
             </div>
           </div>`;
