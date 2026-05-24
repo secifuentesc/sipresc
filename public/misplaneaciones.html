@@ -911,19 +911,24 @@ function abrirDetalle(asignatura, grado, semana) {
   const p = e.data;
   if (!p) return;
   
-  // Generar HTML de las clases
+  // Generar HTML de las clases (más legible)
   let clasesHtml = '';
+  let tieneClases = false;
   for (let i = 1; i <= 5; i++) {
     const tema = p[`d${i}Tema`];
     const act = p[`d${i}Actividades`];
     if (!tema && !act) continue;
+    tieneClases = true;
     clasesHtml += `
-      <div style="background:rgba(255,255,255,0.03); border-radius:16px; padding:16px; margin-bottom:12px;">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-          <div style="width:26px; height:26px; background:rgba(59,130,246,0.2); color:#60a5fa; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700;">${i}</div>
-          <div style="font-weight:600;">${escapeHtml(tema)}</div>
+      <div style="background:rgba(255,255,255,0.04); border-radius:20px; padding:20px; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+          <div style="width:32px; height:32px; background:rgba(59,130,246,0.25); color:#90cdf4; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px;">${i}</div>
+          <div style="font-size:17px; font-weight:700; color:#fff;">${escapeHtml(tema) || 'Sin tema'}</div>
         </div>
-        <div style="margin-left:36px; font-size:13px; color:rgba(255,255,255,0.6);">${escapeHtml(act)}</div>
+        <div style="margin-left:44px;">
+          <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#90cdf4; margin-bottom:6px;">Actividades</div>
+          <div style="font-size:15px; line-height:1.6; color:rgba(255,255,255,0.8);">${escapeHtml(act) || '—'}</div>
+        </div>
       </div>
     `;
   }
@@ -932,77 +937,93 @@ function abrirDetalle(asignatura, grado, semana) {
   
   let html = `
     <div class="modal" id="modalPlaneacion" onclick="if(event.target===this) cerrarModal()">
-      <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-content" style="max-width: 800px; width: 95%;" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="modal-header">
+        
+        <!-- HEADER -->
+        <div class="modal-header" style="padding: 20px 24px;">
           <div class="modal-header-info">
-            <div class="modal-icon">${iconoPorMateria(asignatura)}</div>
+            <div class="modal-icon" style="width: 56px; height: 56px;">${iconoPorMateria(asignatura)}</div>
             <div>
-              <div class="modal-title" style="font-size:20px;">${escapeHtml(asignatura)}</div>
-              <div class="modal-sub">Semana ${semana} · ${escapeHtml(grado)}</div>
+              <div class="modal-title" style="font-size: 22px; font-weight: 700;">${escapeHtml(asignatura)}</div>
+              <div class="modal-sub" style="font-size: 14px; margin-top: 4px;">Semana ${semana} · ${escapeHtml(grado)}</div>
             </div>
           </div>
-          <button class="modal-close" onclick="cerrarModal()">✕</button>
+          <button class="modal-close" style="width: 40px; height: 40px;" onclick="cerrarModal()">✕</button>
         </div>
-        <div class="modal-body" style="padding:20px 24px;">
+        
+        <!-- BADGE ESTADO -->
+        <div style="padding: 0 24px 16px 24px;">
+          <span class="estado-badge ${estadoClass}" style="display:inline-flex; padding: 8px 20px; font-size: 13px;">${e.label}</span>
+        </div>
+        
+        <!-- CUERPO PRINCIPAL -->
+        <div class="modal-body" style="padding: 8px 24px 24px 24px; max-height: 65vh;">
           
-          <div style="margin-bottom:24px;">
-            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Estado</div>
-            <div><span class="estado-badge ${estadoClass}" style="display:inline-flex; padding:6px 16px;">${e.label}</span></div>
+          <!-- INDICADOR -->
+          <div style="margin-bottom: 28px;">
+            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">📋 Indicador de desempeño</div>
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px 20px; font-size: 16px; line-height: 1.6;">${escapeHtml(p.indicadorSemanal) || '—'}</div>
           </div>`;
   
-  if (p.indicadorSemanal) {
+  // CLASES
+  if (tieneClases) {
     html += `
-          <div style="margin-bottom:24px;">
-            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Indicador de desempeño</div>
-            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:14px; font-size:14px; line-height:1.5;">${escapeHtml(p.indicadorSemanal)}</div>
-          </div>`;
-  }
-  
-  if (clasesHtml) {
-    html += `
-          <div style="margin-bottom:24px;">
-            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:12px;">Clases planificadas</div>
+          <div style="margin-bottom: 28px;">
+            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">📚 Clases planificadas</div>
             ${clasesHtml}
           </div>`;
   }
   
-     // 🔥 ACTIVIDAD COMPLEMENTARIA (siempre mostrar si hay descripción O link)
-  if (p.actCompDescripcion || p.actCompAnexoUrl) {
+  // ACTIVIDAD COMPLEMENTARIA
+  const linkComp = p.actCompAnexoUrl || '';
+  if (p.actCompDescripcion || linkComp) {
     html += `
-          <div style="margin-bottom:24px;">
-            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Actividad complementaria</div>
-            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:14px; font-size:14px; line-height:1.5;">
-              ${escapeHtml(p.actCompDescripcion) || 'Sin descripción'}
-              ${p.actCompAnexoUrl ? `<div style="margin-top:10px;"><a href="${p.actCompAnexoUrl}" target="_blank" style="color:var(--gold); text-decoration:none;">📎 Ver anexo de actividad complementaria</a></div>` : ''}
+          <div style="margin-bottom: 28px;">
+            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">⭐ Actividad complementaria</div>
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px 20px;">
+              <div style="font-size: 15px; line-height: 1.6; margin-bottom: ${linkComp ? '12px' : '0'};">
+                ${escapeHtml(p.actCompDescripcion) || 'Sin descripción'}
+              </div>
+              ${linkComp ? `<div><a href="${linkComp}" target="_blank" style="color: #c9962a; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">📎 Ver anexo de actividad complementaria →</a></div>` : ''}
             </div>
           </div>`;
   }
   
-  // 🔥 COMUNICACIÓN A FAMILIAS (siempre mostrar si hay observación O link)
-  if (p.obsFamilias || p.anexoFamiliasUrl) {
+  // COMUNICACIÓN A FAMILIAS
+  const linkFam = p.anexoFamiliasUrl || '';
+  if (p.obsFamilias || linkFam) {
     html += `
-          <div style="margin-bottom:24px;">
-            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Comunicación a familias</div>
-            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:14px; font-size:14px; line-height:1.5;">
-              ${escapeHtml(p.obsFamilias) || 'Sin comunicación registrada'}
-              ${p.anexoFamiliasUrl ? `<div style="margin-top:10px;"><a href="${p.anexoFamiliasUrl}" target="_blank" style="color:var(--gold); text-decoration:none;">📎 Ver anexo de comunicación a familias</a></div>` : ''}
+          <div style="margin-bottom: 28px;">
+            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">👪 Comunicación a familias</div>
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px 20px;">
+              <div style="font-size: 15px; line-height: 1.6; margin-bottom: ${linkFam ? '12px' : '0'};">
+                ${escapeHtml(p.obsFamilias) || 'Sin comunicación registrada'}
+              </div>
+              ${linkFam ? `<div><a href="${linkFam}" target="_blank" style="color: #c9962a; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">📎 Ver anexo de comunicación a familias →</a></div>` : ''}
             </div>
           </div>`;
   }
   
+  // OBSERVACIÓN DEL COORDINADOR
   if (p.observacionCoordinacion && e.estado === 'con_ajustes') {
     html += `
-          <div style="margin-bottom:24px;">
-            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#f59e0b; margin-bottom:8px;">Observación del coordinador</div>
-            <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); border-radius:14px; padding:14px; font-size:14px; line-height:1.5; color:#fbbf24;">${escapeHtml(p.observacionCoordinacion)}</div>
+          <div style="margin-bottom: 28px;">
+            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #f59e0b; margin-bottom: 12px;">📝 Observación del coordinador</div>
+            <div style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); border-radius: 18px; padding: 18px 20px;">
+              <div style="font-size: 15px; line-height: 1.6; color: #fbbf24;">${escapeHtml(p.observacionCoordinacion)}</div>
+            </div>
           </div>`;
   }
   
   html += `
         </div>
-        <div class="modal-footer">
-          ${e.estado === 'con_ajustes' ? `<button class="modal-btn modal-btn-primary" onclick="editarPlaneacion('${p.planeacionId}')">✏️ Editar y reenviar</button>` : `<button class="modal-btn modal-btn-secondary" onclick="cerrarModal()">Cerrar</button>`}
+        
+        <!-- FOOTER -->
+        <div class="modal-footer" style="padding: 20px 24px;">
+          ${e.estado === 'con_ajustes' 
+            ? `<button class="modal-btn modal-btn-primary" style="padding: 16px; font-size: 16px;" onclick="editarPlaneacion('${p.planeacionId}')">✏️ Editar y reenviar planeación</button>` 
+            : `<button class="modal-btn modal-btn-secondary" style="padding: 14px; font-size: 15px;" onclick="cerrarModal()">Cerrar</button>`}
         </div>
       </div>
     </div>
