@@ -1,21 +1,32 @@
 // ============================================================
 // anti-debug.js - SIPRESC
 // Bloqueo de inspección + modo admin con tecla secreta
+// Compatible con Windows, Mac y Linux
+// Tecla secreta: Ctrl + Shift (Windows/Linux) o Cmd + Shift (Mac)
 // ============================================================
 
 (function() {
   'use strict';
 
   // ──────────────────────────────────────────────────────────
-  // TECLA SECRETA: Ctrl + Shift (solo para admin)
+  // DETECTAR SISTEMA OPERATIVO (solo para info visual)
+  // ──────────────────────────────────────────────────────────
+  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  const teclaModificador = isMac ? 'Cmd' : 'Ctrl';
+
+  // ──────────────────────────────────────────────────────────
+  // TECLA SECRETA: Ctrl/Cmd + Shift (cualquier Shift)
   // ──────────────────────────────────────────────────────────
   let modoAdminTemporal = false;
   let contadorTecla = 0;
   let tiempoUltimaTecla = 0;
 
   document.addEventListener('keydown', (e) => {
-    // Ctrl + Shift (cualquier Shift, izquierda o derecha)
-    if (e.ctrlKey && (e.shiftKey || e.key === 'Shift')) {
+    // Detectar Ctrl (Windows/Linux) o Cmd (Mac) + Shift
+    const modificadorPresionado = (e.ctrlKey || e.metaKey);
+    const shiftPresionado = (e.shiftKey || e.key === 'Shift');
+    
+    if (modificadorPresionado && shiftPresionado) {
       e.preventDefault();
       
       const ahora = Date.now();
@@ -32,7 +43,9 @@
         
         // Feedback visual
         const msg = document.createElement('div');
-        msg.textContent = modoAdminTemporal ? '👑 Modo inspección ACTIVADO' : '🔒 Modo inspección DESACTIVADO';
+        msg.textContent = modoAdminTemporal 
+          ? `👑 Modo inspección ACTIVADO (${teclaModificador}+Shift para desactivar)` 
+          : `🔒 Modo inspección DESACTIVADO`;
         msg.style.cssText = `
           position: fixed; top: 20px; right: 20px; z-index: 99999;
           background: #0d1f3c; border: 1px solid #c9962a;
@@ -120,22 +133,25 @@
   });
 
   // ──────────────────────────────────────────────────────────
-  // CAPA 2: Teclas de desarrollador
+  // CAPA 2: Teclas de desarrollador (Windows y Mac)
   // ──────────────────────────────────────────────────────────
   const teclasProhibidas = ['F12', 'F11', 'F10', 'F9', 'F8', 'F7', 'F6', 'F5'];
   
   document.addEventListener('keydown', (e) => {
     if (!bloqueoActivo()) return;
     
-    // Teclas de función
+    // Teclas de función (F12, etc.)
     if (teclasProhibidas.includes(e.key)) {
       e.preventDefault();
       mostrarMensajeSipresc();
       return;
     }
     
-    // Combinaciones con Ctrl
-    if (e.ctrlKey && (
+    // Detectar modificadores: Ctrl (Windows/Linux) o Cmd (Mac)
+    const modificador = (e.ctrlKey || e.metaKey);
+    
+    // Combinaciones peligrosas
+    if (modificador && (
       e.key === 'u' || e.key === 'U' ||
       e.key === 'i' || e.key === 'I' ||
       e.key === 'j' || e.key === 'J' ||
@@ -148,8 +164,8 @@
       mostrarMensajeSipresc();
     }
     
-    // Ctrl + Shift + ...
-    if (e.ctrlKey && e.shiftKey && (
+    // Combinación con Shift: Ctrl/Cmd + Shift + ...
+    if (modificador && e.shiftKey && (
       e.key === 'I' || e.key === 'i' ||
       e.key === 'J' || e.key === 'j' ||
       e.key === 'C' || e.key === 'c'
@@ -157,10 +173,21 @@
       e.preventDefault();
       mostrarMensajeSipresc();
     }
+    
+    // Bloquear Cmd + Option + I/J/C/U en Mac (equivalente a Ctrl+Shift+I en Windows)
+    if (isMac && e.metaKey && e.altKey && (
+      e.key === 'I' || e.key === 'i' ||
+      e.key === 'J' || e.key === 'j' ||
+      e.key === 'C' || e.key === 'c' ||
+      e.key === 'U' || e.key === 'u'
+    )) {
+      e.preventDefault();
+      mostrarMensajeSipresc();
+    }
   });
 
   // ──────────────────────────────────────────────────────────
-  // CAPA 3: Detección de DevTools
+  // CAPA 3: Detección de DevTools (universal)
   // ──────────────────────────────────────────────────────────
   function detectarDevTools() {
     if (!bloqueoActivo()) return;
