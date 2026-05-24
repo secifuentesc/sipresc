@@ -382,66 +382,6 @@ body {
 .modal-body {
   padding: 20px 24px;
 }
-.modal-section {
-  margin-bottom: 24px;
-}
-.modal-label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-}
-.modal-value {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 12px 14px;
-  font-size: 14px;
-  line-height: 1.5;
-}
-.modal-link {
-  color: var(--gold);
-  text-decoration: none;
-  word-break: break-all;
-}
-.modal-link:hover { text-decoration: underline; }
-.clase-item {
-  background: rgba(255,255,255,0.03);
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 12px;
-}
-.clase-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-.clase-num {
-  width: 26px;
-  height: 26px;
-  background: rgba(59,130,246,0.2);
-  color: var(--blue);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-}
-.clase-tema {
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--text);
-}
-.clase-act {
-  font-size: 13px;
-  color: var(--text-muted);
-  line-height: 1.5;
-  margin-left: 36px;
-}
 .modal-footer {
   padding: 16px 20px;
   border-top: 1px solid var(--border);
@@ -566,30 +506,32 @@ function normalizarGrado(grado) {
   
   const gradoStr = String(grado).toLowerCase().trim();
   
-  const mapaGrados = {
-    'primero': '1',
-    'segundo': '2', 
-    'tercero': '3',
-    'cuarto': '4',
-    'quinto': '5',
-    'sexto': '6',
-    'septimo': '7',
-    'séptimo': '7',
-    'octavo': '8',
-    'noveno': '9',
-    'decimo': '10',
-    'décimo': '10',
-    'once': '11',
-    'undecimo': '11',
-    'undécimo': '11'
-  };
+  // Orden: primero las más largas (undécimo antes que décimo)
+  const mapaGrados = [
+    { palabra: 'undecimo', numero: '11' },
+    { palabra: 'undécimo', numero: '11' },
+    { palabra: 'once', numero: '11' },
+    { palabra: 'decimo', numero: '10' },
+    { palabra: 'décimo', numero: '10' },
+    { palabra: 'noveno', numero: '9' },
+    { palabra: 'octavo', numero: '8' },
+    { palabra: 'septimo', numero: '7' },
+    { palabra: 'séptimo', numero: '7' },
+    { palabra: 'sexto', numero: '6' },
+    { palabra: 'quinto', numero: '5' },
+    { palabra: 'cuarto', numero: '4' },
+    { palabra: 'tercero', numero: '3' },
+    { palabra: 'segundo', numero: '2' },
+    { palabra: 'primero', numero: '1' }
+  ];
   
-  for (const [palabra, numero] of Object.entries(mapaGrados)) {
-    if (gradoStr.includes(palabra)) {
-      return numero;
+  for (const item of mapaGrados) {
+    if (gradoStr.includes(item.palabra)) {
+      return item.numero;
     }
   }
   
+  // Si tiene número directamente
   const matchNumero = gradoStr.match(/\d+/);
   if (matchNumero) {
     return matchNumero[0];
@@ -729,11 +671,11 @@ function iconoPorMateria(asignatura) {
 }
 
 // ==================================================
-// API - CARGA DE DATOS (CORREGIDA)
+// API - CARGA DE DATOS
 // ==================================================
 async function cargarDatos() {
   const cacheKey = `sipresc_cache_${ST.correo}_${periodoActivo}`;
-  sessionStorage.removeItem(cacheKey); // Forzar recarga para depurar
+  sessionStorage.removeItem(cacheKey);
   
   const qs = new URLSearchParams({ correo: ST.correo || '' });
   
@@ -744,72 +686,29 @@ async function cargarDatos() {
       fetch(`${API_PLN}?accion=misPlaneacionesDocente&${qs}`).then(r => r.json())
     ]);
     
-    console.log('📚 MATERIAS - Respuesta completa:', resMaterias);
-    console.log('📋 PLANEACIONES - Respuesta completa:', resPlaneaciones);
-    
-    // ============================================
-    // DETECCIÓN AUTOMÁTICA DE ESTRUCTURA - MATERIAS
-    // ============================================
-    materiasRaw = [];
-    
-    if (Array.isArray(resMaterias)) {
-      // Caso 1: Es un array directo
+    // Detectar estructura de materias
+    if (resMaterias.data && Array.isArray(resMaterias.data)) {
+      materiasRaw = resMaterias.data;
+    } else if (Array.isArray(resMaterias)) {
       materiasRaw = resMaterias;
-      console.log('✅ Materias: array directo,', materiasRaw.length, 'items');
-    } 
-    else if (resMaterias.data && Array.isArray(resMaterias.data)) {
-      // Caso 2: Tiene propiedad .data
-      materiasRaw = resMaterias.data;
-      console.log('✅ Materias: desde .data,', materiasRaw.length, 'items');
-    }
-    else if (resMaterias.materias && Array.isArray(resMaterias.materias)) {
-      // Caso 3: Tiene propiedad .materias
-      materiasRaw = resMaterias.materias;
-      console.log('✅ Materias: desde .materias,', materiasRaw.length, 'items');
-    }
-    else if (resMaterias.success && resMaterias.data && Array.isArray(resMaterias.data)) {
-      // Caso 4: Tiene success + data
-      materiasRaw = resMaterias.data;
-      console.log('✅ Materias: desde success.data,', materiasRaw.length, 'items');
-    }
-    else {
-      // Si no reconoce, mostrar todas las propiedades para depurar
-      console.error('❌ Estructura de materias NO reconocida. Propiedades:', Object.keys(resMaterias));
-      console.error('Contenido:', resMaterias);
+    } else {
+      materiasRaw = [];
     }
     
-    // ============================================
-    // DETECCIÓN AUTOMÁTICA DE ESTRUCTURA - PLANEACIONES
-    // ============================================
+    // Detectar estructura de planeaciones
     let planeacionesRaw = [];
-    
-    if (Array.isArray(resPlaneaciones)) {
+    if (resPlaneaciones.data && Array.isArray(resPlaneaciones.data)) {
+      planeacionesRaw = resPlaneaciones.data;
+    } else if (Array.isArray(resPlaneaciones)) {
       planeacionesRaw = resPlaneaciones;
-      console.log('✅ Planeaciones: array directo,', planeacionesRaw.length, 'items');
-    }
-    else if (resPlaneaciones.data && Array.isArray(resPlaneaciones.data)) {
-      planeacionesRaw = resPlaneaciones.data;
-      console.log('✅ Planeaciones: desde .data,', planeacionesRaw.length, 'items');
-    }
-    else if (resPlaneaciones.planeaciones && Array.isArray(resPlaneaciones.planeaciones)) {
-      planeacionesRaw = resPlaneaciones.planeaciones;
-      console.log('✅ Planeaciones: desde .planeaciones,', planeacionesRaw.length, 'items');
-    }
-    else if (resPlaneaciones.success && resPlaneaciones.data && Array.isArray(resPlaneaciones.data)) {
-      planeacionesRaw = resPlaneaciones.data;
-      console.log('✅ Planeaciones: desde success.data,', planeacionesRaw.length, 'items');
-    }
-    else {
-      console.error('❌ Estructura de planeaciones NO reconocida. Propiedades:', Object.keys(resPlaneaciones));
-      console.error('Contenido:', resPlaneaciones);
     }
     
-    // ============================================
-    // PROCESAR PLANEACIONES
-    // ============================================
+    console.log(`📚 Materias: ${materiasRaw.length}, 📋 Planeaciones: ${planeacionesRaw.length}`);
+    
+    // Procesar planeaciones
     planeacionesMap.clear();
     
-    planeacionesRaw.forEach((p, idx) => {
+    planeacionesRaw.forEach(p => {
       const periodoNorm = normalizarPeriodo(p.periodo);
       
       if (periodoNorm === periodoActivo) {
@@ -826,18 +725,25 @@ async function cargarDatos() {
         const asignaturaNorm = normalizar(p.asignatura);
         const gradoNumero = normalizarGrado(p.grado);
         
+        // Procesar grupos destino correctamente
         let gruposDestino = [];
         if (p.gruposDestino && p.gruposDestino !== '') {
-          gruposDestino = String(p.gruposDestino)
-            .split(',')
-            .map(g => g.trim().toUpperCase())
-            .filter(g => g === 'A' || g === 'B');
+          const gruposStr = String(p.gruposDestino).toUpperCase().replace(/\s/g, '');
+          if (gruposStr === 'A,B' || gruposStr === 'B,A') {
+            gruposDestino = ['A', 'B'];
+          } else if (gruposStr === 'A') {
+            gruposDestino = ['A'];
+          } else if (gruposStr === 'B') {
+            gruposDestino = ['B'];
+          }
         }
         
         if (gruposDestino.length === 0) {
+          // Sin grupos específicos -> para todo el grado (sin letra)
           const key = `${asignaturaNorm}|${gradoNumero}|${semanaNum}|SIN_GRUPO`;
           planeacionesMap.set(key, p);
         } else {
+          // Para cada grupo específico
           gruposDestino.forEach(grupo => {
             const key = `${asignaturaNorm}|${gradoNumero}|${semanaNum}|${grupo}`;
             planeacionesMap.set(key, p);
@@ -846,16 +752,14 @@ async function cargarDatos() {
       }
     });
     
-    console.log(`📊 TOTAL: ${planeacionesMap.size} planeaciones guardadas`);
+    console.log(`📊 Planeaciones guardadas: ${planeacionesMap.size}`);
     
-    // Guardar en caché
+    // Guardar caché
     if (materiasRaw.length > 0) {
-      const cacheData = {
+      sessionStorage.setItem(cacheKey, JSON.stringify({
         materias: materiasRaw,
         planeacionesMapData: Array.from(planeacionesMap.entries())
-      };
-      sessionStorage.setItem(cacheKey, JSON.stringify(cacheData));
-      console.log('💾 Caché guardado');
+      }));
     }
     
   } catch (error) {
@@ -884,6 +788,7 @@ function desglosar() {
     });
   });
   
+  // Ordenar por número de grado
   cards.sort((a, b) => {
     const numA = parseInt(normalizarGrado(a.gradoBase)) || 0;
     const numB = parseInt(normalizarGrado(b.gradoBase)) || 0;
@@ -895,7 +800,7 @@ function desglosar() {
 }
 
 // ==================================================
-// GET ESTADO
+// GET ESTADO - LÓGICA CORRECTA DE GRUPOS
 // ==================================================
 function getEstado(asignatura, gradoOriginal, semana) {
   const asignaturaNorm = normalizar(asignatura);
@@ -903,27 +808,29 @@ function getEstado(asignatura, gradoOriginal, semana) {
   const gradoNumero = normalizarGrado(gradoBase);
   const letra = gradoOriginal.match(/[AB]$/i)?.[0]?.toUpperCase() || '';
   
-  console.log(`🔎 Buscando: ${asignatura} | Grado: ${gradoOriginal} (base: ${gradoBase}, número: ${gradoNumero}, letra: ${letra || 'ninguna'}) | Semana: ${semana}`);
-  
+  // Buscar en el mapa
   for (const [key, p] of planeacionesMap.entries()) {
     const [keyAsig, keyGradoNum, keySemana, keyGrupo] = key.split('|');
     
-    if (keyAsig === asignaturaNorm && parseInt(keySemana) === semana && keyGradoNum === gradoNumero) {
-      if (keyGrupo !== 'SIN_GRUPO') {
-        if (letra && keyGrupo === letra) {
-          console.log(`✅ Coincide exacto: ${key}`);
+    if (keyAsig === asignaturaNorm && keyGradoNum === gradoNumero && parseInt(keySemana) === semana) {
+      
+      // Si la tarjeta tiene letra (ej: "SEXTO A")
+      if (letra) {
+        // Solo coincide si la planeación tiene ese grupo específico
+        if (keyGrupo === letra) {
           return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
         }
-      } else {
-        if (!letra) {
-          console.log(`✅ Coincide sin grupo: ${key}`);
+      } 
+      // Si la tarjeta NO tiene letra (ej: "SEXTO" - grado general)
+      else {
+        // Solo mostrar planeaciones SIN_GRUPO
+        if (keyGrupo === 'SIN_GRUPO') {
           return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
         }
       }
     }
   }
   
-  console.log(`❌ No encontrada`);
   return { estado: 'no_enviada', label: 'No enviada', data: null };
 }
 
