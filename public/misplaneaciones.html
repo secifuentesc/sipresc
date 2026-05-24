@@ -586,14 +586,39 @@ async function cargarDatos() {
   }
 }
 
+function compararGrado(gradoPlaneacion, gradoCarga) {
+  const numPlaneacion = String(gradoPlaneacion || '').match(/\d+/)?.[0] || '';
+  const numCarga = String(gradoCarga || '').match(/\d+/)?.[0] || '';
+  if (numPlaneacion !== numCarga) return false;
+  
+  const letraPlaneacion = String(gradoPlaneacion || '').match(/[AB]$/i)?.[0] || '';
+  const letraCarga = String(gradoCarga || '').match(/[AB]$/i)?.[0] || '';
+  if (letraCarga && !letraPlaneacion) return true;
+  if (letraCarga && letraPlaneacion && letraCarga.toUpperCase() !== letraPlaneacion.toUpperCase()) return false;
+  
+  return true;
+}
+
 function getEstado(asignatura, grado) {
-  const key = `${normalizar(asignatura)}|${extraerNumeroGrado(grado)}`;
-  const p = planeacionesMap.get(key);
-  if (!p) return { estado: 'no_enviada', label: 'No enviada', data: null };
-  const raw = (p.estadoRevision || p.revisionCoord || '').toLowerCase();
-  if (raw === 'aprobada' || raw === 'aprobado') return { estado: 'aprobada', label: 'Aprobada', data: p, id: p.planeacionId };
-  if (raw.includes('ajuste')) return { estado: 'con_ajustes', label: 'Con ajustes', data: p, id: p.planeacionId };
-  return { estado: 'pendiente', label: 'En revisión', data: p, id: p.planeacionId };
+  const asignaturaNorm = normalizar(asignatura);
+  
+  // Buscar planeación que coincida en asignatura y grado (ignorando A/B)
+  let planeacionEncontrada = null;
+  for (const [key, p] of planeacionesMap.entries()) {
+    const pAsignatura = normalizar(p.asignatura);
+    if (pAsignatura === asignaturaNorm && compararGrado(p.grado, grado)) {
+      planeacionEncontrada = p;
+      break;
+    }
+  }
+  
+  if (!planeacionEncontrada) return { estado: 'no_enviada', label: 'No enviada', data: null };
+  
+  const raw = (planeacionEncontrada.estadoRevision || planeacionEncontrada.revisionCoord || '').toLowerCase();
+  if (raw === 'aprobada' || raw === 'aprobado') return { estado: 'aprobada', label: 'Aprobada', data: planeacionEncontrada, id: planeacionEncontrada.planeacionId };
+  if (raw.includes('ajuste')) return { estado: 'con_ajustes', label: 'Con ajustes', data: planeacionEncontrada, id: planeacionEncontrada.planeacionId };
+  return { estado: 'pendiente', label: 'En revisión', data: planeacionEncontrada, id: planeacionEncontrada.planeacionId };
+}eturn { estado: 'pendiente', label: 'En revisión', data: p, id: p.planeacionId };
 }
 
 function desglosar() {
