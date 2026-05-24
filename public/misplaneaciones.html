@@ -586,10 +586,20 @@ async function cargarDatos() {
     
     if (resPlaneaciones.ok && resPlaneaciones.data) {
       resPlaneaciones.data.forEach(p => {
-        // 🔥 NORMALIZAR PERÍODO: "2" → "P2", "3" → "P3"
-        let periodoPlaneacion = p.periodo || '';
-        if (periodoPlaneacion && !periodoPlaneacion.startsWith('P') && /^\d+$/.test(periodoPlaneacion)) {
-          periodoPlaneacion = 'P' + periodoPlaneacion;
+        // 🔥 NORMALIZAR PERÍODO: manejar número o string
+        let periodoPlaneacion = p.periodo;
+        if (periodoPlaneacion !== undefined && periodoPlaneacion !== null) {
+          // Convertir a string si es número
+          if (typeof periodoPlaneacion === 'number') {
+            periodoPlaneacion = 'P' + periodoPlaneacion.toString();
+          } else if (typeof periodoPlaneacion === 'string') {
+            // Si es string como "2", convertirlo a "P2"
+            if (!periodoPlaneacion.startsWith('P') && /^\d+$/.test(periodoPlaneacion)) {
+              periodoPlaneacion = 'P' + periodoPlaneacion;
+            }
+          }
+        } else {
+          periodoPlaneacion = '';
         }
         
         // Solo guardar si coincide con el período activo
@@ -600,7 +610,8 @@ async function cargarDatos() {
       });
     }
     
-    // Fallback: si no hay materias, usar datos de prueba para mostrar UI
+    console.log('📊 Planeaciones encontradas en período', periodoActivo, ':', planeacionesMap.size);
+    
     if (materiasRaw.length === 0) {
       materiasRaw = [
         { asignatura: "TECNOLOGÍA E INFORMÁTICA", grados: ["SEXTO A", "SEXTO B", "SÉPTIMO", "OCTAVO", "NOVENO", "DÉCIMO", "UNDÉCIMO"] }
@@ -613,7 +624,6 @@ async function cargarDatos() {
     ];
   }
 }
-
 function compararGrado(gradoPlaneacion, gradoCarga) {
   const numPlaneacion = extraerNumeroGrado(gradoPlaneacion);
   const numCarga = extraerNumeroGrado(gradoCarga);
