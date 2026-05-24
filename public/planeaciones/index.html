@@ -581,6 +581,8 @@ body{
     font-size:11px;
   }
 }
+
+
 </style>
 </head>
 <body>
@@ -1009,6 +1011,35 @@ let ST = {
   enviarCopia:false 
 };
 const API = "/api/planeaciones";
+
+// ==================================================
+// AUTO-RESIZE para todos los textarea
+// ==================================================
+function autoResizeTextarea(textarea) {
+  textarea.style.height = 'auto';
+  textarea.style.height = textarea.scrollHeight + 'px';
+}
+
+// Aplicar a textarea existentes
+document.querySelectorAll('textarea').forEach(ta => {
+  autoResizeTextarea(ta);
+  ta.addEventListener('input', function() {
+    autoResizeTextarea(this);
+  });
+});
+
+// Observar cambios para textarea creados dinámicamente
+const observer = new MutationObserver(() => {
+  document.querySelectorAll('textarea:not(.resize-bound)').forEach(ta => {
+    ta.classList.add('resize-bound');
+    autoResizeTextarea(ta);
+    ta.addEventListener('input', function() {
+      autoResizeTextarea(this);
+    });
+  });
+});
+observer.observe(document.body, { childList: true, subtree: true });
+  
 
 window.addEventListener("DOMContentLoaded", () => {
   const correo = obtenerCorreo();
