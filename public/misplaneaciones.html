@@ -631,6 +631,32 @@ function calcularSemanaActual(fecha = new Date()) {
   
   return semanaCiclo;
 }
+
+function calcularPeriodoActual(fecha = new Date()) {
+  const ahora = fecha;
+  
+  const periodos = [
+    { nombre: 'P1', inicio: new Date('2026-01-20T00:00:00-05:00'), fin: new Date('2026-03-27T23:59:59-05:00') },
+    { nombre: 'P2', inicio: new Date('2026-04-06T00:00:00-05:00'), fin: new Date('2026-06-05T23:59:59-05:00') },
+    { nombre: 'P3', inicio: new Date('2026-06-12T14:00:00-05:00'), fin: new Date('2026-08-14T23:59:59-05:00') },
+    { nombre: 'P4', inicio: new Date('2026-08-24T00:00:00-05:00'), fin: new Date('2026-11-20T23:59:59-05:00') }
+  ];
+  
+  for (const p of periodos) {
+    if (ahora >= p.inicio && ahora <= p.fin) {
+      return p.nombre;
+    }
+  }
+  
+  for (const p of periodos) {
+    if (ahora < p.inicio) {
+      return p.nombre;
+    }
+  }
+  
+  return 'P4';
+}
+  
 function mostrarToast(msg) {
   const t = document.getElementById('toastMsg');
   t.textContent = msg;
@@ -983,9 +1009,9 @@ async function init() {
   document.getElementById('rolVista').textContent = String(ST.rol).toUpperCase();
   
   // 🔥 FORZAR SEMANA ACTIVA A 8 (MANUAL)
-  semanaActual = 8;
-  semanaSeleccionada = 8;
-  periodoActivo = 'P2';
+  semanaActual = calcularSemanaActual();
+  semanaSeleccionada = semanaActual;
+  periodoActivo = calcularPeriodoActual();
   
   await cargarDatos();
   renderSemanas();
