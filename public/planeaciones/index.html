@@ -622,11 +622,39 @@ body{
   text-align:center;transform:scale(.8);opacity:0;transition:all .4s ease
 }
 #overlayEnviar.activo .loader-box{transform:scale(1);opacity:1}
-.loader-ring{
-  width:70px;height:70px;border-radius:50%;
-  border:3px solid rgba(255,255,255,.07);
-  border-top:3px solid var(--gold);
-  animation:spin 1s linear infinite;margin:auto
+.loader-minimal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 auto 12px;
+}
+
+.loader-dot {
+  width: 8px;
+  height: 8px;
+  background: #c9962a;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: loaderPulse 1.4s ease-in-out infinite;
+}
+
+.loader-dot:nth-child(2) { animation-delay: 0.2s; background: #e8b84b; }
+.loader-dot:nth-child(3) { animation-delay: 0.4s; background: #ffd966; }
+.loader-dot:nth-child(4) { animation-delay: 0.6s; background: #e8b84b; }
+.loader-dot:nth-child(5) { animation-delay: 0.8s; background: #c9962a; }
+
+@keyframes loaderPulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.loader-text-minimal {
+  font-size: 13px;
+  font-weight: 500;
+  color: #c9962a;
+  letter-spacing: 0.3px;
+  font-family: -apple-system, 'Helvetica Neue', sans-serif;
 }
 #loaderText{
   margin-top:18px;font-size:14px;color:var(--mt);
@@ -803,9 +831,15 @@ body{
 
 <div id="overlayEnviar">
   <div class="loader-box">
-    <div class="loader-premium"></div>
-    <div id="loaderText" class="loader-text-premium">Iniciando...</div>
-    <div id="loaderSuccess"></div>
+    <div class="loader-minimal">
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+    </div>
+    <div id="loaderText" class="loader-text-minimal">Iniciando</div>
+    <div id="loaderSuccess" style="font-size: 24px; margin-top: 8px;"></div>
   </div>
 </div>
 
