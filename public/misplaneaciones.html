@@ -7,6 +7,8 @@
 <title>Mis planeaciones — SIPRESC</title>
 <link rel="icon" type="image/png" href="/logo.png">
 <style>
+/* ===== ESTILOS ACTUALIZADOS ===== */
+
 * {
   margin: 0;
   padding: 0;
@@ -109,7 +111,15 @@ body {
 }
 @media (max-width: 640px) { .container { padding: 80px 16px 40px; } }
 
-.page-header { margin-bottom: 32px; }
+/* ===== PAGE HEADER CON BOTÓN ===== */
+.page-header {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+}
 .page-header h1 {
   font-size: 34px;
   font-weight: 700;
@@ -118,8 +128,58 @@ body {
   -webkit-background-clip: text;
   color: transparent;
   letter-spacing: -0.5px;
+  margin: 0;
 }
-.page-header p { color: var(--text-muted); font-size: 14px; margin-top: 6px; }
+.page-header p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 6px;
+  width: 100%;
+}
+.btn-crear {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border: none;
+  border-radius: 40px;
+  padding: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #0a0f1a;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(201, 150, 42, 0.25);
+}
+.btn-crear:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(201, 150, 42, 0.4);
+  background: linear-gradient(135deg, #e8b84b, #f5d071);
+}
+.btn-crear:active {
+  transform: translateY(1px);
+}
+.btn-crear svg {
+  width: 18px;
+  height: 18px;
+  stroke: #0a0f1a;
+  stroke-width: 2;
+  fill: none;
+}
+@media (max-width: 640px) {
+  .page-header h1 {
+    font-size: 28px;
+  }
+  .btn-crear {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  .btn-crear svg {
+    width: 16px;
+    height: 16px;
+  }
+}
 
 .segment-label {
   font-size: 12px;
@@ -431,59 +491,6 @@ body {
   pointer-events: none;
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
-
-/* Botón flotante de crear planeación */
-.btn-crear-flotante {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: linear-gradient(135deg, #c9962a, #e8b84b);
-  border: none;
-  border-radius: 56px;
-  padding: 14px 24px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #0a0f1a;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
-  z-index: 100;
-  box-shadow: 0 8px 20px rgba(201, 150, 42, 0.35);
-  transition: all 0.25s ease;
-  backdrop-filter: blur(4px);
-}
-
-.btn-crear-flotante:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px rgba(201, 150, 42, 0.5);
-  background: linear-gradient(135deg, #e8b84b, #f0c66e);
-}
-
-.btn-crear-flotante:active {
-  transform: translateY(1px);
-}
-
-.btn-crear-flotante svg {
-  width: 20px;
-  height: 20px;
-  stroke: #0a0f1a;
-  stroke-width: 2;
-  fill: none;
-}
-
-@media (max-width: 640px) {
-  .btn-crear-flotante {
-    bottom: 20px;
-    right: 20px;
-    padding: 12px 20px;
-    font-size: 14px;
-  }
-  .btn-crear-flotante svg {
-    width: 18px;
-    height: 18px;
-  }
-}
 </style>
 </head>
 <body>
@@ -501,9 +508,18 @@ body {
 </button>
 
 <div class="container">
+  <!-- PAGE HEADER CON BOTÓN -->
   <div class="page-header">
-    <h1>Mis planeaciones</h1>
-    <p>Historial de planeaciones enviadas</p>
+    <div style="flex: 1;">
+      <h1>Mis planeaciones</h1>
+      <p>Historial de planeaciones enviadas</p>
+    </div>
+    <button class="btn-crear" onclick="window.location.href='/planeaciones/'">
+      <svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      <span>Crear planeación</span>
+    </button>
   </div>
 
   <div class="segment-label">Período académico</div>
@@ -530,13 +546,7 @@ body {
 
 <div class="toast" id="toastMsg">Listo</div>
 
-<!-- Botón flotante crear planeación -->
-<button class="btn-crear-flotante" onclick="window.location.href='/planeaciones/'">
-  <svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 5v14M5 12h14"/>
-  </svg>
-  <span>Crear planeación</span>
-</button>
+</body>
 
 <script>
 // ==================================================
