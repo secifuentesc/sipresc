@@ -86,7 +86,186 @@ function mostrarExito() {
     modal.style.pointerEvents = "auto";
   }
 }
+// ==================================================
+// SISTEMA ANTIFALLAS - RESPLADO LOCAL + SINCRONIZACIÓN
+// ==================================================
 
+const COLA_PLANEACIONES = 'planeaciones_pendientes';
+
+// Guardar planeación en cola local (cuando falla)
+function guardarEnColaLocal(payload, error) {
+  try {
+    const cola = JSON.parse(localStorage.getItem(COLA_PLANEACIONES) || '[]');
+    cola.push({
+      id: Date.now(),
+      timestamp: new Date().toISOString(),
+      payload: payload,
+      error: error,
+      reintentos: 0
+    });
+    localStorage.setItem(COLA_PLANEACIONES, JSON.stringify(cola.slice(-20))); // máx 20 pendientes
+    mostrarNotificacionProfesional(
+      '⚠️ Planeación guardada localmente. Se enviará automáticamente cuando recuperes internet.',
+      'warning',
+      5000
+    );
+    actualizarBadgeCola();
+  } catch(e) {
+    console.error('Error guardando en cola local:', e);
+  }
+}
+
+// Sincronizar cola local con el servidor
+async function sincronizarColaLocal() {
+  const cola = JSON.parse(localStorage.getItem(COLA_PLANEACIONES) || '[]');
+  if (cola.length === 0) return;
+  
+  mostrarNotificacionProfesional(
+    `📡 Sincronizando ${cola.length} planeación${cola.length > 1 ? 'es' : ''} pendiente${cola.length > 1 ? 's' : ''}...`,
+    'info',
+    3000
+  );
+  
+  let sincronizadas = [];
+  let errores = [];
+  
+  for (const item of cola) {
+    if (item.reintentos >= 5) {
+      errores.push(item);
+      continue;
+    }
+    
+    try {
+      const response = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(item.payload)
+      });
+      const json = await response.json();
+      
+      if (json && json.ok) {
+        sincronizadas.push(item.id);
+      } else {
+        item.reintentos++;
+        errores.push(item);
+      }
+    } catch (e) {
+      item.reintentos++;
+      errores.push(item);
+    }
+  }
+  
+  // Actualizar cola (solo las que no se sincronizaron)
+  const nuevaCola = errores.filter(e => e.reintentos < 5);
+  localStorage.setItem(COLA_PLANEACIONES, JSON.stringify(nuevaCola));
+  
+  if (sincronizadas.length > 0) {
+    mostrarNotificacionProfesional(
+      `✅ ${sincronizadas.length} planeación${sincronizadas.length > 1 ? 'es' : ''} sincronizada${sincronizadas.length > 1 ? 's' : ''} con éxito`,
+      'success',
+      4000
+    );
+  }
+  
+  actualizarBadgeCola();
+  return { sincronizadas, pendientes: nuevaCola.length };
+}
+
+// Mostrar badge con cantidad de planeaciones pendientes
+function actualizarBadgeCola() {
+  const cola = JSON.parse(localStorage.getItem(COLA_PLANEACIONES) || '[]');
+  const pendientes = cola.filter(i => i.reintentos < 5).length;
+  
+  let badge = document.getElementById('badge-pendientes');
+  if (!badge && pendientes > 0) {
+    badge = document.createElement('div');
+    badge.id = 'badge-pendientes';
+    badge.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #facc15;
+      color: #000;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: bold;
+      z-index: 100;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      animation: pulse 1.5s infinite;
+    `;
+    badge.onclick = () => {
+      if(confirm(`¿Reintentar sincronización de ${pendientes} planeación${pendientes > 1 ? 'es' : ''} pendiente${pendientes > 1 ? 's' : ''}?`)) {
+        sincronizarColaLocal();
+      }
+    };
+    document.body.appendChild(badge);
+    
+    // Agregar animación si no existe
+    if(!document.querySelector('#style-pulse')) {
+      const style = document.createElement('style');
+      style.id = 'style-pulse';
+      style.textContent = `
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.7; transform: scale(1.05); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+  
+  if (badge) {
+    if (pendientes > 0) {
+      badge.textContent = `📤 ${pendientes} pendiente${pendientes > 1 ? 's' : ''}`;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+}
+
+// Detectar cuando vuelve internet y sincronizar automáticamente
+function iniciarDeteccionDeInternet() {
+  window.addEventListener('online', () => {
+    mostrarNotificacionProfesional('📶 Conexión restablecida. Sincronizando planeaciones pendientes...', 'info', 3000);
+    sincronizarColaLocal();
+  });
+  
+  // También al cargar la página
+  if (navigator.onLine) {
+    setTimeout(sincronizarColaLocal, 3000);
+  }
+}
+
+// Modificar la función enviarPlaneacion original para usar la cola
+// Esta es la parte IMPORTANTE: cuando falla, guarda en cola local
+
+// Busca la función enviarPlaneacion original y dentro del catch,
+// donde dice "FALLO DEFINITIVO", reemplaza esa parte por:
+
+/*
+} else {
+  // FALLO DEFINITIVO - Guardar en cola local
+  guardarEnColaLocal(payload, error.message);
+  mostrarNotificacionProfesional(
+    `No se pudo enviar tu planeación. Motivo: ${error.message}. Se guardó localmente y se enviará automáticamente cuando recuperes internet.`,
+    'warning',
+    6000
+  );
+  estado.textContent = "Planeación guardada localmente (pendiente de envío)";
+  btn.classList.remove("loading");
+  icon.textContent = "⏱";
+  overlay.classList.remove("activo");
+  document.querySelector(".form-app").classList.remove("blur");
+}
+*/
+
+// Iniciar detección de internet y sincronización de pendientes
+iniciarDeteccionDeInternet();
+  
 </script>
 <style>
 /* ═══════════════════════════════════════════
