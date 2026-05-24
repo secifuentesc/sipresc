@@ -481,10 +481,155 @@ body {
 <div class="toast" id="toastMsg">Listo</div>
 
 <script>
+// ==================================================
+// CONFIGURACIÓN
+// ==================================================
+const API_PLN = '/api/planeaciones';
+let ST = { rol: null, correo: null, docenteId: null };
+let materiasRaw = [];
+let planeacionesMap = new Map();
+let periodoActivo = 'P2';
+let semanaSeleccionada = 8;
+let semanaActual = 8;
+
+// ==================================================
+// NORMALIZACIÓN (para comparar correctamente)
+// ==================================================
+function normalizar(str) {
+  return (str || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '')
+    .trim();
+}
+
+function extraerNumeroGrado(grado) {
+  const texto = String(grado || '').toLowerCase();
+  const mapa = {
+    'primero': '1', 'segundo': '2', 'tercero': '3', 'cuarto': '4', 'quinto': '5',
+    'sexto': '6', 'séptimo': '7', 'septimo': '7', 'octavo': '8',
+    'noveno': '9', 'décimo': '10', 'decimo': '10', 'once': '11'
+  };
+  for (const [palabra, num] of Object.entries(mapa)) {
+    if (texto.includes(palabra)) return num;
+  }
+  const match = texto.match(/\d+/);
+  return match ? match[0] : '';
+}
+
+// ==================================================
+// UTILS
+// ==================================================
+function obtenerSesion() {
+  try { const data = localStorage.getItem('lp_user'); return data ? JSON.parse(data) : null; } catch { return null; }
+}
+function cerrarSesion() { localStorage.removeItem('lp_user'); window.location.href = '/'; }
+function volverPanel() {
+  const s = obtenerSesion();
+  const r = String(s?.rol || '').toLowerCase();
+  if (r === 'admin') window.location.href = '/dashboardadmin/';
+  else if (r === 'coordinador') window.location.href = '/dashboardcoord/';
+  else window.location.href = '/';
+}
+function calcularSemanaActual() {
+  const inicio = new Date('2026-04-25T00:30:00-05:00');
+  const diff = Math.floor((new Date() - inicio) / (7*24*60*60*1000));
+  let semana = 5 + diff;
+  semana = ((semana - 1) % 10 + 10) % 10 + 1;
+  return semana;
+}
+function mostrarToast(msg) {
+  const t = document.getElementById('toastMsg');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ==================================================
+// ICONOS (iguales al index.html)
+// ==================================================
+function iconoPorMateria(asignatura) {
+  const a = asignatura.toLowerCase();
+  if (a.includes('tecnolog') || a.includes('informática')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>`;
+  }
+  if (a.includes('ética') || a.includes('religión') || a.includes('valores')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l2.5 5.5 6 .5-4.5 4 1.5 6-5.5-3-5.5 3 1.5-6-4.5-4 6-.5L12 2z"/></svg>`;
+  }
+  if (a.includes('matem')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>`;
+  }
+  if (a.includes('españ') || a.includes('lengua')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a7 7 0 017 7c0 3-1.5 5-4 6.5V17a1 1 0 01-1 1h-4a1 1 0 01-1-1v-1.5C6.5 14 5 12 5 9a7 7 0 017-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>`;
+  }
+  if (a.includes('ciencia') || a.includes('biología') || a.includes('química')) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>`;
+  }
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h11l3 3v13a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z"/><path d="M9 13h6M9 17h4M14 4v4h5"/></svg>`;
+}
+
+// ==================================================
+// API
+// ==================================================
+async function cargarDatos() {
+  const qs = new URLSearchParams({ correo: ST.correo || '' });
+  
+  try {
+    const [resMaterias, resPlaneaciones] = await Promise.all([
+      fetch(`${API_PLN}?accion=cargaDocente&${qs}`).then(r => r.json()),
+      fetch(`${API_PLN}?accion=misPlaneacionesDocente&${qs}`).then(r => r.json())
+    ]);
+    
+    materiasRaw = (resMaterias.ok && resMaterias.materias) ? resMaterias.materias : [];
+    planeacionesMap.clear();
+    
+    if (resPlaneaciones.ok && resPlaneaciones.data) {
+      resPlaneaciones.data.forEach(p => {
+        // 🔥 NORMALIZAR PERÍODO: "2" → "P2", "3" → "P3"
+        let periodoPlaneacion = p.periodo || '';
+        if (periodoPlaneacion && !periodoPlaneacion.startsWith('P') && /^\d+$/.test(periodoPlaneacion)) {
+          periodoPlaneacion = 'P' + periodoPlaneacion;
+        }
+        
+        // Solo guardar si coincide con el período activo
+        if (periodoPlaneacion === periodoActivo) {
+          const key = `${normalizar(p.asignatura)}|${extraerNumeroGrado(p.grado)}`;
+          planeacionesMap.set(key, p);
+        }
+      });
+    }
+    
+    // Fallback: si no hay materias, usar datos de prueba para mostrar UI
+    if (materiasRaw.length === 0) {
+      materiasRaw = [
+        { asignatura: "TECNOLOGÍA E INFORMÁTICA", grados: ["SEXTO A", "SEXTO B", "SÉPTIMO", "OCTAVO", "NOVENO", "DÉCIMO", "UNDÉCIMO"] }
+      ];
+    }
+  } catch (error) {
+    console.error('Error cargando datos:', error);
+    materiasRaw = [
+      { asignatura: "TECNOLOGÍA E INFORMÁTICA", grados: ["SEXTO A", "SEXTO B", "SÉPTIMO", "OCTAVO", "NOVENO", "DÉCIMO", "UNDÉCIMO"] }
+    ];
+  }
+}
+
+function compararGrado(gradoPlaneacion, gradoCarga) {
+  const numPlaneacion = extraerNumeroGrado(gradoPlaneacion);
+  const numCarga = extraerNumeroGrado(gradoCarga);
+  if (numPlaneacion !== numCarga) return false;
+  
+  const letraPlaneacion = String(gradoPlaneacion || '').match(/[AB]$/i)?.[0] || '';
+  const letraCarga = String(gradoCarga || '').match(/[AB]$/i)?.[0] || '';
+  if (letraCarga && !letraPlaneacion) return true;
+  if (letraCarga && letraPlaneacion && letraCarga.toUpperCase() !== letraPlaneacion.toUpperCase()) return false;
+  
+  return true;
+}
+
 function getEstado(asignatura, grado) {
   const asignaturaNorm = normalizar(asignatura);
   
-  // Buscar planeación que coincida en asignatura y grado (ignorando A/B)
   let planeacionEncontrada = null;
   for (const [key, p] of planeacionesMap.entries()) {
     const pAsignatura = normalizar(p.asignatura);
@@ -501,6 +646,159 @@ function getEstado(asignatura, grado) {
   if (raw.includes('ajuste')) return { estado: 'con_ajustes', label: 'Con ajustes', data: planeacionEncontrada, id: planeacionEncontrada.planeacionId };
   return { estado: 'pendiente', label: 'En revisión', data: planeacionEncontrada, id: planeacionEncontrada.planeacionId };
 }
+
+function desglosar() {
+  const cards = [];
+  materiasRaw.forEach(m => {
+    m.grados.forEach(g => {
+      cards.push({ asignatura: m.asignatura, grado: g });
+    });
+  });
+  cards.sort((a, b) => {
+    const numA = parseInt(extraerNumeroGrado(a.grado)) || 0;
+    const numB = parseInt(extraerNumeroGrado(b.grado)) || 0;
+    if (numA !== numB) return numA - numB;
+    return a.grado.localeCompare(b.grado);
+  });
+  return cards;
+}
+
+// ==================================================
+// RENDER
+// ==================================================
+function renderSemanas() {
+  const container = document.getElementById('semanasContainer');
+  const semanas = Array.from({ length: 10 }, (_, i) => i + 1);
+  container.innerHTML = semanas.map(s => `
+    <button class="semana-btn ${s === semanaSeleccionada ? 'active' : ''}" data-semana="${s}">
+      <div class="semana-num">${s}</div>
+      <div class="semana-label">Semana</div>
+      ${s === semanaActual ? `<span class="semana-badge ${s === semanaSeleccionada ? 'white' : ''}">Actual</span>` : ''}
+    </button>
+  `).join('');
+  document.querySelectorAll('.semana-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      semanaSeleccionada = parseInt(btn.dataset.semana);
+      renderSemanas();
+      renderCards();
+    });
+  });
+}
+
+function renderPeriodo() {
+  const btns = document.querySelectorAll('.seg-btn');
+  btns.forEach(btn => {
+    if (btn.dataset.periodo === periodoActivo) btn.classList.add('active');
+    else btn.classList.remove('active');
+    btn.onclick = async () => {
+      periodoActivo = btn.dataset.periodo;
+      renderPeriodo();
+      await cargarDatos();
+      renderCards();
+    };
+  });
+}
+
+function renderCards() {
+  const tarjetas = desglosar();
+  const grid = document.getElementById('cardsGrid');
+  document.getElementById('resultadosCount').textContent = `${tarjetas.length} materia${tarjetas.length !== 1 ? 's' : ''}`;
+  document.getElementById('semanaActualBadge').innerHTML = semanaSeleccionada === semanaActual ? '<span class="semana-activa-badge">📅 Semana actual</span>' : '';
+  
+  if (tarjetas.length === 0) {
+    grid.innerHTML = '<div class="empty-card"><div class="empty-icon">📭</div><div class="empty-title">Sin materias asignadas</div><div class="empty-sub">No tienes materias asignadas para este período</div></div>';
+    return;
+  }
+  
+  grid.innerHTML = tarjetas.map((t, idx) => {
+    const e = getEstado(t.asignatura, t.grado);
+    const estadoClass = `estado-${e.estado}`;
+    const estadoIcon = { aprobada: '✓', pendiente: '⏳', con_ajustes: '⚠', no_enviada: '✗' }[e.estado];
+    const fecha = e.data?.timestamp ? new Date(e.data.timestamp).toLocaleDateString('es-CO') : '';
+    return `
+      <div class="plan-card" style="animation-delay: ${idx * 0.02}s" onclick="abrirDetalle('${t.asignatura}', '${t.grado}')">
+        <div class="card-header">
+          <div class="card-icon">${iconoPorMateria(t.asignatura)}</div>
+          <div class="card-chevron">›</div>
+        </div>
+        <div class="card-title">${t.asignatura}</div>
+        <div class="card-sub">Semana ${semanaSeleccionada}</div>
+        <div class="card-info">
+          <span class="info-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>${t.grado}</span>
+          ${e.estado !== 'no_enviada' && fecha ? `<span class="info-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>${fecha}</span>` : ''}
+        </div>
+        <div class="estado-badge ${estadoClass}"><span>${estadoIcon}</span> ${e.label}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function abrirDetalle(asignatura, grado) {
+  const e = getEstado(asignatura, grado);
+  if (e.estado === 'no_enviada') { window.location.href = '/planeaciones/'; return; }
+  const p = e.data;
+  if (!p) return;
+  
+  let clasesHtml = '';
+  for (let i = 1; i <= 5; i++) {
+    const tema = p[`d${i}Tema`];
+    const act = p[`d${i}Actividades`];
+    if (!tema && !act) continue;
+    clasesHtml += `<div class="modal-value" style="margin-bottom: 10px;"><strong>Clase ${i}</strong><br>${tema ? `<span style="color:var(--text-muted)">Tema:</span> ${tema}<br>` : ''}${act ? `<span style="color:var(--text-muted)">Actividades:</span> ${act}` : ''}</div>`;
+  }
+  
+  const estadoClass = `estado-${e.estado}`;
+  const modalHtml = `
+    <div class="modal" id="modalPlaneacion" onclick="if(event.target===this) cerrarModal()">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+          <div class="modal-header-info">
+            <div class="modal-icon">${iconoPorMateria(asignatura)}</div>
+            <div><div class="modal-title">${asignatura}</div><div class="modal-sub">Semana ${p.semana || semanaSeleccionada} — ${grado}</div></div>
+          </div>
+          <button class="modal-close" onclick="cerrarModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-section"><div class="modal-label">Estado</div><div><span class="estado-badge ${estadoClass}" style="display:inline-flex">${e.label}</span></div></div>
+          <div class="modal-section"><div class="modal-label">Indicador de desempeño</div><div class="modal-value">${p.indicadorSemanal || '—'}</div></div>
+          <div class="modal-section"><div class="modal-label">Clases planificadas</div>${clasesHtml || '<div class="modal-value">—</div>'}</div>
+          ${p.actCompDescripcion ? `<div class="modal-section"><div class="modal-label">Actividad complementaria</div><div class="modal-value">${p.actCompDescripcion}</div></div>` : ''}
+          ${p.obsFamilias ? `<div class="modal-section"><div class="modal-label">Comunicación a familias</div><div class="modal-value">${p.obsFamilias}</div></div>` : ''}
+          ${p.observacionCoordinacion ? `<div class="modal-section"><div class="modal-label" style="color:var(--orange)">Observación del coordinador</div><div class="modal-value" style="background:rgba(245,158,11,0.05); border-color:rgba(245,158,11,0.2); color:#fbbf24;">${p.observacionCoordinacion}</div></div>` : ''}
+        </div>
+        <div class="modal-footer">
+          ${e.estado === 'con_ajustes' ? `<button class="modal-btn modal-btn-primary" onclick="editarPlaneacion('${p.planeacionId}')">✏️ Editar y reenviar</button>` : `<button class="modal-btn modal-btn-secondary" onclick="cerrarModal()">Cerrar</button>`}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarModal() { const m = document.getElementById('modalPlaneacion'); if (m) m.remove(); document.body.style.overflow = ''; }
+function editarPlaneacion(id) { window.location.href = `/planeaciones/?editar=1&planeacionId=${id}`; }
+
+// ==================================================
+// INIT
+// ==================================================
+async function init() {
+  const sesion = obtenerSesion();
+  if (!sesion?.correo) { window.location.href = '/'; return; }
+  ST = { correo: sesion.correo, rol: sesion.rol || 'docente', docenteId: sesion.docenteId };
+  document.getElementById('rolVista').textContent = String(ST.rol).toUpperCase();
+  semanaActual = calcularSemanaActual();
+  semanaSeleccionada = 8;
+  periodoActivo = 'P2';
+  
+  await cargarDatos();
+  renderSemanas();
+  renderPeriodo();
+  renderCards();
+}
+init();
 </script>
 </body>
 </html>
