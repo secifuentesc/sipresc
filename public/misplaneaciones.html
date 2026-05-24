@@ -810,21 +810,31 @@ function abrirDetalle(asignatura, grado, semana) {
   const p = e.data;
   if (!p) return;
   
-  // Generar HTML de las 5 clases
+  // Generar HTML de las 5 clases (si existen)
   let clasesHtml = '';
+  const clasesExistentes = [];
   for (let i = 1; i <= 5; i++) {
     const tema = p[`d${i}Tema`];
     const act = p[`d${i}Actividades`];
-    if (!tema && !act) continue;
-    clasesHtml += `
-      <div class="clase-item">
-        <div class="clase-header">
-          <span class="clase-num">${i}</span>
-          <span class="clase-tema">${escapeHtml(tema)}</span>
+    if (tema || act) {
+      clasesExistentes.push({ num: i, tema: tema || '', act: act || '' });
+    }
+  }
+  
+  if (clasesExistentes.length > 0) {
+    clasesHtml = '<div style="display:flex; flex-direction:column; gap:16px;">';
+    clasesExistentes.forEach(c => {
+      clasesHtml += `
+        <div style="background:rgba(255,255,255,0.03); border-radius:16px; padding:16px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <div style="width:28px; height:28px; background:rgba(59,130,246,0.2); color:#60a5fa; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;">${c.num}</div>
+            <div style="font-weight:700; font-size:16px; color:#fff;">${escapeHtml(c.tema) || 'Tema'}</div>
+          </div>
+          <div style="margin-left:40px; font-size:14px; color:rgba(255,255,255,0.7); line-height:1.5;">${escapeHtml(c.act) || '—'}</div>
         </div>
-        <div class="clase-act">${escapeHtml(act)}</div>
-      </div>
-    `;
+      `;
+    });
+    clasesHtml += '</div>';
   }
   
   const estadoClass = `estado-${e.estado}`;
@@ -837,66 +847,77 @@ function abrirDetalle(asignatura, grado, semana) {
           <div class="modal-header-info">
             <div class="modal-icon">${iconoPorMateria(asignatura)}</div>
             <div>
-              <div class="modal-title">${escapeHtml(asignatura)}</div>
-              <div class="modal-sub">Semana ${semana} — ${escapeHtml(grado)}</div>
+              <div class="modal-title" style="font-size:20px;">${escapeHtml(asignatura)}</div>
+              <div class="modal-sub">Semana ${semana} · ${escapeHtml(grado)}</div>
             </div>
           </div>
           <button class="modal-close" onclick="cerrarModal()">✕</button>
         </div>
-        <div class="modal-body">
-          <div class="modal-section">
-            <div class="modal-label">Estado</div>
-            <div><span class="estado-badge ${estadoClass}" style="display:inline-flex">${e.label}</span></div>
+        
+        <div class="modal-body" style="padding:20px 24px;">
+          
+          <!-- ESTADO -->
+          <div style="margin-bottom:24px;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Estado</div>
+            <div><span class="estado-badge ${estadoClass}" style="display:inline-flex; padding:6px 16px;">${e.label}</span></div>
           </div>`;
   
+  // INDICADOR
   if (p.indicadorSemanal) {
     html += `
-          <div class="modal-section">
-            <div class="modal-label">Indicador de desempeño</div>
-            <div class="modal-value">${escapeHtml(p.indicadorSemanal)}</div>
+          <div style="margin-bottom:24px;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Indicador de desempeño</div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:14px; font-size:14px; line-height:1.5;">${escapeHtml(p.indicadorSemanal)}</div>
           </div>`;
   }
   
+  // CLASES
   if (clasesHtml) {
     html += `
-          <div class="modal-section">
-            <div class="modal-label">Clases planificadas</div>
+          <div style="margin-bottom:24px;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:12px;">Clases planificadas</div>
             ${clasesHtml}
           </div>`;
   }
   
+  // ACTIVIDAD COMPLEMENTARIA
   if (p.actCompDescripcion) {
     html += `
-          <div class="modal-section">
-            <div class="modal-label">Actividad complementaria</div>
-            <div class="modal-value">
+          <div style="margin-bottom:24px;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Actividad complementaria</div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:14px; font-size:14px; line-height:1.5;">
               ${escapeHtml(p.actCompDescripcion)}
-              ${p.actCompAnexoUrl ? `<div style="margin-top:8px;"><a href="${p.actCompAnexoUrl}" target="_blank" class="modal-link">📎 Ver anexo</a></div>` : ''}
+              ${p.actCompAnexoUrl ? `<div style="margin-top:10px;"><a href="${p.actCompAnexoUrl}" target="_blank" style="color:var(--gold); text-decoration:none;">📎 Ver anexo de actividad complementaria</a></div>` : ''}
             </div>
           </div>`;
   }
   
+  // COMUNICACIÓN A FAMILIAS
   if (p.obsFamilias) {
     html += `
-          <div class="modal-section">
-            <div class="modal-label">Comunicación a familias</div>
-            <div class="modal-value">
+          <div style="margin-bottom:24px;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Comunicación a familias</div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:14px; font-size:14px; line-height:1.5;">
               ${escapeHtml(p.obsFamilias)}
-              ${p.anexoFamiliasUrl ? `<div style="margin-top:8px;"><a href="${p.anexoFamiliasUrl}" target="_blank" class="modal-link">📎 Ver anexo</a></div>` : ''}
+              ${p.anexoFamiliasUrl ? `<div style="margin-top:10px;"><a href="${p.anexoFamiliasUrl}" target="_blank" style="color:var(--gold); text-decoration:none;">📎 Ver anexo de comunicación a familias</a></div>` : ''}
             </div>
           </div>`;
   }
   
-  if (p.observacionCoordinacion) {
+  // OBSERVACIÓN DEL COORDINADOR (solo si tiene ajustes)
+  if (p.observacionCoordinacion && e.estado === 'con_ajustes') {
     html += `
-          <div class="modal-section">
-            <div class="modal-label" style="color:var(--orange)">Observación del coordinador</div>
-            <div class="modal-value" style="background:rgba(245,158,11,0.05); border-color:rgba(245,158,11,0.2); color:#fbbf24;">${escapeHtml(p.observacionCoordinacion)}</div>
+          <div style="margin-bottom:24px;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#f59e0b; margin-bottom:8px;">Observación del coordinador</div>
+            <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); border-radius:14px; padding:14px; font-size:14px; line-height:1.5; color:#fbbf24;">
+              ${escapeHtml(p.observacionCoordinacion)}
+            </div>
           </div>`;
   }
   
   html += `
         </div>
+        
         <div class="modal-footer">
           ${e.estado === 'con_ajustes' ? `<button class="modal-btn modal-btn-primary" onclick="editarPlaneacion('${p.planeacionId}')">✏️ Editar y reenviar</button>` : `<button class="modal-btn modal-btn-secondary" onclick="cerrarModal()">Cerrar</button>`}
         </div>
@@ -907,7 +928,6 @@ function abrirDetalle(asignatura, grado, semana) {
   document.body.insertAdjacentHTML('beforeend', html);
   document.body.style.overflow = 'hidden';
 }
-
 function escapeHtml(str) {
   if (!str) return '';
   return str.replace(/[&<>]/g, function(m) {
