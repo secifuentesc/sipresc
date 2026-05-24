@@ -670,53 +670,38 @@ function mostrarToast(msg) {
 function iconoPorMateria(asignatura) {
   const a = asignatura.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   
-  // 💻 TECNOLOGÍA E INFORMÁTICA (con SVG que SÍ funciona)
+  // 💻 TECNOLOGÍA (usar emoji para prueba)
   if (a.includes('tecnolog') || a.includes('informatica')) {
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>`;
+    return `<div style="font-size: 26px;">💻</div>`;
   }
   
   // 📐 MATEMÁTICAS
   if (a.includes('matematic')) {
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>`;
+    return `<div style="font-size: 26px;">📐</div>`;
   }
   
-  // 📖 ESPAÑOL / LENGUA
-  if (a.includes('espanol') || a.includes('lengua') || a.includes('castellana')) {
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 017 7c0 3-1.5 5-4 6.5V17a1 1 0 01-1 1h-4a1 1 0 01-1-1v-1.5C6.5 14 5 12 5 9a7 7 0 017-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>`;
+  // 📖 ESPAÑOL
+  if (a.includes('espanol') || a.includes('lengua')) {
+    return `<div style="font-size: 26px;">📖</div>`;
   }
   
-  // 🔬 CIENCIAS NATURALES
-  if (a.includes('ciencia') || a.includes('natural') || a.includes('biologia') || a.includes('quimica') || a.includes('fisica')) {
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>`;
+  // 🔬 CIENCIAS
+  if (a.includes('ciencia') || a.includes('natural')) {
+    return `<div style="font-size: 26px;">🔬</div>`;
   }
   
-  // 🏛️ SOCIALES / HISTORIA
-  if (a.includes('social') || a.includes('historia') || a.includes('geografia')) {
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>`;
+  // 🏛️ SOCIALES
+  if (a.includes('social') || a.includes('historia')) {
+    return `<div style="font-size: 26px;">🏛️</div>`;
   }
   
-  // ⚽ EDUCACIÓN FÍSICA
-  if (a.includes('educacion fisica') || a.includes('deporte') || a.includes('recreacion')) {
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>`;
-  }
-  
-  // 🎨 ARTES
-  if (a.includes('arte') || a.includes('artistica') || a.includes('musica') || a.includes('dibujo')) {
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
-  }
-  
-  // 🌎 INGLÉS
-  if (a.includes('ingles') || a.includes('english')) {
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`;
-  }
-  
-  // ⭐ ÉTICA / RELIGIÓN
-  if (a.includes('etica') || a.includes('religion') || a.includes('valores') || a.includes('filosofia')) {
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.5 5.5 6 .5-4.5 4 1.5 6-5.5-3-5.5 3 1.5-6-4.5-4 6-.5L12 2z"/></svg>`;
+  // ⭐ ÉTICA
+  if (a.includes('etica') || a.includes('religion')) {
+    return `<div style="font-size: 26px;">⭐</div>`;
   }
   
   // 📚 POR DEFECTO
-  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v13a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z"/><path d="M9 13h6M9 17h4M14 4v4h5"/></svg>`;
+  return `<div style="font-size: 26px;">📚</div>`;
 }
 // ==================================================
 // API
