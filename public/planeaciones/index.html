@@ -1643,19 +1643,60 @@ async function revisarIndicadorCoach(){
   box.innerHTML = mensajes.join(""); box.style.display = "block";
 }
 
-async function revisarOrtografia(texto){
-  if(!texto||texto.length<5) return [];
-  const esCorto = texto.length < 20;
-  try{
-    const res = await fetch("https://api.languagetool.org/v2/check",{ 
-  method:"POST", 
-  body:new URLSearchParams({text:texto, language:"auto"}) 
-});
+async function revisarOrtografia(texto) {
+  if (!texto || texto.length < 3) return [];
+  
+  // Limpieza rápida local antes de la API
+  let corregido = texto;
+  
+  // 1. Corregir mayúscula inicial (si aplica)
+  if (corregido.length > 0 && corregido[0] === corregido[0].toLowerCase()) {
+    corregido = corregido[0].toUpperCase() + corregido.slice(1);
+  }
+  
+  // 2. Garantizar punto final
+  if (corregido.length > 0 && !/[.!?]$/.test(corregido.trim())) {
+    corregido = corregido.trim() + '.';
+  }
+  
+  // Si cambió algo, actualizar campo
+  if (corregido !== texto) {
+    return [{ 
+      offset: 0, 
+      length: texto.length,
+      replacements: [{ value: corregido }],
+      context: { text: texto }
+    }];
+  }
+  
+  try {
+    // LanguageTool con detección automática de idioma (español, inglés, o mixto)
+    const res = await fetch("https://api.languagetool.org/v2/check", {
+      method: "POST",
+      body: new URLSearchParams({
+        text: texto,
+        language: "auto",  // 🔥 Detecta español, inglés, o ambos
+        enabledOnly: "spelling,grammar,typography"
+      })
+    });
+    
     const data = await res.json();
     let errores = data.matches || [];
-    if(esCorto) errores = errores.filter(e=>e.rule.issueType==="misspelling");
+    
+    // Filtrar falsos positivos comunes en textos académicos
+    errores = errores.filter(e => {
+      const msg = e.message?.toLowerCase() || '';
+      // Ignorar sugerencias que no aplican a nuestro contexto
+      const falsos = ['posible error', 'consider revising', 'may be misspelled'];
+      return !falsos.some(f => msg.includes(f));
+    });
+    
     return errores;
-  }catch{ return []; }
+    
+  } catch (err) {
+    console.error("Error en revisión ortográfica:", err);
+    return [];
+  }
 }
 
 async function revisarClaseCoach(i){
