@@ -1170,11 +1170,10 @@ body{background:var(--s0);color:var(--tx);font-family:var(--sans);
   const dia = hoy.getDate();
   const mes = hoy.getMonth() + 1; // mayo es mes 5
   const ano = hoy.getFullYear();
-  
-  // Fechas: 26 de mayo al 30 de mayo
-  const fechaInicio = new Date(2026, 4, 26); // 26 de mayo (mes 4 = mayo)
-  const fechaFin = new Date(2026, 4, 31);    // 31 de mayo (exclusivo, hasta el 30)
-  
+
+  // Fechas: 24 de mayo al 30 de mayo
+const fechaInicio = new Date(2026, 4, 23); // 24 de mayo
+const fechaFin = new Date(2026, 4, 30);    // 31 de mayo
   const badge = document.getElementById('badge-estreno');
   
   // Si hoy NO está entre el 26 y 30 de mayo, ocultar badge
