@@ -733,25 +733,7 @@ function iconoPorMateria(asignatura) {
 // ==================================================
 async function cargarDatos() {
   const cacheKey = `sipresc_cache_${ST.correo}_${periodoActivo}`;
-  
-  // Limpiar caché para depuración (comentar en producción)
-  sessionStorage.removeItem(cacheKey);
-  
-  const cache = sessionStorage.getItem(cacheKey);
-  
-  if (cache) {
-    try {
-      const { materias, planeacionesMapData } = JSON.parse(cache);
-      materiasRaw = materias;
-      planeacionesMap = new Map(planeacionesMapData);
-      console.log('⚡ Datos cargados desde caché');
-      console.log('📊 Planeaciones en mapa:', planeacionesMap.size);
-      return;
-    } catch(e) {
-      console.error('Error al leer caché:', e);
-      sessionStorage.removeItem(cacheKey);
-    }
-  }
+  sessionStorage.removeItem(cacheKey); // Forzar recarga para depurar
   
   const qs = new URLSearchParams({ correo: ST.correo || '' });
   
@@ -762,35 +744,75 @@ async function cargarDatos() {
       fetch(`${API_PLN}?accion=misPlaneacionesDocente&${qs}`).then(r => r.json())
     ]);
     
-    console.log('📚 Respuesta materias:', resMaterias);
-    console.log('📋 Respuesta planeaciones:', resPlaneaciones);
+    console.log('📚 MATERIAS - Respuesta completa:', resMaterias);
+    console.log('📋 PLANEACIONES - Respuesta completa:', resPlaneaciones);
     
-    // Extraer materias
-    if (resMaterias.success && Array.isArray(resMaterias.data)) {
+    // ============================================
+    // DETECCIÓN AUTOMÁTICA DE ESTRUCTURA - MATERIAS
+    // ============================================
+    materiasRaw = [];
+    
+    if (Array.isArray(resMaterias)) {
+      // Caso 1: Es un array directo
+      materiasRaw = resMaterias;
+      console.log('✅ Materias: array directo,', materiasRaw.length, 'items');
+    } 
+    else if (resMaterias.data && Array.isArray(resMaterias.data)) {
+      // Caso 2: Tiene propiedad .data
       materiasRaw = resMaterias.data;
-      console.log('✅ Materias cargadas:', materiasRaw.length);
-    } else {
-      console.warn('⚠️ Estructura de materias no reconocida');
-      materiasRaw = [];
+      console.log('✅ Materias: desde .data,', materiasRaw.length, 'items');
+    }
+    else if (resMaterias.materias && Array.isArray(resMaterias.materias)) {
+      // Caso 3: Tiene propiedad .materias
+      materiasRaw = resMaterias.materias;
+      console.log('✅ Materias: desde .materias,', materiasRaw.length, 'items');
+    }
+    else if (resMaterias.success && resMaterias.data && Array.isArray(resMaterias.data)) {
+      // Caso 4: Tiene success + data
+      materiasRaw = resMaterias.data;
+      console.log('✅ Materias: desde success.data,', materiasRaw.length, 'items');
+    }
+    else {
+      // Si no reconoce, mostrar todas las propiedades para depurar
+      console.error('❌ Estructura de materias NO reconocida. Propiedades:', Object.keys(resMaterias));
+      console.error('Contenido:', resMaterias);
     }
     
-    // Extraer planeaciones
+    // ============================================
+    // DETECCIÓN AUTOMÁTICA DE ESTRUCTURA - PLANEACIONES
+    // ============================================
     let planeacionesRaw = [];
-    if (resPlaneaciones.success && Array.isArray(resPlaneaciones.data)) {
+    
+    if (Array.isArray(resPlaneaciones)) {
+      planeacionesRaw = resPlaneaciones;
+      console.log('✅ Planeaciones: array directo,', planeacionesRaw.length, 'items');
+    }
+    else if (resPlaneaciones.data && Array.isArray(resPlaneaciones.data)) {
       planeacionesRaw = resPlaneaciones.data;
-      console.log('✅ Planeaciones recibidas:', planeacionesRaw.length);
-    } else {
-      console.warn('⚠️ Estructura de planeaciones no reconocida');
+      console.log('✅ Planeaciones: desde .data,', planeacionesRaw.length, 'items');
+    }
+    else if (resPlaneaciones.planeaciones && Array.isArray(resPlaneaciones.planeaciones)) {
+      planeacionesRaw = resPlaneaciones.planeaciones;
+      console.log('✅ Planeaciones: desde .planeaciones,', planeacionesRaw.length, 'items');
+    }
+    else if (resPlaneaciones.success && resPlaneaciones.data && Array.isArray(resPlaneaciones.data)) {
+      planeacionesRaw = resPlaneaciones.data;
+      console.log('✅ Planeaciones: desde success.data,', planeacionesRaw.length, 'items');
+    }
+    else {
+      console.error('❌ Estructura de planeaciones NO reconocida. Propiedades:', Object.keys(resPlaneaciones));
+      console.error('Contenido:', resPlaneaciones);
     }
     
+    // ============================================
+    // PROCESAR PLANEACIONES
+    // ============================================
     planeacionesMap.clear();
     
-    // PROCESAR CADA PLANEACIÓN
     planeacionesRaw.forEach((p, idx) => {
       const periodoNorm = normalizarPeriodo(p.periodo);
       
       if (periodoNorm === periodoActivo) {
-        // Extraer número de semana
         let semanaNum = 0;
         if (typeof p.semana === 'number') {
           semanaNum = p.semana;
@@ -804,7 +826,6 @@ async function cargarDatos() {
         const asignaturaNorm = normalizar(p.asignatura);
         const gradoNumero = normalizarGrado(p.grado);
         
-        // Procesar grupos destino
         let gruposDestino = [];
         if (p.gruposDestino && p.gruposDestino !== '') {
           gruposDestino = String(p.gruposDestino)
@@ -813,41 +834,33 @@ async function cargarDatos() {
             .filter(g => g === 'A' || g === 'B');
         }
         
-        console.log(`📝 Procesando: ${p.asignatura} | Grado: ${p.grado} → Número: ${gradoNumero} | Grupos: ${gruposDestino.length ? gruposDestino.join(',') : 'NINGUNO'}`);
-        
-        // Guardar en mapa
         if (gruposDestino.length === 0) {
           const key = `${asignaturaNorm}|${gradoNumero}|${semanaNum}|SIN_GRUPO`;
           planeacionesMap.set(key, p);
-          console.log(`   ✅ Guardado: ${key}`);
         } else {
           gruposDestino.forEach(grupo => {
             const key = `${asignaturaNorm}|${gradoNumero}|${semanaNum}|${grupo}`;
             planeacionesMap.set(key, p);
-            console.log(`   ✅ Guardado: ${key}`);
           });
         }
       }
     });
     
-    console.log(`📊 TOTAL: ${planeacionesMap.size} planeaciones guardadas en mapa`);
-    console.log('🔑 Claves del mapa:', Array.from(planeacionesMap.keys()));
+    console.log(`📊 TOTAL: ${planeacionesMap.size} planeaciones guardadas`);
     
     // Guardar en caché
-    if (materiasRaw.length > 0 || planeacionesMap.size > 0) {
+    if (materiasRaw.length > 0) {
       const cacheData = {
         materias: materiasRaw,
         planeacionesMapData: Array.from(planeacionesMap.entries())
       };
       sessionStorage.setItem(cacheKey, JSON.stringify(cacheData));
       console.log('💾 Caché guardado');
-      setTimeout(() => sessionStorage.removeItem(cacheKey), 10 * 60 * 1000);
     }
     
   } catch (error) {
-    console.error('❌ Error cargando datos:', error);
+    console.error('❌ Error:', error);
     materiasRaw = [];
-    mostrarToast('Error al cargar datos. Recarga la página.');
   }
 }
 
