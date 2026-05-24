@@ -664,7 +664,8 @@ async function cargarDatos() {
         const periodoNorm = normalizarPeriodo(p.periodo);
         if (periodoNorm === periodoActivo) {
           const semanaNum = parseInt(p.semana?.match(/\d+/)?.[0] || '0');
-          const key = `${normalizar(p.asignatura)}|${extraerNumeroGrado(p.grado)}|${semanaNum}`;
+          const gradoNormalizado = String(p.grado || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const key = `${normalizar(p.asignatura)}|${gradoNormalizado}|${semanaNum}`;
           planeacionesMap.set(key, p);
         }
       });
@@ -684,28 +685,61 @@ async function cargarDatos() {
 }
 
 function compararGrado(gradoPlaneacion, gradoCarga) {
-  const numPlaneacion = extraerNumeroGrado(gradoPlaneacion);
-  const numCarga = extraerNumeroGrado(gradoCarga);
-  if (numPlaneacion !== numCarga) return false;
-  const letraPlaneacion = String(gradoPlaneacion || '').match(/[AB]$/i)?.[0] || '';
-  const letraCarga = String(gradoCarga || '').match(/[AB]$/i)?.[0] || '';
-  if (letraCarga && !letraPlaneacion) return true;
-  if (letraCarga && letraPlaneacion && letraCarga.toUpperCase() !== letraPlaneacion.toUpperCase()) return false;
-  return true;
+  // Normalizar ambos grados (quitar acentos, mayúsculas)
+  const norm = (g) => {
+    return String(g || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  };
+  
+  const pGrado = norm(gradoPlaneacion);
+  const cGrado = norm(gradoCarga);
+  
+  // Comparación exacta (décimo vs décimo, undécimo vs undécimo)
+  if (pGrado === cGrado) return true;
+  
+  // Si uno tiene letra y el otro no, no coinciden (para evitar cruce)
+  const tieneLetraPlaneacion = /[a-z]$/i.test(pGrado);
+  const tieneLetraCarga = /[a-z]$/i.test(cGrado);
+  if (tieneLetraPlaneacion !== tieneLetraCarga) return false;
+  
+  // Extraer números si los hay
+  const numPlaneacion = pGrado.match(/\d+/)?.[0] || '';
+  const numCarga = cGrado.match(/\d+/)?.[0] || '';
+  
+  if (numPlaneacion && numCarga) {
+    return numPlaneacion === numCarga;
+  }
+  
+  return pGrado === cGrado;
 }
 
 function getEstado(asignatura, grado, semana) {
-  const key = `${normalizar(asignatura)}|${extraerNumeroGrado(grado)}|${semana}`;
-  const p = planeacionesMap.get(key);
+  const asignaturaNorm = normalizar(asignatura);
+  const gradoNorm = String(grado || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   
-  if (!p) return { estado: 'no_enviada', label: 'No enviada', data: null };
+  // Buscar planeación que coincida EXACTAMENTE en asignatura, grado y semana
+  let planeacionEncontrada = null;
+  for (const [key, p] of planeacionesMap.entries()) {
+    const pAsignatura = normalizar(p.asignatura);
+    const pGradoNorm = String(p.grado || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const pSemanaNum = parseInt(p.semana?.match(/\d+/)?.[0] || '0');
+    
+    if (pAsignatura === asignaturaNorm && pGradoNorm === gradoNorm && pSemanaNum === semana) {
+      planeacionEncontrada = p;
+      break;
+    }
+  }
   
-  const raw = (p.estadoRevision || p.revisionCoord || '').toLowerCase();
-  if (raw === 'aprobada' || raw === 'aprobado') return { estado: 'aprobada', label: 'Aprobada', data: p };
-  if (raw.includes('ajuste')) return { estado: 'con_ajustes', label: 'Con ajustes', data: p };
-  return { estado: 'pendiente', label: 'En revisión', data: p };
+  if (!planeacionEncontrada) return { estado: 'no_enviada', label: 'No enviada', data: null };
+  
+  const raw = (planeacionEncontrada.estadoRevision || planeacionEncontrada.revisionCoord || '').toLowerCase();
+  if (raw === 'aprobada' || raw === 'aprobado') return { estado: 'aprobada', label: 'Aprobada', data: planeacionEncontrada };
+  if (raw.includes('ajuste')) return { estado: 'con_ajustes', label: 'Con ajustes', data: planeacionEncontrada };
+  return { estado: 'pendiente', label: 'En revisión', data: planeacionEncontrada };
 }
-
 function desglosar() {
   const cards = [];
   materiasRaw.forEach(m => {
