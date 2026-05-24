@@ -1367,65 +1367,269 @@ function setFam(valor, el){
   guardarAuto();
 }
 
-async function enviarPlaneacion(){
+async function enviarPlaneacion() {
   const correo = ST.correo || obtenerCorreo();
-  if(!correo){ alert("No se encontró el correo"); return; }
+  if (!correo) {
+    mostrarNotificacionProfesional('No se encontró tu sesión. Vuelve a iniciar sesión.', 'error');
+    return;
+  }
+
   const btn = document.getElementById("btnEnviar");
   const icon = document.getElementById("iconEnviar");
   const estado = document.getElementById("estadoGuardado");
   const overlay = document.getElementById("overlayEnviar");
   const loaderText = document.getElementById("loaderText");
   const loaderSuccess = document.getElementById("loaderSuccess");
-  if(btn.classList.contains("loading")) return;
+  
+  if (btn.classList.contains("loading")) return;
+
   const valido = validarBotonEnviar();
-  if(!valido){ const mensaje = obtenerMensajeError(); alert(mensaje || "Completa todos los campos obligatorios"); irAlPrimerError(); return; }
-  btn.classList.add("loading"); icon.textContent = "";
+  if (!valido) {
+    mostrarNotificacionProfesional(obtenerMensajeError() || "Completa todos los campos obligatorios", 'warning');
+    irAlPrimerError();
+    return;
+  }
+
+  // Iniciar loading
+  btn.classList.add("loading");
+  icon.textContent = "";
   btn.style.transform = "scale(0.9)";
-  setTimeout(()=> btn.style.transform = "scale(1)", 120);
+  setTimeout(() => btn.style.transform = "scale(1)", 120);
   document.querySelector(".form-app").classList.add("blur");
   overlay.classList.add("activo");
   loaderText.textContent = "Enviando...";
   loaderSuccess.style.opacity = "0";
   estado.textContent = "Enviando...";
+
   const payload = {
-    accion:"guardarFinal", 
-    correo,
-    planeacionId:ST.planeacionId || "",
-    asignatura:ST.materia||"", 
-    grado:ST.grado||"",
-    gruposDestino:(ST.grupos||[]).join(","),
-    semana:(ST.semana||"").toUpperCase(),
-    indicador:document.getElementById("indicadorInput")?.value||"",
-    d1_tema:document.getElementById("tema_1")?.value||"", d1_act:document.getElementById("act_1")?.value||"",
-    d2_tema:document.getElementById("tema_2")?.value||"", d2_act:document.getElementById("act_2")?.value||"",
-    d3_tema:document.getElementById("tema_3")?.value||"", d3_act:document.getElementById("act_3")?.value||"",
-    d4_tema:document.getElementById("tema_4")?.value||"", d4_act:document.getElementById("act_4")?.value||"",
-    d5_tema:document.getElementById("tema_5")?.value||"", d5_act:document.getElementById("act_5")?.value||"",
-    intensidad:ST.intensidad||1,
-    observacion:ST.observacionActiva==="si"?document.getElementById("observacionInput")?.value||"":"",
-    comp_obligatoria:ST.compActiva==="si"?document.getElementById("compObligatoria")?.value||"":"",
-    comp_anexo:archivoCompBase64||null, comp_nombre:archivoCompNombre||"",
-    fam_obs:ST.famActiva==="si"?document.getElementById("famObs")?.value||"":"",
-    fam_anexo:archivoFamBase64||null, fam_nombre:archivoFamNombre||"",
-    disp_clases:ST.dispActivo==="si"?(ST.dispClases||[]).join(","):"",
-    disp_desc:ST.dispActivo==="si"?document.getElementById("dispDescripcion")?.value||"":"",
-    enviar_copia:ST.enviarCopia
+    accion: "guardarFinal",
+    correo: correo,
+    planeacionId: ST.planeacionId || "",
+    asignatura: ST.materia || "",
+    grado: ST.grado || "",
+    gruposDestino: (ST.grupos || []).join(","),
+    semana: (ST.semana || "").toUpperCase(),
+    indicador: document.getElementById("indicadorInput")?.value || "",
+    d1_tema: document.getElementById("tema_1")?.value || "",
+    d1_act: document.getElementById("act_1")?.value || "",
+    d2_tema: document.getElementById("tema_2")?.value || "",
+    d2_act: document.getElementById("act_2")?.value || "",
+    d3_tema: document.getElementById("tema_3")?.value || "",
+    d3_act: document.getElementById("act_3")?.value || "",
+    d4_tema: document.getElementById("tema_4")?.value || "",
+    d4_act: document.getElementById("act_4")?.value || "",
+    d5_tema: document.getElementById("tema_5")?.value || "",
+    d5_act: document.getElementById("act_5")?.value || "",
+    intensidad: ST.intensidad || 1,
+    observacion: ST.observacionActiva === "si" ? document.getElementById("observacionInput")?.value || "" : "",
+    comp_obligatoria: ST.compActiva === "si" ? document.getElementById("compObligatoria")?.value || "" : "",
+    comp_anexo: archivoCompBase64 || null,
+    comp_nombre: archivoCompNombre || "",
+    fam_obs: ST.famActiva === "si" ? document.getElementById("famObs")?.value || "" : "",
+    fam_anexo: archivoFamBase64 || null,
+    fam_nombre: archivoFamNombre || "",
+    disp_clases: ST.dispActivo === "si" ? (ST.dispClases || []).join(",") : "",
+    disp_desc: ST.dispActivo === "si" ? document.getElementById("dispDescripcion")?.value || "" : "",
+    enviar_copia: ST.enviarCopia
   };
-  fetch(API,{ method:"POST", headers:{"Content-Type":"application/json","x-correo":correo}, body:JSON.stringify(payload) })
-  .then(res => res.json())
-  .then(json => { if(!json||!json.ok){ console.error("Error backend:",json); mostrarErrorEnvio("No se pudo guardar la planeación."); return; } confirmarEnvioExitoso(); })
-  .catch(err => { console.error("Error envío:",err); mostrarErrorEnvio("Error de conexión."); });
-  loaderText.textContent = "Enviado";
-  loaderSuccess.style.opacity = "1";
-  loaderSuccess.style.transform = "scale(1.2)";
-  loaderSuccess.textContent = "✔";
-  btn.classList.remove("loading"); btn.classList.add("success"); icon.textContent = "✔";
-  estado.textContent = "Planeación enviada ✔";
-  const key = getClavePlaneacion();
-  if(key) localStorage.removeItem(key);
-  setTimeout(() => { overlay.classList.remove("activo"); document.querySelector(".form-app").classList.remove("blur"); mostrarExito(); }, 180);
+
+  let reintentos = 0;
+  const MAX_REINTENTOS = 2;
+
+  async function intentarEnvio() {
+    try {
+      const response = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-correo": correo },
+        body: JSON.stringify(payload)
+      });
+      
+      const json = await response.json();
+      
+      if (json && json.ok) {
+        // ÉXITO
+        loaderText.textContent = "Enviado";
+        loaderSuccess.style.opacity = "1";
+        loaderSuccess.style.transform = "scale(1.2)";
+        loaderSuccess.textContent = "✔";
+        btn.classList.remove("loading");
+        btn.classList.add("success");
+        icon.textContent = "✔";
+        estado.textContent = "Planeación enviada ✔";
+        
+        const key = getClavePlaneacion();
+        if (key) localStorage.removeItem(key);
+        
+        setTimeout(() => {
+          overlay.classList.remove("activo");
+          document.querySelector(".form-app").classList.remove("blur");
+          mostrarExito();
+        }, 500);
+        
+      } else {
+        throw new Error(json.mensaje || json.error || "Error desconocido del servidor");
+      }
+      
+    } catch (error) {
+      console.error("Error en envío:", error);
+      
+      if (reintentos < MAX_REINTENTOS) {
+        reintentos++;
+        loaderText.textContent = `Reintentando (${reintentos}/${MAX_REINTENTOS})...`;
+        mostrarNotificacionProfesional(`Error: ${error.message}. Reintentando automáticamente...`, 'warning', 2000);
+        setTimeout(intentarEnvio, 2000);
+      } else {
+        // FALLO DEFINITIVO
+        mostrarNotificacionProfesional(
+          `No se pudo enviar tu planeación. Motivo: ${error.message}. El sistema guardó un respaldo automático. Por favor, intenta de nuevo más tarde o contacta a soporte.`,
+          'error'
+        );
+        estado.textContent = "Error al guardar. Respaldo creado.";
+        btn.classList.remove("loading");
+        icon.textContent = "⚠";
+        overlay.classList.remove("activo");
+        document.querySelector(".form-app").classList.remove("blur");
+        
+        // Guardar respaldo local en el navegador
+        try {
+          const fallos = JSON.parse(localStorage.getItem('planeaciones_fallidas') || '[]');
+          fallos.push({
+            timestamp: new Date().toISOString(),
+            correo: correo,
+            mensaje: error.message
+          });
+          localStorage.setItem('planeaciones_fallidas', JSON.stringify(fallos.slice(-10)));
+        } catch(e) {}
+      }
+    }
+  }
+  
+  await intentarEnvio();
 }
 
+// ==================================================
+// NOTIFICACIÓN PROFESIONAL CENTRADA
+// ==================================================
+function mostrarNotificacionProfesional(mensaje, tipo = 'info', duracion = 5000) {
+  // Eliminar notificación anterior
+  const vieja = document.querySelector('.sipresc-notificacion');
+  if (vieja) vieja.remove();
+  
+  const notif = document.createElement('div');
+  notif.className = 'sipresc-notificacion';
+  
+  const iconos = {
+    success: '✓',
+    error: '✗',
+    warning: '⚠',
+    info: 'ℹ'
+  };
+  
+  const colores = {
+    success: '#4ade80',
+    error: '#f06b6b',
+    warning: '#facc15',
+    info: '#c9962a'
+  };
+  
+  notif.innerHTML = `
+    <div class="sipresc-notif-icon" style="background: ${colores[tipo]}20; color: ${colores[tipo]}">${iconos[tipo] || 'ℹ'}</div>
+    <div class="sipresc-notif-content">${mensaje}</div>
+    <button class="sipresc-notif-close">×</button>
+  `;
+  
+  notif.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #0d1f3c;
+    border: 1px solid ${colores[tipo]};
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: -apple-system, 'Helvetica Neue', sans-serif;
+    font-size: 15px;
+    color: #e8edf8;
+    backdrop-filter: blur(20px);
+    background: rgba(13,31,60,0.97);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    z-index: 10001;
+    min-width: 320px;
+    max-width: 480px;
+    text-align: left;
+    animation: notifEntrada 0.25s ease;
+    cursor: pointer;
+  `;
+  
+  const iconDiv = notif.querySelector('.sipresc-notif-icon');
+  iconDiv.style.cssText = `
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    flex-shrink: 0;
+  `;
+  
+  const contentDiv = notif.querySelector('.sipresc-notif-content');
+  contentDiv.style.cssText = `
+    flex: 1;
+    line-height: 1.5;
+  `;
+  
+  const closeBtn = notif.querySelector('.sipresc-notif-close');
+  closeBtn.style.cssText = `
+    background: none;
+    border: none;
+    color: #7a8fb0;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    transition: color 0.15s;
+  `;
+  closeBtn.onmouseenter = () => closeBtn.style.color = '#e8edf8';
+  closeBtn.onmouseleave = () => closeBtn.style.color = '#7a8fb0';
+  closeBtn.onclick = () => notif.remove();
+  
+  // Clic en cualquier parte cierra la notificación
+  notif.onclick = (e) => {
+    if (e.target !== closeBtn) notif.remove();
+  };
+  
+  // Agregar animación si no existe
+  if (!document.getElementById('sipresc-notif-styles')) {
+    const style = document.createElement('style');
+    style.id = 'sipresc-notif-styles';
+    style.textContent = `
+      @keyframes notifEntrada {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  document.body.appendChild(notif);
+  
+  if (duracion > 0) {
+    setTimeout(() => {
+      if (notif && notif.remove) notif.remove();
+    }, duracion);
+  }
+}
 function restaurarBorradorCompleto(){
   if(!AUTO_RESTORE) return;
   if(!ST.materia||!ST.grado||!ST.semana) return;
