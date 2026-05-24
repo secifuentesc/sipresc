@@ -719,7 +719,7 @@ function iconoPorMateria(asignatura) {
   return `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>`;
 }
 // ==================================================
-// API
+// API - CORREGIDO
 // ==================================================
 async function cargarDatos() {
   const cacheKey = `sipresc_cache_${ST.correo}_${periodoActivo}`;
@@ -748,38 +748,72 @@ async function cargarDatos() {
       fetch(`${API_PLN}?accion=misPlaneacionesDocente&${qs}`).then(r => r.json())
     ]);
     
-    console.log('📚 Materias recibidas:', resMaterias.materias?.length || 0);
-    console.log('📋 Planeaciones recibidas:', resPlaneaciones.data?.length || 0);
+    console.log('📚 Respuesta materias:', resMaterias);
+    console.log('📋 Respuesta planeaciones:', resPlaneaciones);
     
-    materiasRaw = (resMaterias.ok && resMaterias.materias) ? resMaterias.materias : [];
+    // CORREGIDO: Verificar la estructura correcta de la respuesta
+    if (resMaterias.success && resMaterias.data) {
+      materiasRaw = resMaterias.data;
+      console.log('✅ Materias cargadas:', materiasRaw.length);
+    } else if (resMaterias.ok && resMaterias.materias) {
+      materiasRaw = resMaterias.materias;
+    } else {
+      console.warn('⚠️ Estructura de materias no reconocida:', resMaterias);
+      materiasRaw = [];
+    }
+    
     planeacionesMap.clear();
     
-    if (resPlaneaciones.ok && resPlaneaciones.data) {
+    if (resPlaneaciones.success && resPlaneaciones.data) {
+      console.log('📋 Planeaciones recibidas:', resPlaneaciones.data.length);
+      
       resPlaneaciones.data.forEach(p => {
+        console.log(`🔍 Planeación: ${p.asignatura} | Grado: ${p.grado} | Semana: ${p.semana} | Período original: ${p.periodo}`);
+        
         const periodoNorm = normalizarPeriodo(p.periodo);
+        console.log(`   Período normalizado: ${periodoNorm} | Activo: ${periodoActivo} | Coincide: ${periodoNorm === periodoActivo}`);
+        
         if (periodoNorm === periodoActivo) {
           const semanaNum = parseInt(p.semana?.match(/\d+/)?.[0] || '0');
+          if (semanaNum === 0) return;
+          
+          const asignaturaNorm = normalizar(p.asignatura);
           const gradoNorm = normalizar(p.grado || '').replace(/[ab]$/i, '');
           
           let gruposDestino = [];
-          if (p.gruposDestino) {
+          if (p.gruposDestino && p.gruposDestino !== '') {
             gruposDestino = String(p.gruposDestino).split(',').map(g => g.trim().toUpperCase()).filter(g => g === 'A' || g === 'B');
           }
           
+          console.log(`   Grupos destino: ${gruposDestino.length ? gruposDestino.join(',') : 'SIN_GRUPO'}`);
+          
           if (gruposDestino.length === 0) {
-            const key = `${normalizar(p.asignatura)}|${gradoNorm}|${semanaNum}|SIN_GRUPO`;
+            const key = `${asignaturaNorm}|${gradoNorm}|${semanaNum}|SIN_GRUPO`;
             planeacionesMap.set(key, p);
+            console.log(`   ✅ Guardado SIN_GRUPO: ${key}`);
           } else {
             gruposDestino.forEach(grupo => {
-              const key = `${normalizar(p.asignatura)}|${gradoNorm}|${semanaNum}|${grupo}`;
+              const key = `${asignaturaNorm}|${gradoNorm}|${semanaNum}|${grupo}`;
               planeacionesMap.set(key, p);
+              console.log(`   ✅ Guardado con grupo ${grupo}: ${key}`);
             });
           }
         }
       });
+    } else if (resPlaneaciones.ok && resPlaneaciones.data) {
+      // Fallback para otra estructura
+      resPlaneaciones.data.forEach(p => {
+        const periodoNorm = normalizarPeriodo(p.periodo);
+        if (periodoNorm === periodoActivo) {
+          const semanaNum = parseInt(p.semana?.match(/\d+/)?.[0] || '0');
+          const key = `${normalizar(p.asignatura)}|${normalizar(p.grado).replace(/[ab]$/i, '')}|${semanaNum}|SIN_GRUPO`;
+          planeacionesMap.set(key, p);
+        }
+      });
     }
     
-    console.log('📊 Planeaciones guardadas en mapa:', planeacionesMap.size);
+    console.log('📊 Total planeaciones en mapa:', planeacionesMap.size);
+    console.log('🔑 Claves del mapa:', Array.from(planeacionesMap.keys()));
     
     // Guardar en caché
     const cacheData = {
@@ -789,14 +823,120 @@ async function cargarDatos() {
     sessionStorage.setItem(cacheKey, JSON.stringify(cacheData));
     console.log('💾 Caché guardado');
     
+    // Auto-expiración
     setTimeout(() => sessionStorage.removeItem(cacheKey), 10 * 60 * 1000);
     
   } catch (error) {
-    console.error('Error cargando datos:', error);
-    materiasRaw = [
-      { asignatura: "TECNOLOGÍA E INFORMÁTICA", grados: ["SEXTO A", "SEXTO B", "SÉPTIMO", "OCTAVO", "NOVENO", "DÉCIMO", "UNDÉCIMO"] }
-    ];
+    console.error('❌ Error cargando datos:', error);
+    materiasRaw = [];
+    mostrarToast('Error al cargar datos. Recarga la página.');
   }
+}
+
+// ==================================================
+// GET ESTADO - CORREGIDO CON MÁS DEBUG
+// ==================================================
+function getEstado(asignatura, gradoConLetra, semana) {
+  const asignaturaNorm = normalizar(asignatura);
+  const gradoBase = normalizar(gradoConLetra).replace(/[ab]$/i, '');
+  const letra = gradoConLetra.match(/[AB]$/i)?.[0]?.toUpperCase() || '';
+  
+  const busquedaKey = letra 
+    ? `${asignaturaNorm}|${gradoBase}|${semana}|${letra}`
+    : `${asignaturaNorm}|${gradoBase}|${semana}|SIN_GRUPO`;
+  
+  console.log(`🔎 Buscando: "${busquedaKey}"`);
+  console.log(`   Disponibles:`, Array.from(planeacionesMap.keys()));
+  
+  // Buscar coincidencia exacta
+  for (const [key, p] of planeacionesMap.entries()) {
+    if (key === busquedaKey) {
+      console.log(`✅ Encontrado: ${key}`);
+      return { 
+        estado: mapearEstado(p), 
+        label: estadoLabel(p), 
+        data: p 
+      };
+    }
+  }
+  
+  // Si no encontró con letra, buscar SIN_GRUPO (solo si la tarjeta no tiene letra)
+  if (!letra) {
+    const sinGrupoKey = `${asignaturaNorm}|${gradoBase}|${semana}|SIN_GRUPO`;
+    for (const [key, p] of planeacionesMap.entries()) {
+      if (key === sinGrupoKey) {
+        console.log(`✅ Encontrado SIN_GRUPO: ${key}`);
+        return { 
+          estado: mapearEstado(p), 
+          label: estadoLabel(p), 
+          data: p 
+        };
+      }
+    }
+  }
+  
+  console.log(`❌ No encontrado para: ${busquedaKey}`);
+  return { estado: 'no_enviada', label: 'No enviada', data: null };
+}
+
+// ==================================================
+// NORMALIZACIÓN MEJORADA
+// ==================================================
+function normalizar(str) {
+  if (!str) return '';
+  return String(str)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '')
+    .trim();
+}
+
+function normalizarPeriodo(periodo) {
+  if (periodo === undefined || periodo === null) return '';
+  
+  // Si ya es string con formato "P1", "P2", etc.
+  if (typeof periodo === 'string' && periodo.startsWith('P')) {
+    return periodo;
+  }
+  
+  // Si es número (1,2,3,4)
+  if (typeof periodo === 'number') {
+    return 'P' + periodo.toString();
+  }
+  
+  // Si es string numérico ("1", "2", etc.)
+  if (typeof periodo === 'string' && /^\d+$/.test(periodo)) {
+    return 'P' + periodo;
+  }
+  
+  console.warn(`⚠️ Período no reconocido: ${periodo} (tipo: ${typeof periodo})`);
+  return '';
+}
+
+function mapearEstado(p) {
+  // Probar diferentes campos donde puede estar el estado
+  const estadoRaw = p.estadoRevision || p.revisionCoord || p.estado || p.estadoEnvio || '';
+  const estadoLower = String(estadoRaw).toLowerCase();
+  
+  console.log(`📌 Estado raw: "${estadoRaw}" → lower: "${estadoLower}"`);
+  
+  if (estadoLower.includes('aprob') || estadoLower === 'aprobada') return 'aprobada';
+  if (estadoLower.includes('ajust') || estadoLower.includes('corre') || estadoLower === 'con_ajustes') return 'con_ajustes';
+  if (estadoLower.includes('pend') || estadoLower === 'enviada' || estadoLower === 'recibida' || estadoLower === 'en_revision') return 'pendiente';
+  
+  return 'no_enviada';
+}
+
+function estadoLabel(p) {
+  const estado = mapearEstado(p);
+  const labels = {
+    'aprobada': 'Aprobada',
+    'con_ajustes': 'Con ajustes', 
+    'pendiente': 'En revisión',
+    'no_enviada': 'No enviada'
+  };
+  return labels[estado] || 'No enviada';
 }
 function compararGrado(gradoPlaneacion, gradoCarga) {
   // Normalizar ambos grados (quitar acentos, mayúsculas)
