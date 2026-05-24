@@ -79,6 +79,14 @@ function setMateriaText(texto){
   }catch(e){ window.location.replace("/"); }
 })();
 
+function mostrarExito() {
+  const modal = document.getElementById("modalExito");
+  if (modal) {
+    modal.style.opacity = "1";
+    modal.style.pointerEvents = "auto";
+  }
+}
+
 </script>
 <style>
 /* ═══════════════════════════════════════════
