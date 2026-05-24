@@ -133,32 +133,47 @@
   });
 
   // ──────────────────────────────────────────────────────────
-  // CAPA 2: Teclas de desarrollador (Windows y Mac)
+  // CAPA 2: Teclas de desarrollador (PERMITIR Ctrl+C / Cmd+C)
   // ──────────────────────────────────────────────────────────
   const teclasProhibidas = ['F12', 'F11', 'F10', 'F9', 'F8', 'F7', 'F6', 'F5'];
+  
+  // Combinaciones de copiar/pegar que NO deben bloquearse
+  const comandosPermitidos = (modificador, tecla) => {
+    const teclaUpper = tecla.toUpperCase();
+    // Permitir Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+A
+    if (modificador && (teclaUpper === 'C' || teclaUpper === 'V' || teclaUpper === 'X' || teclaUpper === 'A')) {
+      return true;
+    }
+    return false;
+  };
   
   document.addEventListener('keydown', (e) => {
     if (!bloqueoActivo()) return;
     
+    const modificador = (e.ctrlKey || e.metaKey);
+    const tecla = e.key;
+    const teclaUpper = tecla.toUpperCase();
+    
+    // 🔥 PERMITIR copiar, pegar, cortar, seleccionar todo
+    if (comandosPermitidos(modificador, tecla)) {
+      return; // No bloquear
+    }
+    
     // Teclas de función (F12, etc.)
-    if (teclasProhibidas.includes(e.key)) {
+    if (teclasProhibidas.includes(tecla)) {
       e.preventDefault();
       mostrarMensajeSipresc();
       return;
     }
     
-    // Detectar modificadores: Ctrl (Windows/Linux) o Cmd (Mac)
-    const modificador = (e.ctrlKey || e.metaKey);
-    
-    // Combinaciones peligrosas
+    // Combinaciones peligrosas (excepto las permitidas arriba)
     if (modificador && (
-      e.key === 'u' || e.key === 'U' ||
-      e.key === 'i' || e.key === 'I' ||
-      e.key === 'j' || e.key === 'J' ||
-      e.key === 'c' || e.key === 'C' ||
-      e.key === 's' || e.key === 'S' ||
-      e.key === 'p' || e.key === 'P' ||
-      e.key === 'k' || e.key === 'K'
+      teclaUpper === 'U' ||
+      teclaUpper === 'I' ||
+      teclaUpper === 'J' ||
+      teclaUpper === 'S' ||
+      teclaUpper === 'P' ||
+      teclaUpper === 'K'
     )) {
       e.preventDefault();
       mostrarMensajeSipresc();
@@ -166,9 +181,9 @@
     
     // Combinación con Shift: Ctrl/Cmd + Shift + ...
     if (modificador && e.shiftKey && (
-      e.key === 'I' || e.key === 'i' ||
-      e.key === 'J' || e.key === 'j' ||
-      e.key === 'C' || e.key === 'c'
+      teclaUpper === 'I' ||
+      teclaUpper === 'J' ||
+      teclaUpper === 'C'
     )) {
       e.preventDefault();
       mostrarMensajeSipresc();
@@ -176,10 +191,10 @@
     
     // Bloquear Cmd + Option + I/J/C/U en Mac (equivalente a Ctrl+Shift+I en Windows)
     if (isMac && e.metaKey && e.altKey && (
-      e.key === 'I' || e.key === 'i' ||
-      e.key === 'J' || e.key === 'j' ||
-      e.key === 'C' || e.key === 'c' ||
-      e.key === 'U' || e.key === 'u'
+      teclaUpper === 'I' ||
+      teclaUpper === 'J' ||
+      teclaUpper === 'C' ||
+      teclaUpper === 'U'
     )) {
       e.preventDefault();
       mostrarMensajeSipresc();
