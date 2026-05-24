@@ -608,7 +608,6 @@ function volverPanel() {
   else window.location.href = '/';
 }
 function calcularSemanaActual(fecha = new Date()) {
-  // Semana 1 comenzó el lunes 6 de abril de 2026
   const inicioBase = new Date('2026-04-06T00:00:00-05:00');
   const ahora = fecha;
   
@@ -618,31 +617,20 @@ function calcularSemanaActual(fecha = new Date()) {
   const diaSemana = ahora.getDay();
   const hora = ahora.getHours();
   
-  // Si es domingo: mostrar semana que empieza mañana
   if (diaSemana === 0) {
     semana = semana + 1;
-  }
-  // Si es viernes después de las 2pm: mostrar semana siguiente
-  else if (diaSemana === 5 && hora >= 14) {
+  } else if (diaSemana === 5 && hora >= 14) {
     semana = semana + 1;
-  }
-  // Si es sábado: mostrar semana siguiente
-  else if (diaSemana === 6) {
+  } else if (diaSemana === 6) {
     semana = semana + 1;
   }
   
-  // Ciclo de 10 semanas (P2 usa semanas 1 a 10)
   let semanaCiclo = ((semana - 1) % 10) + 1;
   if (semanaCiclo < 1) semanaCiclo = 1;
   if (semanaCiclo > 10) semanaCiclo = 10;
   
   return semanaCiclo;
 }
-
-// Prueba
-console.log('Hoy (domingo 24 mayo):', calcularSemanaActual());
-console.log('Lunes 25 mayo (inicio semana 8):', calcularSemanaActual(new Date(2026, 4, 25, 10, 0, 0)));
-console.log('Viernes 29 mayo 3pm:', calcularSemanaActual(new Date(2026, 4, 29, 15, 0, 0)));
 function mostrarToast(msg) {
   const t = document.getElementById('toastMsg');
   t.textContent = msg;
