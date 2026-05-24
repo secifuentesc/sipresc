@@ -962,7 +962,7 @@ function abrirDetalle(asignatura, grado, semana) {
           
           <!-- INDICADOR -->
           <div style="margin-bottom: 28px;">
-            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">📋 Indicador de desempeño</div>
+            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">Indicador de desempeño</div>
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px 20px; font-size: 16px; line-height: 1.6;">${escapeHtml(p.indicadorSemanal) || '—'}</div>
           </div>`;
   
@@ -970,7 +970,7 @@ function abrirDetalle(asignatura, grado, semana) {
   if (tieneClases) {
     html += `
           <div style="margin-bottom: 28px;">
-            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">📚 Clases planificadas</div>
+            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">Clases planificadas</div>
             ${clasesHtml}
           </div>`;
   }
@@ -980,12 +980,12 @@ function abrirDetalle(asignatura, grado, semana) {
   if (p.actCompDescripcion || linkComp) {
     html += `
           <div style="margin-bottom: 28px;">
-            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">⭐ Actividad complementaria</div>
+            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">Actividad complementaria</div>
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px 20px;">
               <div style="font-size: 15px; line-height: 1.6; margin-bottom: ${linkComp ? '12px' : '0'};">
                 ${escapeHtml(p.actCompDescripcion) || 'Sin descripción'}
               </div>
-              ${linkComp ? `<div><a href="${linkComp}" target="_blank" style="color: #c9962a; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">📎 Ver anexo de actividad complementaria →</a></div>` : ''}
+              ${linkComp ? `<div><a href="${linkComp}" target="_blank" style="color: #c9962a; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">Ver anexo de actividad complementaria →</a></div>` : ''}
             </div>
           </div>`;
   }
@@ -995,12 +995,12 @@ function abrirDetalle(asignatura, grado, semana) {
   if (p.obsFamilias || linkFam) {
     html += `
           <div style="margin-bottom: 28px;">
-            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">👪 Comunicación a familias</div>
+            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">Comunicación a familias</div>
             <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px 20px;">
               <div style="font-size: 15px; line-height: 1.6; margin-bottom: ${linkFam ? '12px' : '0'};">
                 ${escapeHtml(p.obsFamilias) || 'Sin comunicación registrada'}
               </div>
-              ${linkFam ? `<div><a href="${linkFam}" target="_blank" style="color: #c9962a; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">📎 Ver anexo de comunicación a familias →</a></div>` : ''}
+              ${linkFam ? `<div><a href="${linkFam}" target="_blank" style="color: #c9962a; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">Ver anexo de comunicación a familias →</a></div>` : ''}
             </div>
           </div>`;
   }
@@ -1009,7 +1009,7 @@ function abrirDetalle(asignatura, grado, semana) {
   if (p.observacionCoordinacion && e.estado === 'con_ajustes') {
     html += `
           <div style="margin-bottom: 28px;">
-            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #f59e0b; margin-bottom: 12px;">📝 Observación del coordinador</div>
+            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #f59e0b; margin-bottom: 12px;">Observación del coordinador</div>
             <div style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); border-radius: 18px; padding: 18px 20px;">
               <div style="font-size: 15px; line-height: 1.6; color: #fbbf24;">${escapeHtml(p.observacionCoordinacion)}</div>
             </div>
@@ -1022,7 +1022,7 @@ function abrirDetalle(asignatura, grado, semana) {
         <!-- FOOTER -->
         <div class="modal-footer" style="padding: 20px 24px;">
           ${e.estado === 'con_ajustes' 
-            ? `<button class="modal-btn modal-btn-primary" style="padding: 16px; font-size: 16px;" onclick="editarPlaneacion('${p.planeacionId}')">✏️ Editar y reenviar planeación</button>` 
+            ? `<button class="modal-btn modal-btn-primary" style="padding: 16px; font-size: 16px;" onclick="editarPlaneacion('${p.planeacionId}')">Editar y reenviar planeación</button>` 
             : `<button class="modal-btn modal-btn-secondary" style="padding: 14px; font-size: 15px;" onclick="cerrarModal()">Cerrar</button>`}
         </div>
       </div>
