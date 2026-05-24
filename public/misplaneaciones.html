@@ -707,9 +707,25 @@ async function cargarDatos() {
         const periodoNorm = normalizarPeriodo(p.periodo);
         if (periodoNorm === periodoActivo) {
           const semanaNum = parseInt(p.semana?.match(/\d+/)?.[0] || '0');
-          const gradoNormalizado = String(p.grado || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-const key = `${normalizar(p.asignatura)}|${gradoNormalizado}|${semanaNum}`;
-          planeacionesMap.set(key, p);
+          const gradoNorm = String(p.grado || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          
+          // 🔥 Obtener los grupos destino (pueden ser "A", "B", "A,B", o vacío)
+          let gruposDestino = [];
+          if (p.gruposDestino) {
+            gruposDestino = String(p.gruposDestino).split(',').map(g => g.trim().toUpperCase()).filter(g => g === 'A' || g === 'B');
+          }
+          
+          // Si no hay grupos destino, usar array vacío (se mostrará solo con el grado sin letra)
+          if (gruposDestino.length === 0) {
+            const key = `${normalizar(p.asignatura)}|${gradoNorm}|${semanaNum}|SIN_GRUPO`;
+            planeacionesMap.set(key, p);
+          } else {
+            // Crear una entrada por cada grupo
+            gruposDestino.forEach(grupo => {
+              const key = `${normalizar(p.asignatura)}|${gradoNorm}|${semanaNum}|${grupo}`;
+              planeacionesMap.set(key, p);
+            });
+          }
         }
       });
     }
@@ -726,7 +742,6 @@ const key = `${normalizar(p.asignatura)}|${gradoNormalizado}|${semanaNum}`;
     ];
   }
 }
-
 function compararGrado(gradoPlaneacion, gradoCarga) {
   // Normalizar ambos grados (quitar acentos, mayúsculas)
   const norm = (g) => {
@@ -759,20 +774,30 @@ function compararGrado(gradoPlaneacion, gradoCarga) {
   return pGrado === cGrado;
 }
 
-function getEstado(asignatura, grado, semana) {
+function getEstado(asignatura, gradoConLetra, semana) {
   const asignaturaNorm = normalizar(asignatura);
-  const gradoNorm = String(grado || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   
-  // Buscar planeación que coincida EXACTAMENTE en asignatura, grado y semana
+  // Extraer grado base (ej: "SEXTO A" → "SEXTO") y la letra (ej: "A")
+  const gradoBase = gradoConLetra.replace(/[AB]$/i, '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const letra = gradoConLetra.match(/[AB]$/i)?.[0]?.toUpperCase() || '';
+  
+  // Buscar planeación que coincida exactamente
   let planeacionEncontrada = null;
+  
   for (const [key, p] of planeacionesMap.entries()) {
-    const pAsignatura = normalizar(p.asignatura);
-    const pGradoNorm = String(p.grado || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    const pSemanaNum = parseInt(p.semana?.match(/\d+/)?.[0] || '0');
+    const [keyAsig, keyGrado, keySemana, keyGrupo] = key.split('|');
     
-    if (pAsignatura === asignaturaNorm && pGradoNorm === gradoNorm && pSemanaNum === semana) {
-      planeacionEncontrada = p;
-      break;
+    if (keyAsig === asignaturaNorm && parseInt(keySemana) === semana) {
+      // Coincidencia exacta de grupo
+      if (letra && keyGrupo === letra) {
+        planeacionEncontrada = p;
+        break;
+      }
+      // Si no hay letra en la tarjeta (grado sin grupo) y la planeación no tiene grupo
+      if (!letra && keyGrupo === 'SIN_GRUPO') {
+        planeacionEncontrada = p;
+        break;
+      }
     }
   }
   
