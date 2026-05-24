@@ -31,8 +31,6 @@
   --orange-bg: rgba(245, 158, 11, 0.12);
   --gray: #64748b;
   --gray-bg: rgba(100, 116, 139, 0.12);
-  --red: #ef4444;
-  --red-bg: rgba(239, 68, 68, 0.12);
 }
 
 body {
@@ -189,23 +187,26 @@ body {
   flex-shrink: 0;
   min-width: 72px;
   padding: 12px 8px;
-  background: var(--card-bg);
+  background: rgba(18, 25, 45, 0.7);
+  backdrop-filter: blur(8px);
   border: 1px solid var(--border);
   border-radius: 16px;
   text-align: center;
   cursor: pointer;
   transition: all 0.25s;
   position: relative;
+  color: white;
 }
 .semana-btn:hover {
   transform: translateY(-2px);
   border-color: var(--gold);
-  background: rgba(201,150,42,0.08);
+  background: rgba(201,150,42,0.15);
 }
 .semana-btn.active {
   background: linear-gradient(135deg, #1e4db7, #2563eb);
   border-color: transparent;
   box-shadow: 0 6px 14px rgba(37,99,235,0.35);
+  color: white;
 }
 .semana-num {
   font-size: 20px;
@@ -213,7 +214,7 @@ body {
 }
 .semana-label {
   font-size: 10px;
-  opacity: 0.6;
+  opacity: 0.7;
   margin-top: 2px;
 }
 .semana-badge {
@@ -257,7 +258,7 @@ body {
 /* GRID TARJETAS */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 18px;
 }
 @media (max-width: 480px) {
@@ -346,7 +347,7 @@ body {
 .estado-ajustes { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(245,158,11,0.3); }
 .estado-no_enviada { background: var(--gray-bg); color: var(--gray); border: 1px solid rgba(100,116,139,0.3); }
 
-/* TARJETA VACÍA (cuando no hay materias que mostrar) */
+/* TARJETA VACÍA */
 .empty-card {
   text-align: center;
   padding: 48px 24px;
@@ -354,28 +355,12 @@ body {
   border: 1px dashed var(--border);
   border-radius: 24px;
 }
-.empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-.empty-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.empty-sub {
-  color: var(--text-muted);
-  font-size: 13px;
-  margin-bottom: 20px;
-}
+.empty-icon { font-size: 48px; margin-bottom: 16px; }
+.empty-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+.empty-sub { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
 
 /* LOADING */
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 60px;
-}
+.loading { display: flex; justify-content: center; align-items: center; padding: 60px; }
 .spinner {
   width: 42px;
   height: 42px;
@@ -390,16 +375,14 @@ body {
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.85);
   backdrop-filter: blur(12px);
   z-index: 1000;
   display: flex;
   align-items: flex-end;
   justify-content: center;
 }
-@media (min-width: 768px) {
-  .modal { align-items: center; }
-}
+@media (min-width: 768px) { .modal { align-items: center; } }
 .modal-content {
   max-width: 600px;
   width: 100%;
@@ -410,19 +393,10 @@ body {
   animation: slideUp 0.3s ease;
 }
 @media (min-width: 768px) {
-  .modal-content {
-    border-radius: 28px;
-    animation: zoomIn 0.2s ease;
-  }
+  .modal-content { border-radius: 28px; animation: zoomIn 0.2s ease; }
 }
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-@keyframes zoomIn {
-  from { transform: scale(0.96); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes zoomIn { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .modal-handle {
   width: 40px;
   height: 4px;
@@ -437,11 +411,7 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-.modal-header-info {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-}
+.modal-header-info { display: flex; gap: 14px; align-items: center; }
 .modal-icon {
   width: 48px;
   height: 48px;
@@ -452,15 +422,8 @@ body {
   justify-content: center;
   font-size: 24px;
 }
-.modal-title {
-  font-size: 18px;
-  font-weight: 700;
-}
-.modal-sub {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
+.modal-title { font-size: 18px; font-weight: 700; }
+.modal-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 .modal-close {
   background: rgba(255,255,255,0.08);
   border: none;
@@ -474,18 +437,9 @@ body {
   color: var(--text-muted);
   transition: all 0.2s;
 }
-.modal-close:hover {
-  background: rgba(255,255,255,0.15);
-  color: white;
-}
-.modal-body {
-  padding: 20px;
-  overflow-y: auto;
-  max-height: calc(88vh - 140px);
-}
-.modal-section {
-  margin-bottom: 22px;
-}
+.modal-close:hover { background: rgba(255,255,255,0.15); color: white; }
+.modal-body { padding: 20px; overflow-y: auto; max-height: calc(88vh - 140px); }
+.modal-section { margin-bottom: 22px; }
 .modal-label {
   font-size: 11px;
   font-weight: 700;
@@ -502,39 +456,7 @@ body {
   font-size: 14px;
   line-height: 1.5;
 }
-.clase-block {
-  background: rgba(255,255,255,0.03);
-  border-radius: 14px;
-  padding: 12px;
-  margin-bottom: 10px;
-}
-.clase-num {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  background: rgba(59,130,246,0.2);
-  color: var(--blue);
-  border-radius: 50%;
-  text-align: center;
-  line-height: 24px;
-  font-size: 11px;
-  font-weight: 700;
-  margin-right: 10px;
-}
-.clase-tema {
-  font-weight: 600;
-  font-size: 14px;
-}
-.clase-act {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-left: 34px;
-  margin-top: 6px;
-}
-.modal-footer {
-  padding: 16px 20px;
-  border-top: 1px solid var(--border);
-}
+.modal-footer { padding: 16px 20px; border-top: 1px solid var(--border); }
 .modal-btn {
   width: 100%;
   padding: 14px;
@@ -548,23 +470,10 @@ body {
   justify-content: center;
   gap: 8px;
 }
-.modal-btn-primary {
-  background: linear-gradient(135deg, #f59e0b, #ea580c);
-  border: none;
-  color: white;
-}
-.modal-btn-primary:hover {
-  transform: scale(1.02);
-  box-shadow: 0 6px 16px rgba(245,158,11,0.3);
-}
-.modal-btn-secondary {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid var(--border);
-  color: var(--text);
-}
-.modal-btn-secondary:hover {
-  background: rgba(255,255,255,0.12);
-}
+.modal-btn-primary { background: linear-gradient(135deg, #f59e0b, #ea580c); border: none; color: white; }
+.modal-btn-primary:hover { transform: scale(1.02); box-shadow: 0 6px 16px rgba(245,158,11,0.3); }
+.modal-btn-secondary { background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--text); }
+.modal-btn-secondary:hover { background: rgba(255,255,255,0.12); }
 
 .toast {
   position: fixed;
@@ -581,17 +490,13 @@ body {
   transition: transform 0.25s;
   pointer-events: none;
 }
-.toast.show {
-  transform: translateX(-50%) translateY(0);
-}
+.toast.show { transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="topbar-logo" onclick="volverPanel()">
-    <img src="/logo.png" onerror="this.style.display='none'">
-  </div>
+  <div class="topbar-logo" onclick="volverPanel()"><img src="/logo.png" onerror="this.style.display='none'"></div>
   <h1>SIPRESC — Mis planeaciones</h1>
   <span class="topbar-rol" id="rolVista">DOCENTE</span>
   <button class="logout-btn" onclick="cerrarSesion()">Salir</button>
@@ -608,7 +513,6 @@ body {
     <p>Historial de planeaciones enviadas</p>
   </div>
 
-  <!-- Período -->
   <div class="segment-label">Período académico</div>
   <div class="segmented" id="periodoGroup">
     <button class="seg-btn" data-periodo="P1">P1</button>
@@ -617,19 +521,16 @@ body {
     <button class="seg-btn" data-periodo="P4">P4</button>
   </div>
 
-  <!-- Semanas -->
   <div class="semanas-section">
     <div class="segment-label">Semana</div>
     <div class="semanas-scroll" id="semanasContainer"></div>
   </div>
 
-  <!-- Resultados -->
   <div class="results-header">
     <span class="results-count" id="resultadosCount">Cargando...</span>
     <span id="semanaActualBadge"></span>
   </div>
 
-  <!-- Grid -->
   <div class="cards-grid" id="cardsGrid">
     <div class="loading"><div class="spinner"></div></div>
   </div>
@@ -644,8 +545,8 @@ body {
 const API_PLN = '/api/planeaciones';
 
 let ST = { rol: null, correo: null, nombre: null, docenteId: null };
-let materiasData = [];
-let planeacionesMap = {}; // key: materia_grado -> planeacion
+let materiasRaw = [];        // [{ asignatura: "Tecnología", grados: ["6°A","6°B",...] }]
+let planeacionesMap = {};    // key: "asignatura|grado" -> planeacion
 let periodoActivo = 'P2';
 let semanaSeleccionada = 8;
 let semanaActual = 8;
@@ -654,12 +555,8 @@ let semanaActual = 8;
 // UTILS
 // ==================================================
 function obtenerSesion() {
-  try {
-    const data = localStorage.getItem('lp_user');
-    return data ? JSON.parse(data) : null;
-  } catch { return null; }
+  try { const data = localStorage.getItem('lp_user'); return data ? JSON.parse(data) : null; } catch { return null; }
 }
-
 function cerrarSesion() { localStorage.removeItem('lp_user'); window.location.href = '/'; }
 function volverPanel() {
   const sesion = obtenerSesion();
@@ -668,7 +565,6 @@ function volverPanel() {
   else if (rol === 'coordinador') window.location.href = '/dashboardcoord/';
   else window.location.href = '/';
 }
-
 function calcularSemanaActual() {
   const inicio = new Date('2026-04-25T00:30:00-05:00');
   const diff = Math.floor((new Date() - inicio) / (7*24*60*60*1000));
@@ -676,7 +572,6 @@ function calcularSemanaActual() {
   semana = ((semana - 1) % 10 + 10) % 10 + 1;
   return semana;
 }
-
 function mostrarToast(msg) {
   const t = document.getElementById('toastMsg');
   t.textContent = msg;
@@ -696,16 +591,16 @@ async function apiCall(accion, params = {}) {
 async function cargarMaterias() {
   const res = await apiCall('cargaDocente');
   if (res.ok && res.materias) {
-    materiasData = res.materias;
+    materiasRaw = res.materias;
   } else {
-    materiasData = [];
+    materiasRaw = [];
   }
 }
 
 async function cargarPlaneaciones() {
   const res = await apiCall('misPlaneacionesDocente', { periodo: periodoActivo });
+  planeacionesMap = {};
   if (res.ok && res.data) {
-    planeacionesMap = {};
     res.data.forEach(p => {
       const key = `${p.asignatura}|${p.grado}`;
       planeacionesMap[key] = p;
@@ -713,17 +608,38 @@ async function cargarPlaneaciones() {
   }
 }
 
+// Desglosar materias en tarjetas individuales (una por cada grado)
+function desglosarMaterias() {
+  const tarjetas = [];
+  materiasRaw.forEach(m => {
+    m.grados.forEach(grado => {
+      tarjetas.push({
+        asignatura: m.asignatura,
+        grado: grado,
+        key: `${m.asignatura}|${grado}`
+      });
+    });
+  });
+  // Ordenar por grado (ej: 6°A, 6°B, 7°A, 7°B...)
+  tarjetas.sort((a, b) => {
+    const gradoA = a.grado.replace(/[^0-9]/g, '') || '0';
+    const gradoB = b.grado.replace(/[^0-9]/g, '') || '0';
+    if (gradoA !== gradoB) return parseInt(gradoA) - parseInt(gradoB);
+    return a.grado.localeCompare(b.grado);
+  });
+  return tarjetas;
+}
+
 function getEstadoPlaneacion(asignatura, grado) {
   const key = `${asignatura}|${grado}`;
   const p = planeacionesMap[key];
-  if (!p) return { estado: 'no_enviada', label: 'No enviada', planeacionId: null };
+  if (!p) return { estado: 'no_enviada', label: 'No enviada', planeacionId: null, data: null };
   
   const estadoRaw = (p.estadoRevision || p.revisionCoord || '').toLowerCase();
-  if (estadoRaw === 'aprobada' || estadoRaw === 'aprobado') return { estado: 'aprobada', label: 'Aprobada', planeacionId: p.planeacionId, data: p };
-  if (estadoRaw.includes('ajuste')) return { estado: 'con_ajustes', label: 'Con ajustes', planeacionId: p.planeacionId, data: p };
-  if (estadoRaw === 'pendiente' || estadoRaw === 'recibida' || estadoRaw === 'por revisar') 
-    return { estado: 'pendiente', label: 'En revisión', planeacionId: p.planeacionId, data: p };
-  
+  if (estadoRaw === 'aprobada' || estadoRaw === 'aprobado') 
+    return { estado: 'aprobada', label: 'Aprobada', planeacionId: p.planeacionId, data: p };
+  if (estadoRaw.includes('ajuste')) 
+    return { estado: 'con_ajustes', label: 'Con ajustes', planeacionId: p.planeacionId, data: p };
   return { estado: 'pendiente', label: 'En revisión', planeacionId: p.planeacionId, data: p };
 }
 
@@ -771,32 +687,37 @@ function renderPeriodo() {
 
 function renderCards() {
   const grid = document.getElementById('cardsGrid');
-  const semana = semanaSeleccionada;
+  const tarjetas = desglosarMaterias();
   
-  // Ordenar materias por grado para mejor visualización
-  const materiasOrdenadas = [...materiasData].sort((a, b) => {
-    const gradoA = a.grados[0] || '';
-    const gradoB = b.grados[0] || '';
-    return gradoA.localeCompare(gradoB);
-  });
+  document.getElementById('resultadosCount').textContent = `${tarjetas.length} materia${tarjetas.length !== 1 ? 's' : ''}`;
   
-  const cardsHtml = materiasOrdenadas.map((m, idx) => {
-    const gradoStr = m.grados.join(', ');
-    const estadoInfo = getEstadoPlaneacion(m.asignatura, gradoStr);
+  if (semanaSeleccionada === semanaActual) {
+    document.getElementById('semanaActualBadge').innerHTML = '<span class="semana-activa-badge">📅 Semana actual</span>';
+  } else {
+    document.getElementById('semanaActualBadge').innerHTML = '';
+  }
+  
+  if (tarjetas.length === 0) {
+    grid.innerHTML = '<div class="empty-card"><div class="empty-icon">📭</div><div class="empty-title">Sin materias asignadas</div><div class="empty-sub">No tienes materias asignadas para este período</div></div>';
+    return;
+  }
+  
+  grid.innerHTML = tarjetas.map((t, idx) => {
+    const estadoInfo = getEstadoPlaneacion(t.asignatura, t.grado);
     const estadoClase = `estado-${estadoInfo.estado}`;
     const estadoIcon = { aprobada: '✓', pendiente: '⏳', con_ajustes: '⚠', no_enviada: '✗' }[estadoInfo.estado];
     
     return `
-      <div class="plan-card" style="animation-delay: ${idx * 0.03}s" onclick="abrirPlaneacion('${m.asignatura}', '${gradoStr}')">
+      <div class="plan-card" style="animation-delay: ${idx * 0.02}s" onclick="abrirPlaneacion('${t.asignatura}', '${t.grado}')">
         <div class="card-header">
-          <div class="card-icon">${obtenerIcono(m.asignatura)}</div>
+          <div class="card-icon">${obtenerIcono(t.asignatura)}</div>
           <div class="card-chevron">›</div>
         </div>
-        <div class="card-title">${m.asignatura}</div>
-        <div class="card-sub">Semana ${semana}</div>
+        <div class="card-title">${t.asignatura}</div>
+        <div class="card-sub">Semana ${semanaSeleccionada}</div>
         <div class="card-info">
-          <span class="info-chip">🎓 ${gradoStr || 'Sin grado'}</span>
-          ${estadoInfo.estado === 'no_enviada' ? '' : `<span class="info-chip">📅 ${estadoInfo.data?.timestamp ? new Date(estadoInfo.data.timestamp).toLocaleDateString('es-CO') : ''}</span>`}
+          <span class="info-chip">🎓 ${t.grado}</span>
+          ${estadoInfo.estado !== 'no_enviada' && estadoInfo.data?.timestamp ? `<span class="info-chip">📅 ${new Date(estadoInfo.data.timestamp).toLocaleDateString('es-CO')}</span>` : ''}
         </div>
         <div class="estado-badge ${estadoClase}">
           <span>${estadoIcon}</span> ${estadoInfo.label}
@@ -804,16 +725,6 @@ function renderCards() {
       </div>
     `;
   }).join('');
-  
-  document.getElementById('resultadosCount').textContent = `${materiasData.length} materia${materiasData.length !== 1 ? 's' : ''}`;
-  
-  if (semana === semanaActual) {
-    document.getElementById('semanaActualBadge').innerHTML = '<span class="semana-activa-badge">📅 Semana actual</span>';
-  } else {
-    document.getElementById('semanaActualBadge').innerHTML = '';
-  }
-  
-  grid.innerHTML = cardsHtml || '<div class="empty-card"><div class="empty-icon">📭</div><div class="empty-title">Sin materias asignadas</div><div class="empty-sub">No tienes materias asignadas para este período</div></div>';
 }
 
 function obtenerIcono(asignatura) {
@@ -833,6 +744,7 @@ function obtenerIcono(asignatura) {
 function abrirPlaneacion(asignatura, grado) {
   const estadoInfo = getEstadoPlaneacion(asignatura, grado);
   
+  // Si no hay planeación enviada, redirigir a crear
   if (estadoInfo.estado === 'no_enviada') {
     window.location.href = '/planeaciones/';
     return;
@@ -841,23 +753,22 @@ function abrirPlaneacion(asignatura, grado) {
   const p = estadoInfo.data;
   if (!p) return;
   
-  // Generar clases
+  // Generar HTML de clases
   let clasesHtml = '';
   for (let i = 1; i <= 5; i++) {
     const tema = p[`d${i}Tema`];
     const act = p[`d${i}Actividades`];
     if (!tema && !act) continue;
     clasesHtml += `
-      <div class="clase-block">
-        <div><span class="clase-num">${i}</span> <span class="clase-tema">${tema || 'Tema'}</span></div>
-        <div class="clase-act">${act || '—'}</div>
+      <div class="modal-value" style="margin-bottom: 10px;">
+        <strong>Clase ${i}</strong><br>
+        ${tema ? `<span style="color:var(--text-muted)">Tema:</span> ${tema}<br>` : ''}
+        ${act ? `<span style="color:var(--text-muted)">Actividades:</span> ${act}` : ''}
       </div>
     `;
   }
   
-  const estadoLabel = estadoInfo.label;
   const estadoClase = `estado-${estadoInfo.estado}`;
-  
   const modalHtml = `
     <div class="modal" id="modalPlaneacion" onclick="if(event.target===this) cerrarModal()">
       <div class="modal-content" onclick="event.stopPropagation()">
@@ -875,7 +786,7 @@ function abrirPlaneacion(asignatura, grado) {
         <div class="modal-body">
           <div class="modal-section">
             <div class="modal-label">Estado</div>
-            <div><span class="estado-badge ${estadoClase}" style="display:inline-flex">${estadoLabel}</span></div>
+            <div><span class="estado-badge ${estadoClase}" style="display:inline-flex">${estadoInfo.label}</span></div>
           </div>
           <div class="modal-section">
             <div class="modal-label">Indicador de desempeño</div>
@@ -942,7 +853,8 @@ async function init() {
   document.getElementById('rolVista').textContent = String(ST.rol).toUpperCase();
   
   semanaActual = calcularSemanaActual();
-  semanaSeleccionada = semanaActual;
+  semanaSeleccionada = 8; // FORZADO a Semana 8
+  periodoActivo = 'P2';   // FORZADO a Período 2
   
   await cargarMaterias();
   await cargarPlaneaciones();
