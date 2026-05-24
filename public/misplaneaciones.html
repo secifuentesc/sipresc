@@ -140,7 +140,7 @@ body {
   margin-top: 6px;
 }
 
-/* SEGMENTED CONTROL (Período) */
+/* SEGMENTED CONTROL */
 .segment-label {
   font-size: 12px;
   font-weight: 600;
@@ -173,7 +173,7 @@ body {
   box-shadow: 0 4px 12px rgba(37,99,235,0.3);
 }
 
-/* SEMANAS HORIZONTAL */
+/* SEMANAS */
 .semanas-section {
   margin: 28px 0 20px;
 }
@@ -208,15 +208,8 @@ body {
   box-shadow: 0 6px 14px rgba(37,99,235,0.35);
   color: white;
 }
-.semana-num {
-  font-size: 20px;
-  font-weight: 700;
-}
-.semana-label {
-  font-size: 10px;
-  opacity: 0.7;
-  margin-top: 2px;
-}
+.semana-num { font-size: 20px; font-weight: 700; }
+.semana-label { font-size: 10px; opacity: 0.7; margin-top: 2px; }
 .semana-badge {
   position: absolute;
   top: -6px;
@@ -228,12 +221,9 @@ body {
   padding: 2px 6px;
   border-radius: 20px;
 }
-.semana-badge.white {
-  background: white;
-  color: #1e4db7;
-}
+.semana-badge.white { background: white; color: #1e4db7; }
 
-/* RESULTADOS HEADER */
+/* RESULTS */
 .results-header {
   display: flex;
   justify-content: space-between;
@@ -242,10 +232,7 @@ body {
   flex-wrap: wrap;
   gap: 10px;
 }
-.results-count {
-  color: var(--text-muted);
-  font-size: 13px;
-}
+.results-count { color: var(--text-muted); font-size: 13px; }
 .semana-activa-badge {
   background: rgba(16,185,129,0.15);
   color: var(--green);
@@ -255,15 +242,13 @@ body {
   font-weight: 500;
 }
 
-/* GRID TARJETAS */
+/* CARDS GRID */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 18px;
 }
-@media (max-width: 480px) {
-  .cards-grid { grid-template-columns: 1fr; }
-}
+@media (max-width: 480px) { .cards-grid { grid-template-columns: 1fr; } }
 
 /* TARJETA */
 .plan-card {
@@ -274,10 +259,10 @@ body {
   padding: 20px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  animation: fadeUp 0.4s ease backwards;
+  animation: fadeUp 0.3s ease backwards;
 }
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .plan-card:hover {
@@ -299,8 +284,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
 }
+.card-icon svg { width: 26px; height: 26px; stroke: var(--gold); stroke-width: 1.5; fill: none; }
 .card-chevron {
   color: var(--text-muted);
   font-size: 20px;
@@ -310,22 +295,9 @@ body {
   transform: translateX(3px);
   color: var(--gold);
 }
-.card-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-.card-sub {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 12px;
-}
-.card-info {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin-bottom: 14px;
-}
+.card-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.card-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+.card-info { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
 .info-chip {
   display: flex;
   align-items: center;
@@ -333,6 +305,7 @@ body {
   font-size: 12px;
   color: var(--text-muted);
 }
+.info-chip svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.5; }
 .estado-badge {
   display: inline-flex;
   align-items: center;
@@ -347,7 +320,6 @@ body {
 .estado-ajustes { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(245,158,11,0.3); }
 .estado-no_enviada { background: var(--gray-bg); color: var(--gray); border: 1px solid rgba(100,116,139,0.3); }
 
-/* TARJETA VACÍA */
 .empty-card {
   text-align: center;
   padding: 48px 24px;
@@ -359,7 +331,6 @@ body {
 .empty-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
 .empty-sub { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
 
-/* LOADING */
 .loading { display: flex; justify-content: center; align-items: center; padding: 60px; }
 .spinner {
   width: 42px;
@@ -420,8 +391,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
 }
+.modal-icon svg { width: 24px; height: 24px; stroke: var(--gold); stroke-width: 1.5; fill: none; }
 .modal-title { font-size: 18px; font-weight: 700; }
 .modal-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 .modal-close {
@@ -536,17 +507,16 @@ body {
   </div>
 </div>
 
-<div class="toast" id="toastMsg">📋 Copiado</div>
+<div class="toast" id="toastMsg">Listo</div>
 
 <script>
 // ==================================================
 // CONFIGURACIÓN
 // ==================================================
 const API_PLN = '/api/planeaciones';
-
-let ST = { rol: null, correo: null, nombre: null, docenteId: null };
-let materiasRaw = [];        // [{ asignatura: "Tecnología", grados: ["6°A","6°B",...] }]
-let planeacionesMap = {};    // key: "asignatura|grado" -> planeacion
+let ST = { rol: null, correo: null, docenteId: null };
+let materiasRaw = [];
+let planeacionesMap = new Map(); // key: "asignatura|grado"
 let periodoActivo = 'P2';
 let semanaSeleccionada = 8;
 let semanaActual = 8;
@@ -559,10 +529,10 @@ function obtenerSesion() {
 }
 function cerrarSesion() { localStorage.removeItem('lp_user'); window.location.href = '/'; }
 function volverPanel() {
-  const sesion = obtenerSesion();
-  const rol = String(sesion?.rol || '').toLowerCase();
-  if (rol === 'admin') window.location.href = '/dashboardadmin/';
-  else if (rol === 'coordinador') window.location.href = '/dashboardcoord/';
+  const s = obtenerSesion();
+  const r = String(s?.rol || '').toLowerCase();
+  if (r === 'admin') window.location.href = '/dashboardadmin/';
+  else if (r === 'coordinador') window.location.href = '/dashboardcoord/';
   else window.location.href = '/';
 }
 function calcularSemanaActual() {
@@ -576,92 +546,81 @@ function mostrarToast(msg) {
   const t = document.getElementById('toastMsg');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  setTimeout(() => t.classList.remove('show'), 2000);
 }
 
 // ==================================================
-// API
+// API (carga paralela para más velocidad)
 // ==================================================
-async function apiCall(accion, params = {}) {
-  const qs = new URLSearchParams({ accion, correo: ST.correo || '', ...params });
-  const res = await fetch(`${API_PLN}?${qs}`);
-  return res.json();
-}
-
-async function cargarMaterias() {
-  const res = await apiCall('cargaDocente');
-  if (res.ok && res.materias) {
-    materiasRaw = res.materias;
-  } else {
-    materiasRaw = [];
-  }
-}
-
-async function cargarPlaneaciones() {
-  const res = await apiCall('misPlaneacionesDocente', { periodo: periodoActivo });
-  planeacionesMap = {};
-  if (res.ok && res.data) {
-    res.data.forEach(p => {
-      const key = `${p.asignatura}|${p.grado}`;
-      planeacionesMap[key] = p;
-    });
-  }
-}
-
-// Desglosar materias en tarjetas individuales (una por cada grado)
-function desglosarMaterias() {
-  const tarjetas = [];
-  materiasRaw.forEach(m => {
-    m.grados.forEach(grado => {
-      tarjetas.push({
-        asignatura: m.asignatura,
-        grado: grado,
-        key: `${m.asignatura}|${grado}`
-      });
-    });
-  });
-  // Ordenar por grado (ej: 6°A, 6°B, 7°A, 7°B...)
-  tarjetas.sort((a, b) => {
-    const gradoA = a.grado.replace(/[^0-9]/g, '') || '0';
-    const gradoB = b.grado.replace(/[^0-9]/g, '') || '0';
-    if (gradoA !== gradoB) return parseInt(gradoA) - parseInt(gradoB);
-    return a.grado.localeCompare(b.grado);
-  });
-  return tarjetas;
-}
-
-function getEstadoPlaneacion(asignatura, grado) {
-  const key = `${asignatura}|${grado}`;
-  const p = planeacionesMap[key];
-  if (!p) return { estado: 'no_enviada', label: 'No enviada', planeacionId: null, data: null };
+async function cargarDatos() {
+  const qs = new URLSearchParams({ correo: ST.correo || '' });
+  const [resMaterias, resPlaneaciones] = await Promise.all([
+    fetch(`${API_PLN}?accion=cargaDocente&${qs}`).then(r => r.json()),
+    fetch(`${API_PLN}?accion=misPlaneacionesDocente&periodo=${periodoActivo}&${qs}`).then(r => r.json())
+  ]);
   
-  const estadoRaw = (p.estadoRevision || p.revisionCoord || '').toLowerCase();
-  if (estadoRaw === 'aprobada' || estadoRaw === 'aprobado') 
-    return { estado: 'aprobada', label: 'Aprobada', planeacionId: p.planeacionId, data: p };
-  if (estadoRaw.includes('ajuste')) 
-    return { estado: 'con_ajustes', label: 'Con ajustes', planeacionId: p.planeacionId, data: p };
-  return { estado: 'pendiente', label: 'En revisión', planeacionId: p.planeacionId, data: p };
+  if (resMaterias.ok && resMaterias.materias) materiasRaw = resMaterias.materias;
+  else materiasRaw = [];
+  
+  planeacionesMap.clear();
+  if (resPlaneaciones.ok && resPlaneaciones.data) {
+    resPlaneaciones.data.forEach(p => {
+      const key = `${p.asignatura}|${p.grado}`;
+      planeacionesMap.set(key, p);
+    });
+  }
 }
 
 // ==================================================
 // RENDER
 // ==================================================
+function getEstado(asignatura, grado) {
+  const key = `${asignatura}|${grado}`;
+  const p = planeacionesMap.get(key);
+  if (!p) return { estado: 'no_enviada', label: 'No enviada', data: null };
+  const raw = (p.estadoRevision || p.revisionCoord || '').toLowerCase();
+  if (raw === 'aprobada' || raw === 'aprobado') return { estado: 'aprobada', label: 'Aprobada', data: p, id: p.planeacionId };
+  if (raw.includes('ajuste')) return { estado: 'con_ajustes', label: 'Con ajustes', data: p, id: p.planeacionId };
+  return { estado: 'pendiente', label: 'En revisión', data: p, id: p.planeacionId };
+}
+
+function desglosar() {
+  const cards = [];
+  materiasRaw.forEach(m => {
+    m.grados.forEach(g => cards.push({ asignatura: m.asignatura, grado: g }));
+  });
+  cards.sort((a, b) => {
+    const numA = parseInt(a.grado.match(/\d+/)?.[0] || '0');
+    const numB = parseInt(b.grado.match(/\d+/)?.[0] || '0');
+    if (numA !== numB) return numA - numB;
+    return a.grado.localeCompare(b.grado);
+  });
+  return cards;
+}
+
+function iconoAsignatura(asignatura) {
+  const a = asignatura.toLowerCase();
+  if (a.includes('matem')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>`;
+  if (a.includes('españ') || a.includes('lengua')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>`;
+  if (a.includes('ciencia')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M4.93 4.93l2.83 2.83M12 22v-4M19.07 4.93l-2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M19.07 19.07l-2.83-2.83"/></svg>`;
+  if (a.includes('historia')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`;
+  if (a.includes('física') || a.includes('educación')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>`;
+  if (a.includes('arte')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l2.5 5.5 6 .5-4.5 4 1.5 6-5.5-3-5.5 3 1.5-6-4.5-4 6-.5L12 2z"/></svg>`;
+  if (a.includes('inglés')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>`;
+  if (a.includes('tecnolog')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>`;
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>`;
+}
+
 function renderSemanas() {
   const container = document.getElementById('semanasContainer');
   const semanas = Array.from({ length: 10 }, (_, i) => i + 1);
-  
-  container.innerHTML = semanas.map(s => {
-    const esActual = s === semanaActual;
-    const activa = s === semanaSeleccionada;
-    return `
-      <button class="semana-btn ${activa ? 'active' : ''}" data-semana="${s}">
-        <div class="semana-num">${s}</div>
-        <div class="semana-label">Semana</div>
-        ${esActual ? `<span class="semana-badge ${activa ? 'white' : ''}">Actual</span>` : ''}
-      </button>
-    `;
-  }).join('');
-  
+  container.innerHTML = semanas.map(s => `
+    <button class="semana-btn ${s === semanaSeleccionada ? 'active' : ''}" data-semana="${s}">
+      <div class="semana-num">${s}</div>
+      <div class="semana-label">Semana</div>
+      ${s === semanaActual ? `<span class="semana-badge ${s === semanaSeleccionada ? 'white' : ''}">Actual</span>` : ''}
+    </button>
+  `).join('');
   document.querySelectorAll('.semana-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       semanaSeleccionada = parseInt(btn.dataset.semana);
@@ -679,23 +638,17 @@ function renderPeriodo() {
     btn.onclick = async () => {
       periodoActivo = btn.dataset.periodo;
       renderPeriodo();
-      await cargarPlaneaciones();
+      await cargarDatos();
       renderCards();
     };
   });
 }
 
 function renderCards() {
+  const tarjetas = desglosar();
   const grid = document.getElementById('cardsGrid');
-  const tarjetas = desglosarMaterias();
-  
   document.getElementById('resultadosCount').textContent = `${tarjetas.length} materia${tarjetas.length !== 1 ? 's' : ''}`;
-  
-  if (semanaSeleccionada === semanaActual) {
-    document.getElementById('semanaActualBadge').innerHTML = '<span class="semana-activa-badge">📅 Semana actual</span>';
-  } else {
-    document.getElementById('semanaActualBadge').innerHTML = '';
-  }
+  document.getElementById('semanaActualBadge').innerHTML = semanaSeleccionada === semanaActual ? '<span class="semana-activa-badge">📅 Semana actual</span>' : '';
   
   if (tarjetas.length === 0) {
     grid.innerHTML = '<div class="empty-card"><div class="empty-icon">📭</div><div class="empty-title">Sin materias asignadas</div><div class="empty-sub">No tienes materias asignadas para este período</div></div>';
@@ -703,126 +656,70 @@ function renderCards() {
   }
   
   grid.innerHTML = tarjetas.map((t, idx) => {
-    const estadoInfo = getEstadoPlaneacion(t.asignatura, t.grado);
-    const estadoClase = `estado-${estadoInfo.estado}`;
-    const estadoIcon = { aprobada: '✓', pendiente: '⏳', con_ajustes: '⚠', no_enviada: '✗' }[estadoInfo.estado];
-    
+    const e = getEstado(t.asignatura, t.grado);
+    const estadoClass = `estado-${e.estado}`;
+    const estadoIcon = { aprobada: '✓', pendiente: '⏳', con_ajustes: '⚠', no_enviada: '✗' }[e.estado];
+    const fecha = e.data?.timestamp ? new Date(e.data.timestamp).toLocaleDateString('es-CO') : '';
     return `
-      <div class="plan-card" style="animation-delay: ${idx * 0.02}s" onclick="abrirPlaneacion('${t.asignatura}', '${t.grado}')">
+      <div class="plan-card" style="animation-delay: ${idx * 0.02}s" onclick="abrirDetalle('${t.asignatura}', '${t.grado}')">
         <div class="card-header">
-          <div class="card-icon">${obtenerIcono(t.asignatura)}</div>
+          <div class="card-icon">${iconoAsignatura(t.asignatura)}</div>
           <div class="card-chevron">›</div>
         </div>
         <div class="card-title">${t.asignatura}</div>
         <div class="card-sub">Semana ${semanaSeleccionada}</div>
         <div class="card-info">
-          <span class="info-chip">🎓 ${t.grado}</span>
-          ${estadoInfo.estado !== 'no_enviada' && estadoInfo.data?.timestamp ? `<span class="info-chip">📅 ${new Date(estadoInfo.data.timestamp).toLocaleDateString('es-CO')}</span>` : ''}
+          <span class="info-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>${t.grado}</span>
+          ${e.estado !== 'no_enviada' && fecha ? `<span class="info-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>${fecha}</span>` : ''}
         </div>
-        <div class="estado-badge ${estadoClase}">
-          <span>${estadoIcon}</span> ${estadoInfo.label}
-        </div>
+        <div class="estado-badge ${estadoClass}"><span>${estadoIcon}</span> ${e.label}</div>
       </div>
     `;
   }).join('');
 }
 
-function obtenerIcono(asignatura) {
-  const a = asignatura.toLowerCase();
-  if (a.includes('matem')) return '📐';
-  if (a.includes('españ') || a.includes('lengua')) return '📖';
-  if (a.includes('ciencia')) return '🔬';
-  if (a.includes('historia')) return '🏛️';
-  if (a.includes('física') || a.includes('educación')) return '⚽';
-  if (a.includes('arte')) return '🎨';
-  if (a.includes('inglés')) return '🌎';
-  if (a.includes('tecnolog')) return '💻';
-  if (a.includes('religión')) return '⛪';
-  return '📚';
-}
-
-function abrirPlaneacion(asignatura, grado) {
-  const estadoInfo = getEstadoPlaneacion(asignatura, grado);
+function abrirDetalle(asignatura, grado) {
+  const e = getEstado(asignatura, grado);
   
-  // Si no hay planeación enviada, redirigir a crear
-  if (estadoInfo.estado === 'no_enviada') {
+  // Si no hay planeación, redirigir a crear
+  if (e.estado === 'no_enviada') {
     window.location.href = '/planeaciones/';
     return;
   }
   
-  const p = estadoInfo.data;
+  const p = e.data;
   if (!p) return;
   
-  // Generar HTML de clases
   let clasesHtml = '';
   for (let i = 1; i <= 5; i++) {
     const tema = p[`d${i}Tema`];
     const act = p[`d${i}Actividades`];
     if (!tema && !act) continue;
-    clasesHtml += `
-      <div class="modal-value" style="margin-bottom: 10px;">
-        <strong>Clase ${i}</strong><br>
-        ${tema ? `<span style="color:var(--text-muted)">Tema:</span> ${tema}<br>` : ''}
-        ${act ? `<span style="color:var(--text-muted)">Actividades:</span> ${act}` : ''}
-      </div>
-    `;
+    clasesHtml += `<div class="modal-value" style="margin-bottom: 10px;"><strong>Clase ${i}</strong><br>${tema ? `<span style="color:var(--text-muted)">Tema:</span> ${tema}<br>` : ''}${act ? `<span style="color:var(--text-muted)">Actividades:</span> ${act}` : ''}</div>`;
   }
   
-  const estadoClase = `estado-${estadoInfo.estado}`;
+  const estadoClass = `estado-${e.estado}`;
   const modalHtml = `
     <div class="modal" id="modalPlaneacion" onclick="if(event.target===this) cerrarModal()">
       <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
         <div class="modal-header">
           <div class="modal-header-info">
-            <div class="modal-icon">${obtenerIcono(asignatura)}</div>
-            <div>
-              <div class="modal-title">${asignatura}</div>
-              <div class="modal-sub">Semana ${p.semana || semanaSeleccionada} — ${grado}</div>
-            </div>
+            <div class="modal-icon">${iconoAsignatura(asignatura)}</div>
+            <div><div class="modal-title">${asignatura}</div><div class="modal-sub">Semana ${p.semana || semanaSeleccionada} — ${grado}</div></div>
           </div>
           <button class="modal-close" onclick="cerrarModal()">✕</button>
         </div>
         <div class="modal-body">
-          <div class="modal-section">
-            <div class="modal-label">Estado</div>
-            <div><span class="estado-badge ${estadoClase}" style="display:inline-flex">${estadoInfo.label}</span></div>
-          </div>
-          <div class="modal-section">
-            <div class="modal-label">Indicador de desempeño</div>
-            <div class="modal-value">${p.indicadorSemanal || '—'}</div>
-          </div>
-          <div class="modal-section">
-            <div class="modal-label">Clases planificadas</div>
-            ${clasesHtml || '<div class="modal-value">—</div>'}
-          </div>
-          ${p.actCompDescripcion ? `
-          <div class="modal-section">
-            <div class="modal-label">Actividad complementaria</div>
-            <div class="modal-value">${p.actCompDescripcion}</div>
-          </div>
-          ` : ''}
-          ${p.obsFamilias ? `
-          <div class="modal-section">
-            <div class="modal-label">Comunicación a familias</div>
-            <div class="modal-value">${p.obsFamilias}</div>
-          </div>
-          ` : ''}
-          ${p.observacionCoordinacion ? `
-          <div class="modal-section">
-            <div class="modal-label" style="color: #f59e0b;">Observación del coordinador</div>
-            <div class="modal-value" style="background:rgba(245,158,11,0.05); border-color:rgba(245,158,11,0.2); color:#fbbf24;">${p.observacionCoordinacion}</div>
-          </div>
-          ` : ''}
+          <div class="modal-section"><div class="modal-label">Estado</div><div><span class="estado-badge ${estadoClass}" style="display:inline-flex">${e.label}</span></div></div>
+          <div class="modal-section"><div class="modal-label">Indicador de desempeño</div><div class="modal-value">${p.indicadorSemanal || '—'}</div></div>
+          <div class="modal-section"><div class="modal-label">Clases planificadas</div>${clasesHtml || '<div class="modal-value">—</div>'}</div>
+          ${p.actCompDescripcion ? `<div class="modal-section"><div class="modal-label">Actividad complementaria</div><div class="modal-value">${p.actCompDescripcion}</div></div>` : ''}
+          ${p.obsFamilias ? `<div class="modal-section"><div class="modal-label">Comunicación a familias</div><div class="modal-value">${p.obsFamilias}</div></div>` : ''}
+          ${p.observacionCoordinacion ? `<div class="modal-section"><div class="modal-label" style="color:var(--orange)">Observación del coordinador</div><div class="modal-value" style="background:rgba(245,158,11,0.05); border-color:rgba(245,158,11,0.2); color:#fbbf24;">${p.observacionCoordinacion}</div></div>` : ''}
         </div>
         <div class="modal-footer">
-          ${estadoInfo.estado === 'con_ajustes' ? `
-            <button class="modal-btn modal-btn-primary" onclick="editarPlaneacion('${p.planeacionId}')">
-              ✏️ Editar y reenviar
-            </button>
-          ` : `
-            <button class="modal-btn modal-btn-secondary" onclick="cerrarModal()">Cerrar</button>
-          `}
+          ${e.estado === 'con_ajustes' ? `<button class="modal-btn modal-btn-primary" onclick="editarPlaneacion('${p.planeacionId}')">✏️ Editar y reenviar</button>` : `<button class="modal-btn modal-btn-secondary" onclick="cerrarModal()">Cerrar</button>`}
         </div>
       </div>
     </div>
@@ -832,38 +729,26 @@ function abrirPlaneacion(asignatura, grado) {
   document.body.style.overflow = 'hidden';
 }
 
-function cerrarModal() {
-  const modal = document.getElementById('modalPlaneacion');
-  if (modal) modal.remove();
-  document.body.style.overflow = '';
-}
-
-function editarPlaneacion(id) {
-  window.location.href = `/planeaciones/?editar=1&planeacionId=${id}`;
-}
+function cerrarModal() { const m = document.getElementById('modalPlaneacion'); if (m) m.remove(); document.body.style.overflow = ''; }
+function editarPlaneacion(id) { window.location.href = `/planeaciones/?editar=1&planeacionId=${id}`; }
 
 // ==================================================
 // INIT
 // ==================================================
 async function init() {
   const sesion = obtenerSesion();
-  if (!sesion || !sesion.correo) { window.location.href = '/'; return; }
-  
-  ST = { ...ST, correo: sesion.correo, nombre: sesion.nombre || '', rol: sesion.rol || 'docente', docenteId: sesion.docenteId };
+  if (!sesion?.correo) { window.location.href = '/'; return; }
+  ST = { correo: sesion.correo, rol: sesion.rol || 'docente', docenteId: sesion.docenteId };
   document.getElementById('rolVista').textContent = String(ST.rol).toUpperCase();
-  
   semanaActual = calcularSemanaActual();
-  semanaSeleccionada = 8; // FORZADO a Semana 8
-  periodoActivo = 'P2';   // FORZADO a Período 2
+  semanaSeleccionada = 8;
+  periodoActivo = 'P2';
   
-  await cargarMaterias();
-  await cargarPlaneaciones();
-  
+  await cargarDatos();
   renderSemanas();
   renderPeriodo();
   renderCards();
 }
-
 init();
 </script>
 </body>
