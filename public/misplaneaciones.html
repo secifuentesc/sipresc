@@ -759,7 +759,7 @@ async function cargarDatos() {
         const periodoNorm = normalizarPeriodo(p.periodo);
         if (periodoNorm === periodoActivo) {
           const semanaNum = parseInt(p.semana?.match(/\d+/)?.[0] || '0');
-          const gradoNorm = String(p.grado || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          const gradoNorm = normalizar(p.grado || '').replace(/[ab]$/i, '');
           
           let gruposDestino = [];
           if (p.gruposDestino) {
@@ -832,37 +832,40 @@ function compararGrado(gradoPlaneacion, gradoCarga) {
 
 function getEstado(asignatura, gradoConLetra, semana) {
   const asignaturaNorm = normalizar(asignatura);
-  
-  // Extraer grado base (ej: "SEXTO A" → "SEXTO") y la letra (ej: "A")
-  const gradoBase = gradoConLetra.replace(/[AB]$/i, '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const gradoBase = normalizar(gradoConLetra).replace(/[ab]$/i, ''); // ← Usa normalizar() + quita letra
   const letra = gradoConLetra.match(/[AB]$/i)?.[0]?.toUpperCase() || '';
   
-  // Buscar planeación que coincida exactamente
-  let planeacionEncontrada = null;
+  // 🔍 DEBUG: descomenta para ver qué está pasando
+  // console.log(`🔎 getEstado: ${asignatura} | ${gradoConLetra} | S${semana} → buscando: "${asignaturaNorm}|${gradoBase}|${semana}|${letra || 'SIN_GRUPO'}"`);
   
   for (const [key, p] of planeacionesMap.entries()) {
     const [keyAsig, keyGrado, keySemana, keyGrupo] = key.split('|');
     
     if (keyAsig === asignaturaNorm && parseInt(keySemana) === semana) {
-      // Coincidencia exacta de grupo
-      if (letra && keyGrupo === letra) {
-        planeacionEncontrada = p;
-        break;
-      }
-      // Si no hay letra en la tarjeta (grado sin grupo) y la planeación no tiene grupo
-      if (!letra && keyGrupo === 'SIN_GRUPO') {
-        planeacionEncontrada = p;
-        break;
-      }
+      if (letra && keyGrupo === letra) return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
+      if (!letra && keyGrupo === 'SIN_GRUPO') return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
     }
   }
   
-  if (!planeacionEncontrada) return { estado: 'no_enviada', label: 'No enviada', data: null };
-  
-  const raw = (planeacionEncontrada.estadoRevision || planeacionEncontrada.revisionCoord || '').toLowerCase();
-  if (raw === 'aprobada' || raw === 'aprobado') return { estado: 'aprobada', label: 'Aprobada', data: planeacionEncontrada };
-  if (raw.includes('ajuste')) return { estado: 'con_ajustes', label: 'Con ajustes', data: planeacionEncontrada };
-  return { estado: 'pendiente', label: 'En revisión', data: planeacionEncontrada };
+  return { estado: 'no_enviada', label: 'No enviada', data: null };
+}
+
+// Helper para estados (más robusto)
+function mapearEstado(p) {
+  const raw = (p.estadoRevision || p.revisionCoord || p.estado || '').toLowerCase();
+  if (raw.includes('aprob')) return 'aprobada';
+  if (raw.includes('ajust') || raw.includes('corre')) return 'con_ajustes';
+  if (raw.includes('pend') || raw === 'enviada' || raw === 'recibida') return 'pendiente';
+  return 'no_enviada';
+}
+
+function estadoLabel(p) {
+  return {
+    'aprobada': 'Aprobada',
+    'con_ajustes': 'Con ajustes', 
+    'pendiente': 'En revisión',
+    'no_enviada': 'No enviada'
+  }[mapearEstado(p)] || 'No enviada';
 }
 function desglosar() {
   const cards = [];
