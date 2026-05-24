@@ -60,8 +60,8 @@ if(!sesion || !sesion.correo) return;
   enviar();
   heartbeatPlaneacionesTimer = setInterval(enviar, 30000);
 }
-const AUTO_GUARD = false;
-const AUTO_RESTORE = false;
+const AUTO_GUARD = true;
+const AUTO_RESTORE = true;
 
 function setMateriaText(texto){
   const display = document.getElementById("materiaText");
