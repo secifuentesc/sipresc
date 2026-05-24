@@ -7,9 +7,6 @@
 <title>Mis planeaciones — SIPRESC</title>
 <link rel="icon" type="image/png" href="/logo.png">
 <style>
-/* ==================================================
-   RESET Y VARIABLES
-================================================== */
 * {
   margin: 0;
   padding: 0;
@@ -18,507 +15,382 @@
 }
 
 :root {
-  --ink: #0a1628;
-  --blue: #1a3a6b;
-  --royal: #0f2657;
-  --cobalt: #1e4db7;
+  --bg: #0a0f1a;
+  --card-bg: rgba(18, 25, 45, 0.8);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.12);
+  --text: #f0f3fa;
+  --text-muted: #8a99b8;
   --gold: #c9962a;
-  --gold2: #e8b84b;
-  --s0: #050e1d;
-  --s1: #0d1f3c;
-  --s2: #122449;
-  --s3: #182e58;
-  --br: rgba(255,255,255,0.07);
-  --br2: rgba(255,255,255,0.13);
-  --tx: #e8edf8;
-  --mt: #7a8fb0;
-  --green: #4ade80;
-  --emerald: #10b981;
-  --sky: #38bdf8;
-  --amber: #f59e0b;
-  --slate: #64748b;
-  --mono: -apple-system, 'SF Mono', monospace;
-  --sans: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  --gold-light: #e8b84b;
+  --green: #10b981;
+  --green-bg: rgba(16, 185, 129, 0.12);
+  --blue: #3b82f6;
+  --blue-bg: rgba(59, 130, 246, 0.12);
+  --orange: #f59e0b;
+  --orange-bg: rgba(245, 158, 11, 0.12);
+  --gray: #64748b;
+  --gray-bg: rgba(100, 116, 139, 0.12);
+  --red: #ef4444;
+  --red-bg: rgba(239, 68, 68, 0.12);
 }
 
 body {
-  background: #0a1628;
-  color: var(--tx);
-  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
   min-height: 100vh;
 }
 
-/* ==================================================
-   SCROLLBAR HORIZONTAL
-================================================== */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-/* ==================================================
-   TOPBAR (igual al sistema)
-================================================== */
+/* TOPBAR */
 .topbar {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(5,14,29,0.75);
-  border-bottom: 1px solid var(--br);
-  padding: 10px 18px;
-  padding-top: calc(10px + env(safe-area-inset-top, 0));
+  background: rgba(10, 15, 26, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  backdrop-filter: blur(24px);
+  gap: 12px;
 }
 .topbar-logo {
-  width: 30px;
-  height: 30px;
-  border-radius: 9px;
-  background: linear-gradient(140deg, #1c3f7a, #2557c7);
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(140deg, #1a3a6b, #1e4db7);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-  text-decoration: none;
+  cursor: pointer;
 }
-.logo-img-top {
-  width: 18px;
-  filter: brightness(10);
-}
+.topbar-logo img { width: 20px; filter: brightness(10); }
 .topbar h1 {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
-  letter-spacing: -0.2px;
   flex: 1;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: white;
 }
 .topbar-rol {
-  font-size: 10px;
-  color: rgba(255,255,255,0.5);
-  background: rgba(255,255,255,0.08);
-  border: 1px solid var(--br);
-  padding: 3px 10px;
+  font-size: 11px;
+  color: var(--gold);
+  background: rgba(201, 150, 42, 0.12);
+  padding: 4px 12px;
   border-radius: 20px;
-  flex-shrink: 0;
 }
-.logout-btn, .back-panel-btn {
+.logout-btn, .back-btn {
   background: none;
   border: none;
-  color: rgba(255,255,255,0.5);
-  font-size: 12px;
+  color: var(--text-muted);
+  font-size: 13px;
   cursor: pointer;
-  padding: 4px 8px;
-  font-family: var(--sans);
-  border-radius: 6px;
-  transition: all 0.15s;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.2s;
 }
-.logout-btn:hover, .back-panel-btn:hover {
-  color: rgba(255,255,255,0.8);
+.logout-btn:hover, .back-btn:hover {
+  color: white;
   background: rgba(255,255,255,0.05);
 }
-.back-panel-btn {
+.back-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   position: fixed;
-  left: 18px;
-  top: 65px;
+  left: 20px;
+  top: 70px;
   z-index: 60;
-  backdrop-filter: blur(18px);
-  background: rgba(255,255,255,0.055);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 999px;
-  padding: 6px 14px;
+  background: rgba(10, 15, 26, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 8px 16px;
   font-size: 12px;
-  font-weight: 500;
-}
-@media (max-width: 520px) {
-  .back-panel-btn {
-    top: 58px;
-    left: 12px;
-    padding: 5px 11px;
-    font-size: 11px;
-  }
-}
-
-/* ==================================================
-   CONTAINER PRINCIPAL
-================================================== */
-.container {
-  max-width: 1024px;
-  margin: 0 auto;
-  padding: 80px 16px 40px;
 }
 @media (max-width: 640px) {
-  .container {
-    padding-top: 70px;
-  }
+  .back-btn { top: 62px; left: 14px; padding: 6px 12px; }
+  .container { padding-top: 90px; }
 }
 
-/* ==================================================
-   HEADER
-================================================== */
+/* CONTAINER */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 70px 20px 40px;
+}
+@media (max-width: 640px) {
+  .container { padding: 80px 16px 40px; }
+}
+
+/* HEADER */
 .page-header {
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 .page-header h1 {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 700;
-  background: linear-gradient(135deg, #fff, rgba(255,255,255,0.6));
+  background: linear-gradient(135deg, #fff, var(--gold-light));
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
   letter-spacing: -0.5px;
 }
 .page-header p {
-  color: rgba(255,255,255,0.4);
-  font-size: 13px;
-  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 6px;
 }
 
-/* ==================================================
-   SELECTOR PERÍODO (Segmented Control iOS)
-================================================== */
+/* SEGMENTED CONTROL (Período) */
 .segment-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: rgba(255,255,255,0.4);
-  margin-bottom: 10px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
 }
-.segmented-control {
+.segmented {
   display: inline-flex;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(4px);
-  border: 1px solid var(--br);
-  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 14px;
   padding: 4px;
 }
-.segmented-btn {
-  position: relative;
-  padding: 8px 20px;
+.seg-btn {
+  padding: 8px 24px;
   font-size: 14px;
   font-weight: 600;
   background: transparent;
   border: none;
-  border-radius: 8px;
-  color: rgba(255,255,255,0.5);
+  border-radius: 10px;
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.2s;
 }
-.segmented-btn.active {
-  color: white;
-}
-.segmented-btn.active::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+.seg-btn.active {
   background: linear-gradient(135deg, #1e4db7, #2563eb);
-  border-radius: 8px;
+  color: white;
   box-shadow: 0 4px 12px rgba(37,99,235,0.3);
-  z-index: 0;
-}
-.segmented-btn span {
-  position: relative;
-  z-index: 1;
 }
 
-/* ==================================================
-   SELECTOR SEMANAS
-================================================== */
-.weeks-scroll {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-  margin-top: 12px;
+/* SEMANAS HORIZONTAL */
+.semanas-section {
+  margin: 28px 0 20px;
 }
-.week-btn {
+.semanas-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+.semana-btn {
   flex-shrink: 0;
-  min-width: 85px;
-  padding: 10px 12px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--br);
+  min-width: 72px;
+  padding: 12px 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 16px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s;
   position: relative;
 }
-.week-btn:hover {
-  background: rgba(255,255,255,0.1);
+.semana-btn:hover {
   transform: translateY(-2px);
+  border-color: var(--gold);
+  background: rgba(201,150,42,0.08);
 }
-.week-btn.active {
+.semana-btn.active {
   background: linear-gradient(135deg, #1e4db7, #2563eb);
   border-color: transparent;
-  box-shadow: 0 6px 16px rgba(37,99,235,0.35);
+  box-shadow: 0 6px 14px rgba(37,99,235,0.35);
 }
-.week-label {
-  font-size: 11px;
-  opacity: 0.6;
-}
-.week-number {
+.semana-num {
   font-size: 20px;
   font-weight: 700;
-  line-height: 1.2;
 }
-.week-badge {
+.semana-label {
+  font-size: 10px;
+  opacity: 0.6;
+  margin-top: 2px;
+}
+.semana-badge {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #10b981;
+  top: -6px;
+  right: -6px;
+  background: var(--green);
   color: white;
   font-size: 9px;
   font-weight: 700;
-  padding: 2px 7px;
+  padding: 2px 6px;
   border-radius: 20px;
-  letter-spacing: 0.5px;
 }
-.week-badge.white {
+.semana-badge.white {
   background: white;
   color: #1e4db7;
 }
 
-/* ==================================================
-   RESULTADOS
-================================================== */
+/* RESULTADOS HEADER */
 .results-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   margin: 24px 0 18px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 .results-count {
-  color: rgba(255,255,255,0.4);
+  color: var(--text-muted);
   font-size: 13px;
 }
-.semana-actual-badge {
+.semana-activa-badge {
   background: rgba(16,185,129,0.15);
-  color: #10b981;
-  padding: 4px 10px;
+  color: var(--green);
+  padding: 5px 12px;
   border-radius: 20px;
   font-size: 11px;
+  font-weight: 500;
 }
 
-/* ==================================================
-   GRID DE TARJETAS
-================================================== */
+/* GRID TARJETAS */
 .cards-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 18px;
 }
-@media (min-width: 768px) {
-  .cards-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+@media (max-width: 480px) {
+  .cards-grid { grid-template-columns: 1fr; }
 }
 
-/* ==================================================
-   TARJETA DE PLANEACIÓN
-================================================== */
-.planeacion-card {
-  position: relative;
-  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-  border: 1px solid var(--br);
-  border-radius: 24px;
+/* TARJETA */
+.plan-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
   padding: 20px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  overflow: hidden;
+  animation: fadeUp 0.4s ease backwards;
 }
-.planeacion-card:hover {
-  transform: scale(1.02);
-  border-color: rgba(255,255,255,0.2);
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.plan-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-light);
   box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5);
-}
-.planeacion-card:active {
-  transform: scale(0.98);
-}
-.card-glow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 30% 20%, rgba(59,130,246,0.08), transparent);
-  opacity: 0;
-  transition: opacity 0.5s;
-  pointer-events: none;
-}
-.planeacion-card:hover .card-glow {
-  opacity: 1;
-}
-.card-content {
-  position: relative;
-  z-index: 2;
 }
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 .card-icon {
-  width: 48px;
-  height: 48px;
-  background: rgba(255,255,255,0.08);
+  width: 50px;
+  height: 50px;
+  background: rgba(255,255,255,0.06);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 26px;
+}
+.card-chevron {
+  color: var(--text-muted);
+  font-size: 20px;
+  transition: transform 0.2s;
+}
+.plan-card:hover .card-chevron {
+  transform: translateX(3px);
+  color: var(--gold);
 }
 .card-title {
-  font-size: 17px;
-  font-weight: 600;
-  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
 }
-.card-subtitle {
+.card-sub {
   font-size: 13px;
-  color: rgba(255,255,255,0.4);
-  margin-top: 2px;
-}
-.chevron {
-  color: rgba(255,255,255,0.3);
-  font-size: 20px;
-  transition: all 0.2s;
-}
-.planeacion-card:hover .chevron {
-  color: rgba(255,255,255,0.7);
-  transform: translateX(3px);
+  color: var(--text-muted);
+  margin-bottom: 12px;
 }
 .card-info {
   display: flex;
   gap: 14px;
-  margin: 12px 0;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
 }
-.info-item {
+.info-chip {
   display: flex;
   align-items: center;
   gap: 5px;
   font-size: 12px;
-  color: rgba(255,255,255,0.4);
+  color: var(--text-muted);
 }
-.badge {
+.estado-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 30px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
 }
-.badge-aprobada {
-  background: rgba(16,185,129,0.15);
-  color: #10b981;
-  border: 1px solid rgba(16,185,129,0.3);
-}
-.badge-pendiente {
-  background: rgba(56,189,248,0.15);
-  color: #38bdf8;
-  border: 1px solid rgba(56,189,248,0.3);
-}
-.badge-ajustes {
-  background: rgba(245,158,11,0.15);
-  color: #f59e0b;
-  border: 1px solid rgba(245,158,11,0.3);
-}
-.badge-no_enviada {
-  background: rgba(100,116,139,0.15);
-  color: #94a3b8;
-  border: 1px solid rgba(100,116,139,0.3);
-}
+.estado-aprobada { background: var(--green-bg); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+.estado-pendiente { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+.estado-ajustes { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(245,158,11,0.3); }
+.estado-no_enviada { background: var(--gray-bg); color: var(--gray); border: 1px solid rgba(100,116,139,0.3); }
 
-/* ==================================================
-   TARJETA VACÍA
-================================================== */
-.card-empty {
-  background: linear-gradient(135deg, rgba(30,41,59,0.5), rgba(15,23,42,0.5));
-  border: 2px dashed rgba(255,255,255,0.15);
+/* TARJETA VACÍA (cuando no hay materias que mostrar) */
+.empty-card {
   text-align: center;
-  padding: 32px 20px;
-  cursor: default;
-}
-.card-empty:hover {
-  transform: none;
+  padding: 48px 24px;
+  background: rgba(255,255,255,0.02);
+  border: 1px dashed var(--border);
+  border-radius: 24px;
 }
 .empty-icon {
-  width: 64px;
-  height: 64px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 16px;
-  font-size: 28px;
+  font-size: 48px;
+  margin-bottom: 16px;
 }
 .empty-title {
+  font-size: 18px;
   font-weight: 600;
-  color: rgba(255,255,255,0.7);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
-.empty-text {
+.empty-sub {
+  color: var(--text-muted);
   font-size: 13px;
-  color: rgba(255,255,255,0.3);
-  margin-bottom: 18px;
-}
-.btn-create {
-  background: linear-gradient(135deg, #1e4db7, #2563eb);
-  border: none;
-  border-radius: 40px;
-  padding: 10px 22px;
-  color: white;
-  font-weight: 500;
-  font-size: 13px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s;
-}
-.btn-create:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(37,99,235,0.3);
+  margin-bottom: 20px;
 }
 
-/* ==================================================
-   LOADING
-================================================== */
-.loading-spinner {
+/* LOADING */
+.loading {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 60px 20px;
+  padding: 60px;
 }
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(255,255,255,0.1);
+  width: 42px;
+  height: 42px;
+  border: 3px solid rgba(255,255,255,0.08);
   border-top-color: var(--gold);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* ==================================================
-   MODAL / SHEET (iOS Style)
-================================================== */
-.modal-backdrop {
+/* MODAL */
+.modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.75);
+  background: rgba(0,0,0,0.8);
   backdrop-filter: blur(12px);
   z-index: 1000;
   display: flex;
@@ -526,28 +398,20 @@ body {
   justify-content: center;
 }
 @media (min-width: 768px) {
-  .modal-backdrop {
-    align-items: center;
-  }
+  .modal { align-items: center; }
 }
-.modal-sheet {
-  position: relative;
+.modal-content {
+  max-width: 600px;
   width: 100%;
-  max-width: 640px;
-  max-height: 90vh;
-  background: linear-gradient(135deg, #1a2a4a, #0f1d32);
+  max-height: 88vh;
+  background: linear-gradient(135deg, #121d2d, #0a1020);
   border-radius: 28px 28px 0 0;
-  border-top: 1px solid rgba(255,255,255,0.1);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
   animation: slideUp 0.3s ease;
 }
 @media (min-width: 768px) {
-  .modal-sheet {
+  .modal-content {
     border-radius: 28px;
-    border: 1px solid rgba(255,255,255,0.1);
-    max-height: 85vh;
     animation: zoomIn 0.2s ease;
   }
 }
@@ -556,14 +420,8 @@ body {
   to { transform: translateY(0); }
 }
 @keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { transform: scale(0.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 .modal-handle {
   width: 40px;
@@ -574,10 +432,10 @@ body {
 }
 .modal-header {
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
 }
 .modal-header-info {
   display: flex;
@@ -585,91 +443,80 @@ body {
   align-items: center;
 }
 .modal-icon {
-  width: 52px;
-  height: 52px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 18px;
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  font-size: 24px;
 }
 .modal-title {
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 700;
-  color: white;
 }
 .modal-sub {
-  font-size: 13px;
-  color: rgba(255,255,255,0.4);
-  margin-top: 3px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
 }
 .modal-close {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.08);
   border: none;
-  border-radius: 50%;
   width: 34px;
   height: 34px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: rgba(255,255,255,0.6);
+  color: var(--text-muted);
   transition: all 0.2s;
 }
 .modal-close:hover {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.15);
   color: white;
-}
-.modal-badge-row {
-  padding: 12px 20px;
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 .modal-body {
   padding: 20px;
   overflow-y: auto;
-  flex: 1;
+  max-height: calc(88vh - 140px);
 }
 .modal-section {
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
-.modal-section-label {
+.modal-label {
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: rgba(255,255,255,0.5);
-  margin-bottom: 10px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
 }
-.modal-section-content {
+.modal-value {
   background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 16px;
-  padding: 14px;
-}
-.modal-section-content p {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
   font-size: 14px;
   line-height: 1.5;
-  color: rgba(255,255,255,0.85);
 }
-.clase-item {
+.clase-block {
   background: rgba(255,255,255,0.03);
   border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
 }
-.clase-number {
-  display: inline-flex;
+.clase-num {
+  display: inline-block;
   width: 24px;
   height: 24px;
   background: rgba(59,130,246,0.2);
-  color: #60a5fa;
+  color: var(--blue);
   border-radius: 50%;
-  align-items: center;
-  justify-content: center;
+  text-align: center;
+  line-height: 24px;
   font-size: 11px;
   font-weight: 700;
   margin-right: 10px;
@@ -677,19 +524,16 @@ body {
 .clase-tema {
   font-weight: 600;
   font-size: 14px;
-  color: white;
-  margin-bottom: 8px;
-  display: inline;
 }
 .clase-act {
   font-size: 12px;
-  color: rgba(255,255,255,0.55);
-  line-height: 1.5;
+  color: var(--text-muted);
   margin-left: 34px;
+  margin-top: 6px;
 }
 .modal-footer {
   padding: 16px 20px;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  border-top: 1px solid var(--border);
 }
 .modal-btn {
   width: 100%;
@@ -715,31 +559,27 @@ body {
 }
 .modal-btn-secondary {
   background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.8);
+  border: 1px solid var(--border);
+  color: var(--text);
 }
 .modal-btn-secondary:hover {
   background: rgba(255,255,255,0.12);
 }
 
-/* ==================================================
-   TOAST
-================================================== */
 .toast {
   position: fixed;
-  bottom: 80px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%) translateY(100px);
-  background: #1a2a3a;
-  border: 1px solid rgba(201,150,42,0.3);
+  background: #1e293b;
+  border: 1px solid var(--gold);
   border-radius: 40px;
-  padding: 10px 20px;
+  padding: 10px 22px;
   font-size: 13px;
   color: white;
   z-index: 1100;
-  transition: transform 0.25s ease;
+  transition: transform 0.25s;
   pointer-events: none;
-  white-space: nowrap;
 }
 .toast.show {
   transform: translateX(-50%) translateY(0);
@@ -748,45 +588,39 @@ body {
 </head>
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar">
-  <a href="javascript:void(0)" onclick="volverPanel()" class="topbar-logo">
-    <img src="/logo.png" class="logo-img-top" onerror="this.style.display='none'">
-  </a>
+  <div class="topbar-logo" onclick="volverPanel()">
+    <img src="/logo.png" onerror="this.style.display='none'">
+  </div>
   <h1>SIPRESC — Mis planeaciones</h1>
   <span class="topbar-rol" id="rolVista">DOCENTE</span>
   <button class="logout-btn" onclick="cerrarSesion()">Salir</button>
 </div>
 
-<button class="back-panel-btn" onclick="volverPanel()">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-  <span>Volver al panel</span>
+<button class="back-btn" onclick="volverPanel()">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+  Volver al panel
 </button>
 
-<!-- CONTENIDO PRINCIPAL -->
 <div class="container">
   <div class="page-header">
     <h1>Mis planeaciones</h1>
     <p>Historial de planeaciones enviadas</p>
   </div>
 
-  <!-- Selector de período -->
-  <div style="margin-bottom: 28px;">
-    <div class="segment-label">Período académico</div>
-    <div class="segmented-control" id="periodoSelector">
-      <button class="segmented-btn" data-periodo="P1"><span>P1</span></button>
-      <button class="segmented-btn" data-periodo="P2"><span>P2</span></button>
-      <button class="segmented-btn" data-periodo="P3"><span>P3</span></button>
-      <button class="segmented-btn" data-periodo="P4"><span>P4</span></button>
-    </div>
+  <!-- Período -->
+  <div class="segment-label">Período académico</div>
+  <div class="segmented" id="periodoGroup">
+    <button class="seg-btn" data-periodo="P1">P1</button>
+    <button class="seg-btn" data-periodo="P2">P2</button>
+    <button class="seg-btn" data-periodo="P3">P3</button>
+    <button class="seg-btn" data-periodo="P4">P4</button>
   </div>
 
-  <!-- Selector de semanas -->
-  <div style="margin-bottom: 20px;">
+  <!-- Semanas -->
+  <div class="semanas-section">
     <div class="segment-label">Semana</div>
-    <div class="weeks-scroll scrollbar-hide" id="semanasContainer"></div>
+    <div class="semanas-scroll" id="semanasContainer"></div>
   </div>
 
   <!-- Resultados -->
@@ -795,9 +629,9 @@ body {
     <span id="semanaActualBadge"></span>
   </div>
 
-  <!-- Grid de tarjetas -->
+  <!-- Grid -->
   <div class="cards-grid" id="cardsGrid">
-    <div class="loading-spinner"><div class="spinner"></div></div>
+    <div class="loading"><div class="spinner"></div></div>
   </div>
 </div>
 
@@ -807,320 +641,272 @@ body {
 // ==================================================
 // CONFIGURACIÓN
 // ==================================================
-const API_BASE = window.location.origin;
-const API = API_BASE + '/api/proxy';
-const API_PLN = API_BASE + '/api/planeaciones';
+const API_PLN = '/api/planeaciones';
 
-let ST = {
-  rol: null,
-  correo: null,
-  nombre: null,
-  docenteId: null
-};
-
-let planeacionesData = [];
+let ST = { rol: null, correo: null, nombre: null, docenteId: null };
+let materiasData = [];
+let planeacionesMap = {}; // key: materia_grado -> planeacion
 let periodoActivo = 'P2';
 let semanaSeleccionada = 8;
-let semanaActualCalculada = 8;
-let planeacionSeleccionada = null;
+let semanaActual = 8;
 
 // ==================================================
-// FUNCIONES DE UTILIDAD
+// UTILS
 // ==================================================
 function obtenerSesion() {
   try {
     const data = localStorage.getItem('lp_user');
-    if (!data) return null;
-    return JSON.parse(data);
+    return data ? JSON.parse(data) : null;
   } catch { return null; }
 }
 
-function cerrarSesion() {
-  localStorage.removeItem('lp_user');
-  window.location.href = '/';
-}
-
+function cerrarSesion() { localStorage.removeItem('lp_user'); window.location.href = '/'; }
 function volverPanel() {
   const sesion = obtenerSesion();
-  const rol = String(sesion?.rol || '').toLowerCase().trim();
-  if (rol === 'admin') {
-    window.location.href = '/dashboardadmin/';
-  } else if (rol === 'coordinador') {
-    window.location.href = '/dashboardcoord/';
-  } else {
-    window.location.href = '/';
-  }
+  const rol = String(sesion?.rol || '').toLowerCase();
+  if (rol === 'admin') window.location.href = '/dashboardadmin/';
+  else if (rol === 'coordinador') window.location.href = '/dashboardcoord/';
+  else window.location.href = '/';
 }
 
 function calcularSemanaActual() {
-  const inicioBase = new Date('2026-04-25T00:30:00-05:00');
-  const ahora = new Date();
-  const unaSemana = 7 * 24 * 60 * 60 * 1000;
-  const diffSemanas = Math.floor((ahora.getTime() - inicioBase.getTime()) / unaSemana);
-  let semana = 5 + diffSemanas;
+  const inicio = new Date('2026-04-25T00:30:00-05:00');
+  const diff = Math.floor((new Date() - inicio) / (7*24*60*60*1000));
+  let semana = 5 + diff;
   semana = ((semana - 1) % 10 + 10) % 10 + 1;
   return semana;
 }
 
-function mostrarToast(mensaje) {
-  const toast = document.getElementById('toastMsg');
-  toast.textContent = mensaje;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2500);
+function mostrarToast(msg) {
+  const t = document.getElementById('toastMsg');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 // ==================================================
 // API
 // ==================================================
-async function apiPlaneaciones(accion, params = {}) {
+async function apiCall(accion, params = {}) {
   const qs = new URLSearchParams({ accion, correo: ST.correo || '', ...params });
-  const res = await fetch(`${API_PLN}?${qs}`, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' }
-  });
+  const res = await fetch(`${API_PLN}?${qs}`);
   return res.json();
 }
 
-async function cargarPlaneaciones() {
-  try {
-    const res = await apiPlaneaciones('misPlaneacionesDocente', {
-      periodo: periodoActivo,
-      correo: ST.correo
-    });
-    
-    if (res.ok && res.data) {
-      planeacionesData = res.data;
-    } else {
-      planeacionesData = [];
-      console.warn('Error cargando planeaciones:', res.error);
-    }
-  } catch (err) {
-    console.error('Error:', err);
-    planeacionesData = [];
+async function cargarMaterias() {
+  const res = await apiCall('cargaDocente');
+  if (res.ok && res.materias) {
+    materiasData = res.materias;
+  } else {
+    materiasData = [];
   }
-  renderizarTodo();
+}
+
+async function cargarPlaneaciones() {
+  const res = await apiCall('misPlaneacionesDocente', { periodo: periodoActivo });
+  if (res.ok && res.data) {
+    planeacionesMap = {};
+    res.data.forEach(p => {
+      const key = `${p.asignatura}|${p.grado}`;
+      planeacionesMap[key] = p;
+    });
+  }
+}
+
+function getEstadoPlaneacion(asignatura, grado) {
+  const key = `${asignatura}|${grado}`;
+  const p = planeacionesMap[key];
+  if (!p) return { estado: 'no_enviada', label: 'No enviada', planeacionId: null };
+  
+  const estadoRaw = (p.estadoRevision || p.revisionCoord || '').toLowerCase();
+  if (estadoRaw === 'aprobada' || estadoRaw === 'aprobado') return { estado: 'aprobada', label: 'Aprobada', planeacionId: p.planeacionId, data: p };
+  if (estadoRaw.includes('ajuste')) return { estado: 'con_ajustes', label: 'Con ajustes', planeacionId: p.planeacionId, data: p };
+  if (estadoRaw === 'pendiente' || estadoRaw === 'recibida' || estadoRaw === 'por revisar') 
+    return { estado: 'pendiente', label: 'En revisión', planeacionId: p.planeacionId, data: p };
+  
+  return { estado: 'pendiente', label: 'En revisión', planeacionId: p.planeacionId, data: p };
 }
 
 // ==================================================
-// RENDERIZADO
+// RENDER
 // ==================================================
-function renderizarSelectorSemanas() {
+function renderSemanas() {
   const container = document.getElementById('semanasContainer');
   const semanas = Array.from({ length: 10 }, (_, i) => i + 1);
   
-  container.innerHTML = semanas.map(semana => {
-    const esActual = semana === semanaActualCalculada;
-    const esSeleccionada = semana === semanaSeleccionada;
+  container.innerHTML = semanas.map(s => {
+    const esActual = s === semanaActual;
+    const activa = s === semanaSeleccionada;
     return `
-      <button class="week-btn ${esSeleccionada ? 'active' : ''}" data-semana="${semana}">
-        <div class="week-label">Semana</div>
-        <div class="week-number">${semana}</div>
-        ${esActual ? `<span class="week-badge ${esSeleccionada ? 'white' : ''}">Actual</span>` : ''}
+      <button class="semana-btn ${activa ? 'active' : ''}" data-semana="${s}">
+        <div class="semana-num">${s}</div>
+        <div class="semana-label">Semana</div>
+        ${esActual ? `<span class="semana-badge ${activa ? 'white' : ''}">Actual</span>` : ''}
       </button>
     `;
   }).join('');
   
-  document.querySelectorAll('.week-btn').forEach(btn => {
+  document.querySelectorAll('.semana-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const semana = parseInt(btn.dataset.semana);
-      semanaSeleccionada = semana;
-      renderizarSelectorSemanas();
-      renderizarCards();
+      semanaSeleccionada = parseInt(btn.dataset.semana);
+      renderSemanas();
+      renderCards();
     });
   });
 }
 
-function renderizarSelectorPeriodo() {
-  const btns = document.querySelectorAll('.segmented-btn');
+function renderPeriodo() {
+  const btns = document.querySelectorAll('.seg-btn');
   btns.forEach(btn => {
-    const periodo = btn.dataset.periodo;
-    if (periodo === periodoActivo) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
-    btn.onclick = () => {
-      periodoActivo = periodo;
-      renderizarSelectorPeriodo();
-      cargarPlaneaciones();
+    if (btn.dataset.periodo === periodoActivo) btn.classList.add('active');
+    else btn.classList.remove('active');
+    btn.onclick = async () => {
+      periodoActivo = btn.dataset.periodo;
+      renderPeriodo();
+      await cargarPlaneaciones();
+      renderCards();
     };
   });
 }
 
-function getEstadoConfig(estado) {
-  const estadoMap = {
-    'aprobada': { label: 'Aprobada', className: 'badge-aprobada', icon: '✓' },
-    'aprobado': { label: 'Aprobada', className: 'badge-aprobada', icon: '✓' },
-    'con ajustes': { label: 'Con ajustes', className: 'badge-ajustes', icon: '⚠' },
-    'ajustes': { label: 'Con ajustes', className: 'badge-ajustes', icon: '⚠' },
-    'pendiente': { label: 'En revisión', className: 'badge-pendiente', icon: '⏳' },
-    'recibida': { label: 'En revisión', className: 'badge-pendiente', icon: '⏳' },
-    'por revisar': { label: 'En revisión', className: 'badge-pendiente', icon: '⏳' },
-    'no_enviada': { label: 'Sin enviar', className: 'badge-no_enviada', icon: '✗' },
-    'reenviada': { label: 'Reenviada', className: 'badge-pendiente', icon: '⏳' }
-  };
-  const key = String(estado || 'no_enviada').toLowerCase();
-  return estadoMap[key] || estadoMap['pendiente'];
-}
-
-function getAsignaturaIcon(asignatura) {
-  const icons = {
-    'matemáticas': '📐',
-    'matematicas': '📐',
-    'español': '📖',
-    'lengua': '📖',
-    'ciencias naturales': '🔬',
-    'ciencias': '🔬',
-    'historia': '🏛️',
-    'educación física': '⚽',
-    'arte': '🎨',
-    'inglés': '🌎',
-    'ingles': '🌎'
-  };
-  return icons[String(asignatura || '').toLowerCase()] || '📚';
-}
-
-function renderizarCards() {
+function renderCards() {
   const grid = document.getElementById('cardsGrid');
-  const filtradas = planeacionesData.filter(p => (p.semanaNum === semanaSeleccionada || p.semana === semanaSeleccionada));
+  const semana = semanaSeleccionada;
   
-  document.getElementById('resultadosCount').textContent = 
-    `${filtradas.length} planeación${filtradas.length !== 1 ? 'es' : ''}`;
+  // Ordenar materias por grado para mejor visualización
+  const materiasOrdenadas = [...materiasData].sort((a, b) => {
+    const gradoA = a.grados[0] || '';
+    const gradoB = b.grados[0] || '';
+    return gradoA.localeCompare(gradoB);
+  });
   
-  if (semanaSeleccionada === semanaActualCalculada) {
-    document.getElementById('semanaActualBadge').innerHTML = 
-      '<span class="semana-actual-badge">📅 Semana actual</span>';
-  } else {
-    document.getElementById('semanaActualBadge').innerHTML = '';
-  }
-  
-  if (filtradas.length === 0) {
-    grid.innerHTML = `
-      <div class="planeacion-card card-empty">
-        <div class="empty-icon">📋</div>
-        <div class="empty-title">Sin planeación</div>
-        <div class="empty-text">No has enviado planeación para esta semana</div>
-        <button class="btn-create" onclick="crearPlaneacion()">
-          <span>+</span> Crear planeación
-        </button>
-      </div>
-    `;
-    return;
-  }
-  
-  grid.innerHTML = filtradas.map((p, idx) => {
-    const estadoConfig = getEstadoConfig(p.estadoRevision || p.revisionCoord);
-    const fechaEnvio = p.timestamp ? new Date(p.timestamp).toLocaleDateString('es-CO') : '';
+  const cardsHtml = materiasOrdenadas.map((m, idx) => {
+    const gradoStr = m.grados.join(', ');
+    const estadoInfo = getEstadoPlaneacion(m.asignatura, gradoStr);
+    const estadoClase = `estado-${estadoInfo.estado}`;
+    const estadoIcon = { aprobada: '✓', pendiente: '⏳', con_ajustes: '⚠', no_enviada: '✗' }[estadoInfo.estado];
+    
     return `
-      <div class="planeacion-card" style="animation: fadeInUp 0.4s ease-out backwards; animation-delay: ${idx * 0.05}s" onclick="abrirModal('${p.planeacionId}')">
-        <div class="card-glow"></div>
-        <div class="card-content">
-          <div class="card-header">
-            <div class="card-icon">${getAsignaturaIcon(p.asignatura)}</div>
-            <div class="chevron">›</div>
-          </div>
-          <div class="card-title">${p.asignatura || 'Asignatura'}</div>
-          <div class="card-subtitle">Semana ${p.semana || p.semanaNum}</div>
-          <div class="card-info">
-            <div class="info-item">🎓 ${p.grado || '—'}</div>
-            ${fechaEnvio ? `<div class="info-item">📅 ${fechaEnvio}</div>` : ''}
-          </div>
-          <div class="badge ${estadoConfig.className}">
-            <span>${estadoConfig.icon}</span> ${estadoConfig.label}
-          </div>
+      <div class="plan-card" style="animation-delay: ${idx * 0.03}s" onclick="abrirPlaneacion('${m.asignatura}', '${gradoStr}')">
+        <div class="card-header">
+          <div class="card-icon">${obtenerIcono(m.asignatura)}</div>
+          <div class="card-chevron">›</div>
+        </div>
+        <div class="card-title">${m.asignatura}</div>
+        <div class="card-sub">Semana ${semana}</div>
+        <div class="card-info">
+          <span class="info-chip">🎓 ${gradoStr || 'Sin grado'}</span>
+          ${estadoInfo.estado === 'no_enviada' ? '' : `<span class="info-chip">📅 ${estadoInfo.data?.timestamp ? new Date(estadoInfo.data.timestamp).toLocaleDateString('es-CO') : ''}</span>`}
+        </div>
+        <div class="estado-badge ${estadoClase}">
+          <span>${estadoIcon}</span> ${estadoInfo.label}
         </div>
       </div>
     `;
   }).join('');
+  
+  document.getElementById('resultadosCount').textContent = `${materiasData.length} materia${materiasData.length !== 1 ? 's' : ''}`;
+  
+  if (semana === semanaActual) {
+    document.getElementById('semanaActualBadge').innerHTML = '<span class="semana-activa-badge">📅 Semana actual</span>';
+  } else {
+    document.getElementById('semanaActualBadge').innerHTML = '';
+  }
+  
+  grid.innerHTML = cardsHtml || '<div class="empty-card"><div class="empty-icon">📭</div><div class="empty-title">Sin materias asignadas</div><div class="empty-sub">No tienes materias asignadas para este período</div></div>';
 }
 
-function renderizarTodo() {
-  renderizarSelectorSemanas();
-  renderizarSelectorPeriodo();
-  renderizarCards();
+function obtenerIcono(asignatura) {
+  const a = asignatura.toLowerCase();
+  if (a.includes('matem')) return '📐';
+  if (a.includes('españ') || a.includes('lengua')) return '📖';
+  if (a.includes('ciencia')) return '🔬';
+  if (a.includes('historia')) return '🏛️';
+  if (a.includes('física') || a.includes('educación')) return '⚽';
+  if (a.includes('arte')) return '🎨';
+  if (a.includes('inglés')) return '🌎';
+  if (a.includes('tecnolog')) return '💻';
+  if (a.includes('religión')) return '⛪';
+  return '📚';
 }
 
-// ==================================================
-// MODAL Y ACCIONES
-// ==================================================
-function abrirModal(planeacionId) {
-  const planeacion = planeacionesData.find(p => p.planeacionId === planeacionId);
-  if (!planeacion) return;
+function abrirPlaneacion(asignatura, grado) {
+  const estadoInfo = getEstadoPlaneacion(asignatura, grado);
   
-  planeacionSeleccionada = planeacion;
-  const estadoConfig = getEstadoConfig(planeacion.estadoRevision || planeacion.revisionCoord);
+  if (estadoInfo.estado === 'no_enviada') {
+    window.location.href = '/planeaciones/';
+    return;
+  }
   
-  // Generar clases HTML
+  const p = estadoInfo.data;
+  if (!p) return;
+  
+  // Generar clases
   let clasesHtml = '';
   for (let i = 1; i <= 5; i++) {
-    const tema = planeacion[`d${i}Tema`];
-    const act = planeacion[`d${i}Actividades`];
+    const tema = p[`d${i}Tema`];
+    const act = p[`d${i}Actividades`];
     if (!tema && !act) continue;
     clasesHtml += `
-      <div class="clase-item">
-        <div><span class="clase-number">${i}</span> <span class="clase-tema">${tema || 'Tema'}</span></div>
+      <div class="clase-block">
+        <div><span class="clase-num">${i}</span> <span class="clase-tema">${tema || 'Tema'}</span></div>
         <div class="clase-act">${act || '—'}</div>
       </div>
     `;
   }
   
-  if (!clasesHtml) clasesHtml = '<div class="modal-section-content"><p>—</p></div>';
+  const estadoLabel = estadoInfo.label;
+  const estadoClase = `estado-${estadoInfo.estado}`;
   
-  const modalHTML = `
-    <div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this) cerrarModal()">
-      <div class="modal-sheet" onclick="event.stopPropagation()">
+  const modalHtml = `
+    <div class="modal" id="modalPlaneacion" onclick="if(event.target===this) cerrarModal()">
+      <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
         <div class="modal-header">
           <div class="modal-header-info">
-            <div class="modal-icon">${getAsignaturaIcon(planeacion.asignatura)}</div>
+            <div class="modal-icon">${obtenerIcono(asignatura)}</div>
             <div>
-              <div class="modal-title">${planeacion.asignatura || 'Asignatura'}</div>
-              <div class="modal-sub">Semana ${planeacion.semana || planeacion.semanaNum} — ${planeacion.grado || ''}</div>
+              <div class="modal-title">${asignatura}</div>
+              <div class="modal-sub">Semana ${p.semana || semanaSeleccionada} — ${grado}</div>
             </div>
           </div>
           <button class="modal-close" onclick="cerrarModal()">✕</button>
         </div>
-        <div class="modal-badge-row">
-          <div class="badge ${estadoConfig.className}">
-            <span>${estadoConfig.icon}</span> ${estadoConfig.label}
-          </div>
-          ${planeacion.timestamp ? `<div class="info-item" style="background:transparent">📅 Enviada: ${new Date(planeacion.timestamp).toLocaleDateString('es-CO')}</div>` : ''}
-        </div>
         <div class="modal-body">
           <div class="modal-section">
-            <div class="modal-section-label">Indicador de desempeño</div>
-            <div class="modal-section-content">
-              <p>${planeacion.indicadorSemanal || '—'}</p>
-            </div>
+            <div class="modal-label">Estado</div>
+            <div><span class="estado-badge ${estadoClase}" style="display:inline-flex">${estadoLabel}</span></div>
           </div>
           <div class="modal-section">
-            <div class="modal-section-label">Clases planificadas</div>
-            ${clasesHtml}
+            <div class="modal-label">Indicador de desempeño</div>
+            <div class="modal-value">${p.indicadorSemanal || '—'}</div>
           </div>
-          ${planeacion.actCompDescripcion ? `
           <div class="modal-section">
-            <div class="modal-section-label">Actividad complementaria</div>
-            <div class="modal-section-content"><p>${planeacion.actCompDescripcion}</p></div>
+            <div class="modal-label">Clases planificadas</div>
+            ${clasesHtml || '<div class="modal-value">—</div>'}
           </div>
-          ` : ''}
-          ${planeacion.obsFamilias ? `
+          ${p.actCompDescripcion ? `
           <div class="modal-section">
-            <div class="modal-section-label">Comunicación a familias</div>
-            <div class="modal-section-content"><p>${planeacion.obsFamilias}</p></div>
+            <div class="modal-label">Actividad complementaria</div>
+            <div class="modal-value">${p.actCompDescripcion}</div>
           </div>
           ` : ''}
-          ${planeacion.observacionCoordinacion ? `
+          ${p.obsFamilias ? `
           <div class="modal-section">
-            <div class="modal-section-label" style="color: #f59e0b;">Observación del coordinador</div>
-            <div class="modal-section-content" style="background:rgba(245,158,11,0.05); border-color:rgba(245,158,11,0.2);">
-              <p style="color: #fbbf24;">${planeacion.observacionCoordinacion}</p>
-            </div>
+            <div class="modal-label">Comunicación a familias</div>
+            <div class="modal-value">${p.obsFamilias}</div>
+          </div>
+          ` : ''}
+          ${p.observacionCoordinacion ? `
+          <div class="modal-section">
+            <div class="modal-label" style="color: #f59e0b;">Observación del coordinador</div>
+            <div class="modal-value" style="background:rgba(245,158,11,0.05); border-color:rgba(245,158,11,0.2); color:#fbbf24;">${p.observacionCoordinacion}</div>
           </div>
           ` : ''}
         </div>
         <div class="modal-footer">
-          ${estadoConfig.label === 'Con ajustes' ? `
-            <button class="modal-btn modal-btn-primary" onclick="editarPlaneacion('${planeacion.planeacionId}')">
+          ${estadoInfo.estado === 'con_ajustes' ? `
+            <button class="modal-btn modal-btn-primary" onclick="editarPlaneacion('${p.planeacionId}')">
               ✏️ Editar y reenviar
             </button>
           ` : `
@@ -1131,47 +917,39 @@ function abrirModal(planeacionId) {
     </div>
   `;
   
-  document.body.insertAdjacentHTML('beforeend', modalHTML);
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
   document.body.style.overflow = 'hidden';
 }
 
 function cerrarModal() {
-  const modal = document.getElementById('modalBackdrop');
+  const modal = document.getElementById('modalPlaneacion');
   if (modal) modal.remove();
   document.body.style.overflow = '';
-  planeacionSeleccionada = null;
 }
 
-function crearPlaneacion() {
-  window.location.href = '/planeaciones/';
-}
-
-function editarPlaneacion(planeacionId) {
-  window.location.href = `/planeaciones/?editar=1&planeacionId=${planeacionId}`;
+function editarPlaneacion(id) {
+  window.location.href = `/planeaciones/?editar=1&planeacionId=${id}`;
 }
 
 // ==================================================
-// INICIALIZACIÓN
+// INIT
 // ==================================================
 async function init() {
   const sesion = obtenerSesion();
-  if (!sesion || !sesion.correo) {
-    window.location.href = '/';
-    return;
-  }
+  if (!sesion || !sesion.correo) { window.location.href = '/'; return; }
   
-  ST.correo = sesion.correo;
-  ST.nombre = sesion.nombre || '';
-  ST.rol = sesion.rol || 'docente';
-  ST.docenteId = sesion.docenteId;
+  ST = { ...ST, correo: sesion.correo, nombre: sesion.nombre || '', rol: sesion.rol || 'docente', docenteId: sesion.docenteId };
+  document.getElementById('rolVista').textContent = String(ST.rol).toUpperCase();
   
-  const rolSpan = document.getElementById('rolVista');
-  if (rolSpan) rolSpan.textContent = String(ST.rol).toUpperCase();
+  semanaActual = calcularSemanaActual();
+  semanaSeleccionada = semanaActual;
   
-  semanaActualCalculada = calcularSemanaActual();
-  semanaSeleccionada = semanaActualCalculada;
-  
+  await cargarMaterias();
   await cargarPlaneaciones();
+  
+  renderSemanas();
+  renderPeriodo();
+  renderCards();
 }
 
 init();
