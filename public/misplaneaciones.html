@@ -916,7 +916,7 @@ function renderCards() {
     return `
       <div class="plan-card" style="animation-delay: ${idx * 0.02}s" onclick="abrirDetalle('${t.asignatura}', '${t.grado}', ${semanaSeleccionada})">
         <div class="card-header">
-          <div class="card-icon">${iconoPorMateria(t.asignatura)}</div>
+          <div class="card-icon">${t.asignatura === 'TECNOLOGÍA E INFORMÁTICA' ? '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="2" y1="10" x2="22" y2="10"/></svg>' : iconoPorMateria(t.asignatura)}</div>
           <div class="card-chevron">›</div>
         </div>
         <div class="card-title">${t.asignatura}</div>
