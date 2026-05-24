@@ -929,8 +929,10 @@ async function init() {
   if (!sesion?.correo) { window.location.href = '/'; return; }
   ST = { correo: sesion.correo, rol: sesion.rol || 'docente', docenteId: sesion.docenteId };
   document.getElementById('rolVista').textContent = String(ST.rol).toUpperCase();
-  semanaActual = calcularSemanaActual();
-  semanaSeleccionada = semanaActual;
+  
+  // 🔥 FORZAR SEMANA ACTIVA A 8 (MANUAL)
+  semanaActual = 8;
+  semanaSeleccionada = 8;
   periodoActivo = 'P2';
   
   await cargarDatos();
