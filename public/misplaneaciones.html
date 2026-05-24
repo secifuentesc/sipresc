@@ -608,11 +608,35 @@ function volverPanel() {
   else window.location.href = '/';
 }
 function calcularSemanaActual() {
-  const inicio = new Date('2026-04-25T00:30:00-05:00');
-  const diff = Math.floor((new Date() - inicio) / (7*24*60*60*1000));
-  let semana = 5 + diff;
-  semana = ((semana - 1) % 10 + 10) % 10 + 1;
-  return semana;
+  // Fecha base: 27 de abril de 2026 fue el inicio de la semana 5 (lunes)
+  const inicioBase = new Date('2026-04-27T00:00:00-05:00');
+  const ahora = new Date();
+  
+  // Calcular semanas completas transcurridas
+  const diffDias = Math.floor((ahora - inicioBase) / (24 * 60 * 60 * 1000));
+  let semana = 5 + Math.floor(diffDias / 7);
+  
+  const diaSemana = ahora.getDay(); // 0=domingo, 5=viernes, 6=sábado
+  const hora = ahora.getHours();
+  
+  // Si es domingo: mostrar semana que empieza mañana
+  if (diaSemana === 0) {
+    semana = semana + 1;
+  }
+  // Si es viernes después de las 2pm: mostrar semana siguiente
+  else if (diaSemana === 5 && hora >= 14) {
+    semana = semana + 1;
+  }
+  // Si es sábado: mostrar semana siguiente
+  else if (diaSemana === 6) {
+    semana = semana + 1;
+  }
+  
+  // Ciclo de 10 semanas (1 a 10)
+  let semanaCiclo = ((semana - 1) % 10) + 1;
+  if (semanaCiclo < 1) semanaCiclo = 1;
+  
+  return semanaCiclo;
 }
 function mostrarToast(msg) {
   const t = document.getElementById('toastMsg');
