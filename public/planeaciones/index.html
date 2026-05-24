@@ -1647,7 +1647,10 @@ async function revisarOrtografia(texto){
   if(!texto||texto.length<5) return [];
   const esCorto = texto.length < 20;
   try{
-    const res = await fetch("https://api.languagetool.org/v2/check",{ method:"POST", body:new URLSearchParams({text:texto,language:"es-ES"}) });
+    const res = await fetch("https://api.languagetool.org/v2/check",{ 
+  method:"POST", 
+  body:new URLSearchParams({text:texto, language:"auto"}) 
+});
     const data = await res.json();
     let errores = data.matches || [];
     if(esCorto) errores = errores.filter(e=>e.rule.issueType==="misspelling");
