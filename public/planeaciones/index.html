@@ -1646,7 +1646,7 @@ async function enviarPlaneacion() {
   document.querySelector(".form-app").classList.add("blur");
   overlay.classList.add("activo");
   
-  // ✨ ANIMACIÓN DE PASOS (para que parezca más rápido)
+  // ✨ ANIMACIÓN DE PASOS
   const pasos = [
     "Verificando datos...",
     "Subiendo archivos...",
@@ -1699,6 +1699,15 @@ async function enviarPlaneacion() {
     enviar_copia: ST.enviarCopia
   };
 
+  // ✅ LOG: Guardar intento en localStorage (para depuración)
+  const intentoLog = {
+    timestamp: new Date().toISOString(),
+    correo: correo,
+    materia: ST.materia,
+    semana: ST.semana,
+    exito: false
+  };
+
   let reintentos = 0;
   const MAX_REINTENTOS = 2;
 
@@ -1713,7 +1722,10 @@ async function enviarPlaneacion() {
       const json = await response.json();
       
       if (json && json.ok) {
-        // ÉXITO
+        // ✅ ÉXITO - Registrar en log local
+        intentoLog.exito = true;
+        guardarLogEnvio(intentoLog);
+        
         clearInterval(intervalPasos);
         loaderText.textContent = "Enviado";
         loaderSuccess.style.opacity = "1";
@@ -1726,6 +1738,9 @@ async function enviarPlaneacion() {
         
         const key = getClavePlaneacion();
         if (key) localStorage.removeItem(key);
+        
+        // ✅ Mostrar confirmación al docente
+        mostrarNotificacionProfesional('✅ Planeación guardada correctamente en el sistema', 'success', 4000);
         
         setTimeout(() => {
           overlay.classList.remove("activo");
@@ -1745,36 +1760,74 @@ async function enviarPlaneacion() {
         loaderText.textContent = `Reintentando (${reintentos}/${MAX_REINTENTOS})...`;
         mostrarNotificacionProfesional(`Error: ${error.message}. Reintentando automáticamente...`, 'warning', 2000);
         setTimeout(intentarEnvio, 2000);
-      } else {
-        // FALLO DEFINITIVO
-        clearInterval(intervalPasos);
-        mostrarNotificacionProfesional(
-          `No se pudo enviar tu planeación. Motivo: ${error.message}. El sistema guardó un respaldo automático. Por favor, intenta de nuevo más tarde o contacta a soporte.`,
-          'error'
-        );
-        estado.textContent = "Error al guardar. Respaldo creado.";
-        btn.classList.remove("loading");
-        icon.textContent = "⚠";
-        overlay.classList.remove("activo");
-        document.querySelector(".form-app").classList.remove("blur");
-        
-        // Guardar respaldo local en el navegador
-        try {
-          const fallos = JSON.parse(localStorage.getItem('planeaciones_fallidas') || '[]');
-          fallos.push({
-            timestamp: new Date().toISOString(),
-            correo: correo,
-            mensaje: error.message
-          });
-          localStorage.setItem('planeaciones_fallidas', JSON.stringify(fallos.slice(-10)));
-        } catch(e) {}
-      }
+      } } else {
+  // ❌ FALLO DEFINITIVO
+  intentoLog.exito = false;
+  intentoLog.error = error.message;
+  guardarLogEnvio(intentoLog);
+  notificarFalloAlAdmin(intentoLog);  // ← AGREGAR ESTA LÍNEA
+  
+  clearInterval(intervalPasos);
+  mostrarNotificacionProfesional(
+    `❌ Error al guardar. El sistema ha notificado al administrador.`,
+    'error',
+    5000
+  );
+  estado.textContent = "Error al guardar. Notificado a administración.";
+  btn.classList.remove("loading");
+  icon.textContent = "⚠";
+  overlay.classList.remove("activo");
+  document.querySelector(".form-app").classList.remove("blur");
+}
     }
   }
   
   await intentarEnvio();
 }
 
+// ✅ Función para guardar log de envíos (para que tú puedas depurar después)
+function guardarLogEnvio(log) {
+  try {
+    const logs = JSON.parse(localStorage.getItem('sipresc_log_envios') || '[]');
+    logs.push(log);
+    // Mantener solo los últimos 50 logs
+    while (logs.length > 50) logs.shift();
+    localStorage.setItem('sipresc_log_envios', JSON.stringify(logs));
+    
+    // Si hubo error, también guardar en una lista especial
+    if (!log.exito) {
+      const fallos = JSON.parse(localStorage.getItem('sipresc_fallos_envio') || '[]');
+      fallos.push(log);
+      localStorage.setItem('sipresc_fallos_envio', JSON.stringify(fallos.slice(-20)));
+    }
+  } catch(e) {
+    console.error("Error guardando log:", e);
+  }
+}
+
+
+// ✅ Función para notificar al administrador cuando hay un fallo definitivo
+async function notificarFalloAlAdmin(log) {
+  try {
+    const payload = {
+      accion: "notificarFalloPlaneacion",
+      timestamp: log.timestamp,
+      correoDocente: log.correo,
+      materia: log.materia,
+      semana: log.semana,
+      error: log.error || "Error desconocido"
+    };
+    
+    fetch("/api/planeaciones", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).catch(e => console.error("Error notificando:", e));
+    
+  } catch(e) {
+    console.error("Error en notificacion:", e);
+  }
+}
 // ==================================================
 // NOTIFICACIÓN PROFESIONAL CENTRADA
 // ==================================================
