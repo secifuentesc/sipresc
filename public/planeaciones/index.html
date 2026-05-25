@@ -105,7 +105,7 @@ function guardarEnColaLocal(payload, error) {
     });
     localStorage.setItem(COLA_PLANEACIONES, JSON.stringify(cola.slice(-20))); // máx 20 pendientes
     mostrarNotificacionProfesional(
-      '⚠️ Planeación guardada localmente. Se enviará automáticamente cuando recuperes internet.',
+      'Planeación guardada localmente. Se enviará automáticamente cuando recuperes internet.',
       'warning',
       5000
     );
@@ -121,7 +121,7 @@ async function sincronizarColaLocal() {
   if (cola.length === 0) return;
   
   mostrarNotificacionProfesional(
-    `📡 Sincronizando ${cola.length} planeación${cola.length > 1 ? 'es' : ''} pendiente${cola.length > 1 ? 's' : ''}...`,
+    `Sincronizando ${cola.length} planeación${cola.length > 1 ? 'es' : ''} pendiente${cola.length > 1 ? 's' : ''}...`,
     'info',
     3000
   );
@@ -1739,7 +1739,7 @@ async function enviarPlaneacion() {
         const key = getClavePlaneacion();
         if (key) localStorage.removeItem(key);
         
-        mostrarNotificacionProfesional('✅ Planeación guardada correctamente en el sistema', 'success', 4000);
+        mostrarNotificacionProfesional('Planeación guardada correctamente en el sistema', 'success', 4000);
         
         setTimeout(() => {
           overlay.classList.remove("activo");
@@ -1766,7 +1766,7 @@ async function enviarPlaneacion() {
         notificarFalloAlAdmin(intentoLog);
         
         clearInterval(intervalPasos);
-        mostrarNotificacionProfesional(`❌ Error al guardar. El sistema ha notificado al administrador.`, 'error', 5000);
+        mostrarNotificacionProfesional(`Error al guardar. El sistema ha notificado al administrador.`, 'error', 5000);
         estado.textContent = "Error al guardar. Notificado a administración.";
         btn.classList.remove("loading");
         icon.textContent = "⚠";
