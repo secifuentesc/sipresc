@@ -1074,6 +1074,9 @@ let archivoCompNombre = null;
 let archivoFamBase64 = null;
 let archivoFamNombre = null;
 
+let archivoCompUrl = null;
+let archivoFamUrl = null;
+
 async function corregirTodo(){
   const btn = document.getElementById("btnCorregir");
   btn.classList.add("cargando");
@@ -1691,10 +1694,10 @@ async function enviarPlaneacion() {
     intensidad: ST.intensidad || 1,
     observacion: ST.observacionActiva === "si" ? document.getElementById("observacionInput")?.value || "" : "",
     comp_obligatoria: ST.compActiva === "si" ? document.getElementById("compObligatoria")?.value || "" : "",
-    comp_anexo: archivoCompBase64 || null,
+    comp_anexo_url: archivoCompUrl || null,
     comp_nombre: archivoCompNombre || "",
     fam_obs: ST.famActiva === "si" ? document.getElementById("famObs")?.value || "" : "",
-    fam_anexo: archivoFamBase64 || null,
+    fam_anexo_url: archivoFamUrl || null,
     fam_nombre: archivoFamNombre || "",
     disp_clases: ST.dispActivo === "si" ? (ST.dispClases || []).join(",") : "",
     disp_desc: ST.dispActivo === "si" ? document.getElementById("dispDescripcion")?.value || "" : "",
@@ -2292,32 +2295,126 @@ function fileToBase64(file){ return new Promise((resolve,reject)=>{ const reader
 document.getElementById("compArchivo").addEventListener("change", async function(){
   const file=this.files[0]; if(!file) return;
   if(file.size > 10 * 1024 * 1024){
-    toast("El archivo supera el límite permitido (máx 10MB)", "er");
+    mostrarNotificacionProfesional("El archivo supera el límite de 10MB", "error");
     this.value = "";
     return;
   }
-  archivoCompNombre=file.name; archivoCompBase64=await fileToBase64(file);
-  document.getElementById("compNombre").textContent=file.name; document.getElementById("compLabel").textContent="Archivo cargado ✔";
-  const bar=document.getElementById("compProgress"); const box=document.getElementById("compBox").querySelector(".file-upload");
-  bar.style.width="0%"; setTimeout(()=>{bar.style.width="35%"},80); setTimeout(()=>{bar.style.width="70%"},180); setTimeout(()=>{bar.style.width="100%"},320);
-  setTimeout(()=>{ box.style.borderColor="#4ade80"; box.style.boxShadow="0 0 0 1px #4ade80 inset"; },350);
-  document.getElementById("btnQuitarComp").style.display="inline-block";
+  
+  const btnQuitar = document.getElementById("btnQuitarComp");
+  const label = document.getElementById("compLabel");
+  const nombreSpan = document.getElementById("compNombre");
+  const bar = document.getElementById("compProgress");
+  const box = document.getElementById("compBox").querySelector(".file-upload");
+  
+  label.textContent = "Subiendo...";
+  nombreSpan.textContent = file.name;
+  if (bar) bar.style.width = "50%";
+  
+  try {
+    const url = await subirArchivoDirectoADrive(file, "");
+    archivoCompUrl = url;
+    archivoCompNombre = file.name;
+    archivoCompBase64 = null;
+    
+    label.textContent = "Archivo cargado ✓";
+    if (btnQuitar) btnQuitar.style.display = "inline-block";
+    if (bar) bar.style.width = "100%";
+    if (box) {
+      box.style.borderColor = "#4ade80";
+      box.style.boxShadow = "0 0 0 1px #4ade80 inset";
+    }
+    
+    mostrarNotificacionProfesional("Archivo subido correctamente", "success", 2000);
+  } catch (error) {
+    label.textContent = "Seleccionar archivo (máx 10MB)";
+    nombreSpan.textContent = "Ningún archivo";
+    if (bar) bar.style.width = "0%";
+    if (box) {
+      box.style.borderColor = "";
+      box.style.boxShadow = "";
+    }
+    mostrarNotificacionProfesional("Error al subir el archivo", "error");
+  }
 });
 
 document.getElementById("famArchivo").addEventListener("change", async function(){
   const file=this.files[0]; if(!file) return;
   if(file.size > 10 * 1024 * 1024){
-    toast("El archivo supera el límite permitido (máx 10MB)", "er");
+    mostrarNotificacionProfesional("El archivo supera el límite de 10MB", "error");
     this.value = "";
     return;
   }
-  archivoFamNombre=file.name; archivoFamBase64=await fileToBase64(file);
-  document.getElementById("famNombre").textContent=file.name;
-  const bar=document.getElementById("famProgress"); const box=document.getElementById("famUpload");
-  bar.style.width="0%"; setTimeout(()=>{bar.style.width="35%"},80); setTimeout(()=>{bar.style.width="70%"},180); setTimeout(()=>{bar.style.width="100%"},320);
-  setTimeout(()=>{ box.style.borderColor="#4ade80"; box.style.boxShadow="0 0 0 1px #4ade80 inset"; },350);
-  document.getElementById("btnQuitarFam").style.display="inline-block";
+  
+  const btnQuitar = document.getElementById("btnQuitarFam");
+  const label = document.querySelector("#famUpload span");
+  const nombreSpan = document.getElementById("famNombre");
+  const bar = document.getElementById("famProgress");
+  const box = document.getElementById("famUpload");
+  
+  label.textContent = "Subiendo...";
+  nombreSpan.textContent = file.name;
+  if (bar) bar.style.width = "50%";
+  
+  try {
+    const url = await subirArchivoDirectoADrive(file, "");
+    archivoFamUrl = url;
+    archivoFamNombre = file.name;
+    archivoFamBase64 = null;
+    
+    label.textContent = "Archivo cargado ✓";
+    if (btnQuitar) btnQuitar.style.display = "inline-block";
+    if (bar) bar.style.width = "100%";
+    if (box) {
+      box.style.borderColor = "#4ade80";
+      box.style.boxShadow = "0 0 0 1px #4ade80 inset";
+    }
+    
+    mostrarNotificacionProfesional("Archivo subido correctamente", "success", 2000);
+  } catch (error) {
+    label.textContent = "Seleccionar archivo (máx 10MB)";
+    nombreSpan.textContent = "Ningún archivo";
+    if (bar) bar.style.width = "0%";
+    if (box) {
+      box.style.borderColor = "";
+      box.style.boxShadow = "";
+    }
+    mostrarNotificacionProfesional("Error al subir el archivo", "error");
+  }
 });
+
+// Subir archivo directo a Drive
+async function subirArchivoDirectoADrive(file, carpetaId) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const base64 = e.target.result.split(",")[1];
+        
+        const response = await fetch("/api/upload-to-drive", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            archivo: base64,
+            nombre: file.name,
+            carpetaId: carpetaId
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+          resolve(data.url);
+        } else {
+          reject(data.error);
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    } catch (error) {
+      reject(error.message);
+    }
+  });
+}
 function quitarArchivoComp(e){
   e.stopPropagation(); const input=document.getElementById("compArchivo"); input.value="";
   document.getElementById("compNombre").textContent="Ningún archivo"; document.getElementById("compLabel").textContent="Seleccionar archivo";
