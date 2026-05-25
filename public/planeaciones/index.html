@@ -1638,7 +1638,6 @@ async function enviarPlaneacion() {
     return;
   }
 
-  // Iniciar loading
   btn.classList.add("loading");
   icon.textContent = "";
   btn.style.transform = "scale(0.9)";
@@ -1646,15 +1645,7 @@ async function enviarPlaneacion() {
   document.querySelector(".form-app").classList.add("blur");
   overlay.classList.add("activo");
   
-  // ✨ ANIMACIÓN DE PASOS
-  const pasos = [
-    "Verificando datos...",
-    "Subiendo archivos...",
-    "Guardando en el sistema...",
-    "Confirmando registro...",
-    "¡Casi listo!"
-  ];
-  
+  const pasos = ["Verificando datos...", "Subiendo archivos...", "Guardando en el sistema...", "Confirmando registro...", "¡Casi listo!"];
   let pasoActual = 0;
   loaderText.textContent = pasos[0];
   loaderSuccess.style.opacity = "0";
@@ -1699,7 +1690,6 @@ async function enviarPlaneacion() {
     enviar_copia: ST.enviarCopia
   };
 
-  // ✅ LOG: Guardar intento en localStorage (para depuración)
   const intentoLog = {
     timestamp: new Date().toISOString(),
     correo: correo,
@@ -1722,7 +1712,6 @@ async function enviarPlaneacion() {
       const json = await response.json();
       
       if (json && json.ok) {
-        // ✅ ÉXITO - Registrar en log local
         intentoLog.exito = true;
         guardarLogEnvio(intentoLog);
         
@@ -1739,7 +1728,6 @@ async function enviarPlaneacion() {
         const key = getClavePlaneacion();
         if (key) localStorage.removeItem(key);
         
-        // ✅ Mostrar confirmación al docente
         mostrarNotificacionProfesional('✅ Planeación guardada correctamente en el sistema', 'success', 4000);
         
         setTimeout(() => {
@@ -1760,25 +1748,20 @@ async function enviarPlaneacion() {
         loaderText.textContent = `Reintentando (${reintentos}/${MAX_REINTENTOS})...`;
         mostrarNotificacionProfesional(`Error: ${error.message}. Reintentando automáticamente...`, 'warning', 2000);
         setTimeout(intentarEnvio, 2000);
-      } } else {
-  // ❌ FALLO DEFINITIVO
-  intentoLog.exito = false;
-  intentoLog.error = error.message;
-  guardarLogEnvio(intentoLog);
-  notificarFalloAlAdmin(intentoLog);  // ← AGREGAR ESTA LÍNEA
-  
-  clearInterval(intervalPasos);
-  mostrarNotificacionProfesional(
-    `❌ Error al guardar. El sistema ha notificado al administrador.`,
-    'error',
-    5000
-  );
-  estado.textContent = "Error al guardar. Notificado a administración.";
-  btn.classList.remove("loading");
-  icon.textContent = "⚠";
-  overlay.classList.remove("activo");
-  document.querySelector(".form-app").classList.remove("blur");
-}
+      } else {
+        intentoLog.exito = false;
+        intentoLog.error = error.message;
+        guardarLogEnvio(intentoLog);
+        notificarFalloAlAdmin(intentoLog);
+        
+        clearInterval(intervalPasos);
+        mostrarNotificacionProfesional(`❌ Error al guardar. El sistema ha notificado al administrador.`, 'error', 5000);
+        estado.textContent = "Error al guardar. Notificado a administración.";
+        btn.classList.remove("loading");
+        icon.textContent = "⚠";
+        overlay.classList.remove("activo");
+        document.querySelector(".form-app").classList.remove("blur");
+      }
     }
   }
   
