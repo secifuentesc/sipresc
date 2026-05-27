@@ -669,9 +669,25 @@ function getPeriodoPorSemana(semana) {
   return 'P2';
 }
 
+// ==================================================
+// PERÍODO AUTOMÁTICO SEGÚN FECHA REAL
+// ==================================================
 function calcularPeriodoActual(fecha = new Date()) {
-  const semanaActual = calcularSemanaActual(fecha);
-  return getPeriodoPorSemana(semanaActual);
+  const ahora = fecha;
+  const finP2 = new Date('2026-06-12T14:00:00-05:00');
+  const finP3 = new Date('2026-08-14T23:59:59-05:00');
+  const finP4 = new Date('2026-11-20T23:59:59-05:00');
+  
+  // P1 (ya pasó)
+  if (ahora < new Date('2026-03-27T23:59:59-05:00')) return 'P1';
+  // P2: desde 6 abril hasta 12 junio 2pm
+  if (ahora >= new Date('2026-04-06T00:00:00-05:00') && ahora < finP2) return 'P2';
+  // P3: desde 12 junio 2pm hasta 14 agosto
+  if (ahora >= finP2 && ahora <= finP3) return 'P3';
+  // P4: desde 24 agosto hasta 20 noviembre
+  if (ahora >= new Date('2026-08-24T00:00:00-05:00') && ahora <= finP4) return 'P4';
+  
+  return 'P2';
 }
   
 function mostrarToast(msg) {
@@ -964,23 +980,31 @@ function renderSemanas() {
 function renderPeriodo() {
   const btns = document.querySelectorAll('.seg-btn');
   
-  // Ocultar P1 y P4 (solo mostramos P2 y P3)
+  // Ocultar P1 y P4 (no se usan ahora)
   const p1Btn = document.querySelector('[data-periodo="P1"]');
   const p4Btn = document.querySelector('[data-periodo="P4"]');
   if (p1Btn) p1Btn.style.display = 'none';
   if (p4Btn) p4Btn.style.display = 'none';
   
+  // Mostrar P2 y P3
+  const p2Btn = document.querySelector('[data-periodo="P2"]');
+  const p3Btn = document.querySelector('[data-periodo="P3"]');
+  if (p2Btn) p2Btn.style.display = 'flex';
+  if (p3Btn) p3Btn.style.display = 'flex';
+  
   btns.forEach(btn => {
-    if (btn.dataset.periodo === periodoActivo) btn.classList.add('active');
-    else btn.classList.remove('active');
+    if (btn.dataset.periodo === periodoActivo) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
     
     btn.onclick = async () => {
       periodoActivo = btn.dataset.periodo;
       renderPeriodo();
       
-      // Mostrar loading
       const grid = document.getElementById('cardsGrid');
-      grid.innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top:12px;color:var(--text-muted)">Cargando...</p></div>';
+      grid.innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top:12px;color:var(--text-muted)">Cargando planeaciones...</p></div>';
       
       await cargarDatos();
       renderCards();
@@ -1165,11 +1189,7 @@ async function init() {
   
   semanaActual = calcularSemanaActual();
   semanaSeleccionada = semanaActual;
-  
-  // NUEVO: Período basado en la semana actual
-  periodoActivo = getPeriodoPorSemana(semanaActual);
-  
-  console.log(`📅 Semana: ${semanaActual}, Período: ${periodoActivo}`);
+  periodoActivo = calcularPeriodoActual(); // ← automático según fecha
   
   renderSemanas();
   renderPeriodo();
