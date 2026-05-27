@@ -905,7 +905,7 @@ function renderCards() {
   grid.innerHTML = tarjetas.map((t, idx) => {
     const e        = getEstado(t.asignatura, t.gradoOriginal, semanaSeleccionada);
     const estadoCls = `estado-${e.estado}`;
-    const icon      = { aprobada: '✓', pendiente: '⏳', con_ajustes: '⚠', no_enviada: '✗' }[e.estado];
+    const icon      = { aprobada: '✓', pendiente: '', con_ajustes: '⚠', no_enviada: '✗' }[e.estado];
     const fecha     = e.data?.timestamp ? new Date(e.data.timestamp).toLocaleDateString('es-CO') : '';
 
     return `
