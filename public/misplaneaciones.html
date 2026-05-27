@@ -761,6 +761,9 @@ function iconoPorMateria(asignatura) {
 // ==================================================
 // API - CARGA DE DATOS (VERSIÓN DEFINITIVA)
 // ==================================================
+// ==================================================
+// API - CARGA DE DATOS (VERSIÓN CORREGIDA)
+// ==================================================
 async function cargarDatos() {
   const qs = new URLSearchParams({ correo: ST.correo || '' });
   
@@ -775,7 +778,6 @@ async function cargarDatos() {
     console.log('📋 Planeaciones raw:', resPlaneaciones);
     
     // ========== PROCESAR MATERIAS ==========
-    // Probar diferentes estructuras
     if (resMaterias.materias && Array.isArray(resMaterias.materias)) {
       materiasRaw = resMaterias.materias;
     } else if (resMaterias.data && Array.isArray(resMaterias.data)) {
@@ -785,7 +787,6 @@ async function cargarDatos() {
     } else if (Array.isArray(resMaterias)) {
       materiasRaw = resMaterias;
     } else {
-      // Si no encuentra, buscar cualquier propiedad que sea array
       for (const key in resMaterias) {
         if (Array.isArray(resMaterias[key]) && resMaterias[key].length > 0) {
           materiasRaw = resMaterias[key];
@@ -795,7 +796,6 @@ async function cargarDatos() {
       }
     }
     
-    // Si aún no hay materias, usar datos de prueba
     if (materiasRaw.length === 0) {
       console.warn('⚠️ No se encontraron materias, usando datos de prueba');
       materiasRaw = [
@@ -826,56 +826,52 @@ async function cargarDatos() {
     
     console.log('✅ Planeaciones raw:', planeacionesRaw.length);
     
-    // ========== GUARDAR EN MAPA ==========
+    // ========== GUARDAR EN MAPA (SIN FILTRO) ==========
     planeacionesMap.clear();
     
-    planeacionesRaw.forEach(p => {
+    for (const p of planeacionesRaw) {
       const periodoNorm = normalizarPeriodo(p.periodo);
       
-    
-        let semanaNum = 0;
-        if (typeof p.semana === 'number') {
-          semanaNum = p.semana;
-        } else if (typeof p.semana === 'string') {
-          const match = p.semana.match(/\d+/);
-          semanaNum = match ? parseInt(match[0]) : 0;
-        }
-        
-        if (semanaNum === 0) return;
-        
-        const asignaturaNorm = normalizar(p.asignatura);
-        const gradoNumero = normalizarGrado(p.grado);
-        
-        // Procesar grupos destino
-        let gruposDestino = [];
-        if (p.gruposDestino && p.gruposDestino !== '') {
-          const gruposStr = String(p.gruposDestino).toUpperCase().replace(/\s/g, '');
-          if (gruposStr === 'A,B' || gruposStr === 'B,A') {
-            gruposDestino = ['A', 'B'];
-          } else if (gruposStr === 'A') {
-            gruposDestino = ['A'];
-          } else if (gruposStr === 'B') {
-            gruposDestino = ['B'];
-          }
-        }
-        
-        if (gruposDestino.length === 0) {
-          const key = `${asignaturaNorm}|${gradoNumero}|${semanaNum}|SIN_GRUPO`;
-          planeacionesMap.set(key, p);
-        } else {
-          gruposDestino.forEach(grupo => {
-            const key = `${asignaturaNorm}|${gradoNumero}|${semanaNum}|${grupo}`;
-            planeacionesMap.set(key, p);
-          });
+      let semanaNum = 0;
+      if (typeof p.semana === 'number') {
+        semanaNum = p.semana;
+      } else if (typeof p.semana === 'string') {
+        const match = p.semana.match(/\d+/);
+        semanaNum = match ? parseInt(match[0]) : 0;
+      }
+      
+      if (semanaNum === 0) continue;
+      
+      const asignaturaNorm = normalizar(p.asignatura);
+      const gradoNumero = normalizarGrado(p.grado);
+      
+      let gruposDestino = [];
+      if (p.gruposDestino && p.gruposDestino !== '') {
+        const gruposStr = String(p.gruposDestino).toUpperCase().replace(/\s/g, '');
+        if (gruposStr === 'A,B' || gruposStr === 'B,A') {
+          gruposDestino = ['A', 'B'];
+        } else if (gruposStr === 'A') {
+          gruposDestino = ['A'];
+        } else if (gruposStr === 'B') {
+          gruposDestino = ['B'];
         }
       }
-    });
+      
+      if (gruposDestino.length === 0) {
+        const key = `${periodoNorm}|${asignaturaNorm}|${gradoNumero}|${semanaNum}|SIN_GRUPO`;
+        planeacionesMap.set(key, p);
+      } else {
+        for (const grupo of gruposDestino) {
+          const key = `${periodoNorm}|${asignaturaNorm}|${gradoNumero}|${semanaNum}|${grupo}`;
+          planeacionesMap.set(key, p);
+        }
+      }
+    }
     
     console.log(`📊 Planeaciones guardadas: ${planeacionesMap.size}`);
     
   } catch (error) {
     console.error('❌ Error:', error);
-    // Si hay error, usar datos de prueba
     materiasRaw = [
       { asignatura: "TECNOLOGÍA E INFORMÁTICA", grados: ["SEXTO A", "SEXTO B", "SÉPTIMO", "OCTAVO", "NOVENO", "DÉCIMO", "UNDÉCIMO"] }
     ];
@@ -888,8 +884,7 @@ async function cargarDatos() {
 function desglosar() {
   const cards = [];
   
-  materiasRaw.forEach(m => {
-    // Soporta diferentes formatos de grados
+  for (const m of materiasRaw) {
     let grados = [];
     if (m.grados && Array.isArray(m.grados)) {
       grados = m.grados;
@@ -899,7 +894,7 @@ function desglosar() {
       grados = m.grupos;
     }
     
-    grados.forEach(gradoConLetra => {
+    for (const gradoConLetra of grados) {
       cards.push({
         asignatura: m.asignatura || m.materia || m.nombre || 'Sin asignatura',
         gradoOriginal: gradoConLetra,
@@ -907,10 +902,9 @@ function desglosar() {
         letra: String(gradoConLetra).match(/[AB]$/i)?.[0]?.toUpperCase() || '',
         tieneLetra: /[AB]$/i.test(String(gradoConLetra))
       });
-    });
-  });
+    }
+  }
   
-  // Ordenar por número de grado
   cards.sort((a, b) => {
     const numA = parseInt(normalizarGrado(a.gradoBase)) || 0;
     const numB = parseInt(normalizarGrado(b.gradoBase)) || 0;
@@ -922,7 +916,7 @@ function desglosar() {
 }
 
 // ==================================================
-// GET ESTADO - LÓGICA CORRECTA
+// GET ESTADO - LÓGICA CORRECTA (con período)
 // ==================================================
 function getEstado(asignatura, gradoOriginal, semana) {
   const asignaturaNorm = normalizar(asignatura);
@@ -931,7 +925,10 @@ function getEstado(asignatura, gradoOriginal, semana) {
   const letra = String(gradoOriginal).match(/[AB]$/i)?.[0]?.toUpperCase() || '';
   
   for (const [key, p] of planeacionesMap.entries()) {
-    const [keyAsig, keyGradoNum, keySemana, keyGrupo] = key.split('|');
+    const [keyPeriodo, keyAsig, keyGradoNum, keySemana, keyGrupo] = key.split('|');
+    
+    // Solo considerar si el período coincide con el seleccionado
+    if (keyPeriodo !== periodoActivo) continue;
     
     if (keyAsig === asignaturaNorm && keyGradoNum === gradoNumero && parseInt(keySemana) === semana) {
       if (letra) {
@@ -980,13 +977,11 @@ function renderSemanas() {
 function renderPeriodo() {
   const btns = document.querySelectorAll('.seg-btn');
   
-  // Ocultar P1 y P4 (no se usan ahora)
   const p1Btn = document.querySelector('[data-periodo="P1"]');
   const p4Btn = document.querySelector('[data-periodo="P4"]');
   if (p1Btn) p1Btn.style.display = 'none';
   if (p4Btn) p4Btn.style.display = 'none';
   
-  // Mostrar P2 y P3
   const p2Btn = document.querySelector('[data-periodo="P2"]');
   const p3Btn = document.querySelector('[data-periodo="P3"]');
   if (p2Btn) p2Btn.style.display = 'flex';
@@ -1202,6 +1197,7 @@ async function init() {
 }
 
 init();
+
 </script>
 </body>
 </html>
