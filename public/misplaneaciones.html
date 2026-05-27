@@ -797,13 +797,11 @@ async function cargarDatos() {
     }
     
     if (materiasRaw.length === 0) {
-      console.warn('⚠️ No se encontraron materias, usando datos de prueba');
+      console.warn('⚠️ No se encontraron materias');
       materiasRaw = [
         { asignatura: "TECNOLOGÍA E INFORMÁTICA", grados: ["SEXTO A", "SEXTO B", "SÉPTIMO", "OCTAVO", "NOVENO", "DÉCIMO", "UNDÉCIMO"] }
       ];
     }
-    
-    console.log('✅ Materias procesadas:', materiasRaw.length);
     
     // ========== PROCESAR PLANEACIONES ==========
     let planeacionesRaw = [];
@@ -826,11 +824,28 @@ async function cargarDatos() {
     
     console.log('✅ Planeaciones raw:', planeacionesRaw.length);
     
-    // ========== GUARDAR EN MAPA (SIN FILTRO) ==========
+    // ========== GUARDAR EN MAPA ==========
     planeacionesMap.clear();
     
     for (const p of planeacionesRaw) {
-      const periodoNorm = normalizarPeriodo(p.periodo);
+      // NORMALIZAR PERÍODO: convierte 2 → "P2", 3 → "P3", etc.
+      let periodoNorm = '';
+      if (p.periodo) {
+        const perStr = p.periodo.toString().trim();
+        if (perStr === '2' || perStr === 'P2' || perStr === '2') {
+          periodoNorm = 'P2';
+        } else if (perStr === '3' || perStr === 'P3') {
+          periodoNorm = 'P3';
+        } else if (perStr === '1' || perStr === 'P1') {
+          periodoNorm = 'P1';
+        } else if (perStr === '4' || perStr === 'P4') {
+          periodoNorm = 'P4';
+        } else {
+          periodoNorm = perStr.startsWith('P') ? perStr : 'P' + perStr;
+        }
+      } else {
+        periodoNorm = 'P2'; // default
+      }
       
       let semanaNum = 0;
       if (typeof p.semana === 'number') {
@@ -860,15 +875,24 @@ async function cargarDatos() {
       if (gruposDestino.length === 0) {
         const key = `${periodoNorm}|${asignaturaNorm}|${gradoNumero}|${semanaNum}|SIN_GRUPO`;
         planeacionesMap.set(key, p);
+        console.log(`Guardada: ${key}`);
       } else {
         for (const grupo of gruposDestino) {
           const key = `${periodoNorm}|${asignaturaNorm}|${gradoNumero}|${semanaNum}|${grupo}`;
           planeacionesMap.set(key, p);
+          console.log(`Guardada: ${key}`);
         }
       }
     }
     
     console.log(`📊 Planeaciones guardadas: ${planeacionesMap.size}`);
+    
+    // Mostrar qué períodos hay en el mapa
+    const periodosEnMapa = new Set();
+    for (const [key] of planeacionesMap.entries()) {
+      periodosEnMapa.add(key.split('|')[0]);
+    }
+    console.log('Períodos en mapa:', Array.from(periodosEnMapa));
     
   } catch (error) {
     console.error('❌ Error:', error);
@@ -924,25 +948,29 @@ function getEstado(asignatura, gradoOriginal, semana) {
   const gradoNumero = normalizarGrado(gradoBase);
   const letra = String(gradoOriginal).match(/[AB]$/i)?.[0]?.toUpperCase() || '';
   
+  console.log(`Buscando: período=${periodoActivo}, semana=${semana}, materia=${asignaturaNorm}, grado=${gradoNumero}, letra=${letra}`);
+  
   for (const [key, p] of planeacionesMap.entries()) {
     const [keyPeriodo, keyAsig, keyGradoNum, keySemana, keyGrupo] = key.split('|');
     
-    // 🔥 ELIMINA ESTA LÍNEA - NO FILTRES POR PERÍODO
-    // if (keyPeriodo !== periodoActivo) continue;
+    if (keyPeriodo !== periodoActivo) continue;
     
     if (keyAsig === asignaturaNorm && keyGradoNum === gradoNumero && parseInt(keySemana) === semana) {
       if (letra) {
         if (keyGrupo === letra) {
+          console.log('✅ Encontrada en P2');
           return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
         }
       } else {
         if (keyGrupo === 'SIN_GRUPO') {
+          console.log('✅ Encontrada en P2');
           return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
         }
       }
     }
   }
   
+  console.log('❌ No encontrada');
   return { estado: 'no_enviada', label: 'No enviada', data: null };
 }
 
