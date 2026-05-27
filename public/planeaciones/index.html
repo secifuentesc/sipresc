@@ -1275,13 +1275,22 @@ let ST = {
 const API = "/api/planeaciones";
 
 // ==================================================
-// PERÍODO BASADO EN SEMANA ACADÉMICA
+// PERÍODO AUTOMÁTICO SEGÚN FECHA REAL
 // ==================================================
+function getPeriodoActual() {
+  const ahora = new Date();
+  const finP2 = new Date('2026-06-12T14:00:00-05:00'); // 12 junio 2pm
+  
+  if (ahora < finP2) {
+    return 'P2';
+  } else {
+    return 'P3';
+  }
+}
+
 function getPeriodoPorSemana(semana) {
-  if (semana >= 1 && semana <= 8) return 'P2';
-  if (semana >= 9 && semana <= 10) return 'P3';
-  if (semana >= 11 && semana <= 20) return 'P4';
-  return 'P2';
+  // No importa la semana, el período depende de la fecha actual
+  return getPeriodoActual();
 }
 
 // ==================================================
@@ -1690,7 +1699,7 @@ async function enviarPlaneacion() {
     grado: ST.grado || "",
     gruposDestino: (ST.grupos || []).join(","),
     semana: (ST.semana || "").toUpperCase(),
-    periodo: getPeriodoPorSemana(parseInt((ST.semana || "").match(/\d+/)?.[0] || 1)),
+    periodo: getPeriodoActual(),
     indicador: document.getElementById("indicadorInput")?.value || "",
     d1_tema: document.getElementById("tema_1")?.value || "",
     d1_act: document.getElementById("act_1")?.value || "",
