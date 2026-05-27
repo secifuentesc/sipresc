@@ -620,9 +620,10 @@ function mostrarToast(msg) {
 function mapearEstado(p) {
   const raw   = p.estadoRevision || p.revisionCoord || p.estado || p.estadoEnvio || '';
   const lower = String(raw).toLowerCase();
-  if (lower.includes('aprob'))                                              return 'aprobada';
+  if (lower.includes('aprob'))                                                        return 'aprobada';
   if (lower.includes('ajust') || lower.includes('corre') || lower === 'con_ajustes') return 'con_ajustes';
-  if (lower.includes('pend') || lower === 'enviada' || lower === 'recibida' || lower === 'en_revision') return 'pendiente';
+  if (lower.includes('pend') || lower.includes('revis') || lower === 'enviada' ||
+      lower === 'recibida' || lower === 'en_revision')                                return 'pendiente';
   return 'no_enviada';
 }
 function estadoLabel(p) {
