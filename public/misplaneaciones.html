@@ -771,7 +771,7 @@ async function cargarDatos() {
     console.log('🔄 Cargando datos...');
     const [resMaterias, resPlaneaciones] = await Promise.all([
       fetch(`${API_PLN}?accion=cargaDocente&${qs}`).then(r => r.json()),
-      fetch(`${API_PLN}?accion=planeacionesUI`).then(r => r.json()),
+      fetch(`${API_PLN}?accion=misPlaneacionesDocente&correo=${ST.correo}`).then(r => r.json())
     ]);
     
     console.log('📚 Materias raw:', resMaterias);
@@ -806,6 +806,7 @@ async function cargarDatos() {
     // ========== PROCESAR PLANEACIONES ==========
     let planeacionesRaw = [];
     
+    // misPlaneacionesDocente devuelve {ok: true, data: [...]}
     if (resPlaneaciones.data && Array.isArray(resPlaneaciones.data)) {
       planeacionesRaw = resPlaneaciones.data;
     } else if (resPlaneaciones.planeaciones && Array.isArray(resPlaneaciones.planeaciones)) {
@@ -813,6 +814,7 @@ async function cargarDatos() {
     } else if (Array.isArray(resPlaneaciones)) {
       planeacionesRaw = resPlaneaciones;
     } else {
+      // Buscar cualquier propiedad que sea array
       for (const key in resPlaneaciones) {
         if (Array.isArray(resPlaneaciones[key]) && resPlaneaciones[key].length > 0) {
           planeacionesRaw = resPlaneaciones[key];
@@ -828,30 +830,20 @@ async function cargarDatos() {
     planeacionesMap.clear();
     
     for (const p of planeacionesRaw) {
-      // NORMALIZAR PERÍODO: convierte 2 → "P2", 3 → "P3", etc.
-      let periodoNorm = '';
+      // Obtener período (puede ser 1,2,3 o P1,P2,P3)
+      let periodoNorm = 'P2';
       if (p.periodo) {
         const perStr = p.periodo.toString().trim();
-        if (perStr === '2' || perStr === 'P2' || perStr === '2') {
-          periodoNorm = 'P2';
-        } else if (perStr === '3' || perStr === 'P3') {
-          periodoNorm = 'P3';
-        } else if (perStr === '1' || perStr === 'P1') {
-          periodoNorm = 'P1';
-        } else if (perStr === '4' || perStr === 'P4') {
-          periodoNorm = 'P4';
-        } else {
-          periodoNorm = perStr.startsWith('P') ? perStr : 'P' + perStr;
-        }
-      } else {
-        periodoNorm = 'P2'; // default
+        if (perStr === '1' || perStr === 'P1') periodoNorm = 'P1';
+        else if (perStr === '2' || perStr === 'P2') periodoNorm = 'P2';
+        else if (perStr === '3' || perStr === 'P3') periodoNorm = 'P3';
+        else if (perStr === '4' || perStr === 'P4') periodoNorm = 'P4';
+        else periodoNorm = perStr.startsWith('P') ? perStr : 'P' + perStr;
       }
       
-      let semanaNum = 0;
-      if (typeof p.semana === 'number') {
-        semanaNum = p.semana;
-      } else if (typeof p.semana === 'string') {
-        const match = p.semana.match(/\d+/);
+      let semanaNum = p.semanaNum || 0;
+      if (semanaNum === 0 && p.semana) {
+        const match = p.semana.toString().match(/\d+/);
         semanaNum = match ? parseInt(match[0]) : 0;
       }
       
@@ -872,27 +864,19 @@ async function cargarDatos() {
         }
       }
       
+      // Guardar en el mapa SIN filtrar por período
       if (gruposDestino.length === 0) {
-        const key = `${periodoNorm}|${asignaturaNorm}|${gradoNumero}|${semanaNum}|SIN_GRUPO`;
+        const key = `${asignaturaNorm}|${gradoNumero}|${semanaNum}|SIN_GRUPO`;
         planeacionesMap.set(key, p);
-        console.log(`Guardada: ${key}`);
       } else {
         for (const grupo of gruposDestino) {
-          const key = `${periodoNorm}|${asignaturaNorm}|${gradoNumero}|${semanaNum}|${grupo}`;
+          const key = `${asignaturaNorm}|${gradoNumero}|${semanaNum}|${grupo}`;
           planeacionesMap.set(key, p);
-          console.log(`Guardada: ${key}`);
         }
       }
     }
     
     console.log(`📊 Planeaciones guardadas: ${planeacionesMap.size}`);
-    
-    // Mostrar qué períodos hay en el mapa
-    const periodosEnMapa = new Set();
-    for (const [key] of planeacionesMap.entries()) {
-      periodosEnMapa.add(key.split('|')[0]);
-    }
-    console.log('Períodos en mapa:', Array.from(periodosEnMapa));
     
   } catch (error) {
     console.error('❌ Error:', error);
