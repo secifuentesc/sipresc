@@ -1067,8 +1067,19 @@ function cerrarModal() {
   if (m) m.remove();
   document.body.style.overflow = '';
 }
-function editarPlaneacion(id) {
-  window.location.href = `/planeaciones/?editar=1&planeacionId=${id}`;
+
+function editarPlaneacion(planeacionId) {
+  let datosPlaneacion = null;
+  for (const [, p] of planeacionesMap.entries()) {
+    if (p.planeacionId === planeacionId) {
+      datosPlaneacion = p;
+      break;
+    }
+  }
+  if (datosPlaneacion) {
+    sessionStorage.setItem('planeacion_edicion_' + planeacionId, JSON.stringify(datosPlaneacion));
+  }
+  window.location.href = `/planeaciones/?editar=1&planeacionId=${encodeURIComponent(planeacionId)}`;
 }
 
 // ==================================================
