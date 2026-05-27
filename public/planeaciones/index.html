@@ -1275,6 +1275,16 @@ let ST = {
 const API = "/api/planeaciones";
 
 // ==================================================
+// PERÍODO BASADO EN SEMANA ACADÉMICA
+// ==================================================
+function getPeriodoPorSemana(semana) {
+  if (semana >= 1 && semana <= 8) return 'P2';
+  if (semana >= 9 && semana <= 10) return 'P3';
+  if (semana >= 11 && semana <= 20) return 'P4';
+  return 'P2';
+}
+
+// ==================================================
 // AUTO-RESIZE para todos los textarea
 // ==================================================
 function autoResizeTextarea(textarea) {
@@ -1680,6 +1690,7 @@ async function enviarPlaneacion() {
     grado: ST.grado || "",
     gruposDestino: (ST.grupos || []).join(","),
     semana: (ST.semana || "").toUpperCase(),
+    periodo: getPeriodoPorSemana(parseInt((ST.semana || "").match(/\d+/)?.[0] || 1)),
     indicador: document.getElementById("indicadorInput")?.value || "",
     d1_tema: document.getElementById("tema_1")?.value || "",
     d1_act: document.getElementById("act_1")?.value || "",
