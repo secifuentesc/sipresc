@@ -932,29 +932,33 @@ function getEstado(asignatura, gradoOriginal, semana) {
   const gradoNumero = normalizarGrado(gradoBase);
   const letra = String(gradoOriginal).match(/[AB]$/i)?.[0]?.toUpperCase() || '';
   
-  // Buscar SOLO en el período activo (P2 o P3)
+  console.log(`🔍 Buscando: ${asignaturaNorm} | grado:${gradoNumero} | semana:${semana} | letra:${letra}`);
+  
   for (const [key, p] of planeacionesMap.entries()) {
-    const [keyAsig, keyGradoNum, keySemana, keyGrupo] = key.split('|');
+    const parts = key.split('|');
+    const keyAsig = parts[0];
+    const keyGrado = parts[1];
+    const keySemana = parseInt(parts[2]);
+    const keyGrupo = parts[3];
     
-    // Solo considerar si el período REAL de la planeación coincide con periodoActivo
-    const periodoReal = p.periodo;
-    const periodoRealStr = typeof periodoReal === 'number' ? `P${periodoReal}` : periodoReal;
-    
-    if (periodoRealStr !== periodoActivo) continue;
-    
-    if (keyAsig === asignaturaNorm && keyGradoNum === gradoNumero && parseInt(keySemana) === semana) {
+    // Verificar si coincide
+    if (keyAsig === asignaturaNorm && keyGrado === gradoNumero && keySemana === semana) {
+      // Verificar grupo
       if (letra) {
         if (keyGrupo === letra) {
+          console.log(`✅ Encontrada: ${p.asignatura} - ${p.grado} (${keyGrupo})`);
           return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
         }
       } else {
         if (keyGrupo === 'SIN_GRUPO') {
+          console.log(`✅ Encontrada: ${p.asignatura} - ${p.grado} (sin grupo)`);
           return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
         }
       }
     }
   }
   
+  console.log(`❌ No encontrada`);
   return { estado: 'no_enviada', label: 'No enviada', data: null };
 }
 
