@@ -8,8 +8,6 @@
 <link rel="icon" type="image/png" href="/logo.png">
 
 <style>
-/* ===== ESTILOS ACTUALIZADOS ===== */
-
 * {
   margin: 0;
   padding: 0;
@@ -112,7 +110,6 @@ body {
 }
 @media (max-width: 640px) { .container { padding: 80px 16px 40px; } }
 
-/* ===== PAGE HEADER CON BOTÓN ===== */
 .page-header {
   margin-bottom: 32px;
   display: flex;
@@ -158,28 +155,15 @@ body {
   box-shadow: 0 4px 12px rgba(201, 150, 42, 0.4);
   background: linear-gradient(135deg, #e8b84b, #f5d071);
 }
-.btn-crear:active {
-  transform: translateY(1px);
-}
+.btn-crear:active { transform: translateY(1px); }
 .btn-crear svg {
-  width: 18px;
-  height: 18px;
-  stroke: #0a0f1a;
-  stroke-width: 2;
-  fill: none;
+  width: 18px; height: 18px;
+  stroke: #0a0f1a; stroke-width: 2; fill: none;
 }
 @media (max-width: 640px) {
-  .page-header h1 {
-    font-size: 28px;
-  }
-  .btn-crear {
-    padding: 8px 16px;
-    font-size: 13px;
-  }
-  .btn-crear svg {
-    width: 16px;
-    height: 16px;
-  }
+  .page-header h1 { font-size: 28px; }
+  .btn-crear { padding: 8px 16px; font-size: 13px; }
+  .btn-crear svg { width: 16px; height: 16px; }
 }
 
 .segment-label {
@@ -250,8 +234,7 @@ body {
 .semana-label { font-size: 10px; opacity: 0.7; margin-top: 2px; }
 .semana-badge {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -8px; right: -8px;
   background: rgba(255,255,255,0.2);
   backdrop-filter: blur(4px);
   color: white;
@@ -305,52 +288,34 @@ body {
   margin-bottom: 14px;
 }
 .card-icon {
-  width: 50px;
-  height: 50px;
+  width: 50px; height: 50px;
   background: rgba(255,255,255,0.06);
   border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
 }
 .card-icon svg { width: 26px; height: 26px; stroke: var(--gold); stroke-width: 1.5; fill: none; }
-.card-chevron {
-  color: var(--text-muted);
-  font-size: 20px;
-  transition: transform 0.2s;
-}
-.plan-card:hover .card-chevron {
-  transform: translateX(3px);
-  color: var(--gold);
-}
+.card-chevron { color: var(--text-muted); font-size: 20px; transition: transform 0.2s; }
+.plan-card:hover .card-chevron { transform: translateX(3px); color: var(--gold); }
 .card-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
 .card-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
 .card-info { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
 .info-chip {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  color: var(--text-muted);
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--text-muted);
 }
 .info-chip svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; }
 .estado-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 30px;
-  font-size: 12px;
-  font-weight: 600;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 30px;
+  font-size: 12px; font-weight: 600;
 }
-.estado-aprobada { background: var(--green-bg); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
-.estado-pendiente { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
-.estado-ajustes { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(245,158,11,0.3); }
-.estado-no_enviada { background: var(--gray-bg); color: var(--gray); border: 1px solid rgba(100,116,139,0.3); }
+.estado-aprobada   { background: var(--green-bg);  color: var(--green);  border: 1px solid rgba(16,185,129,0.3); }
+.estado-pendiente  { background: var(--blue-bg);   color: var(--blue);   border: 1px solid rgba(59,130,246,0.3); }
+.estado-con_ajustes{ background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(245,158,11,0.3); }
+.estado-no_enviada { background: var(--gray-bg);   color: var(--gray);   border: 1px solid rgba(100,116,139,0.3); }
 
 .empty-card {
-  text-align: center;
-  padding: 48px 24px;
+  text-align: center; padding: 48px 24px;
   background: rgba(255,255,255,0.02);
   border: 1px dashed var(--border);
   border-radius: 24px;
@@ -359,10 +324,9 @@ body {
 .empty-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
 .empty-sub { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
 
-.loading { display: flex; justify-content: center; align-items: center; padding: 60px; }
+.loading { display: flex; justify-content: center; align-items: center; padding: 60px; flex-direction: column; gap: 12px; }
 .spinner {
-  width: 42px;
-  height: 42px;
+  width: 42px; height: 42px;
   border: 3px solid rgba(255,255,255,0.08);
   border-top-color: var(--gold);
   border-radius: 50%;
@@ -371,20 +335,15 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .modal {
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background: rgba(0,0,0,0.85);
   backdrop-filter: blur(12px);
   z-index: 1000;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  display: flex; align-items: flex-end; justify-content: center;
 }
 @media (min-width: 768px) { .modal { align-items: center; } }
 .modal-content {
-  max-width: 720px;
-  width: 100%;
-  max-height: 88vh;
+  max-width: 720px; width: 100%; max-height: 88vh;
   background: linear-gradient(135deg, #121d2d, #0a1020);
   border-radius: 28px 28px 0 0;
   overflow-y: auto;
@@ -394,102 +353,67 @@ body {
   .modal-content { border-radius: 28px; animation: zoomIn 0.2s ease; }
 }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-@keyframes zoomIn { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes zoomIn  { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .modal-handle {
-  width: 40px;
-  height: 4px;
+  width: 40px; height: 4px;
   background: rgba(255,255,255,0.2);
   border-radius: 2px;
   margin: 12px auto 8px;
 }
 .modal-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  position: sticky; top: 0;
   background: linear-gradient(135deg, #121d2d, #0a1020);
   z-index: 10;
 }
 .modal-header-info { display: flex; gap: 14px; align-items: center; }
 .modal-icon {
-  width: 48px;
-  height: 48px;
+  width: 48px; height: 48px;
   background: rgba(255,255,255,0.06);
   border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
 }
 .modal-icon svg { width: 24px; height: 24px; stroke: var(--gold); stroke-width: 1.5; fill: none; }
 .modal-title { font-size: 18px; font-weight: 700; }
 .modal-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 .modal-close {
-  background: rgba(255,255,255,0.08);
-  border: none;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--text-muted);
-  transition: all 0.2s;
+  background: rgba(255,255,255,0.08); border: none;
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-muted); transition: all 0.2s;
 }
 .modal-close:hover { background: rgba(255,255,255,0.15); color: white; }
-.modal-body {
-  padding: 20px 24px;
-}
+.modal-body { padding: 20px 24px; }
 .modal-footer {
-  padding: 16px 20px;
-  border-top: 1px solid var(--border);
-  position: sticky;
-  bottom: 0;
+  padding: 16px 20px; border-top: 1px solid var(--border);
+  position: sticky; bottom: 0;
   background: linear-gradient(135deg, #121d2d, #0a1020);
 }
 .modal-btn {
-  width: 100%;
-  padding: 14px;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
+  width: 100%; padding: 14px; border-radius: 14px;
+  font-weight: 600; font-size: 14px; cursor: pointer;
   transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .modal-btn-primary {
   background: linear-gradient(135deg, #f59e0b, #ea580c);
-  border: none;
-  color: white;
+  border: none; color: white;
 }
 .modal-btn-primary:hover { transform: scale(1.02); box-shadow: 0 6px 16px rgba(245,158,11,0.3); }
 .modal-btn-secondary {
   background: rgba(255,255,255,0.08);
-  border: 1px solid var(--border);
-  color: var(--text);
+  border: 1px solid var(--border); color: var(--text);
 }
 .modal-btn-secondary:hover { background: rgba(255,255,255,0.12); }
 
 .toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
+  position: fixed; bottom: 30px; left: 50%;
   transform: translateX(-50%) translateY(100px);
-  background: #1e293b;
-  border: 1px solid var(--gold);
-  border-radius: 40px;
-  padding: 10px 22px;
-  font-size: 13px;
-  color: white;
-  z-index: 1100;
-  transition: transform 0.25s;
-  pointer-events: none;
+  background: #1e293b; border: 1px solid var(--gold);
+  border-radius: 40px; padding: 10px 22px;
+  font-size: 13px; color: white; z-index: 1100;
+  transition: transform 0.25s; pointer-events: none;
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
 </style>
@@ -497,19 +421,22 @@ body {
 <body>
 
 <div class="topbar">
-  <div class="topbar-logo" onclick="volverPanel()"><img src="/logo.png" onerror="this.style.display='none'"></div>
+  <div class="topbar-logo" onclick="volverPanel()">
+    <img src="/logo.png" onerror="this.style.display='none'">
+  </div>
   <h1>SIPRESC — Mis planeaciones</h1>
   <span class="topbar-rol" id="rolVista">DOCENTE</span>
   <button class="logout-btn" onclick="cerrarSesion()">Salir</button>
 </div>
 
 <button class="back-btn" onclick="volverPanel()">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M15 6l-6 6 6 6"/>
+  </svg>
   Volver al panel
 </button>
 
 <div class="container">
-  <!-- PAGE HEADER CON BOTÓN -->
   <div class="page-header">
     <div style="flex: 1;">
       <h1>Mis planeaciones</h1>
@@ -541,28 +468,34 @@ body {
   </div>
 
   <div class="cards-grid" id="cardsGrid">
-    <div class="loading"><div class="spinner"></div></div>
+    <div class="loading">
+      <div class="spinner"></div>
+      <p style="color:var(--text-muted);font-size:13px;">Cargando planeaciones...</p>
+    </div>
   </div>
 </div>
 
 <div class="toast" id="toastMsg">Listo</div>
-
-</body>
 
 <script>
 // ==================================================
 // CONFIGURACIÓN
 // ==================================================
 const API_PLN = '/api/planeaciones';
+
 let ST = { rol: null, correo: null, docenteId: null };
-let materiasRaw = [];
+let materiasRaw    = [];
+
+// ✅ FIX PRINCIPAL: La llave incluye período → "P2|tecnologia e informatica|8|9|SIN_GRUPO"
+// Así cada período tiene su propio espacio y no se pisan entre sí.
 let planeacionesMap = new Map();
-let periodoActivo = 'P2';
-let semanaSeleccionada = 8;
-let semanaActual = 8;
+
+let periodoActivo      = 'P2';
+let semanaSeleccionada = 1;
+let semanaActual       = 1;
 
 // ==================================================
-// FUNCIONES DE NORMALIZACIÓN
+// NORMALIZACIÓN
 // ==================================================
 function normalizar(str) {
   if (!str) return '';
@@ -575,20 +508,13 @@ function normalizar(str) {
 
 function normalizarGrado(grado) {
   if (!grado) return '';
-  
   const gradoStr = String(grado).toLowerCase().trim();
-  
-  // Mapa ordenado: primero los más largos (undécimo antes que décimo)
   const mapaGrados = {
-    'undecimo': '11',
-    'undécimo': '11',
-    'once': '11',
-    'decimo': '10',
-    'décimo': '10',
+    'undecimo': '11', 'undécimo': '11', 'once': '11',
+    'decimo': '10',   'décimo': '10',
     'noveno': '9',
     'octavo': '8',
-    'septimo': '7',
-    'séptimo': '7',
+    'septimo': '7',   'séptimo': '7',
     'sexto': '6',
     'quinto': '5',
     'cuarto': '4',
@@ -596,35 +522,73 @@ function normalizarGrado(grado) {
     'segundo': '2',
     'primero': '1'
   };
-  
   for (const [palabra, numero] of Object.entries(mapaGrados)) {
-    if (gradoStr.includes(palabra)) {
-      return numero;
-    }
+    if (gradoStr.includes(palabra)) return numero;
   }
-  
   const matchNumero = gradoStr.match(/\d+/);
-  if (matchNumero) {
-    return matchNumero[0];
-  }
-  
+  if (matchNumero) return matchNumero[0];
   return normalizar(gradoStr);
 }
 
-function normalizarPeriodo(periodo) {
-  if (periodo === undefined || periodo === null) return '';
-  if (typeof periodo === 'number') return 'P' + periodo.toString();
-  if (typeof periodo === 'string') {
-    if (periodo.startsWith('P')) return periodo;
-    if (/^\d+$/.test(periodo)) return 'P' + periodo;
+// ✅ FIX: Normalización de período robusta — siempre devuelve "P1", "P2", "P3" o "P4"
+function normalizarPeriodo(valor) {
+  if (valor === undefined || valor === null || valor === '') return null;
+  const s = String(valor).trim().toUpperCase();
+  if (s === 'P1' || s === '1') return 'P1';
+  if (s === 'P2' || s === '2') return 'P2';
+  if (s === 'P3' || s === '3') return 'P3';
+  if (s === 'P4' || s === '4') return 'P4';
+  // Intentar extraer número
+  const m = s.match(/\d+/);
+  if (m) {
+    const n = parseInt(m[0]);
+    if (n >= 1 && n <= 4) return 'P' + n;
   }
-  return '';
+  return null;
 }
 
+// ==================================================
+// SEMANA ACTUAL (cálculo por fecha)
+// ==================================================
+function calcularSemanaActual(fecha = new Date()) {
+  const inicioBase = new Date('2026-04-06T00:00:00-05:00');
+  const diffDias   = Math.floor((fecha - inicioBase) / (24 * 60 * 60 * 1000));
+  let semana       = 1 + Math.floor(diffDias / 7);
+  const diaSemana  = fecha.getDay();
+  const hora       = fecha.getHours();
+  if (diaSemana === 0)                       semana++;
+  else if (diaSemana === 5 && hora >= 14)    semana++;
+  else if (diaSemana === 6)                  semana++;
+  let semanaCiclo = ((semana - 1) % 10) + 1;
+  if (semanaCiclo < 1)  semanaCiclo = 1;
+  if (semanaCiclo > 10) semanaCiclo = 10;
+  return semanaCiclo;
+}
+
+// ==================================================
+// PERÍODO ACTIVO SEGÚN FECHA REAL
+// ==================================================
+function calcularPeriodoActual(fecha = new Date()) {
+  const finP1 = new Date('2026-03-27T23:59:59-05:00');
+  const iniP2 = new Date('2026-04-06T00:00:00-05:00');
+  const finP2 = new Date('2026-06-12T14:00:00-05:00');
+  const finP3 = new Date('2026-08-14T23:59:59-05:00');
+  const iniP4 = new Date('2026-08-24T00:00:00-05:00');
+  const finP4 = new Date('2026-11-20T23:59:59-05:00');
+
+  if (fecha <= finP1)                      return 'P1';
+  if (fecha >= iniP2 && fecha < finP2)     return 'P2';
+  if (fecha >= finP2 && fecha <= finP3)    return 'P3';
+  if (fecha >= iniP4 && fecha <= finP4)    return 'P4';
+  return 'P2';
+}
+
+// ==================================================
+// SEMANAS ORDENADAS (desde la actual)
+// ==================================================
 function obtenerSemanasOrdenadas() {
-  const semanas = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  const actual = semanaActual;
-  const inicio = semanas.indexOf(actual);
+  const semanas = [1,2,3,4,5,6,7,8,9,10];
+  const inicio  = semanas.indexOf(semanaActual);
   if (inicio === -1) return semanas;
   return [...semanas.slice(inicio), ...semanas.slice(0, inicio)];
 }
@@ -633,63 +597,16 @@ function obtenerSemanasOrdenadas() {
 // UTILS
 // ==================================================
 function obtenerSesion() {
-  try { const data = localStorage.getItem('lp_user'); return data ? JSON.parse(data) : null; } catch { return null; }
+  try { const d = localStorage.getItem('lp_user'); return d ? JSON.parse(d) : null; } catch { return null; }
 }
 function cerrarSesion() { localStorage.removeItem('lp_user'); window.location.href = '/'; }
 function volverPanel() {
   const s = obtenerSesion();
   const r = String(s?.rol || '').toLowerCase();
-  if (r === 'admin') window.location.href = '/dashboardadmin/';
+  if (r === 'admin')        window.location.href = '/dashboardadmin/';
   else if (r === 'coordinador') window.location.href = '/dashboardcoord/';
-  else window.location.href = '/';
+  else                      window.location.href = '/';
 }
-function calcularSemanaActual(fecha = new Date()) {
-  const inicioBase = new Date('2026-04-06T00:00:00-05:00');
-  const ahora = fecha;
-  const diffDias = Math.floor((ahora - inicioBase) / (24 * 60 * 60 * 1000));
-  let semana = 1 + Math.floor(diffDias / 7);
-  const diaSemana = ahora.getDay();
-  const hora = ahora.getHours();
-  if (diaSemana === 0) semana++;
-  else if (diaSemana === 5 && hora >= 14) semana++;
-  else if (diaSemana === 6) semana++;
-  let semanaCiclo = ((semana - 1) % 10) + 1;
-  if (semanaCiclo < 1) semanaCiclo = 1;
-  if (semanaCiclo > 10) semanaCiclo = 10;
-  return semanaCiclo;
-}
-
-// ==================================================
-// PERÍODO BASADO EN SEMANA ACADÉMICA
-// ==================================================
-function getPeriodoPorSemana(semana) {
-  if (semana >= 1 && semana <= 8) return 'P2';
-  if (semana >= 9 && semana <= 10) return 'P3';
-  if (semana >= 11 && semana <= 20) return 'P4';
-  return 'P2';
-}
-
-// ==================================================
-// PERÍODO AUTOMÁTICO SEGÚN FECHA REAL
-// ==================================================
-function calcularPeriodoActual(fecha = new Date()) {
-  const ahora = fecha;
-  const finP2 = new Date('2026-06-12T14:00:00-05:00');
-  const finP3 = new Date('2026-08-14T23:59:59-05:00');
-  const finP4 = new Date('2026-11-20T23:59:59-05:00');
-  
-  // P1 (ya pasó)
-  if (ahora < new Date('2026-03-27T23:59:59-05:00')) return 'P1';
-  // P2: desde 6 abril hasta 12 junio 2pm
-  if (ahora >= new Date('2026-04-06T00:00:00-05:00') && ahora < finP2) return 'P2';
-  // P3: desde 12 junio 2pm hasta 14 agosto
-  if (ahora >= finP2 && ahora <= finP3) return 'P3';
-  // P4: desde 24 agosto hasta 20 noviembre
-  if (ahora >= new Date('2026-08-24T00:00:00-05:00') && ahora <= finP4) return 'P4';
-  
-  return 'P2';
-}
-  
 function mostrarToast(msg) {
   const t = document.getElementById('toastMsg');
   t.textContent = msg;
@@ -701,25 +618,16 @@ function mostrarToast(msg) {
 // MAPEO DE ESTADOS
 // ==================================================
 function mapearEstado(p) {
-  const estadoRaw = p.estadoRevision || p.revisionCoord || p.estado || p.estadoEnvio || '';
-  const estadoLower = String(estadoRaw).toLowerCase();
-  
-  if (estadoLower.includes('aprob') || estadoLower === 'aprobada') return 'aprobada';
-  if (estadoLower.includes('ajust') || estadoLower.includes('corre') || estadoLower === 'con_ajustes') return 'con_ajustes';
-  if (estadoLower.includes('pend') || estadoLower === 'enviada' || estadoLower === 'recibida' || estadoLower === 'en_revision') return 'pendiente';
-  
+  const raw   = p.estadoRevision || p.revisionCoord || p.estado || p.estadoEnvio || '';
+  const lower = String(raw).toLowerCase();
+  if (lower.includes('aprob'))                                              return 'aprobada';
+  if (lower.includes('ajust') || lower.includes('corre') || lower === 'con_ajustes') return 'con_ajustes';
+  if (lower.includes('pend') || lower === 'enviada' || lower === 'recibida' || lower === 'en_revision') return 'pendiente';
   return 'no_enviada';
 }
-
 function estadoLabel(p) {
-  const estado = mapearEstado(p);
-  const labels = {
-    'aprobada': 'Aprobada',
-    'con_ajustes': 'Con ajustes', 
-    'pendiente': 'En revisión',
-    'no_enviada': 'No enviada'
-  };
-  return labels[estado] || 'No enviada';
+  const labels = { aprobada: 'Aprobada', con_ajustes: 'Con ajustes', pendiente: 'En revisión', no_enviada: 'No enviada' };
+  return labels[mapearEstado(p)] || 'No enviada';
 }
 
 // ==================================================
@@ -727,162 +635,145 @@ function estadoLabel(p) {
 // ==================================================
 function iconoPorMateria(asignatura) {
   const a = asignatura.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  
-  if (a.includes('tecnolog') || a.includes('informatica')) {
-    return `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>`;
-  }
-  if (a.includes('matematic')) {
-    return `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>`;
-  }
-  if (a.includes('espanol') || a.includes('lengua') || a.includes('castellana')) {
-    return `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a7 7 0 017 7c0 3-1.5 5-4 6.5V17a1 1 0 01-1 1h-4a1 1 0 01-1-1v-1.5C6.5 14 5 12 5 9a7 7 0 017-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>`;
-  }
-  if (a.includes('ciencia') || a.includes('natural') || a.includes('biologia') || a.includes('quimica') || a.includes('fisica')) {
-    return `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4"/><line x1="3" y1="11" x2="21" y2="11"/><circle cx="8" cy="16" r="1"/><circle cx="12" cy="16" r="1"/><circle cx="16" cy="16" r="1"/></svg>`;
-  }
-  if (a.includes('social') || a.includes('historia') || a.includes('geografia')) {
-    return `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`;
-  }
-  if (a.includes('educacion fisica') || a.includes('deporte') || a.includes('recreacion')) {
-    return `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>`;
-  }
-  if (a.includes('arte') || a.includes('artistica') || a.includes('musica') || a.includes('dibujo')) {
-    return `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-5"/></svg>`;
-  }
-  if (a.includes('ingles') || a.includes('english')) {
-    return `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`;
-  }
-  if (a.includes('etica') || a.includes('religion') || a.includes('valores') || a.includes('filosofia')) {
-    return `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-5"/></svg>`;
-  }
-  return `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>`;
+  const iconDoc  = `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>`;
+  const iconCal  = `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`;
+  const iconBulb = `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a7 7 0 017 7c0 3-1.5 5-4 6.5V17a1 1 0 01-1 1h-4a1 1 0 01-1-1v-1.5C6.5 14 5 12 5 9a7 7 0 017-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>`;
+  const iconCirc = `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-5"/></svg>`;
+
+  if (a.includes('tecnolog') || a.includes('informatica')) return iconDoc;
+  if (a.includes('matematic'))                              return iconDoc;
+  if (a.includes('espanol') || a.includes('lengua') || a.includes('castellana')) return iconBulb;
+  if (a.includes('ciencia') || a.includes('natural') || a.includes('biolog') || a.includes('quimic') || a.includes('fisic')) return iconCal;
+  if (a.includes('social') || a.includes('historia') || a.includes('geografia'))  return iconCal;
+  if (a.includes('ingles') || a.includes('english'))        return iconCal;
+  if (a.includes('etica') || a.includes('religion') || a.includes('valores') || a.includes('filosofia')) return iconCirc;
+  if (a.includes('arte') || a.includes('artistica') || a.includes('musica'))       return iconCirc;
+  if (a.includes('educacion fisica') || a.includes('deporte'))                     return iconCirc;
+  return iconDoc;
 }
 
 // ==================================================
-// API - CARGA DE DATOS (VERSIÓN DEFINITIVA)
-// ==================================================
-// ==================================================
-// API - CARGA DE DATOS (VERSIÓN CORREGIDA)
+// ✅ CARGA DE DATOS — FIX PRINCIPAL AQUÍ
+// La llave del mapa ahora incluye el período:
+//   "PERIODO|asignatura|grado|semana|GRUPO"
+// Ej: "P2|tecnologia e informatica|8|9|SIN_GRUPO"
+// Así P1-semana9 y P2-semana9 tienen llaves distintas y NUNCA se pisan.
 // ==================================================
 async function cargarDatos() {
   const qs = new URLSearchParams({ correo: ST.correo || '' });
-  
+
   try {
     console.log('🔄 Cargando datos...');
     const [resMaterias, resPlaneaciones] = await Promise.all([
       fetch(`${API_PLN}?accion=cargaDocente&${qs}`).then(r => r.json()),
       fetch(`${API_PLN}?accion=misPlaneacionesDocente&correo=${ST.correo}`).then(r => r.json())
     ]);
-    
+
     console.log('📚 Materias raw:', resMaterias);
     console.log('📋 Planeaciones raw:', resPlaneaciones);
-    
-    // ========== PROCESAR MATERIAS ==========
-    if (resMaterias.materias && Array.isArray(resMaterias.materias)) {
-      materiasRaw = resMaterias.materias;
-    } else if (resMaterias.data && Array.isArray(resMaterias.data)) {
-      materiasRaw = resMaterias.data;
-    } else if (resMaterias.cargaDocente && Array.isArray(resMaterias.cargaDocente)) {
-      materiasRaw = resMaterias.cargaDocente;
-    } else if (Array.isArray(resMaterias)) {
-      materiasRaw = resMaterias;
-    } else {
+
+    // ---------- PROCESAR MATERIAS ----------
+    materiasRaw = [];
+    if      (Array.isArray(resMaterias))                        materiasRaw = resMaterias;
+    else if (Array.isArray(resMaterias.materias))               materiasRaw = resMaterias.materias;
+    else if (Array.isArray(resMaterias.data))                   materiasRaw = resMaterias.data;
+    else if (Array.isArray(resMaterias.cargaDocente))           materiasRaw = resMaterias.cargaDocente;
+    else {
       for (const key in resMaterias) {
         if (Array.isArray(resMaterias[key]) && resMaterias[key].length > 0) {
-          materiasRaw = resMaterias[key];
-          console.log(`✅ Materias encontradas en propiedad "${key}"`);
-          break;
+          materiasRaw = resMaterias[key]; break;
         }
       }
     }
-    
+
     if (materiasRaw.length === 0) {
       console.warn('⚠️ No se encontraron materias');
-      materiasRaw = [
-        { asignatura: "TECNOLOGÍA E INFORMÁTICA", grados: ["SEXTO A", "SEXTO B", "SÉPTIMO", "OCTAVO", "NOVENO", "DÉCIMO", "UNDÉCIMO"] }
-      ];
     }
-    
-    // ========== PROCESAR PLANEACIONES ==========
+
+    // ---------- PROCESAR PLANEACIONES ----------
     let planeacionesRaw = [];
-    
-    // misPlaneacionesDocente devuelve {ok: true, data: [...]}
-    if (resPlaneaciones.data && Array.isArray(resPlaneaciones.data)) {
-      planeacionesRaw = resPlaneaciones.data;
-    } else if (resPlaneaciones.planeaciones && Array.isArray(resPlaneaciones.planeaciones)) {
-      planeacionesRaw = resPlaneaciones.planeaciones;
-    } else if (Array.isArray(resPlaneaciones)) {
-      planeacionesRaw = resPlaneaciones;
-    } else {
-      // Buscar cualquier propiedad que sea array
+    if      (Array.isArray(resPlaneaciones))                     planeacionesRaw = resPlaneaciones;
+    else if (Array.isArray(resPlaneaciones.data))                planeacionesRaw = resPlaneaciones.data;
+    else if (Array.isArray(resPlaneaciones.planeaciones))        planeacionesRaw = resPlaneaciones.planeaciones;
+    else {
       for (const key in resPlaneaciones) {
         if (Array.isArray(resPlaneaciones[key]) && resPlaneaciones[key].length > 0) {
-          planeacionesRaw = resPlaneaciones[key];
-          console.log(`✅ Planeaciones encontradas en propiedad "${key}"`);
-          break;
+          planeacionesRaw = resPlaneaciones[key]; break;
         }
       }
     }
-    
-    console.log('✅ Planeaciones raw:', planeacionesRaw.length);
-    
-    // ========== GUARDAR EN MAPA ==========
+
+    console.log(`✅ Planeaciones recibidas: ${planeacionesRaw.length}`);
+
+    // ---------- CONSTRUIR MAPA CON PERÍODO EN LA LLAVE ----------
     planeacionesMap.clear();
-    
+
     for (const p of planeacionesRaw) {
-      // Obtener período (puede ser 1,2,3 o P1,P2,P3)
-      let periodoNorm = 'P2';
-      if (p.periodo) {
-        const perStr = p.periodo.toString().trim();
-        if (perStr === '1' || perStr === 'P1') periodoNorm = 'P1';
-        else if (perStr === '2' || perStr === 'P2') periodoNorm = 'P2';
-        else if (perStr === '3' || perStr === 'P3') periodoNorm = 'P3';
-        else if (perStr === '4' || perStr === 'P4') periodoNorm = 'P4';
-        else periodoNorm = perStr.startsWith('P') ? perStr : 'P' + perStr;
+
+      // ── Período ──────────────────────────────────────────────
+      // Intentar todas las propiedades posibles donde puede venir
+      const periodoNorm =
+        normalizarPeriodo(p.periodo) ||
+        normalizarPeriodo(p.periodoAcademico) ||
+        normalizarPeriodo(p.period) ||
+        null;
+
+      if (!periodoNorm) {
+        // Si no tiene período reconocible, no lo podemos clasificar → skip
+        console.warn('⚠️ Planeación sin período reconocible, se omite:', p.planeacionId || p.id);
+        continue;
       }
-      
-      let semanaNum = p.semanaNum || 0;
-      if (semanaNum === 0 && p.semana) {
-        const match = p.semana.toString().match(/\d+/);
-        semanaNum = match ? parseInt(match[0]) : 0;
+
+      // ── Semana ───────────────────────────────────────────────
+      let semanaNum = 0;
+      if (p.semanaNum && !isNaN(parseInt(p.semanaNum))) {
+        semanaNum = parseInt(p.semanaNum);
+      } else if (p.semana) {
+        const m = String(p.semana).match(/\d+/);
+        if (m) semanaNum = parseInt(m[0]);
       }
-      
-      if (semanaNum === 0) continue;
-      
+
+      if (semanaNum < 1 || semanaNum > 10) {
+        console.warn('⚠️ Semana inválida, se omite:', p.planeacionId || p.id, '→ semana:', semanaNum);
+        continue;
+      }
+
+      // ── Asignatura y grado ───────────────────────────────────
       const asignaturaNorm = normalizar(p.asignatura);
-      const gradoNumero = normalizarGrado(p.grado);
-      
-      let gruposDestino = [];
-      if (p.gruposDestino && p.gruposDestino !== '') {
-        const gruposStr = String(p.gruposDestino).toUpperCase().replace(/\s/g, '');
-        if (gruposStr === 'A,B' || gruposStr === 'B,A') {
-          gruposDestino = ['A', 'B'];
-        } else if (gruposStr === 'A') {
-          gruposDestino = ['A'];
-        } else if (gruposStr === 'B') {
-          gruposDestino = ['B'];
-        }
+      const gradoNumero    = normalizarGrado(p.grado);
+
+      if (!asignaturaNorm || !gradoNumero) {
+        console.warn('⚠️ Planeación sin asignatura o grado, se omite:', p.planeacionId || p.id);
+        continue;
       }
-      
-      // Guardar en el mapa SIN filtrar por período
+
+      // ── Grupos ───────────────────────────────────────────────
+      let gruposDestino = [];
+      if (p.gruposDestino && String(p.gruposDestino).trim() !== '') {
+        const gs = String(p.gruposDestino).toUpperCase().replace(/\s/g, '');
+        if      (gs === 'A,B' || gs === 'B,A') gruposDestino = ['A', 'B'];
+        else if (gs === 'A')                    gruposDestino = ['A'];
+        else if (gs === 'B')                    gruposDestino = ['B'];
+      }
+
+      // ── Insertar en el mapa ──────────────────────────────────
+      // Llave: "PERIODO|asignatura_normalizada|grado_numerico|semana|GRUPO"
       if (gruposDestino.length === 0) {
-        const key = `${asignaturaNorm}|${gradoNumero}|${semanaNum}|SIN_GRUPO`;
+        const key = `${periodoNorm}|${asignaturaNorm}|${gradoNumero}|${semanaNum}|SIN_GRUPO`;
         planeacionesMap.set(key, p);
       } else {
         for (const grupo of gruposDestino) {
-          const key = `${asignaturaNorm}|${gradoNumero}|${semanaNum}|${grupo}`;
+          const key = `${periodoNorm}|${asignaturaNorm}|${gradoNumero}|${semanaNum}|${grupo}`;
           planeacionesMap.set(key, p);
         }
       }
     }
-    
-    console.log(`📊 Planeaciones guardadas: ${planeacionesMap.size}`);
-    
+
+    console.log(`📊 Planeaciones indexadas en mapa: ${planeacionesMap.size}`);
+
   } catch (error) {
-    console.error('❌ Error:', error);
-    materiasRaw = [
-      { asignatura: "TECNOLOGÍA E INFORMÁTICA", grados: ["SEXTO A", "SEXTO B", "SÉPTIMO", "OCTAVO", "NOVENO", "DÉCIMO", "UNDÉCIMO"] }
-    ];
+    console.error('❌ Error al cargar datos:', error);
+    materiasRaw = [];
   }
 }
 
@@ -891,96 +782,78 @@ async function cargarDatos() {
 // ==================================================
 function desglosar() {
   const cards = [];
-  
   for (const m of materiasRaw) {
-    let grados = [];
-    if (m.grados && Array.isArray(m.grados)) {
-      grados = m.grados;
-    } else if (m.cursos && Array.isArray(m.cursos)) {
-      grados = m.cursos;
-    } else if (m.grupos && Array.isArray(m.grupos)) {
-      grados = m.grupos;
-    }
-    
+    let grados = m.grados || m.cursos || m.grupos || [];
+    if (!Array.isArray(grados)) grados = [];
     for (const gradoConLetra of grados) {
       cards.push({
-        asignatura: m.asignatura || m.materia || m.nombre || 'Sin asignatura',
+        asignatura:    m.asignatura || m.materia || m.nombre || 'Sin asignatura',
         gradoOriginal: gradoConLetra,
-        gradoBase: String(gradoConLetra).replace(/[AB]$/i, '').trim(),
-        letra: String(gradoConLetra).match(/[AB]$/i)?.[0]?.toUpperCase() || '',
-        tieneLetra: /[AB]$/i.test(String(gradoConLetra))
+        gradoBase:     String(gradoConLetra).replace(/[AB]$/i, '').trim(),
+        letra:         String(gradoConLetra).match(/[AB]$/i)?.[0]?.toUpperCase() || '',
+        tieneLetra:    /[AB]$/i.test(String(gradoConLetra))
       });
     }
   }
-  
   cards.sort((a, b) => {
-    const numA = parseInt(normalizarGrado(a.gradoBase)) || 0;
-    const numB = parseInt(normalizarGrado(b.gradoBase)) || 0;
-    if (numA !== numB) return numA - numB;
-    return a.gradoBase.localeCompare(b.gradoBase);
+    const nA = parseInt(normalizarGrado(a.gradoBase)) || 0;
+    const nB = parseInt(normalizarGrado(b.gradoBase)) || 0;
+    return nA !== nB ? nA - nB : a.gradoBase.localeCompare(b.gradoBase);
   });
-  
   return cards;
 }
 
 // ==================================================
-// GET ESTADO - LÓGICA CORRECTA (con período)
+// ✅ GET ESTADO — ahora filtra por periodoActivo
 // ==================================================
 function getEstado(asignatura, gradoOriginal, semana) {
   const asignaturaNorm = normalizar(asignatura);
-  const gradoBase = String(gradoOriginal).replace(/[AB]$/i, '').trim();
-  const gradoNumero = normalizarGrado(gradoBase);
-  const letra = String(gradoOriginal).match(/[AB]$/i)?.[0]?.toUpperCase() || '';
-  
-  console.log(`🔍 Buscando: ${asignaturaNorm} | grado:${gradoNumero} | semana:${semana} | letra:${letra}`);
-  
-  for (const [key, p] of planeacionesMap.entries()) {
-    const parts = key.split('|');
-    const keyAsig = parts[0];
-    const keyGrado = parts[1];
-    const keySemana = parseInt(parts[2]);
-    const keyGrupo = parts[3];
-    
-    // Verificar si coincide
-    if (keyAsig === asignaturaNorm && keyGrado === gradoNumero && keySemana === semana) {
-      // Verificar grupo
-      if (letra) {
-        if (keyGrupo === letra) {
-          console.log(`✅ Encontrada: ${p.asignatura} - ${p.grado} (${keyGrupo})`);
-          return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
-        }
-      } else {
-        if (keyGrupo === 'SIN_GRUPO') {
-          console.log(`✅ Encontrada: ${p.asignatura} - ${p.grado} (sin grupo)`);
-          return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
-        }
-      }
+  const gradoBase      = String(gradoOriginal).replace(/[AB]$/i, '').trim();
+  const gradoNumero    = normalizarGrado(gradoBase);
+  const letra          = String(gradoOriginal).match(/[AB]$/i)?.[0]?.toUpperCase() || '';
+
+  // Construir la llave exacta a buscar
+  const grupoKey = letra || 'SIN_GRUPO';
+  const key      = `${periodoActivo}|${asignaturaNorm}|${gradoNumero}|${semana}|${grupoKey}`;
+
+  if (planeacionesMap.has(key)) {
+    const p = planeacionesMap.get(key);
+    console.log(`✅ Encontrada [${key}]`);
+    return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
+  }
+
+  // Si tiene letra, también intentar SIN_GRUPO (planeaciones que cubren todo el grado)
+  if (letra) {
+    const keyFallback = `${periodoActivo}|${asignaturaNorm}|${gradoNumero}|${semana}|SIN_GRUPO`;
+    if (planeacionesMap.has(keyFallback)) {
+      const p = planeacionesMap.get(keyFallback);
+      console.log(`✅ Encontrada fallback sin grupo [${keyFallback}]`);
+      return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
     }
   }
-  
-  console.log(`❌ No encontrada`);
+
+  console.log(`❌ No encontrada [${key}]`);
   return { estado: 'no_enviada', label: 'No enviada', data: null };
 }
 
 // ==================================================
-// RENDER
+// RENDER — SEMANAS
 // ==================================================
 function renderSemanas() {
   const container = document.getElementById('semanasContainer');
-  const semanas = obtenerSemanasOrdenadas();
-  
+  const semanas   = obtenerSemanasOrdenadas();
+
   container.innerHTML = semanas.map(s => {
     const esActual = s === semanaActual;
-    const activa = s === semanaSeleccionada;
+    const activa   = s === semanaSeleccionada;
     return `
       <button class="semana-btn ${activa ? 'active' : ''}" data-semana="${s}">
         <div class="semana-num">${s}</div>
         <div class="semana-label">Semana</div>
         ${esActual ? `<span class="semana-badge">Actual</span>` : ''}
-      </button>
-    `;
+      </button>`;
   }).join('');
-  
+
   document.querySelectorAll('.semana-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       semanaSeleccionada = parseInt(btn.dataset.semana);
@@ -990,204 +863,212 @@ function renderSemanas() {
   });
 }
 
+// ==================================================
+// RENDER — PERÍODO
+// ==================================================
 function renderPeriodo() {
-  const btns = document.querySelectorAll('.seg-btn');
-  
-  const p1Btn = document.querySelector('[data-periodo="P1"]');
-  const p4Btn = document.querySelector('[data-periodo="P4"]');
-  if (p1Btn) p1Btn.style.display = 'none';
-  if (p4Btn) p4Btn.style.display = 'none';
-  
-  const p2Btn = document.querySelector('[data-periodo="P2"]');
-  const p3Btn = document.querySelector('[data-periodo="P3"]');
-  if (p2Btn) p2Btn.style.display = 'flex';
-  if (p3Btn) p3Btn.style.display = 'flex';
-  
-  btns.forEach(btn => {
-    if (btn.dataset.periodo === periodoActivo) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
-    
+  document.querySelectorAll('.seg-btn').forEach(btn => {
+    btn.style.display = 'flex';
+    btn.classList.toggle('active', btn.dataset.periodo === periodoActivo);
+
     btn.onclick = async () => {
       periodoActivo = btn.dataset.periodo;
       renderPeriodo();
-      
-      const grid = document.getElementById('cardsGrid');
-      grid.innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top:12px;color:var(--text-muted)">Cargando planeaciones...</p></div>';
-      
-      await cargarDatos();
+      document.getElementById('cardsGrid').innerHTML =
+        '<div class="loading"><div class="spinner"></div><p style="color:var(--text-muted);font-size:13px;">Cargando...</p></div>';
       renderCards();
-      mostrarToast(`Mostrando período ${periodoActivo}`);
+      mostrarToast(`Período ${periodoActivo}`);
     };
   });
 }
 
+// ==================================================
+// RENDER — CARDS
+// ==================================================
 function renderCards() {
   const tarjetas = desglosar();
-  const grid = document.getElementById('cardsGrid');
-  document.getElementById('resultadosCount').textContent = `${tarjetas.length} materia${tarjetas.length !== 1 ? 's' : ''}`;
-  
+  const grid     = document.getElementById('cardsGrid');
+  document.getElementById('resultadosCount').textContent =
+    `${tarjetas.length} materia${tarjetas.length !== 1 ? 's' : ''}`;
+
   if (tarjetas.length === 0) {
-    grid.innerHTML = '<div class="empty-card"><div class="empty-icon">📭</div><div class="empty-title">Sin materias asignadas</div><div class="empty-sub">No tienes materias asignadas para este período</div></div>';
+    grid.innerHTML = `
+      <div class="empty-card">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">Sin materias asignadas</div>
+        <div class="empty-sub">No tienes materias asignadas para este período</div>
+      </div>`;
     return;
   }
-  
+
   grid.innerHTML = tarjetas.map((t, idx) => {
-    const e = getEstado(t.asignatura, t.gradoOriginal, semanaSeleccionada);
-    const estadoClass = `estado-${e.estado}`;
-    const estadoIcon = { aprobada: '✓', pendiente: '⏳', con_ajustes: '⚠', no_enviada: '✗' }[e.estado];
-    const fecha = e.data?.timestamp ? new Date(e.data.timestamp).toLocaleDateString('es-CO') : '';
-    
+    const e        = getEstado(t.asignatura, t.gradoOriginal, semanaSeleccionada);
+    const estadoCls = `estado-${e.estado}`;
+    const icon      = { aprobada: '✓', pendiente: '⏳', con_ajustes: '⚠', no_enviada: '✗' }[e.estado];
+    const fecha     = e.data?.timestamp ? new Date(e.data.timestamp).toLocaleDateString('es-CO') : '';
+
     return `
-      <div class="plan-card" style="animation-delay: ${idx * 0.02}s" onclick="abrirDetalle('${t.asignatura.replace(/'/g, "\\'")}', '${t.gradoOriginal.replace(/'/g, "\\'")}', ${semanaSeleccionada})">
+      <div class="plan-card" style="animation-delay:${idx * 0.02}s"
+           onclick="abrirDetalle('${t.asignatura.replace(/'/g,"\\'")}','${t.gradoOriginal.replace(/'/g,"\\'")}',${semanaSeleccionada})">
         <div class="card-header">
           <div class="card-icon">${iconoPorMateria(t.asignatura)}</div>
           <div class="card-chevron">›</div>
         </div>
         <div class="card-title">${t.asignatura}</div>
-        <div class="card-sub">Semana ${semanaSeleccionada}</div>
+        <div class="card-sub">Semana ${semanaSeleccionada} · ${periodoActivo}</div>
         <div class="card-info">
-          <span class="info-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>${t.gradoOriginal}</span>
-          ${e.estado !== 'no_enviada' && fecha ? `<span class="info-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>${fecha}</span>` : ''}
+          <span class="info-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            ${t.gradoOriginal}
+          </span>
+          ${e.estado !== 'no_enviada' && fecha
+            ? `<span class="info-chip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+                ${fecha}
+               </span>`
+            : ''}
         </div>
-        <div class="estado-badge ${estadoClass}"><span>${estadoIcon}</span> ${e.label}</div>
-      </div>
-    `;
+        <div class="estado-badge ${estadoCls}"><span>${icon}</span> ${e.label}</div>
+      </div>`;
   }).join('');
 }
 
+// ==================================================
+// MODAL DE DETALLE
+// ==================================================
 function escapeHtml(str) {
   if (!str) return '';
-  return str.replace(/[&<>]/g, function(m) {
-    if (m === '&') return '&amp;';
-    if (m === '<') return '&lt;';
-    if (m === '>') return '&gt;';
-    return m;
-  }).replace(/\n/g, '<br>');
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\n/g,'<br>');
 }
 
 function abrirDetalle(asignatura, grado, semana) {
   const e = getEstado(asignatura, grado, semana);
-  
+
   if (e.estado === 'no_enviada') {
     window.location.href = '/planeaciones/';
     return;
   }
-  
+
   const p = e.data;
   if (!p) return;
-  
-  let clasesHtml = '';
+
+  let clasesHtml  = '';
   let tieneClases = false;
   for (let i = 1; i <= 5; i++) {
     const tema = p[`d${i}Tema`];
-    const act = p[`d${i}Actividades`];
+    const act  = p[`d${i}Actividades`];
     if (!tema && !act) continue;
     tieneClases = true;
     clasesHtml += `
-      <div style="background:rgba(255,255,255,0.04); border-radius:20px; padding:20px; margin-bottom:16px;">
-        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-          <div style="width:32px; height:32px; background:rgba(59,130,246,0.25); color:#90cdf4; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px;">${i}</div>
-          <div style="font-size:17px; font-weight:700; color:#fff;">${escapeHtml(tema) || 'Sin tema'}</div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:20px;padding:20px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+          <div style="width:32px;height:32px;background:rgba(59,130,246,0.25);color:#90cdf4;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">${i}</div>
+          <div style="font-size:17px;font-weight:700;color:#fff;">${escapeHtml(tema) || 'Sin tema'}</div>
         </div>
         <div style="margin-left:44px;">
-          <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#90cdf4; margin-bottom:6px;">Actividades</div>
-          <div style="font-size:15px; line-height:1.6; color:rgba(255,255,255,0.8);">${escapeHtml(act) || '—'}</div>
+          <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#90cdf4;margin-bottom:6px;">Actividades</div>
+          <div style="font-size:15px;line-height:1.6;color:rgba(255,255,255,0.8);">${escapeHtml(act) || '—'}</div>
         </div>
-      </div>
-    `;
+      </div>`;
   }
-  
-  const estadoClass = `estado-${e.estado}`;
-  
+
+  const estadoCls = `estado-${e.estado}`;
+  const linkComp  = p.actCompAnexoUrl  || '';
+  const linkFam   = p.anexoFamiliasUrl || '';
+
   let html = `
-    <div class="modal" id="modalPlaneacion" onclick="if(event.target===this) cerrarModal()">
-      <div class="modal-content" style="max-width: 800px; width: 95%;" onclick="event.stopPropagation()">
+    <div class="modal" id="modalPlaneacion" onclick="if(event.target===this)cerrarModal()">
+      <div class="modal-content" style="max-width:800px;width:95%;" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="modal-header" style="padding: 20px 24px;">
+        <div class="modal-header" style="padding:20px 24px;">
           <div class="modal-header-info">
             <div class="modal-icon">${iconoPorMateria(asignatura)}</div>
             <div>
-              <div class="modal-title" style="font-size: 22px; font-weight: 700;">${escapeHtml(asignatura)}</div>
-              <div class="modal-sub" style="font-size: 14px; margin-top: 4px;">Semana ${semana} · ${escapeHtml(grado)}</div>
+              <div class="modal-title" style="font-size:22px;">${escapeHtml(asignatura)}</div>
+              <div class="modal-sub" style="font-size:14px;margin-top:4px;">Semana ${semana} · ${escapeHtml(grado)} · ${periodoActivo}</div>
             </div>
           </div>
-          <button class="modal-close" style="width: 40px; height: 40px;" onclick="cerrarModal()">✕</button>
+          <button class="modal-close" style="width:40px;height:40px;" onclick="cerrarModal()">✕</button>
         </div>
-        <div style="padding: 0 24px 16px 24px;">
-          <span class="estado-badge ${estadoClass}" style="display:inline-flex; padding: 8px 20px; font-size: 13px;">${e.label}</span>
+        <div style="padding:0 24px 16px 24px;">
+          <span class="estado-badge ${estadoCls}" style="display:inline-flex;padding:8px 20px;font-size:13px;">${e.label}</span>
         </div>
-        <div class="modal-body" style="padding: 8px 24px 24px 24px; max-height: 65vh;">
-          <div style="margin-bottom: 28px;">
-            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">Indicador de desempeño</div>
-            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px 20px; font-size: 16px; line-height: 1.6;">${escapeHtml(p.indicadorSemanal) || '—'}</div>
+        <div class="modal-body" style="padding:8px 24px 24px 24px;max-height:65vh;">
+          <div style="margin-bottom:28px;">
+            <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#c9962a;margin-bottom:12px;">Indicador de desempeño</div>
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:18px 20px;font-size:16px;line-height:1.6;">
+              ${escapeHtml(p.indicadorSemanal) || '—'}
+            </div>
           </div>`;
-  
+
   if (tieneClases) {
     html += `
-          <div style="margin-bottom: 28px;">
-            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">Clases planificadas</div>
+          <div style="margin-bottom:28px;">
+            <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#c9962a;margin-bottom:12px;">Clases planificadas</div>
             ${clasesHtml}
           </div>`;
   }
-  
-  const linkComp = p.actCompAnexoUrl || '';
+
   if (p.actCompDescripcion || linkComp) {
     html += `
-          <div style="margin-bottom: 28px;">
-            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">Actividad complementaria</div>
-            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px 20px;">
-              <div style="font-size: 15px; line-height: 1.6; margin-bottom: ${linkComp ? '12px' : '0'};">
+          <div style="margin-bottom:28px;">
+            <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#c9962a;margin-bottom:12px;">Actividad complementaria</div>
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:18px 20px;">
+              <div style="font-size:15px;line-height:1.6;margin-bottom:${linkComp?'12px':'0'};">
                 ${escapeHtml(p.actCompDescripcion) || 'Sin descripción'}
               </div>
-              ${linkComp ? `<div><a href="${linkComp}" target="_blank" style="color: #c9962a; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">Ver anexo de actividad complementaria →</a></div>` : ''}
+              ${linkComp ? `<a href="${linkComp}" target="_blank" style="color:#c9962a;text-decoration:none;font-weight:500;">Ver anexo →</a>` : ''}
             </div>
           </div>`;
   }
-  
-  const linkFam = p.anexoFamiliasUrl || '';
+
   if (p.obsFamilias || linkFam) {
     html += `
-          <div style="margin-bottom: 28px;">
-            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #c9962a; margin-bottom: 12px;">Comunicación a familias</div>
-            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px 20px;">
-              <div style="font-size: 15px; line-height: 1.6; margin-bottom: ${linkFam ? '12px' : '0'};">
+          <div style="margin-bottom:28px;">
+            <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#c9962a;margin-bottom:12px;">Comunicación a familias</div>
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:18px 20px;">
+              <div style="font-size:15px;line-height:1.6;margin-bottom:${linkFam?'12px':'0'};">
                 ${escapeHtml(p.obsFamilias) || 'Sin comunicación registrada'}
               </div>
-              ${linkFam ? `<div><a href="${linkFam}" target="_blank" style="color: #c9962a; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">Ver anexo de comunicación a familias →</a></div>` : ''}
+              ${linkFam ? `<a href="${linkFam}" target="_blank" style="color:#c9962a;text-decoration:none;font-weight:500;">Ver anexo →</a>` : ''}
             </div>
           </div>`;
   }
-  
+
   if (p.observacionCoordinacion && e.estado === 'con_ajustes') {
     html += `
-          <div style="margin-bottom: 28px;">
-            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #f59e0b; margin-bottom: 12px;">Observación del coordinador</div>
-            <div style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); border-radius: 18px; padding: 18px 20px;">
-              <div style="font-size: 15px; line-height: 1.6; color: #fbbf24;">${escapeHtml(p.observacionCoordinacion)}</div>
+          <div style="margin-bottom:28px;">
+            <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#f59e0b;margin-bottom:12px;">Observación del coordinador</div>
+            <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:18px;padding:18px 20px;">
+              <div style="font-size:15px;line-height:1.6;color:#fbbf24;">${escapeHtml(p.observacionCoordinacion)}</div>
             </div>
           </div>`;
   }
-  
+
   html += `
         </div>
-        <div class="modal-footer" style="padding: 20px 24px;">
-          ${e.estado === 'con_ajustes' 
-            ? `<button class="modal-btn modal-btn-primary" style="padding: 16px; font-size: 16px;" onclick="editarPlaneacion('${p.planeacionId}')">Editar y reenviar planeación</button>` 
-            : `<button class="modal-btn modal-btn-secondary" style="padding: 14px; font-size: 15px;" onclick="cerrarModal()">Cerrar</button>`}
+        <div class="modal-footer" style="padding:20px 24px;">
+          ${e.estado === 'con_ajustes'
+            ? `<button class="modal-btn modal-btn-primary" style="padding:16px;font-size:16px;" onclick="editarPlaneacion('${p.planeacionId}')">Editar y reenviar planeación</button>`
+            : `<button class="modal-btn modal-btn-secondary" style="padding:14px;font-size:15px;" onclick="cerrarModal()">Cerrar</button>`}
         </div>
       </div>
-    </div>
-  `;
-  
+    </div>`;
+
   document.body.insertAdjacentHTML('beforeend', html);
   document.body.style.overflow = 'hidden';
 }
 
-function cerrarModal() { const m = document.getElementById('modalPlaneacion'); if (m) m.remove(); document.body.style.overflow = ''; }
-function editarPlaneacion(id) { window.location.href = `/planeaciones/?editar=1&planeacionId=${id}`; }
+function cerrarModal() {
+  const m = document.getElementById('modalPlaneacion');
+  if (m) m.remove();
+  document.body.style.overflow = '';
+}
+function editarPlaneacion(id) {
+  window.location.href = `/planeaciones/?editar=1&planeacionId=${id}`;
+}
 
 // ==================================================
 // INIT
@@ -1195,25 +1076,26 @@ function editarPlaneacion(id) { window.location.href = `/planeaciones/?editar=1&
 async function init() {
   const sesion = obtenerSesion();
   if (!sesion?.correo) { window.location.href = '/'; return; }
+
   ST = { correo: sesion.correo, rol: sesion.rol || 'docente', docenteId: sesion.docenteId };
   document.getElementById('rolVista').textContent = String(ST.rol).toUpperCase();
-  
-  semanaActual = calcularSemanaActual();
+
+  // Calcular semana y período actuales
+  semanaActual       = calcularSemanaActual();
   semanaSeleccionada = semanaActual;
-  periodoActivo = 'P2';
-  
-  renderSemanas();
+  periodoActivo      = calcularPeriodoActual(); // ← automático por fecha
+
   renderPeriodo();
-  
-  const grid = document.getElementById('cardsGrid');
-  grid.innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top:12px;color:var(--text-muted)">Cargando planeaciones...</p></div>';
-  
+  renderSemanas();
+
+  document.getElementById('cardsGrid').innerHTML =
+    '<div class="loading"><div class="spinner"></div><p style="color:var(--text-muted);font-size:13px;">Cargando planeaciones...</p></div>';
+
   await cargarDatos();
   renderCards();
 }
 
 init();
-
 </script>
 </body>
 </html>
