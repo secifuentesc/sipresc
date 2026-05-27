@@ -622,7 +622,7 @@ function mapearEstado(p) {
   const lower = String(raw).toLowerCase();
   if (lower.includes('aprob'))                                                        return 'aprobada';
   if (lower.includes('ajust') || lower.includes('corre') || lower === 'con_ajustes') return 'con_ajustes';
-  if (lower.includes('pend') || lower.includes('revis') || lower === 'enviada' ||
+  if (lower.includes('pend') || lower.includes('revis') || lower === 'enviada' || lower === 'recibida' || lower === 'en_revision' || lower === 'reenviada') return 'pendiente';
       lower === 'recibida' || lower === 'en_revision')                                return 'pendiente';
   return 'no_enviada';
 }
