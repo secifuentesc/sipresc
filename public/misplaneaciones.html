@@ -932,10 +932,15 @@ function getEstado(asignatura, gradoOriginal, semana) {
   const gradoNumero = normalizarGrado(gradoBase);
   const letra = String(gradoOriginal).match(/[AB]$/i)?.[0]?.toUpperCase() || '';
   
-  // BUSCAR SIN PERÍODO (porque en la clave NO guardaste período)
+  // Buscar SOLO en el período activo (P2 o P3)
   for (const [key, p] of planeacionesMap.entries()) {
-    // La clave tiene formato: "asignatura|grado|semana|grupo"
     const [keyAsig, keyGradoNum, keySemana, keyGrupo] = key.split('|');
+    
+    // Solo considerar si el período REAL de la planeación coincide con periodoActivo
+    const periodoReal = p.periodo;
+    const periodoRealStr = typeof periodoReal === 'number' ? `P${periodoReal}` : periodoReal;
+    
+    if (periodoRealStr !== periodoActivo) continue;
     
     if (keyAsig === asignaturaNorm && keyGradoNum === gradoNumero && parseInt(keySemana) === semana) {
       if (letra) {
