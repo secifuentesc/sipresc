@@ -771,7 +771,7 @@ async function cargarDatos() {
     console.log('🔄 Cargando datos...');
     const [resMaterias, resPlaneaciones] = await Promise.all([
       fetch(`${API_PLN}?accion=cargaDocente&${qs}`).then(r => r.json()),
-      fetch(`${API_PLN}?accion=misPlaneacionesDocente&${qs}`).then(r => r.json())
+      fetch(`${API_PLN}?accion=planeacionesUI`).then(r => r.json()),
     ]);
     
     console.log('📚 Materias raw:', resMaterias);
