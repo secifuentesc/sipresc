@@ -832,7 +832,7 @@ async function cargarDatos() {
     planeacionesRaw.forEach(p => {
       const periodoNorm = normalizarPeriodo(p.periodo);
       
-      if (periodoNorm === periodoActivo) {
+    
         let semanaNum = 0;
         if (typeof p.semana === 'number') {
           semanaNum = p.semana;
@@ -1189,7 +1189,7 @@ async function init() {
   
   semanaActual = calcularSemanaActual();
   semanaSeleccionada = semanaActual;
-  periodoActivo = calcularPeriodoActual(); // ← automático según fecha
+  periodoActivo = 'P2';
   
   renderSemanas();
   renderPeriodo();
