@@ -927,8 +927,8 @@ function getEstado(asignatura, gradoOriginal, semana) {
   for (const [key, p] of planeacionesMap.entries()) {
     const [keyPeriodo, keyAsig, keyGradoNum, keySemana, keyGrupo] = key.split('|');
     
-    // Solo considerar si el período coincide con el seleccionado
-    if (keyPeriodo !== periodoActivo) continue;
+    // 🔥 ELIMINA ESTA LÍNEA - NO FILTRES POR PERÍODO
+    // if (keyPeriodo !== periodoActivo) continue;
     
     if (keyAsig === asignaturaNorm && keyGradoNum === gradoNumero && parseInt(keySemana) === semana) {
       if (letra) {
