@@ -948,29 +948,24 @@ function getEstado(asignatura, gradoOriginal, semana) {
   const gradoNumero = normalizarGrado(gradoBase);
   const letra = String(gradoOriginal).match(/[AB]$/i)?.[0]?.toUpperCase() || '';
   
-  console.log(`Buscando: período=${periodoActivo}, semana=${semana}, materia=${asignaturaNorm}, grado=${gradoNumero}, letra=${letra}`);
-  
+  // BUSCAR SIN PERÍODO (porque en la clave NO guardaste período)
   for (const [key, p] of planeacionesMap.entries()) {
-    const [keyPeriodo, keyAsig, keyGradoNum, keySemana, keyGrupo] = key.split('|');
-    
-    if (keyPeriodo !== periodoActivo) continue;
+    // La clave tiene formato: "asignatura|grado|semana|grupo"
+    const [keyAsig, keyGradoNum, keySemana, keyGrupo] = key.split('|');
     
     if (keyAsig === asignaturaNorm && keyGradoNum === gradoNumero && parseInt(keySemana) === semana) {
       if (letra) {
         if (keyGrupo === letra) {
-          console.log('✅ Encontrada en P2');
           return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
         }
       } else {
         if (keyGrupo === 'SIN_GRUPO') {
-          console.log('✅ Encontrada en P2');
           return { estado: mapearEstado(p), label: estadoLabel(p), data: p };
         }
       }
     }
   }
   
-  console.log('❌ No encontrada');
   return { estado: 'no_enviada', label: 'No enviada', data: null };
 }
 
