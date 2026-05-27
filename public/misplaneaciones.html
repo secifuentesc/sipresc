@@ -955,7 +955,9 @@ function abrirDetalle(asignatura, grado, semana) {
   const p = e.data;
   if (!p) return;
 
-  let clasesHtml  = '';
+  const puedeEditar = e.estado === 'pendiente' || e.estado === 'con_ajustes';
+
+  let clasesHtml = '';
   let tieneClases = false;
   for (let i = 1; i <= 5; i++) {
     const tema = p[`d${i}Tema`];
@@ -966,11 +968,11 @@ function abrirDetalle(asignatura, grado, semana) {
       <div style="background:rgba(255,255,255,0.04);border-radius:20px;padding:20px;margin-bottom:16px;">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
           <div style="width:32px;height:32px;background:rgba(59,130,246,0.25);color:#90cdf4;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">${i}</div>
-          <div style="font-size:17px;font-weight:700;color:#fff;">${escapeHtml(tema) || 'Sin tema'}</div>
+          <div style="font-size:17px;font-weight:700;color:#fff;">${escapeHtml(tema)||'Sin tema'}</div>
         </div>
         <div style="margin-left:44px;">
           <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#90cdf4;margin-bottom:6px;">Actividades</div>
-          <div style="font-size:15px;line-height:1.6;color:rgba(255,255,255,0.8);">${escapeHtml(act) || '—'}</div>
+          <div style="font-size:15px;line-height:1.6;color:rgba(255,255,255,0.8);">${escapeHtml(act)||'—'}</div>
         </div>
       </div>`;
   }
@@ -1000,7 +1002,7 @@ function abrirDetalle(asignatura, grado, semana) {
           <div style="margin-bottom:28px;">
             <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#c9962a;margin-bottom:12px;">Indicador de desempeño</div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:18px 20px;font-size:16px;line-height:1.6;">
-              ${escapeHtml(p.indicadorSemanal) || '—'}
+              ${escapeHtml(p.indicadorSemanal)||'—'}
             </div>
           </div>`;
 
@@ -1017,10 +1019,8 @@ function abrirDetalle(asignatura, grado, semana) {
           <div style="margin-bottom:28px;">
             <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#c9962a;margin-bottom:12px;">Actividad complementaria</div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:18px 20px;">
-              <div style="font-size:15px;line-height:1.6;margin-bottom:${linkComp?'12px':'0'};">
-                ${escapeHtml(p.actCompDescripcion) || 'Sin descripción'}
-              </div>
-              ${linkComp ? `<a href="${linkComp}" target="_blank" style="color:#c9962a;text-decoration:none;font-weight:500;">Ver anexo →</a>` : ''}
+              <div style="font-size:15px;line-height:1.6;margin-bottom:${linkComp?'12px':'0'};">${escapeHtml(p.actCompDescripcion)||'Sin descripción'}</div>
+              ${linkComp?`<a href="${linkComp}" target="_blank" style="color:#c9962a;text-decoration:none;font-weight:500;">Ver anexo →</a>`:''}
             </div>
           </div>`;
   }
@@ -1030,10 +1030,8 @@ function abrirDetalle(asignatura, grado, semana) {
           <div style="margin-bottom:28px;">
             <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#c9962a;margin-bottom:12px;">Comunicación a familias</div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:18px 20px;">
-              <div style="font-size:15px;line-height:1.6;margin-bottom:${linkFam?'12px':'0'};">
-                ${escapeHtml(p.obsFamilias) || 'Sin comunicación registrada'}
-              </div>
-              ${linkFam ? `<a href="${linkFam}" target="_blank" style="color:#c9962a;text-decoration:none;font-weight:500;">Ver anexo →</a>` : ''}
+              <div style="font-size:15px;line-height:1.6;margin-bottom:${linkFam?'12px':'0'};">${escapeHtml(p.obsFamilias)||'Sin comunicación registrada'}</div>
+              ${linkFam?`<a href="${linkFam}" target="_blank" style="color:#c9962a;text-decoration:none;font-weight:500;">Ver anexo →</a>`:''}
             </div>
           </div>`;
   }
@@ -1048,15 +1046,20 @@ function abrirDetalle(asignatura, grado, semana) {
           </div>`;
   }
 
-  html += `
-        </div>
-        <div class="modal-footer" style="padding:20px 24px;">
-          ${e.estado === 'con_ajustes'
-            ? `<button class="modal-btn modal-btn-primary" style="padding:16px;font-size:16px;" onclick="editarPlaneacion('${p.planeacionId}')">Editar y reenviar planeación</button>`
-            : `<button class="modal-btn modal-btn-secondary" style="padding:14px;font-size:15px;" onclick="cerrarModal()">Cerrar</button>`}
-        </div>
-      </div>
-    </div>`;
+  html += `</div><div class="modal-footer" style="padding:20px 24px;">`;
+
+  if (puedeEditar) {
+    html += `<button class="modal-btn modal-btn-primary" style="padding:16px;font-size:16px;" onclick="editarPlaneacion('${p.planeacionId}')">
+               ${e.estado === 'con_ajustes' ? 'Editar y reenviar planeación' : 'Editar planeación'}
+             </button>`;
+  } else {
+    html += `<div style="text-align:center;padding:10px 0 6px;">
+               <span style="font-size:13px;color:var(--text-muted);">Esta planeación ya fue aprobada y no puede modificarse.</span>
+             </div>
+             <button class="modal-btn modal-btn-secondary" style="padding:14px;font-size:15px;margin-top:8px;" onclick="cerrarModal()">Cerrar</button>`;
+  }
+
+  html += `</div></div></div>`;
 
   document.body.insertAdjacentHTML('beforeend', html);
   document.body.style.overflow = 'hidden';
