@@ -1539,15 +1539,17 @@ function guardarAuto(){
 }
 
 function calcularSemanaActual(){
-  const inicioBase = new Date("2026-04-25T00:30:00-05:00");
+  const cierreExtendido = new Date('2026-06-01T23:59:00-05:00');
   const ahora = new Date();
+  if (ahora <= cierreExtendido) return 9;
+
+  const inicioBase = new Date("2026-04-25T00:30:00-05:00");
   const unaSemana = 7 * 24 * 60 * 60 * 1000;
   const diffSemanas = Math.floor((ahora.getTime() - inicioBase.getTime()) / unaSemana);
   let semana = 5 + diffSemanas;
   semana = ((semana - 1) % 10 + 10) % 10 + 1;
   return semana;
 }
-
 function generarSemanas(){
   const box = document.getElementById("semanaOptions");
   const actual = calcularSemanaActual();
