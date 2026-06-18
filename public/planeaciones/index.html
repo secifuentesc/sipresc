@@ -1539,8 +1539,16 @@ function guardarAuto(){
 }
 
 function calcularSemanaActual(){
-  const cierreExtendido = new Date('2026-06-01T23:59:00-05:00');
+  const cierreExtendidoSemana1 = new Date('2026-06-22T23:59:00-05:00'); // 🔥 Semana 1 habilitada hasta el 22 de junio
   const ahora = new Date();
+  
+  // 🔥 Si es antes del 22 de junio a las 23:59, mostrar semana 1 como disponible
+  if (ahora <= cierreExtendidoSemana1) {
+    return 1; // Retorna 1 para que la semana 1 esté activa
+  }
+
+  // Después del 22 de junio, vuelve a la lógica normal
+  const cierreExtendido = new Date('2026-06-01T23:59:00-05:00');
   if (ahora <= cierreExtendido) return 9;
 
   const inicioBase = new Date("2026-04-25T00:30:00-05:00");
@@ -1557,23 +1565,46 @@ function generarSemanas(){
 
   const semanasPermitidasPorCorreo = {
     "secifuentes@lapresentaciongirardota.edu.co": [9, 10]
-    
   };
 
   const semanasPermitidas = semanasPermitidasPorCorreo[correo] || [];
 
   box.innerHTML = "";
 
+  // 🔥 Fecha límite para la semana 1: 22 de junio 23:59
+  const fechaLimiteSemana1 = new Date('2026-06-22T23:59:00-05:00');
+  const ahora = new Date();
+  const semana1Habilitada = ahora <= fechaLimiteSemana1;
+
   for(let i = 1; i <= 10; i++){
     const div = document.createElement("div");
     div.textContent = "Semana " + i;
 
-    if(i < actual && !semanasPermitidas.includes(i)){
-      div.style.opacity = "0.4";
-      div.style.pointerEvents = "none";
+    // 🔥 Lógica especial para la semana 1
+    if (i === 1) {
+      if (!semana1Habilitada) {
+        // Si ya pasó el 22 de junio, deshabilitar semana 1
+        div.style.opacity = "0.4";
+        div.style.pointerEvents = "none";
+      }
+      // Si está habilitada, se comporta normal (sin opacidad)
+    } else {
+      // Lógica normal para las demás semanas
+      if(i < actual && !semanasPermitidas.includes(i)){
+        div.style.opacity = "0.4";
+        div.style.pointerEvents = "none";
+      }
     }
 
-    if(i === actual){
+    // Determinar qué semana seleccionar automáticamente
+    let semanaSeleccionada = actual;
+    
+    // 🔥 Si la semana 1 está habilitada y es la actual (o no hay otra seleccionada), seleccionar semana 1
+    if (semana1Habilitada && i === 1) {
+      semanaSeleccionada = 1;
+    }
+
+    if(i === semanaSeleccionada){
       const texto = "Semana " + i;
       document.getElementById("semanaText").textContent = texto;
       ST.semana = texto;
