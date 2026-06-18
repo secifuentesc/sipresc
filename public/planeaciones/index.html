@@ -6,8 +6,7 @@
 <meta name="theme-color" content="#0a1628">
 <title>Planeaciones — La Presentación</title>
 <link rel="icon" type="image/png" href="/logo.png">
-<!--<script src="/js/anti-debug.js"></script>
-<!-- fuentes Apple system -->
+<!--<script src="/js/anti-debug.js"></script>-->
 <script>
 
 window.SIPRESC_MODULO = 'Docente · Planeaciones';
@@ -239,29 +238,6 @@ function iniciarDeteccionDeInternet() {
     setTimeout(sincronizarColaLocal, 3000);
   }
 }
-
-// Modificar la función enviarPlaneacion original para usar la cola
-// Esta es la parte IMPORTANTE: cuando falla, guarda en cola local
-
-// Busca la función enviarPlaneacion original y dentro del catch,
-// donde dice "FALLO DEFINITIVO", reemplaza esa parte por:
-
-/*
-} else {
-  // FALLO DEFINITIVO - Guardar en cola local
-  guardarEnColaLocal(payload, error.message);
-  mostrarNotificacionProfesional(
-    `No se pudo enviar tu planeación. Motivo: ${error.message}. Se guardó localmente y se enviará automáticamente cuando recuperes internet.`,
-    'warning',
-    6000
-  );
-  estado.textContent = "Planeación guardada localmente (pendiente de envío)";
-  btn.classList.remove("loading");
-  icon.textContent = "⏱";
-  overlay.classList.remove("activo");
-  document.querySelector(".form-app").classList.remove("blur");
-}
-*/
 
 // Iniciar detección de internet y sincronización de pendientes
 iniciarDeteccionDeInternet();
@@ -1538,16 +1514,21 @@ function guardarAuto(){
   }, 300);
 }
 
+// ==================================================
+// FUNCIONES MODIFICADAS PARA HABILITAR SEMANA 1
+// ==================================================
+
 function calcularSemanaActual(){
-  const cierreExtendidoSemana1 = new Date('2026-06-22T23:59:00-05:00'); // 🔥 Semana 1 habilitada hasta el 22 de junio
   const ahora = new Date();
+  // Fecha límite para que la semana 1 esté habilitada: 22 de junio 23:59
+  const fechaLimiteSemana1 = new Date('2026-06-22T23:59:00-05:00');
   
-  // 🔥 Si es antes del 22 de junio a las 23:59, mostrar semana 1 como disponible
-  if (ahora <= cierreExtendidoSemana1) {
-    return 1; // Retorna 1 para que la semana 1 esté activa
+  // Si es antes o igual al 22 de junio a las 23:59, semana 1 es la "actual"
+  if (ahora <= fechaLimiteSemana1) {
+    return 1;
   }
 
-  // Después del 22 de junio, vuelve a la lógica normal
+  // Después del 22 de junio, lógica normal
   const cierreExtendido = new Date('2026-06-01T23:59:00-05:00');
   if (ahora <= cierreExtendido) return 9;
 
@@ -1558,6 +1539,7 @@ function calcularSemanaActual(){
   semana = ((semana - 1) % 10 + 10) % 10 + 1;
   return semana;
 }
+
 function generarSemanas(){
   const box = document.getElementById("semanaOptions");
   const actual = calcularSemanaActual();
@@ -1571,40 +1553,18 @@ function generarSemanas(){
 
   box.innerHTML = "";
 
-  // 🔥 Fecha límite para la semana 1: 22 de junio 23:59
-  const fechaLimiteSemana1 = new Date('2026-06-22T23:59:00-05:00');
-  const ahora = new Date();
-  const semana1Habilitada = ahora <= fechaLimiteSemana1;
-
   for(let i = 1; i <= 10; i++){
     const div = document.createElement("div");
     div.textContent = "Semana " + i;
 
-    // 🔥 Lógica especial para la semana 1
-    if (i === 1) {
-      if (!semana1Habilitada) {
-        // Si ya pasó el 22 de junio, deshabilitar semana 1
-        div.style.opacity = "0.4";
-        div.style.pointerEvents = "none";
-      }
-      // Si está habilitada, se comporta normal (sin opacidad)
-    } else {
-      // Lógica normal para las demás semanas
-      if(i < actual && !semanasPermitidas.includes(i)){
-        div.style.opacity = "0.4";
-        div.style.pointerEvents = "none";
-      }
+    // Deshabilitar semanas anteriores a la actual (excepto las permitidas por correo)
+    if(i < actual && !semanasPermitidas.includes(i)){
+      div.style.opacity = "0.4";
+      div.style.pointerEvents = "none";
     }
 
-    // Determinar qué semana seleccionar automáticamente
-    let semanaSeleccionada = actual;
-    
-    // 🔥 Si la semana 1 está habilitada y es la actual (o no hay otra seleccionada), seleccionar semana 1
-    if (semana1Habilitada && i === 1) {
-      semanaSeleccionada = 1;
-    }
-
-    if(i === semanaSeleccionada){
+    // Seleccionar automáticamente la semana actual (que puede ser 1 durante el período)
+    if(i === actual){
       const texto = "Semana " + i;
       document.getElementById("semanaText").textContent = texto;
       ST.semana = texto;
@@ -1639,6 +1599,11 @@ function generarSemanas(){
     box.appendChild(div);
   }
 }
+
+// ==================================================
+// FIN DE FUNCIONES MODIFICADAS
+// ==================================================
+
 function setObs(valor, el){
   ST.observacionActiva = valor;
   document.querySelectorAll("#b-observacion .btn-opcion").forEach(b => b.classList.remove("activa"));
