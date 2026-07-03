@@ -1542,15 +1542,15 @@ function calcularSemanaActual(){
   const ahora = new Date();
   const cierres = [
     new Date('2026-06-22T23:59:00-05:00'), // Semana 1
-    new Date('2026-06-29T23:59:00-05:00'), // Semana 2
-    new Date('2026-07-06T23:59:00-05:00'), // Semana 3
-    new Date('2026-07-13T23:59:00-05:00'), // Semana 4
-    new Date('2026-07-20T23:59:00-05:00'), // Semana 5
-    new Date('2026-07-27T23:59:00-05:00'), // Semana 6
-    new Date('2026-08-03T23:59:00-05:00'), // Semana 7
-    new Date('2026-08-10T23:59:00-05:00'), // Semana 8
-    new Date('2026-08-17T23:59:00-05:00'), // Semana 9
-    new Date('2026-08-24T23:59:00-05:00'), // Semana 10
+    new Date('2026-07-10T23:59:00-05:00'), // Semana 2
+    new Date('2026-07-17T23:59:00-05:00'), // Semana 3
+    new Date('2026-07-24T23:59:00-05:00'), // Semana 4
+    new Date('2026-07-32T23:59:00-05:00'), // Semana 5
+    new Date('2026-08-07T23:59:00-05:00'), // Semana 6
+    new Date('2026-08-14T23:59:00-05:00'), // Semana 7
+    new Date('2026-08-21T23:59:00-05:00'), // Semana 8
+    new Date('2026-08-28T23:59:00-05:00'), // Semana 9
+    new Date('2026-09-04T23:59:00-05:00'), // Semana 10
   ];
   for (let i = 0; i < cierres.length; i++) {
     if (ahora <= cierres[i]) return i + 1;
@@ -1565,8 +1565,8 @@ function generarSemanas(){
   const semanasPermitidasPorCorreo = {
     "coord.academica@lapresentaciongirardota.edu.co": [9],
     "secifuentes@lapresentaciongirardota.edu.co": [9, 10],
-    "xivanegas@lapresentaciongirardota.edu.co": [1]
-    
+    "xivanegas@lapresentaciongirardota.edu.co": [1],
+    "gegutierrez@lapresentaciongirardota.edu.co":[1]
   };
 
   const semanasPermitidas = semanasPermitidasPorCorreo[correo] || [];
