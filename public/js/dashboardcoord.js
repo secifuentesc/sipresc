@@ -683,7 +683,7 @@ function iniciarPresenciaCoordinacion() {
       const resp = await apiGet(API_PLN, {
         accion: "dashboardCoordinacion",
         correo: state.user.correo,
-        periodo: state.periodo,
+        periodo: 'P' + state.periodo,
         semana: `SEMANA ${state.semana}`
       });
       const ok = resp?.ok ?? resp?.data?.ok;
