@@ -20,8 +20,40 @@ window.SIPRESC_MODULO = 'Panel de coordinación';
   const PERIODOS = [1, 2, 3, 4];
   const SEMANAS  = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-  const DEFAULT_PERIODO = 2;
-  const DEFAULT_SEMANA  = 5;
+   // ===== CALCULAR PERIODO Y SEMANA ACTUAL SEGÚN LA FECHA =====
+function calcularPeriodoSemanaActual() {
+  const hoy = new Date();
+  // FECHAS DE INICIO DE CADA PERIODO - AJUSTA SEGÚN TU CALENDARIO
+  const inicios = [
+    { periodo: 1, inicio: new Date(2026, 0, 1) },  // 1 de enero
+    { periodo: 2, inicio: new Date(2026, 3, 1) },  // 1 de abril
+    { periodo: 3, inicio: new Date(2026, 6, 5) },  // 5 de julio (lunes) - PERIODO 3 SEMANA 1
+    { periodo: 4, inicio: new Date(2026, 9, 1) }   // 1 de octubre
+  ];
+
+  let periodoActual = 2; // fallback por si no coincide
+  let semanaActual = 1;
+
+  // Determinar el periodo en el que estamos
+  for (let i = inicios.length - 1; i >= 0; i--) {
+    if (hoy >= inicios[i].inicio) {
+      periodoActual = inicios[i].periodo;
+      break;
+    }
+  }
+
+  // Calcular la semana dentro de ese periodo
+  const inicioPeriodo = inicios.find(p => p.periodo === periodoActual)?.inicio;
+  if (inicioPeriodo) {
+    const diffDias = Math.floor((hoy - inicioPeriodo) / (1000 * 60 * 60 * 24));
+    let semana = Math.floor(diffDias / 7) + 1;
+    if (semana < 1) semana = 1;
+    if (semana > 10) semana = 10; // máximo 10 semanas (ajusta si es necesario)
+    semanaActual = semana;
+  }
+
+  return { periodo: periodoActual, semana: semanaActual };
+}
 
   const MOTIVOS_AJUSTE = [
     "El indicador de desempeño no cumple la estructura institucional.",
@@ -40,8 +72,8 @@ window.SIPRESC_MODULO = 'Panel de coordinación';
   ------------------------------------------------------ */
   const state = {
     user: null,
-    periodo: DEFAULT_PERIODO,
-    semana:  DEFAULT_SEMANA,
+    periodo: 2,
+    semana:  1,
     view: "inicio",
     cache: {
       coord: new Map(),    // key: `${periodo}-${semana}` → payload
@@ -353,27 +385,42 @@ function iniciarPresenciaCoordinacion() {
     $("#coordPeriodoLabel").textContent = `Periodo ${state.periodo} · Semana ${state.semana}`;
   }
 
-  function buildWeekSelect() {
-    const wrap = $("#coordWeekSelect");
-    wrap.innerHTML = "";
-    SEMANAS.forEach(n => {
-      const b = el("button", {
-        type: "button",
-        "data-semana": n,
-        class: n === state.semana ? "is-active" : "",
-        "aria-label": `Semana ${n}`
-      }, String(n));
-      b.addEventListener("click", () => setSemana(n));
-      wrap.appendChild(b);
-    });
-  }
+  function buildWeekSelect(periodo) {
+  const wrap = $("#coordWeekSelect");
+  wrap.innerHTML = "";
+  SEMANAS.forEach(n => {
+    const b = el("button", {
+      type: "button",
+      "data-semana": n,
+      class: n === state.semana ? "is-active" : "",
+      "aria-label": `Semana ${n}`
+    }, String(n));
+    b.addEventListener("click", () => setSemana(n));
+    wrap.appendChild(b);
+  });
+}
 
   function setPeriodo(p) {
-    state.periodo = Number(p);
-    $$('.coord-segmented__btn').forEach(b => b.classList.toggle("is-active", Number(b.dataset.periodo) === state.periodo));
-    paintPeriodLabel();
-    refreshDataForPeriodWeek();
+  state.periodo = Number(p);
+  // Actualizar botones de periodo
+  $$('.coord-segmented__btn').forEach(b => b.classList.toggle("is-active", Number(b.dataset.periodo) === state.periodo));
+  
+  // RECONSTRUIR EL SELECTOR DE SEMANAS
+  buildWeekSelect(state.periodo);
+
+  // SELECCIONAR LA SEMANA ADECUADA
+  const { periodo, semana } = calcularPeriodoSemanaActual();
+  if (state.periodo === periodo) {
+    state.semana = semana; // si es el periodo actual, usar la semana calculada
+  } else {
+    state.semana = 1; // si es otro periodo, ir a semana 1
   }
+  // Marcar la semana activa en el selector
+  $$('#coordWeekSelect button').forEach(b => b.classList.toggle("is-active", Number(b.dataset.semana) === state.semana));
+  
+  paintPeriodLabel();
+  refreshDataForPeriodWeek();
+}
   function setSemana(s) {
     state.semana = Number(s);
     $$('#coordWeekSelect button').forEach(b => b.classList.toggle("is-active", Number(b.dataset.semana) === state.semana));
@@ -1531,9 +1578,20 @@ if (!planeacionId) {
 }
 
   async function cargarDashboard() {
+  // CALCULAR PERIODO Y SEMANA ACTUALES
+  const { periodo, semana } = calcularPeriodoSemanaActual();
+  state.periodo = periodo;
+  state.semana = semana;
+
+  // ACTUALIZAR BOTONES DE PERIODO
+  $$('.coord-segmented__btn').forEach(b => b.classList.toggle("is-active", Number(b.dataset.periodo) === state.periodo));
+  
   paintHeaderUser();
   paintPeriodLabel();
-  buildWeekSelect();
+  buildWeekSelect(state.periodo);
+  // Marcar la semana activa en el selector
+  $$('#coordWeekSelect button').forEach(b => b.classList.toggle("is-active", Number(b.dataset.semana) === state.semana));
+  
   renderSemana();
 
   // Citas en paralelo porque alimentan el KPI "Citas de hoy".
