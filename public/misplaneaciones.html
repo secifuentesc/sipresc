@@ -551,7 +551,7 @@ function normalizarPeriodo(valor) {
 // SEMANA ACTUAL (cálculo por fecha)
 // ==================================================
 function calcularSemanaActual(fecha = new Date()) {
-  const inicioBase = new Date('2026-04-06T00:00:00-05:00');
+  const inicioBase = new Date('2026-07-06T00:00:00-05:00');
   const diffDias   = Math.floor((fecha - inicioBase) / (24 * 60 * 60 * 1000));
   let semana       = 1 + Math.floor(diffDias / 7);
   const diaSemana  = fecha.getDay();
