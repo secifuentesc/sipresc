@@ -121,7 +121,7 @@
             color: #856404;
             border: 1px solid #ffc107;
         }
-        /* ===== ADMIN PANEL ===== */
+        /* ADMIN */
         .admin-panel {
             display: none;
         }
@@ -294,9 +294,6 @@
             color: #888;
             margin-top: 10px;
         }
-        .admin-link {
-            display: none;
-        }
         @media (max-width: 480px) {
             .container {
                 padding: 25px 15px;
@@ -320,9 +317,7 @@
 <body>
     <div class="container" id="app">
 
-        <!-- ========================================== -->
-        <!-- VISTA PARA EL PUBLICO (SOLO VOTAR) -->
-        <!-- ========================================== -->
+        <!-- VISTA PUBLICO -->
         <div id="vistaVotacion">
             <div class="festival-badge">Festival de la Presentacion</div>
             <h1>Vota por tu Stand</h1>
@@ -334,15 +329,10 @@
             </div>
 
             <button class="btn-votar" id="btnVotar">Votar por este stand</button>
-
             <div class="mensaje" id="mensaje"></div>
-
-            <!-- EL PUBLICO NO VE NADA DE VOTOS NI RESULTADOS -->
         </div>
 
-        <!-- ========================================== -->
-        <!-- PANEL DE ADMIN (SOLO PARA EL ORGANIZADOR) -->
-        <!-- ========================================== -->
+        <!-- PANEL ADMIN -->
         <div id="vistaAdmin" class="admin-panel">
             <div class="admin-header">
                 <button class="btn-volver" id="btnVolver">← Volver</button>
@@ -352,7 +342,6 @@
             <h1>Ranking en Vivo</h1>
             <p class="subtitle">Actualizacion automatica cada 5 segundos</p>
 
-            <!-- Estadisticas -->
             <div class="admin-stats" id="statsContainer">
                 <div class="stat-card">
                     <div class="numero" id="totalVotosGlobal">0</div>
@@ -368,10 +357,7 @@
                 </div>
             </div>
 
-            <!-- Ganador actual -->
             <div id="ganadorContainer"></div>
-
-            <!-- Ranking completo -->
             <div id="rankingContainer">
                 <div class="sin-votos">
                     <span class="icon">📭</span>
@@ -381,7 +367,6 @@
 
             <button class="btn-votar btn-actualizar" id="btnActualizar">Actualizar ahora</button>
             <button class="btn-votar btn-reiniciar" id="btnReiniciarTodo">Reiniciar todas las votaciones</button>
-
             <div class="hora-actualizacion" id="horaActualizacion">Ultima actualizacion: --</div>
         </div>
 
@@ -389,11 +374,10 @@
 
     <script>
         // ============================================
-        // CONFIGURACION
+        // CONFIGURACION - URL ACTUALIZADA
         // ============================================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxjwmrcMAMNRdanW2OhJBux3jLFdCIz6VHYsyOE96UWZpEVazGJq_ksFX8iW2h68dzS/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxhh3knpJ2NjzCG6lxnGyCayMl1DNkdMVb4hebBN-PvIVP_i3RePehsH38GOhRTcCKW/exec';
 
-        // Tus stands
         const STANDS = {
             '1': { nombre: 'ALIS FOOD' },
             '2': { nombre: 'ALIS FOOD POSTRES' },
@@ -412,15 +396,12 @@
         };
 
         // ============================================
-        // VARIABLES
+        // LOGICA
         // ============================================
         let standIdActual = null;
         let dispositivoId = null;
         let yaVoto = false;
 
-        // ============================================
-        // FUNCIONES
-        // ============================================
         function obtenerDispositivoId() {
             let id = localStorage.getItem('dispositivoId');
             if (!id) {
@@ -448,18 +429,15 @@
                 document.getElementById('btnVotar').disabled = true;
             }
 
-            // Eventos
             document.getElementById('btnVotar').addEventListener('click', votar);
             document.getElementById('btnVolver').addEventListener('click', mostrarVotacion);
             document.getElementById('btnActualizar').addEventListener('click', cargarRanking);
             document.getElementById('btnReiniciarTodo').addEventListener('click', reiniciarTodo);
 
-            // Si viene con ?admin=true, mostrar panel de admin
             if (params.get('admin') === 'true') {
                 mostrarAdmin();
             }
 
-            // Auto-actualizacion del admin cada 5 segundos
             setInterval(() => {
                 if (document.getElementById('vistaAdmin').classList.contains('active')) {
                     cargarRanking();
@@ -467,9 +445,6 @@
             }, 5000);
         }
 
-        // ============================================
-        // VOTAR
-        // ============================================
         async function votar() {
             if (yaVoto) {
                 mostrarMensaje('Ya votaste por este stand', 'warning');
@@ -517,9 +492,6 @@
             }
         }
 
-        // ============================================
-        // RANKING (SOLO ADMIN)
-        // ============================================
         async function cargarRanking() {
             const container = document.getElementById('rankingContainer');
             const ganadorContainer = document.getElementById('ganadorContainer');
@@ -528,7 +500,6 @@
                 const response = await fetch(API_URL);
                 const data = await response.json();
 
-                // Agrupar por stand
                 const stands = {};
                 data.forEach(v => {
                     if (!stands[v.stand_id]) {
@@ -540,17 +511,14 @@
                     stands[v.stand_id].votos += 1;
                 });
 
-                // Crear ranking ordenado
                 const ranking = Object.entries(stands).map(([id, info]) => ({ id, ...info }))
                     .sort((a, b) => b.votos - a.votos);
 
-                // Estadisticas
                 const totalVotos = ranking.reduce((sum, s) => sum + s.votos, 0);
                 document.getElementById('totalVotosGlobal').textContent = totalVotos;
                 document.getElementById('totalStands').textContent = ranking.length;
                 document.getElementById('ganadorVotos').textContent = ranking.length > 0 ? ranking[0].votos : 0;
 
-                // Hora de actualizacion
                 const ahora = new Date();
                 document.getElementById('horaActualizacion').textContent = 
                     'Ultima actualizacion: ' + ahora.toLocaleTimeString();
@@ -566,7 +534,6 @@
                     return;
                 }
 
-                // ===== MOSTRAR GANADOR =====
                 const ganador = ranking[0];
                 ganadorContainer.innerHTML = `
                     <div class="ganador-titulo">
@@ -577,7 +544,6 @@
                     </div>
                 `;
 
-                // ===== MOSTRAR RANKING COMPLETO =====
                 const maxVotos = ranking[0].votos;
                 let html = '';
                 ranking.forEach((s, i) => {
@@ -609,9 +575,6 @@
             }
         }
 
-        // ============================================
-        // NAVEGACION
-        // ============================================
         function mostrarAdmin() {
             document.getElementById('vistaVotacion').style.display = 'none';
             document.getElementById('vistaAdmin').classList.add('active');
@@ -629,9 +592,6 @@
             window.history.pushState({}, '', url);
         }
 
-        // ============================================
-        // REINICIAR
-        // ============================================
         function reiniciarTodo() {
             if (confirm('¿REINICIAR TODAS LAS VOTACIONES? Esta accion no se puede deshacer.')) {
                 if (confirm('¿Estas SEGURO? Se borraran TODOS los votos.')) {
@@ -649,9 +609,6 @@
             }
         }
 
-        // ============================================
-        // UTILIDADES
-        // ============================================
         function mostrarMensaje(texto, tipo) {
             const div = document.getElementById('mensaje');
             div.textContent = texto;
