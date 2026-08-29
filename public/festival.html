@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎪 Festival de la Presentación</title>
+    <title>Festival de la Presentacion</title>
     <style>
         * {
             margin: 0;
@@ -121,36 +121,7 @@
             color: #856404;
             border: 1px solid #ffc107;
         }
-        .total-votos {
-            margin: 15px 0;
-            padding: 15px;
-            background: #e9ecef;
-            border-radius: 10px;
-            font-size: 15px;
-            color: #666;
-        }
-        .total-votos span {
-            font-weight: bold;
-            color: #333;
-            font-size: 22px;
-        }
-        .links {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            flex-wrap: wrap;
-        }
-        .links a {
-            color: #667eea;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .links a:hover {
-            text-decoration: underline;
-        }
+        /* ===== ADMIN PANEL ===== */
         .admin-panel {
             display: none;
         }
@@ -282,7 +253,7 @@
             color: #888;
             padding: 40px 0;
         }
-        .sin-votos .emoji {
+        .sin-votos .icon {
             font-size: 50px;
             display: block;
             margin-bottom: 10px;
@@ -323,6 +294,9 @@
             color: #888;
             margin-top: 10px;
         }
+        .admin-link {
+            display: none;
+        }
         @media (max-width: 480px) {
             .container {
                 padding: 25px 15px;
@@ -345,30 +319,40 @@
 </head>
 <body>
     <div class="container" id="app">
-        <!-- VOTACIÓN -->
+
+        <!-- ========================================== -->
+        <!-- VISTA PARA EL PUBLICO (SOLO VOTAR) -->
+        <!-- ========================================== -->
         <div id="vistaVotacion">
-            <div class="festival-badge">🎪 Festival de la Presentación</div>
-            <h1>¡Vota por tu Stand!</h1>
+            <div class="festival-badge">Festival de la Presentacion</div>
+            <h1>Vota por tu Stand</h1>
             <p class="subtitle">Escanea el QR y vota en 1 clic</p>
+
             <div class="stand-card">
                 <div class="stand-nombre" id="standNombre">Cargando...</div>
                 <div class="stand-id" id="standId">#1</div>
             </div>
-            <button class="btn-votar" id="btnVotar">⭐ ¡Votar por este stand!</button>
+
+            <button class="btn-votar" id="btnVotar">Votar por este stand</button>
+
             <div class="mensaje" id="mensaje"></div>
-            <div class="total-votos">🗳️ <span id="totalVotos">0</span> personas ya votaron</div>
-            <div class="links">
-                <a id="verResultados">📊 Ver resultados en vivo</a>
-            </div>
+
+            <!-- EL PUBLICO NO VE NADA DE VOTOS NI RESULTADOS -->
         </div>
-        <!-- ADMIN -->
+
+        <!-- ========================================== -->
+        <!-- PANEL DE ADMIN (SOLO PARA EL ORGANIZADOR) -->
+        <!-- ========================================== -->
         <div id="vistaAdmin" class="admin-panel">
             <div class="admin-header">
                 <button class="btn-volver" id="btnVolver">← Volver</button>
-                <span class="festival-badge">🎪 Admin</span>
+                <span class="festival-badge">Admin</span>
             </div>
-            <h1>🏆 Ranking en Vivo</h1>
-            <p class="subtitle">Actualización automática cada 5 segundos</p>
+
+            <h1>Ranking en Vivo</h1>
+            <p class="subtitle">Actualizacion automatica cada 5 segundos</p>
+
+            <!-- Estadisticas -->
             <div class="admin-stats" id="statsContainer">
                 <div class="stat-card">
                     <div class="numero" id="totalVotosGlobal">0</div>
@@ -383,21 +367,29 @@
                     <div class="label">Votos del ganador</div>
                 </div>
             </div>
+
+            <!-- Ganador actual -->
+            <div id="ganadorContainer"></div>
+
+            <!-- Ranking completo -->
             <div id="rankingContainer">
                 <div class="sin-votos">
-                    <span class="emoji">📭</span>
-                    Aún no hay votos registrados
+                    <span class="icon">📭</span>
+                    Aun no hay votos registrados
                 </div>
             </div>
-            <button class="btn-votar btn-actualizar" id="btnActualizar">🔄 Actualizar ahora</button>
-            <button class="btn-votar btn-reiniciar" id="btnReiniciarTodo">🗑️ Reiniciar todas las votaciones</button>
-            <div class="hora-actualizacion" id="horaActualizacion">Última actualización: --</div>
+
+            <button class="btn-votar btn-actualizar" id="btnActualizar">Actualizar ahora</button>
+            <button class="btn-votar btn-reiniciar" id="btnReiniciarTodo">Reiniciar todas las votaciones</button>
+
+            <div class="hora-actualizacion" id="horaActualizacion">Ultima actualizacion: --</div>
         </div>
+
     </div>
 
     <script>
         // ============================================
-        // CONFIGURACIÓN
+        // CONFIGURACION
         // ============================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbxjwmrcMAMNRdanW2OhJBux3jLFdCIz6VHYsyOE96UWZpEVazGJq_ksFX8iW2h68dzS/exec';
 
@@ -420,12 +412,15 @@
         };
 
         // ============================================
-        // ¡NO TOCAR DEBAJO!
+        // VARIABLES
         // ============================================
         let standIdActual = null;
         let dispositivoId = null;
         let yaVoto = false;
 
+        // ============================================
+        // FUNCIONES
+        // ============================================
         function obtenerDispositivoId() {
             let id = localStorage.getItem('dispositivoId');
             if (!id) {
@@ -448,38 +443,50 @@
             const votosLocales = JSON.parse(localStorage.getItem('votosRealizados') || '{}');
             yaVoto = votosLocales[standIdActual] === true;
             if (yaVoto) {
-                document.getElementById('btnVotar').textContent = '✅ ¡Ya votaste!';
+                document.getElementById('btnVotar').textContent = 'Ya votaste';
                 document.getElementById('btnVotar').classList.add('votado');
                 document.getElementById('btnVotar').disabled = true;
             }
 
-            actualizarContador();
+            // Eventos
             document.getElementById('btnVotar').addEventListener('click', votar);
-            document.getElementById('verResultados').addEventListener('click', mostrarAdmin);
             document.getElementById('btnVolver').addEventListener('click', mostrarVotacion);
             document.getElementById('btnActualizar').addEventListener('click', cargarRanking);
             document.getElementById('btnReiniciarTodo').addEventListener('click', reiniciarTodo);
 
-            if (params.get('admin') === 'true') mostrarAdmin();
+            // Si viene con ?admin=true, mostrar panel de admin
+            if (params.get('admin') === 'true') {
+                mostrarAdmin();
+            }
+
+            // Auto-actualizacion del admin cada 5 segundos
             setInterval(() => {
-                if (document.getElementById('vistaAdmin').classList.contains('active')) cargarRanking();
+                if (document.getElementById('vistaAdmin').classList.contains('active')) {
+                    cargarRanking();
+                }
             }, 5000);
         }
 
+        // ============================================
+        // VOTAR
+        // ============================================
         async function votar() {
             if (yaVoto) {
                 mostrarMensaje('Ya votaste por este stand', 'warning');
                 return;
             }
+
             const btn = document.getElementById('btnVotar');
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Enviando voto...';
+            btn.innerHTML = '<span class="spinner"></span> Enviando...';
+
             const stand = STANDS[standIdActual];
             const datos = {
                 stand_id: standIdActual,
                 stand_nombre: stand.nombre,
                 dispositivo: dispositivoId
             };
+
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
@@ -487,44 +494,41 @@
                     body: JSON.stringify(datos)
                 });
                 const result = await response.json();
+
                 if (result.success) {
                     const votosLocales = JSON.parse(localStorage.getItem('votosRealizados') || '{}');
                     votosLocales[standIdActual] = true;
                     localStorage.setItem('votosRealizados', JSON.stringify(votosLocales));
+
                     yaVoto = true;
-                    btn.textContent = '✅ ¡Voto registrado!';
+                    btn.textContent = 'Voto registrado';
                     btn.classList.add('votado');
                     btn.disabled = true;
-                    mostrarMensaje('🎉 ¡Gracias por votar!', 'success');
-                    actualizarContador();
-                    if (document.getElementById('vistaAdmin').classList.contains('active')) cargarRanking();
+
+                    mostrarMensaje('Gracias por votar', 'success');
                 } else {
                     throw new Error(result.error || 'Error al guardar');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                mostrarMensaje('❌ Error al votar. Intenta de nuevo.', 'error');
+                mostrarMensaje('Error al votar. Intenta de nuevo.', 'error');
                 btn.disabled = false;
-                btn.innerHTML = '⭐ ¡Votar por este stand!';
+                btn.innerHTML = 'Votar por este stand';
             }
         }
 
-        async function actualizarContador() {
-            try {
-                const response = await fetch(API_URL);
-                const data = await response.json();
-                const votosStand = data.filter(v => v.stand_id === standIdActual);
-                document.getElementById('totalVotos').textContent = votosStand.length;
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
+        // ============================================
+        // RANKING (SOLO ADMIN)
+        // ============================================
         async function cargarRanking() {
             const container = document.getElementById('rankingContainer');
+            const ganadorContainer = document.getElementById('ganadorContainer');
+
             try {
                 const response = await fetch(API_URL);
                 const data = await response.json();
+
+                // Agrupar por stand
                 const stands = {};
                 data.forEach(v => {
                     if (!stands[v.stand_id]) {
@@ -535,36 +539,79 @@
                     }
                     stands[v.stand_id].votos += 1;
                 });
+
+                // Crear ranking ordenado
                 const ranking = Object.entries(stands).map(([id, info]) => ({ id, ...info }))
                     .sort((a, b) => b.votos - a.votos);
+
+                // Estadisticas
                 const totalVotos = ranking.reduce((sum, s) => sum + s.votos, 0);
                 document.getElementById('totalVotosGlobal').textContent = totalVotos;
                 document.getElementById('totalStands').textContent = ranking.length;
                 document.getElementById('ganadorVotos').textContent = ranking.length > 0 ? ranking[0].votos : 0;
+
+                // Hora de actualizacion
                 const ahora = new Date();
-                document.getElementById('horaActualizacion').textContent = 'Última actualización: ' + ahora.toLocaleTimeString();
+                document.getElementById('horaActualizacion').textContent = 
+                    'Ultima actualizacion: ' + ahora.toLocaleTimeString();
+
                 if (ranking.length === 0) {
-                    container.innerHTML = `<div class="sin-votos"><span class="emoji">📭</span>Aún no hay votos registrados</div>`;
+                    ganadorContainer.innerHTML = '';
+                    container.innerHTML = `
+                        <div class="sin-votos">
+                            <span class="icon">📭</span>
+                            Aun no hay votos registrados
+                        </div>
+                    `;
                     return;
                 }
-                const maxVotos = ranking[0].votos;
+
+                // ===== MOSTRAR GANADOR =====
                 const ganador = ranking[0];
-                let html = `<div class="ganador-titulo"><div class="trofeo">👑</div><h2>Stand Ganador</h2><div class="nombre">${ganador.nombre}</div><div class="votos">${ganador.votos} votos</div></div>`;
-                html += ranking.map((s, i) => {
+                ganadorContainer.innerHTML = `
+                    <div class="ganador-titulo">
+                        <div class="trofeo">🏆</div>
+                        <h2>Stand Ganador</h2>
+                        <div class="nombre">${ganador.nombre}</div>
+                        <div class="votos">${ganador.votos} votos</div>
+                    </div>
+                `;
+
+                // ===== MOSTRAR RANKING COMPLETO =====
+                const maxVotos = ranking[0].votos;
+                let html = '';
+                ranking.forEach((s, i) => {
                     const porcentaje = maxVotos > 0 ? (s.votos / maxVotos) * 100 : 0;
-                    return `<div class="ranking-item ${i === 0 ? 'ganador' : ''}">
-                        <span class="pos">#${i+1}</span>
-                        <span class="nombre">${s.nombre}<div class="barra-progreso"><div class="relleno" style="width: ${porcentaje}%"></div></div></span>
-                        <span class="votos">${s.votos} 🗳️</span>
-                    </div>`;
-                }).join('');
+                    const esGanador = i === 0 ? 'ganador' : '';
+                    html += `
+                        <div class="ranking-item ${esGanador}">
+                            <span class="pos">#${i+1}</span>
+                            <span class="nombre">
+                                ${s.nombre}
+                                <div class="barra-progreso">
+                                    <div class="relleno" style="width: ${porcentaje}%"></div>
+                                </div>
+                            </span>
+                            <span class="votos">${s.votos}</span>
+                        </div>
+                    `;
+                });
                 container.innerHTML = html;
+
             } catch (error) {
                 console.error('Error:', error);
-                container.innerHTML = `<div class="sin-votos"><span class="emoji">⚠️</span>Error al cargar datos</div>`;
+                container.innerHTML = `
+                    <div class="sin-votos">
+                        <span class="icon">⚠️</span>
+                        Error al cargar datos
+                    </div>
+                `;
             }
         }
 
+        // ============================================
+        // NAVEGACION
+        // ============================================
         function mostrarAdmin() {
             document.getElementById('vistaVotacion').style.display = 'none';
             document.getElementById('vistaAdmin').classList.add('active');
@@ -582,27 +629,36 @@
             window.history.pushState({}, '', url);
         }
 
+        // ============================================
+        // REINICIAR
+        // ============================================
         function reiniciarTodo() {
-            if (confirm('⚠️ ¿REINICIAR TODAS LAS VOTACIONES? Esta acción no se puede deshacer.')) {
-                if (confirm('¿Estás SEGURO? Se borrarán TODOS los votos.')) {
+            if (confirm('¿REINICIAR TODAS LAS VOTACIONES? Esta accion no se puede deshacer.')) {
+                if (confirm('¿Estas SEGURO? Se borraran TODOS los votos.')) {
                     localStorage.removeItem('votosRealizados');
-                    mostrarMensaje('🗑️ Votos locales reiniciados', 'success');
+                    mostrarMensaje('Votos locales reiniciados', 'success');
+
                     yaVoto = false;
                     const btn = document.getElementById('btnVotar');
-                    btn.textContent = '⭐ ¡Votar por este stand!';
+                    btn.textContent = 'Votar por este stand';
                     btn.classList.remove('votado');
                     btn.disabled = false;
-                    actualizarContador();
+
                     cargarRanking();
                 }
             }
         }
 
+        // ============================================
+        // UTILIDADES
+        // ============================================
         function mostrarMensaje(texto, tipo) {
             const div = document.getElementById('mensaje');
             div.textContent = texto;
             div.className = 'mensaje ' + tipo;
-            setTimeout(() => { div.style.display = 'none'; }, 5000);
+            setTimeout(() => {
+                div.style.display = 'none';
+            }, 5000);
         }
 
         document.addEventListener('DOMContentLoaded', init);
