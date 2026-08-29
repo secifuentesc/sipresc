@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎪 Festival de la Presentación</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .festival-badge {
+            display: inline-block;
+            background: #f5576c;
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin: 5px 0;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .stand-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 15px 0 25px 0;
+            border: 3px solid #667eea;
+        }
+        .stand-nombre {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .stand-id {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 2px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        .btn-votar {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 0;
+        }
+        .btn-votar:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 5px 25px rgba(102, 126, 234, 0.4);
+        }
+        .btn-votar:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-votar.votado {
+            background: #28a745;
+        }
+        .mensaje {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .mensaje.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .mensaje.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .mensaje.warning {
+            display: block;
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+        }
+        .total-votos {
+            margin: 15px 0;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #666;
+        }
+        .total-votos span {
+            font-weight: bold;
+            color: #333;
+            font-size: 22px;
+        }
+        .links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+        .admin-panel {
+            display: none;
+        }
+        .admin-panel.active {
+            display: block;
+        }
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .btn-volver {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: #667eea;
+            font-weight: bold;
+            padding: 5px 10px;
+        }
+        .btn-volver:hover {
+            text-decoration: underline;
+        }
+        .admin-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-card .numero {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-card .label {
+            font-size: 11px;
+            color: #888;
+            margin-top: 2px;
+        }
+        .ranking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+        .ranking-item.ganador {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-left-color: white;
+            font-weight: bold;
+            transform: scale(1.02);
+        }
+        .ranking-item .pos {
+            font-weight: bold;
+            font-size: 16px;
+            min-width: 30px;
+        }
+        .ranking-item .nombre {
+            flex: 1;
+            margin: 0 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+        .ranking-item .votos {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .ganador-titulo {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 15px 0 25px 0;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        .ganador-titulo .trofeo {
+            font-size: 50px;
+        }
+        .ganador-titulo h2 {
+            font-size: 16px;
+            opacity: 0.9;
+            margin: 5px 0;
+        }
+        .ganador-titulo .nombre {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .ganador-titulo .votos {
+            font-size: 20px;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+        .btn-actualizar {
+            background: #28a745;
+            margin-top: 10px;
+        }
+        .btn-actualizar:hover {
+            background: #218838;
+        }
+        .btn-reiniciar {
+            background: #dc3545;
+            margin-top: 8px;
+            font-size: 14px;
+            padding: 12px;
+        }
+        .btn-reiniciar:hover {
+            background: #c82333;
+        }
+        .sin-votos {
+            text-align: center;
+            color: #888;
+            padding: 40px 0;
+        }
+        .sin-votos .emoji {
+            font-size: 50px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .barra-progreso {
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+        .barra-progreso .relleno {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+            transition: width 0.5s;
+        }
+        .ranking-item.ganador .barra-progreso .relleno {
+            background: white;
+        }
+        .hora-actualizacion {
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 15px;
+            }
+            .stand-nombre {
+                font-size: 20px;
+            }
+            .btn-votar {
+                font-size: 18px;
+                padding: 16px;
+            }
+            .admin-stats {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+            .ganador-titulo .nombre {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- VOTACIÓN -->
+        <div id="vistaVotacion">
+            <div class="festival-badge">🎪 Festival de la Presentación</div>
+            <h1>¡Vota por tu Stand!</h1>
+            <p class="subtitle">Escanea el QR y vota en 1 clic</p>
+            <div class="stand-card">
+                <div class="stand-nombre" id="standNombre">Cargando...</div>
+                <div class="stand-id" id="standId">#1</div>
+            </div>
+            <button class="btn-votar" id="btnVotar">⭐ ¡Votar por este stand!</button>
+            <div class="mensaje" id="mensaje"></div>
+            <div class="total-votos">🗳️ <span id="totalVotos">0</span> personas ya votaron</div>
+            <div class="links">
+                <a id="verResultados">📊 Ver resultados en vivo</a>
+            </div>
+        </div>
+        <!-- ADMIN -->
+        <div id="vistaAdmin" class="admin-panel">
+            <div class="admin-header">
+                <button class="btn-volver" id="btnVolver">← Volver</button>
+                <span class="festival-badge">🎪 Admin</span>
+            </div>
+            <h1>🏆 Ranking en Vivo</h1>
+            <p class="subtitle">Actualización automática cada 5 segundos</p>
+            <div class="admin-stats" id="statsContainer">
+                <div class="stat-card">
+                    <div class="numero" id="totalVotosGlobal">0</div>
+                    <div class="label">Votos totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="numero" id="totalStands">0</div>
+                    <div class="label">Stands con votos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="numero" id="ganadorVotos">0</div>
+                    <div class="label">Votos del ganador</div>
+                </div>
+            </div>
+            <div id="rankingContainer">
+                <div class="sin-votos">
+                    <span class="emoji">📭</span>
+                    Aún no hay votos registrados
+                </div>
+            </div>
+            <button class="btn-votar btn-actualizar" id="btnActualizar">🔄 Actualizar ahora</button>
+            <button class="btn-votar btn-reiniciar" id="btnReiniciarTodo">🗑️ Reiniciar todas las votaciones</button>
+            <div class="hora-actualizacion" id="horaActualizacion">Última actualización: --</div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxjwmrcMAMNRdanW2OhJBux3jLFdCIz6VHYsyOE96UWZpEVazGJq_ksFX8iW2h68dzS/exec';
+
+        // Tus stands
+        const STANDS = {
+            '1': { nombre: 'ALIS FOOD' },
+            '2': { nombre: 'ALIS FOOD POSTRES' },
+            '3': { nombre: 'CAFETALIA' },
+            '4': { nombre: 'Q CHINGON' },
+            '5': { nombre: 'Q FRESAS' },
+            '6': { nombre: 'SAKURA' },
+            '7': { nombre: 'PIZZARELLA' },
+            '8': { nombre: 'ASADOS' },
+            '9': { nombre: 'AREPAS DIOS FAMILIA' },
+            '10': { nombre: 'EMPANADAS QUE DELICIA' },
+            '11': { nombre: 'CRISPETAS' },
+            '12': { nombre: 'PAPAS' },
+            '13': { nombre: 'GRANIZADOS GLUP' },
+            '14': { nombre: 'DULCIMON' }
+        };
+
+        // ============================================
+        // ¡NO TOCAR DEBAJO!
+        // ============================================
+        let standIdActual = null;
+        let dispositivoId = null;
+        let yaVoto = false;
+
+        function obtenerDispositivoId() {
+            let id = localStorage.getItem('dispositivoId');
+            if (!id) {
+                id = 'dev_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('dispositivoId', id);
+            }
+            return id;
+        }
+
+        function init() {
+            const params = new URLSearchParams(window.location.search);
+            standIdActual = params.get('stand') || '1';
+            if (!STANDS[standIdActual]) standIdActual = '1';
+            dispositivoId = obtenerDispositivoId();
+
+            const stand = STANDS[standIdActual];
+            document.getElementById('standNombre').textContent = stand.nombre;
+            document.getElementById('standId').textContent = '#' + standIdActual;
+
+            const votosLocales = JSON.parse(localStorage.getItem('votosRealizados') || '{}');
+            yaVoto = votosLocales[standIdActual] === true;
+            if (yaVoto) {
+                document.getElementById('btnVotar').textContent = '✅ ¡Ya votaste!';
+                document.getElementById('btnVotar').classList.add('votado');
+                document.getElementById('btnVotar').disabled = true;
+            }
+
+            actualizarContador();
+            document.getElementById('btnVotar').addEventListener('click', votar);
+            document.getElementById('verResultados').addEventListener('click', mostrarAdmin);
+            document.getElementById('btnVolver').addEventListener('click', mostrarVotacion);
+            document.getElementById('btnActualizar').addEventListener('click', cargarRanking);
+            document.getElementById('btnReiniciarTodo').addEventListener('click', reiniciarTodo);
+
+            if (params.get('admin') === 'true') mostrarAdmin();
+            setInterval(() => {
+                if (document.getElementById('vistaAdmin').classList.contains('active')) cargarRanking();
+            }, 5000);
+        }
+
+        async function votar() {
+            if (yaVoto) {
+                mostrarMensaje('Ya votaste por este stand', 'warning');
+                return;
+            }
+            const btn = document.getElementById('btnVotar');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Enviando voto...';
+            const stand = STANDS[standIdActual];
+            const datos = {
+                stand_id: standIdActual,
+                stand_nombre: stand.nombre,
+                dispositivo: dispositivoId
+            };
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    const votosLocales = JSON.parse(localStorage.getItem('votosRealizados') || '{}');
+                    votosLocales[standIdActual] = true;
+                    localStorage.setItem('votosRealizados', JSON.stringify(votosLocales));
+                    yaVoto = true;
+                    btn.textContent = '✅ ¡Voto registrado!';
+                    btn.classList.add('votado');
+                    btn.disabled = true;
+                    mostrarMensaje('🎉 ¡Gracias por votar!', 'success');
+                    actualizarContador();
+                    if (document.getElementById('vistaAdmin').classList.contains('active')) cargarRanking();
+                } else {
+                    throw new Error(result.error || 'Error al guardar');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarMensaje('❌ Error al votar. Intenta de nuevo.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '⭐ ¡Votar por este stand!';
+            }
+        }
+
+        async function actualizarContador() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                const votosStand = data.filter(v => v.stand_id === standIdActual);
+                document.getElementById('totalVotos').textContent = votosStand.length;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function cargarRanking() {
+            const container = document.getElementById('rankingContainer');
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                const stands = {};
+                data.forEach(v => {
+                    if (!stands[v.stand_id]) {
+                        stands[v.stand_id] = {
+                            nombre: v.stand_nombre || 'Stand ' + v.stand_id,
+                            votos: 0
+                        };
+                    }
+                    stands[v.stand_id].votos += 1;
+                });
+                const ranking = Object.entries(stands).map(([id, info]) => ({ id, ...info }))
+                    .sort((a, b) => b.votos - a.votos);
+                const totalVotos = ranking.reduce((sum, s) => sum + s.votos, 0);
+                document.getElementById('totalVotosGlobal').textContent = totalVotos;
+                document.getElementById('totalStands').textContent = ranking.length;
+                document.getElementById('ganadorVotos').textContent = ranking.length > 0 ? ranking[0].votos : 0;
+                const ahora = new Date();
+                document.getElementById('horaActualizacion').textContent = 'Última actualización: ' + ahora.toLocaleTimeString();
+                if (ranking.length === 0) {
+                    container.innerHTML = `<div class="sin-votos"><span class="emoji">📭</span>Aún no hay votos registrados</div>`;
+                    return;
+                }
+                const maxVotos = ranking[0].votos;
+                const ganador = ranking[0];
+                let html = `<div class="ganador-titulo"><div class="trofeo">👑</div><h2>Stand Ganador</h2><div class="nombre">${ganador.nombre}</div><div class="votos">${ganador.votos} votos</div></div>`;
+                html += ranking.map((s, i) => {
+                    const porcentaje = maxVotos > 0 ? (s.votos / maxVotos) * 100 : 0;
+                    return `<div class="ranking-item ${i === 0 ? 'ganador' : ''}">
+                        <span class="pos">#${i+1}</span>
+                        <span class="nombre">${s.nombre}<div class="barra-progreso"><div class="relleno" style="width: ${porcentaje}%"></div></div></span>
+                        <span class="votos">${s.votos} 🗳️</span>
+                    </div>`;
+                }).join('');
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = `<div class="sin-votos"><span class="emoji">⚠️</span>Error al cargar datos</div>`;
+            }
+        }
+
+        function mostrarAdmin() {
+            document.getElementById('vistaVotacion').style.display = 'none';
+            document.getElementById('vistaAdmin').classList.add('active');
+            cargarRanking();
+            const url = new URL(window.location);
+            url.searchParams.set('admin', 'true');
+            window.history.pushState({}, '', url);
+        }
+
+        function mostrarVotacion() {
+            document.getElementById('vistaVotacion').style.display = 'block';
+            document.getElementById('vistaAdmin').classList.remove('active');
+            const url = new URL(window.location);
+            url.searchParams.delete('admin');
+            window.history.pushState({}, '', url);
+        }
+
+        function reiniciarTodo() {
+            if (confirm('⚠️ ¿REINICIAR TODAS LAS VOTACIONES? Esta acción no se puede deshacer.')) {
+                if (confirm('¿Estás SEGURO? Se borrarán TODOS los votos.')) {
+                    localStorage.removeItem('votosRealizados');
+                    mostrarMensaje('🗑️ Votos locales reiniciados', 'success');
+                    yaVoto = false;
+                    const btn = document.getElementById('btnVotar');
+                    btn.textContent = '⭐ ¡Votar por este stand!';
+                    btn.classList.remove('votado');
+                    btn.disabled = false;
+                    actualizarContador();
+                    cargarRanking();
+                }
+            }
+        }
+
+        function mostrarMensaje(texto, tipo) {
+            const div = document.getElementById('mensaje');
+            div.textContent = texto;
+            div.className = 'mensaje ' + tipo;
+            setTimeout(() => { div.style.display = 'none'; }, 5000);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
