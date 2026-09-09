@@ -1292,14 +1292,16 @@ const API = "/api/planeaciones";
 function getPeriodoActual() {
   const ahora = new Date();
   const finP2 = new Date('2026-06-12T14:00:00-05:00'); // 12 junio 2pm
+  const finP3 = new Date('2026-09-11T23:59:00-05:00'); // 11 septiembre 11:59pm
   
   if (ahora < finP2) {
     return 'P2';
-  } else {
+  } else if (ahora < finP3) {
     return 'P3';
+  } else {
+    return 'P4';
   }
 }
-
 function getPeriodoPorSemana(semana) {
   // No importa la semana, el período depende de la fecha actual
   return getPeriodoActual();
@@ -1540,22 +1542,28 @@ function guardarAuto(){
 
 function calcularSemanaActual(){
   const ahora = new Date();
-  const cierres = [
-    new Date('2026-06-22T23:59:00-05:00'), // Semana 1
-    new Date('2026-07-10T23:59:00-05:00'), // Semana 2
-    new Date('2026-07-17T23:59:00-05:00'), // Semana 3
-    new Date('2026-07-24T23:59:00-05:00'), // Semana 4
-    new Date('2026-07-31T23:59:00-05:00'), // Semana 5
-    new Date('2026-08-07T23:59:00-05:00'), // Semana 6
-    new Date('2026-08-14T23:59:00-05:00'), // Semana 7
-    new Date('2026-08-21T23:59:00-05:00'), // Semana 8
-    new Date('2026-08-28T23:59:00-05:00'), // Semana 9
-    new Date('2026-09-04T23:59:00-05:00'), // Semana 10
-  ];
-  for (let i = 0; i < cierres.length; i++) {
-    if (ahora <= cierres[i]) return i + 1;
+  
+  // La semana 1 de P4 comenzó el 5 de septiembre de 2026
+  const inicioP4 = new Date('2026-09-05T00:00:00-05:00');
+  
+  // Si es antes del inicio de P4, mostramos la última semana de P3 (semana 10)
+  if (ahora < inicioP4) {
+    return 10;
   }
-  return 10;
+  
+  // Para P4: semana 1 comienza 5 de septiembre
+  const inicioBase = new Date("2026-09-05T00:00:00-05:00");
+  const unaSemana = 7 * 24 * 60 * 60 * 1000;
+  const diffSemanas = Math.floor((ahora.getTime() - inicioBase.getTime()) / unaSemana);
+  
+  // Semana 1 = 5-11 sep, semana 2 = 12-18 sep, etc.
+  let semana = diffSemanas + 1;
+  
+  // Limitar entre 1 y 10
+  if (semana < 1) semana = 1;
+  if (semana > 10) semana = 10;
+  
+  return semana;
 }
 function generarSemanas(){
   const box = document.getElementById("semanaOptions");
@@ -1564,7 +1572,7 @@ function generarSemanas(){
 
   const semanasPermitidasPorCorreo = {
     "coord.academica@lapresentaciongirardota.edu.co":[2,3,4,5,6,7,8],
-    "secifuentes@lapresentaciongirardota.edu.co":[2,3,4,5,7,8],
+    "secifuentes@lapresentaciongirardota.edu.co":[],
     "siramirez@lapresentaciongirardota.edu.co": [4]
   };
 
