@@ -1292,11 +1292,14 @@ const API = "/api/planeaciones";
 function getPeriodoActual() {
   const ahora = new Date();
   const finP2 = new Date('2026-06-12T14:00:00-05:00'); // 12 junio 2pm
+  const finP3 = new Date('2026-09-11T23:59:00-05:00'); // 11 septiembre 11:59pm
   
   if (ahora < finP2) {
     return 'P2';
-  } else {
+  } else if (ahora < finP3) {
     return 'P3';
+  } else {
+    return 'P4';
   }
 }
 
@@ -1540,28 +1543,32 @@ function guardarAuto(){
 
 function calcularSemanaActual(){
   const ahora = new Date();
-  // Fecha límite para que la semana 1 esté habilitada: 22 de junio 23:59 (hora Colombia)
-  const fechaLimiteSemana1 = new Date('2026-06-22T23:59:00-05:00');
   
-  // Si es antes o igual al 22 de junio a las 23:59, la semana "actual" es la 1
-  if (ahora <= fechaLimiteSemana1) {
-    return 1;
+  // La semana 1 de P4 comenzó el 5 de septiembre de 2026
+  const inicioP4 = new Date('2026-09-05T00:00:00-05:00');
+  
+  // Si es antes del inicio de P4, mostramos la última semana de P3 (semana 10)
+  if (ahora < inicioP4) {
+    return 10;
   }
-
-  // Después del 22 de junio, se usa la lógica normal
-  const cierreExtendido = new Date('2026-06-01T23:59:00-05:00');
-  if (ahora <= cierreExtendido) return 9;
-
-  const inicioBase = new Date("2026-04-25T00:30:00-05:00");
+  
+  // Para P4: semana 1 comienza 5 de septiembre
+  const inicioBase = new Date("2026-09-05T00:00:00-05:00");
   const unaSemana = 7 * 24 * 60 * 60 * 1000;
   const diffSemanas = Math.floor((ahora.getTime() - inicioBase.getTime()) / unaSemana);
-  let semana = 5 + diffSemanas;
-  semana = ((semana - 1) % 10 + 10) % 10 + 1;
+  
+  // Semana 1 = 5-11 sep, semana 2 = 12-18 sep, etc.
+  let semana = diffSemanas + 1;
+  
+  // Limitar entre 1 y 10
+  if (semana < 1) semana = 1;
+  if (semana > 10) semana = 10;
+  
   return semana;
 }
 function generarSemanas(){
   const box = document.getElementById("semanaOptions");
-  const actual = calcularSemanaActual();  // aquí ya viene 1 durante el período
+  const actual = calcularSemanaActual();
   const correo = obtenerCorreo();
 
   const semanasPermitidasPorCorreo = {
@@ -1571,28 +1578,44 @@ function generarSemanas(){
   const semanasPermitidas = semanasPermitidasPorCorreo[correo] || [];
 
   box.innerHTML = "";
+  const display = document.getElementById("semanaText");
 
   for(let i = 1; i <= 10; i++){
     const div = document.createElement("div");
     div.textContent = "Semana " + i;
 
-    // Deshabilitar semanas anteriores a la "actual" (a menos que estén en la lista de excepción)
+    // Para P4, habilitar solo semanas desde la actual hacia adelante
     if(i < actual && !semanasPermitidas.includes(i)){
       div.style.opacity = "0.4";
       div.style.pointerEvents = "none";
     }
 
-    // Preseleccionar la semana "actual" (que será 1 durante el período)
-    if(i === actual){
+    div.onclick = () => {
+      // Verificar que la semana sea válida
+      if(i < actual && !semanasPermitidas.includes(i)){
+        mostrarNotificacionProfesional("Esta semana ya está cerrada", "warning");
+        return;
+      }
+      
       const texto = "Semana " + i;
-      document.getElementById("semanaText").textContent = texto;
+      display.textContent = texto;
       ST.semana = texto;
-      // ... resto de la lógica (guardado automático, restauración de borrador)
-    }
-
-    // ... evento onclick para que el usuario pueda cambiar manualmente
+      box.style.display = "none";
+      guardarAuto();
+      validarBotonEnviar();
+    };
     box.appendChild(div);
   }
+
+  // Preseleccionar la semana actual
+  const textos = box.querySelectorAll("div");
+  textos.forEach(div => {
+    const num = parseInt(div.textContent.replace("Semana ", ""));
+    if(num === actual && !(num < actual && !semanasPermitidas.includes(num))){
+      display.textContent = "Semana " + actual;
+      ST.semana = "Semana " + actual;
+    }
+  });
 }
 function setObs(valor, el){
   ST.observacionActiva = valor;
