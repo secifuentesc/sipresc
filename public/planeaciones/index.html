@@ -1292,14 +1292,14 @@ const API = "/api/planeaciones";
 function getPeriodoActual() {
   const ahora = new Date();
   const finP2 = new Date('2026-06-12T14:00:00-05:00'); // 12 junio 2pm
-  const finP3 = new Date('2026-09-11T23:59:00-05:00'); // 11 septiembre 11:59pm
+  const finP3 = new Date('2026-09-04T23:59:00-05:00'); // ← CAMBIAR: 4 septiembre 11:59pm
   
   if (ahora < finP2) {
     return 'P2';
   } else if (ahora < finP3) {
     return 'P3';
   } else {
-    return 'P4';
+    return 'P4';  // ← Ahora sí: desde 5 sep es P4
   }
 }
 function getPeriodoPorSemana(semana) {
