@@ -551,36 +551,36 @@ function normalizarPeriodo(valor) {
 // SEMANA ACTUAL (cálculo por fecha)
 // ==================================================
 function calcularSemanaActual(fecha = new Date()) {
-  const inicioBase = new Date('2026-07-06T00:00:00-05:00');
-  const diffDias   = Math.floor((fecha - inicioBase) / (24 * 60 * 60 * 1000));
-  let semana       = 1 + Math.floor(diffDias / 7);
-  const diaSemana  = fecha.getDay();
-  const hora       = fecha.getHours();
-  if (diaSemana === 0)                       semana++;
-  else if (diaSemana === 5 && hora >= 14)    semana++;
-  else if (diaSemana === 6)                  semana++;
-  let semanaCiclo = ((semana - 1) % 10) + 1;
-  if (semanaCiclo < 1)  semanaCiclo = 1;
-  if (semanaCiclo > 10) semanaCiclo = 10;
-  return semanaCiclo;
+  // La semana 1 de P4 comenzó el viernes 11 de septiembre a las 14:00 (hora Bogotá)
+  const inicioP4 = new Date('2026-09-11T14:00:00-05:00');
+  
+  // Si es antes del inicio de P4, mostrar semana 10 (última de P3)
+  if (fecha < inicioP4) return 10;
+  
+  const unaSemana = 7 * 24 * 60 * 60 * 1000;
+  const diffSemanas = Math.floor((fecha.getTime() - inicioP4.getTime()) / unaSemana);
+  
+  // Semana 1 = 11-18 sep, semana 2 = 18-25 sep, etc.
+  let semana = diffSemanas + 1;
+  
+  if (semana < 1)  semana = 1;
+  if (semana > 10) semana = 10;
+  
+  return semana;
 }
 
 // ==================================================
 // PERÍODO ACTIVO SEGÚN FECHA REAL
 // ==================================================
 function calcularPeriodoActual(fecha = new Date()) {
-  const finP1 = new Date('2026-03-27T23:59:59-05:00');
-  const iniP2 = new Date('2026-04-06T00:00:00-05:00');
-  const finP2 = new Date('2026-06-12T14:00:00-05:00');
-  const finP3 = new Date('2026-08-14T23:59:59-05:00');
-  const iniP4 = new Date('2026-08-24T00:00:00-05:00');
-  const finP4 = new Date('2026-11-20T23:59:59-05:00');
-
-  if (fecha <= finP1)                      return 'P1';
-  if (fecha >= iniP2 && fecha < finP2)     return 'P2';
-  if (fecha >= finP2 && fecha <= finP3)    return 'P3';
-  if (fecha >= iniP4 && fecha <= finP4)    return 'P4';
-  return 'P2';
+  const finP2  = new Date('2026-06-12T14:00:00-05:00');
+  const finP3  = new Date('2026-09-11T14:00:00-05:00'); // ← P3 cierra el viernes 11 sep a las 2pm
+  const finP4  = new Date('2026-11-20T23:59:59-05:00');
+  
+  if (fecha < finP2)                 return 'P2';
+  if (fecha < finP3)                 return 'P3';
+  if (fecha <= finP4)                return 'P4';
+  return 'P4';
 }
 
 // ==================================================
