@@ -1901,12 +1901,14 @@ async function verificarCodigoLogin(){
       ST.docenteId = r.docenteId;
 
       localStorage.setItem('lp_user', JSON.stringify({
-        correo: r.correo,
-        nombre: r.nombre,
-        docenteId: r.docenteId,
-        rol: r.rol,
-        loginTime: Date.now()
-      }));
+  correo: r.correo,
+  nombre: r.nombre,
+  docenteId: r.docenteId,
+  rol: r.rol,
+  token: r.token,      // ← NUEVO: token de sesión del backend
+  expira: r.expira,    // ← NUEVO: timestamp de expiración
+  loginTime: Date.now()
+}));
 
       setTimeout(() => {
 
@@ -1971,16 +1973,25 @@ function mostrarPantallaInicial(){
   }
 
   try{
-    const obj = JSON.parse(data);
-    const ahora = Date.now();
-    const DIAS_14 = 14 * 24 * 60 * 60 * 1000;
+  const obj = JSON.parse(data);
+  const ahora = Date.now();
 
-    if(ahora - obj.loginTime > DIAS_14){
-      localStorage.removeItem('lp_user');
-      ocultarSplashDocente();
-      $('s-login').classList.add('on');
-      return;
-    }
+  // Validación 1: si tiene 'expira', usar esa fecha del backend (fuente de verdad)
+  if (obj.expira && ahora > obj.expira) {
+    localStorage.removeItem('lp_user');
+    ocultarSplashDocente();
+    $('s-login').classList.add('on');
+    return;
+  }
+
+  // Validación 2 (fallback): si no hay 'expira', usar loginTime + 14 días
+  const DIAS_14 = 14 * 24 * 60 * 60 * 1000;
+  if (!obj.expira && (ahora - obj.loginTime > DIAS_14)) {
+    localStorage.removeItem('lp_user');
+    ocultarSplashDocente();
+    $('s-login').classList.add('on');
+    return;
+  }
 
     ST.correo = obj.correo;
 
