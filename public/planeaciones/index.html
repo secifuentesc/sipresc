@@ -1540,8 +1540,8 @@ function guardarAuto(){
   }, 300);
 }
 
-function calcularSemanaActual(){
-  const ahora = new Date();
+function calcularSemanaActual(fecha = new Date()){
+  const ahora = fecha;
   
   // La semana 1 de P4 comenzó el 5 de septiembre de 2026
   const inicioP4 = new Date('2026-09-05T00:00:00-05:00');
@@ -1551,6 +1551,16 @@ function calcularSemanaActual(){
     return 10;
   }
   
+  // Excepción temporal por vacaciones: desde el 10 de octubre
+  // la secuencia institucional retoma la semana 5 y avanza cada sábado.
+  const inicioAjusteVacaciones = new Date('2026-10-10T00:00:00-05:00');
+  if (ahora >= inicioAjusteVacaciones) {
+    const unaSemana = 7 * 24 * 60 * 60 * 1000;
+    return Math.min(10, 5 + Math.floor(
+      (ahora.getTime() - inicioAjusteVacaciones.getTime()) / unaSemana
+    ));
+  }
+
   // Para P4: semana 1 comienza 5 de septiembre
   const inicioBase = new Date("2026-09-05T00:00:00-05:00");
   const unaSemana = 7 * 24 * 60 * 60 * 1000;
