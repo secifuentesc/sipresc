@@ -43,6 +43,7 @@ const ADMIN = {
     sesiones: null, auditoria: null, alertas: null,
   },
   charts: {},
+  pendingRequests: new Map(),
   sessionId: null,
   planeacionActual: null,
 };
@@ -128,6 +129,8 @@ async function iniciarApp() {
 
   configurarNavegacion();
   configurarSidebar();
+  configurarCommandPalette();
+  configurarEstadoConexion();
 
   document.getElementById('logoutBtn').addEventListener('click', () => {
     confirmar('¿Cerrar sesión?', '¿Deseas cerrar tu sesión de administrador?', () => {
@@ -261,6 +264,67 @@ function configurarNavegacion() {
   });
 }
 
+function configurarCommandPalette() {
+  const trigger = document.getElementById('commandTrigger');
+  const backdrop = document.getElementById('commandBackdrop');
+  const input = document.getElementById('commandSearch');
+  const results = document.getElementById('commandResults');
+  if (!trigger || !backdrop || !input || !results) return;
+
+  const descripciones = {
+    inicio: 'Resumen institucional y accesos rápidos', live: 'Usuarios conectados ahora',
+    planeaciones: 'Entregas, revisión y seguimiento', publicaciones: 'Calendario y publicaciones',
+    citas: 'Agenda, cierres y solicitudes', docentes: 'Directorio y carga académica',
+    horarios: 'Permisos y solicitudes de horario', estadisticas: 'Indicadores consolidados',
+    alertas: 'Pendientes que requieren atención', auditoria: 'Historial de operaciones',
+    logs: 'Registro técnico del sistema', configuracion: 'Parámetros institucionales'
+  };
+  const icono = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+  const render = () => {
+    const q = input.value.trim().toLowerCase();
+    const items = Object.entries(MODULOS).filter(([id, m]) =>
+      !q || `${m.titulo} ${descripciones[id] || ''}`.toLowerCase().includes(q));
+    results.innerHTML = items.length ? items.map(([id, m], i) => `
+      <button class="command-result${i === 0 ? ' is-active' : ''}" type="button" data-command-module="${id}">
+        ${icono}<span><strong>${esc(m.titulo)}</strong><small>${esc(descripciones[id] || '')}</small></span>
+      </button>`).join('') : '<div class="command-empty">No encontramos ese módulo.</div>';
+    results.querySelectorAll('[data-command-module]').forEach(btn => btn.addEventListener('click', () => {
+      navegarA(btn.dataset.commandModule); cerrar();
+    }));
+  };
+  const abrir = () => { backdrop.classList.remove('hidden'); backdrop.setAttribute('aria-hidden', 'false'); input.value = ''; render(); requestAnimationFrame(() => input.focus()); };
+  const cerrar = () => { backdrop.classList.add('hidden'); backdrop.setAttribute('aria-hidden', 'true'); trigger.focus(); };
+
+  trigger.addEventListener('click', abrir);
+  backdrop.addEventListener('click', e => { if (e.target === backdrop) cerrar(); });
+  input.addEventListener('input', render);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') results.querySelector('.command-result')?.click();
+    if (e.key === 'Escape') cerrar();
+  });
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); backdrop.classList.contains('hidden') ? abrir() : cerrar(); }
+    else if (e.key === 'Escape' && !backdrop.classList.contains('hidden')) cerrar();
+  });
+}
+
+function configurarEstadoConexion() {
+  const pintar = () => {
+    const el = document.getElementById('topbarStatus');
+    if (!el) return;
+    const online = navigator.onLine;
+    el.classList.toggle('is-offline', !online);
+    el.querySelector('.status-dot')?.classList.toggle('online', online);
+    const label = el.querySelector('.status-label');
+    if (label) label.textContent = online ? 'Sistema activo' : 'Sin conexión';
+    if (!online) toast('Sin conexión. Los cambios no se enviarán hasta recuperar Internet.', 'warning', 5000);
+  };
+  window.addEventListener('online', pintar);
+  window.addEventListener('offline', pintar);
+  pintar();
+}
+
 function navegarA(modulo, filtro = null) {
   if (!MODULOS[modulo]) return;
   ADMIN.moduloActual = modulo;
@@ -281,8 +345,13 @@ function navegarA(modulo, filtro = null) {
 function cargarModuloActual(forzar = false) {
   const mod = ADMIN.moduloActual;
   if (MODULOS[mod]) {
-    if (forzar) ADMIN.cache[mod] = null;
-    MODULOS[mod].loader();
+    if (forzar) {
+      ADMIN.cache[mod] = null;
+      if (mod === 'inicio') ADMIN.cache.kpis = null;
+    }
+    const refresh = document.getElementById('refreshBtn');
+    refresh?.classList.add('is-loading');
+    Promise.resolve(MODULOS[mod].loader()).finally(() => refresh?.classList.remove('is-loading'));
   }
 }
 
@@ -334,12 +403,13 @@ function cerrarSidebarMobile() {
 // ══════════════════════════════════════════════════════════════════
 
 async function cargarInicio() {
-  cargarKPIs();
-  cargarActividadReciente();
-  cargarAlertasMini();
-  cargarMiniChartPlaneaciones();
-  // Cargar conteo de usuarios en vivo al abrir el inicio
-  cargarConteoLive();
+  await Promise.allSettled([
+    cargarKPIs(),
+    cargarActividadReciente(),
+    cargarAlertasMini(),
+  ]);
+  await cargarConteoLive();
+  await cargarMiniChartPlaneaciones();
 }
 
 async function cargarKPIs(forzar = false) {
@@ -355,6 +425,7 @@ async function cargarKPIs(forzar = false) {
 
     const pln  = resP.status === 'fulfilled' ? resP.value : null;
     const cits = resC.status === 'fulfilled' ? resC.value : null;
+    actualizarEstadoServicios_(resP.status === 'fulfilled', resC.status === 'fulfilled');
 
     const kpis = {
       plnRecibidas:   pln?.resumen?.recibidas          ?? '—',
@@ -373,7 +444,7 @@ async function cargarKPIs(forzar = false) {
       semana:         pln?.semana_actual               || 'Sin configurar',
     };
 
-    ADMIN.cache.kpis = kpis;
+    ADMIN.cache.kpis = resP.status === 'fulfilled' && resC.status === 'fulfilled' ? kpis : null;
     renderKPIs(kpis);
     setEl('greetingPeriodo', `Periodo ${kpis.periodo}`);
     setEl('greetingSemana', kpis.semana);
@@ -414,10 +485,26 @@ function renderKPIs(kpis) {
   const badgeInicio  = document.getElementById('badge-inicio');
   const badgeAlertas = document.getElementById('badge-alertas');
   const bottomBadge  = document.getElementById('bottomAlertBadge');
-  if (total > 0) {
-    if (badgeInicio)  { badgeInicio.textContent  = total; badgeInicio.style.display  = ''; }
-    if (badgeAlertas) { badgeAlertas.textContent = total; badgeAlertas.style.display = ''; }
-    if (bottomBadge)  { bottomBadge.textContent  = total; bottomBadge.classList.remove('hidden'); }
+  if (badgeInicio)  { badgeInicio.textContent  = total || ''; badgeInicio.style.display  = total > 0 ? '' : 'none'; }
+  if (badgeAlertas) { badgeAlertas.textContent = total || ''; badgeAlertas.style.display = total > 0 ? '' : 'none'; }
+  if (bottomBadge)  { bottomBadge.textContent  = total || ''; bottomBadge.classList.toggle('hidden', total === 0); }
+}
+
+function actualizarEstadoServicios_(planeacionesOk, citasOk) {
+  const indicator = document.getElementById('statusIndicator');
+  if (indicator) {
+    indicator.classList.remove('online', 'warning', 'offline');
+    indicator.classList.add(planeacionesOk && citasOk ? 'online' : planeacionesOk || citasOk ? 'warning' : 'offline');
+  }
+  if (planeacionesOk && citasOk) {
+    setEl('statusTitle', 'Sistema operativo');
+    setEl('statusSub', 'Todos los servicios activos');
+  } else if (planeacionesOk || citasOk) {
+    setEl('statusTitle', 'Conexión parcial');
+    setEl('statusSub', planeacionesOk ? 'Citas no respondió' : 'Planeaciones no respondió');
+  } else {
+    setEl('statusTitle', 'Servicios no disponibles');
+    setEl('statusSub', 'Intenta actualizar en unos minutos');
   }
 }
 
@@ -686,8 +773,6 @@ async function refrescarDocentes() {
       periodo,
       semana
     });
-
-    console.log('[DATA DASHBOARD COORDINACION]', res);
 
     const docentesRaw = res?.data?.docentes || [];
 
@@ -2234,63 +2319,48 @@ function configurarTabs(containerId, onChange) {
 // ══════════════════════════════════════════════════════════════════
 
 async function apiCitasPost(payload) {
-  if (window.api && typeof window.api === 'function') {
-    const { action, ...rest } = payload;
-    return window.api(action, rest);
-  }
-  const res = await fetch(ADMIN.API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  if (data.error) throw new Error(data.error);
-  return data;
+  const lecturas = new Set(['estadisticas','obtenerLog','sesionesActivasExtendidas','todasCitas','cierresPendientes','docentes','estadoPermisoHorarios','listarSolicitudesHorario','adminStatsCitas','config','obtenerAuditoria']);
+  const ejecutar = async () => {
+    if (window.api && typeof window.api === 'function') {
+      const { action, ...rest } = payload;
+      const data = await window.api(action, rest);
+      if (data?.ok === false || data?.error) throw new Error(data.error || data.mensaje || 'La API rechazó la solicitud');
+      return data;
+    }
+    const res = await fetch(ADMIN.API, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    return data;
+  };
+  return lecturas.has(payload.action) ? peticionUnica_(`citas:${JSON.stringify(payload)}`, ejecutar) : ejecutar();
 }
 
 async function apiPlaneacionesGet(accion, params = {}) {
   const qs = new URLSearchParams({ accion, ...params }).toString();
   const url = `${ADMIN.API_PLN}?${qs}`;
 
-  console.log('[PLANEACIONES GET]', url);
+  return peticionUnica_(`planeaciones:get:${url}`, async () => {
+    const res = await fetch(url, { method: 'GET', cache: 'no-store' });
 
-  const res = await fetch(url, {
-    method: 'GET',
-    cache: 'no-store'
+    const text = await res.text();
+
+    let data;
+    try { data = JSON.parse(text); }
+    catch (e) { throw new Error('La API de planeaciones no devolvió JSON válido.'); }
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    if (data.ok === false) throw new Error(data.error || data.mensaje || 'La API respondió ok:false');
+
+    if (data.error) throw new Error(data.error);
+    return data;
   });
-
-  const text = await res.text();
-
-  console.log('[PLANEACIONES RAW]', text);
-
-  let data;
-  try {
-    data = JSON.parse(text);
-  } catch (e) {
-    throw new Error('La API de planeaciones no devolvió JSON válido: ' + text.slice(0, 200));
-  }
-
-  console.log('[PLANEACIONES JSON]', data);
-
-  if (!res.ok) {
-    throw new Error(`HTTP ${res.status}`);
-  }
-
-  if (data.ok === false) {
-    throw new Error(data.error || data.mensaje || 'La API respondió ok:false');
-  }
-
-  if (data.error) {
-    throw new Error(data.error);
-  }
-
-  return data;
 }
 
 async function apiPlaneacionesPost(payload) {
-  console.log('[PLANEACIONES POST]', payload);
-
   const res = await fetch(ADMIN.API_PLN, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -2300,16 +2370,12 @@ async function apiPlaneacionesPost(payload) {
 
   const text = await res.text();
 
-  console.log('[PLANEACIONES POST RAW]', text);
-
   let data;
   try {
     data = JSON.parse(text);
   } catch (e) {
-    throw new Error('La API de planeaciones no devolvió JSON válido: ' + text.slice(0, 200));
+    throw new Error('La API de planeaciones no devolvió JSON válido.');
   }
-
-  console.log('[PLANEACIONES POST JSON]', data);
 
   if (!res.ok) {
     throw new Error(`HTTP ${res.status}`);
@@ -2324,6 +2390,13 @@ async function apiPlaneacionesPost(payload) {
   }
 
   return data;
+}
+
+function peticionUnica_(clave, ejecutar) {
+  if (ADMIN.pendingRequests.has(clave)) return ADMIN.pendingRequests.get(clave);
+  const promesa = Promise.resolve().then(ejecutar).finally(() => ADMIN.pendingRequests.delete(clave));
+  ADMIN.pendingRequests.set(clave, promesa);
+  return promesa;
 }
 // ══════════════════════════════════════════════════════════════════
 // 19. HELPERS DE UI Y FORMATO
@@ -2427,7 +2500,8 @@ function debounce(fn, ms = 300) {
 // ══════════════════════════════════════════════════════════════════
 
 function registrarServiceWorker() {
-  if ('serviceWorker' in navigator) {
+  const pwaHabilitada = Boolean(document.querySelector('link[rel="manifest"]'));
+  if (pwaHabilitada && 'serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.admin.js').catch(() => {});
   }
 }

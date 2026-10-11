@@ -196,6 +196,12 @@
       <div class="topbar-title" id="topbarTitle">Centro de control</div>
       <div class="topbar-actions">
 
+  <button class="command-trigger" id="commandTrigger" type="button" aria-label="Buscar módulo o acción">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+    <span>Buscar en el panel</span>
+    <kbd>⌘ K</kbd>
+  </button>
+
   <a href="/planeaciones/" class="admin-plan-btn" title="Crear planeación">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
       <path d="M12 5v14M5 12h14"/>
@@ -244,6 +250,25 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="quick-actions" aria-label="Acciones rápidas">
+          <button class="quick-action" type="button" data-module="planeaciones">
+            <span class="quick-action-icon quick-action-icon-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12h6M9 8h6M9 16h4"/><rect x="4" y="3" width="16" height="18" rx="2"/></svg></span>
+            <span><strong>Revisar planeaciones</strong><small>Entregas, ajustes y aprobaciones</small></span>
+          </button>
+          <button class="quick-action" type="button" data-module="citas">
+            <span class="quick-action-icon quick-action-icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg></span>
+            <span><strong>Gestionar citas</strong><small>Agenda, cierres y solicitudes</small></span>
+          </button>
+          <button class="quick-action" type="button" data-module="docentes">
+            <span class="quick-action-icon quick-action-icon-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="7" r="4"/><path d="M2 21a7 7 0 0114 0M19 8v6M16 11h6"/></svg></span>
+            <span><strong>Administrar docentes</strong><small>Altas, estado y carga académica</small></span>
+          </button>
+          <button class="quick-action" type="button" data-module="configuracion">
+            <span class="quick-action-icon quick-action-icon-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 01-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1-1.5 1.7 1.7 0 00-1.8.3l-.1.1A2 2 0 014.4 17l.1-.1a1.7 1.7 0 00.3-1.8A1.7 1.7 0 003.2 14H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.8l-.1-.1A2 2 0 017 4.3l.1.1a1.7 1.7 0 001.8.3A1.7 1.7 0 0010 3.2V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1A2 2 0 0119.7 7l-.1.1a1.7 1.7 0 00-.3 1.8A1.7 1.7 0 0020.8 10h.2a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></span>
+            <span><strong>Configuración</strong><small>Reglas y parámetros del sistema</small></span>
+          </button>
         </div>
 
         <!-- KPIs Grid -->
@@ -1178,6 +1203,18 @@
       <button class="btn btn-ghost" id="modalPublicarCancel">Cancelar</button>
       <button class="btn btn-primary" id="modalPublicarConfirm">Publicar ahora</button>
     </div>
+  </div>
+</div>
+
+<div class="command-backdrop hidden" id="commandBackdrop" aria-hidden="true">
+  <div class="command-palette" role="dialog" aria-modal="true" aria-labelledby="commandTitle">
+    <div class="command-search-row">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+      <input id="commandSearch" type="search" autocomplete="off" placeholder="Ir a planeaciones, citas, docentes…" aria-label="Buscar módulo" />
+      <kbd>Esc</kbd>
+    </div>
+    <div class="command-label" id="commandTitle">Módulos y acciones</div>
+    <div class="command-results" id="commandResults"></div>
   </div>
 </div>
 
