@@ -482,6 +482,7 @@ body {
 // CONFIGURACIÓN
 // ==================================================
 const API_PLN = '/api/planeaciones';
+const SESSION_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 
 let ST = { rol: null, correo: null, docenteId: null };
 let materiasRaw    = [];
@@ -607,7 +608,23 @@ function obtenerSemanasOrdenadas() {
 // UTILS
 // ==================================================
 function obtenerSesion() {
-  try { const d = localStorage.getItem('lp_user'); return d ? JSON.parse(d) : null; } catch { return null; }
+  try {
+    const d = localStorage.getItem('lp_user');
+    if (!d) return null;
+    const sesion = JSON.parse(d);
+    const loginTime = Number(sesion && sesion.loginTime);
+    const ahora = Date.now();
+    if (!sesion || !sesion.correo || !Number.isFinite(loginTime) ||
+        loginTime > ahora || ahora >= loginTime + SESSION_TTL_MS) {
+      localStorage.removeItem('lp_user');
+      return null;
+    }
+    sesion.loginTime = loginTime;
+    return sesion;
+  } catch {
+    localStorage.removeItem('lp_user');
+    return null;
+  }
 }
 function cerrarSesion() { localStorage.removeItem('lp_user'); window.location.href = '/'; }
 function volverPanel() {

@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#050e1d">
 <title>Mis Citas — La Presentación</title>
+<style>html{display:none!important}</style>
+<script>window.location.replace('/');</script>
 <link rel="icon" type="image/png" href="/logo.png">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -33,61 +35,6 @@ html,body{
   font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
   background:var(--s0);color:var(--tx);
   overflow:hidden;-webkit-text-size-adjust:100%
-}
-
-/* ══════════════════════════════════
-   DEV GATE
-══════════════════════════════════ */
-#dev-gate{
-  position:fixed;inset:0;z-index:999;
-  background:var(--s0);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:40px 28px;
-  background-image:
-    radial-gradient(ellipse 100% 50% at 50% 0%,rgba(30,77,183,.3) 0%,transparent 55%),
-    radial-gradient(ellipse 60% 40% at 20% 100%,rgba(201,150,42,.08) 0%,transparent 60%)
-}
-.gate-logo{
-  width:72px;height:72px;border-radius:20px;
-  background:linear-gradient(145deg,#1a3a6b,#2046a0);
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:20px;
-  box-shadow:0 20px 50px rgba(20,50,160,.4),inset 0 1px 0 rgba(255,255,255,.15)
-}
-.gate-logo img{width:42px;filter:brightness(10)}
-.gate-logo span{color:#fff;font-size:26px;font-weight:700}
-.gate-title{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.4px;margin-bottom:6px;text-align:center}
-.gate-sub{font-size:13px;color:var(--mt2);text-align:center;margin-bottom:8px;line-height:1.5;max-width:240px}
-.gate-badge{
-  font-size:10px;color:var(--gold2);
-  background:rgba(201,150,42,.1);border:1px solid rgba(201,150,42,.2);
-  border-radius:20px;padding:4px 12px;letter-spacing:.8px;margin-bottom:28px
-}
-.gate-card{
-  width:100%;max-width:300px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  border-radius:20px;padding:20px;
-  box-shadow:0 24px 60px rgba(0,0,0,.3)
-}
-.gate-lbl{font-size:11px;color:var(--mt);margin-bottom:7px;letter-spacing:.3px}
-.gate-inp{
-  width:100%;background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.1);border-radius:11px;
-  color:#fff;padding:13px;font-size:22px;letter-spacing:8px;text-align:center;
-  outline:none;-webkit-appearance:none;margin-bottom:11px;
-  transition:border-color .2s,box-shadow .2s
-}
-.gate-inp:focus{border-color:rgba(201,150,42,.5);box-shadow:0 0 0 3px rgba(201,150,42,.1)}
-.gate-btn{
-  width:100%;padding:13px;border-radius:11px;border:none;
-  background:linear-gradient(135deg,#9a7220,var(--gold2));
-  color:#000;font-size:14px;font-weight:700;cursor:pointer;
-  transition:opacity .15s,transform .1s
-}
-.gate-btn:active{transform:scale(.98);opacity:.9}
-.gate-err{
-  font-size:12px;color:var(--red);text-align:center;
-  margin-top:8px;min-height:16px;transition:opacity .2s
 }
 
 /* ══════════════════════════════════
@@ -767,23 +714,6 @@ html,body{
 </head>
 <body>
 
-<!-- ══ DEV GATE ══ -->
-<div id="dev-gate">
-  <div class="gate-logo">
-    <img src="/logo.png" onerror="this.style.display='none';this.parentNode.innerHTML='<span>S</span>'">
-  </div>
-  <div class="gate-title">Módulo de Citas</div>
-  <div class="gate-sub">Próximamente disponible para todos los docentes</div>
-  <div class="gate-badge">EN DESARROLLO</div>
-  <div class="gate-card">
-    <div class="gate-lbl">Acceso de administrador</div>
-    <input type="password" id="gateInp" class="gate-inp" placeholder="••••••••" maxlength="20"
-      onkeydown="if(event.key==='Enter')checkGate()">
-    <button class="gate-btn" onclick="checkGate()">Continuar →</button>
-    <div class="gate-err" id="gateErr"> </div>
-  </div>
-</div>
-
 <!-- ══ SPLASH ══ -->
 <div id="splash">
   <div class="spin-w"></div>
@@ -943,9 +873,8 @@ window.SIPRESC_MODULO = 'Citas';
 // ══════════════════════════════════════════════
 // CONSTANTES Y UTILS
 // ══════════════════════════════════════════════
-const CLAVE_DEV = '1624Scc$';
-const DEV_KEY   = 'sipresc_citas_dev';
 const API       = '/api/proxy';
+const SESSION_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 const DIAS      = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 const MESES     = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const MESES_CORTO = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
@@ -958,21 +887,6 @@ let ST = {correo:null,nombre:null,docenteId:null,rol:null,citas:[],horarios:{},y
 let filtroCitas = 'proximas';
 
 // ══════════════════════════════════════════════
-// DEV GATE
-// ══════════════════════════════════════════════
-function checkGate(){
-  if($('gateInp').value === CLAVE_DEV){
-    localStorage.setItem(DEV_KEY,'1');
-    $('dev-gate').style.display = 'none';
-    boot();
-  } else {
-    $('gateErr').textContent = 'Clave incorrecta';
-    $('gateInp').value = '';
-    setTimeout(()=>$('gateErr').textContent=' ', 1800);
-  }
-}
-
-// ══════════════════════════════════════════════
 // BOOT
 // ══════════════════════════════════════════════
 function boot(){
@@ -981,7 +895,12 @@ function boot(){
   if(!data){ go('/'); return; }
   try{
     const obj = JSON.parse(data);
-    if(Date.now() - obj.loginTime > 14*864e5){ localStorage.removeItem('lp_user'); go('/'); return; }
+    const loginTime = Number(obj && obj.loginTime);
+    const ahora = Date.now();
+    if(!obj || !obj.correo || !Number.isFinite(loginTime) ||
+       loginTime > ahora || ahora >= loginTime + SESSION_TTL_MS){
+      localStorage.removeItem('lp_user'); go('/'); return;
+    }
     ST.correo = obj.correo;
     api('loginGoogle',{correo:obj.correo}).then(r=>{
       if(!r.ok){ localStorage.removeItem('lp_user'); go('/'); return; }
@@ -994,7 +913,7 @@ function boot(){
 }
 
 function go(url){ window.location.href = url; }
-function doLogout(){ localStorage.removeItem('lp_user'); localStorage.removeItem(DEV_KEY); go('/'); }
+function doLogout(){ localStorage.removeItem('lp_user'); go('/'); }
 
 function iniciar(){
   const ini = (ST.nombre||'').split(' ').filter(p=>p.length>1).map(p=>p[0]).slice(0,2).join('').toUpperCase();
@@ -1534,15 +1453,7 @@ function enviarSolCierre(){
 document.addEventListener('DOMContentLoaded',()=>{
   $('splash').style.display = 'none';
   $('app').classList.remove('on');
-
-  const accesoDev = localStorage.getItem(DEV_KEY);
-
-  if(accesoDev === '1'){
-    $('dev-gate').style.display = 'none';
-    boot();
-  } else {
-    $('dev-gate').style.display = 'flex';
-  }
+  boot();
 });
 </script>
 </body>

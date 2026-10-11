@@ -75,7 +75,7 @@ async function inicializar() {
       correo: login.correo || sesion.correo,
       rol: login.rol || 'admin',
       nombre: login.nombre || sesion.nombre || sesion.correo.split('@')[0],
-      loginTime: Date.now()
+      loginTime: sesion.loginTime
     };
 
     localStorage.setItem('lp_user', JSON.stringify(ADMIN.sesion));
@@ -99,14 +99,15 @@ function leerSesionAdmin() {
     const s = JSON.parse(raw);
     if (!s || !s.correo) return null;
 
-    if (s.loginTime) {
-      const dias = (Date.now() - s.loginTime) / (1000 * 60 * 60 * 24);
-      if (dias > 14) {
-        localStorage.removeItem('lp_user');
-        return null;
-      }
+    const loginTime = Number(s.loginTime);
+    const ahora = Date.now();
+    const ttl = 14 * 24 * 60 * 60 * 1000;
+    if (!Number.isFinite(loginTime) || loginTime > ahora || ahora >= loginTime + ttl) {
+      localStorage.removeItem('lp_user');
+      return null;
     }
 
+    s.loginTime = loginTime;
     return s;
   } catch {
     return null;

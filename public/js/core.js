@@ -7,6 +7,7 @@
 // ── Endpoints ──
 const API     = '/api/proxy';
 const API_PLN = '/api/planeaciones';
+const SESSION_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 
 // ── Estado global de sesión ──
 const ST = {
@@ -70,25 +71,19 @@ function leerSesion() {
     const data = localStorage.getItem('lp_user');
     if (!data) return null;
     const obj = JSON.parse(data);
-    const DIAS_14 = 14 * 24 * 60 * 60 * 1000;
-    if (Date.now() - obj.loginTime > DIAS_14) {
+    const loginTime = Number(obj && obj.loginTime);
+    const ahora = Date.now();
+    if (!obj || !obj.correo || !Number.isFinite(loginTime) ||
+        loginTime > ahora || ahora >= loginTime + SESSION_TTL_MS) {
       localStorage.removeItem('lp_user');
       return null;
     }
+    obj.loginTime = loginTime;
     return obj;
   } catch {
+    localStorage.removeItem('lp_user');
     return null;
   }
-}
-
-/**
- * Guarda la sesión en localStorage
- */
-function guardarSesion(correo) {
-  localStorage.setItem('lp_user', JSON.stringify({
-    correo,
-    loginTime: Date.now()
-  }));
 }
 
 /**
@@ -123,8 +118,6 @@ function verificarAcceso(rolesPermitidos = []) {
           window.location.href = '/';
           return;
         }
-        guardarSesion(sesion.correo);
-
         // ── Registrar presencia en SESIONES para el panel en vivo ──
         // Se llama sin await para no bloquear la carga de la página.
         // Si falla silenciosamente, no afecta nada.

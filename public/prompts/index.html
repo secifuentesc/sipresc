@@ -496,6 +496,27 @@ body{
 </body>
 
 <script>
+const SESSION_TTL_MS = 14 * 24 * 60 * 60 * 1000;
+
+function leerSesionVigentePrompts(){
+  try{
+    const raw = localStorage.getItem("lp_user");
+    if(!raw) return null;
+    const sesion = JSON.parse(raw);
+    const loginTime = Number(sesion && sesion.loginTime);
+    const ahora = Date.now();
+    if(!sesion || !sesion.correo || !Number.isFinite(loginTime) ||
+       loginTime > ahora || ahora >= loginTime + SESSION_TTL_MS){
+      localStorage.removeItem("lp_user");
+      return null;
+    }
+    sesion.loginTime = loginTime;
+    return sesion;
+  }catch(e){
+    localStorage.removeItem("lp_user");
+    return null;
+  }
+}
 
 window.SIPRESC_MODULO = "Docente · Prompts IA";
 
@@ -523,19 +544,8 @@ function iniciarHeartbeatPrompts(){
 
   const enviar = () => {
 
-    let sesion = {};
-
-    try{
-
-      sesion = JSON.parse(localStorage.getItem("lp_user") || "{}");
-
-    }catch(e){
-
-      sesion = {};
-
-    }
-
-    if(!sesion || !sesion.correo) return;
+    const sesion = leerSesionVigentePrompts();
+    if(!sesion) return;
 
     fetch("/api/proxy", {
 
@@ -578,10 +588,13 @@ function iniciarHeartbeatPrompts(){
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  const sesion = leerSesionVigentePrompts();
+  if(!sesion){
+    window.location.href = "/";
+    return;
+  }
 
   iniciarHeartbeatPrompts();
-
-  const sesion = JSON.parse(localStorage.getItem("lp_user") || "{}");
 
   const rol = document.getElementById("tp-rol");
 
@@ -983,7 +996,7 @@ function showToast(msg="Copiado"){
 }
 
 function volverPanel(){
-  const sesion = JSON.parse(localStorage.getItem("lp_user") || "{}");
+  const sesion = leerSesionVigentePrompts() || {};
   const rol = String(sesion.rol || "").toLowerCase().trim();
 
   if(rol === "admin"){
@@ -1000,13 +1013,7 @@ function volverPanel(){
 }
 
 function volverPanel(){
-  let sesion = {};
-
-  try{
-    sesion = JSON.parse(localStorage.getItem("lp_user") || "{}");
-  }catch(e){
-    sesion = {};
-  }
+  const sesion = leerSesionVigentePrompts() || {};
 
   const rol = String(sesion.rol || "").toLowerCase().trim();
 

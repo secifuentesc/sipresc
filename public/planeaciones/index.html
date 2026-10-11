@@ -11,6 +11,27 @@
 <script>
 
 window.SIPRESC_MODULO = 'Docente · Planeaciones';
+const SESSION_TTL_MS = 14 * 24 * 60 * 60 * 1000;
+
+function leerSesionVigentePlaneaciones(){
+  try{
+    const raw = localStorage.getItem("lp_user");
+    if(!raw) return null;
+    const sesion = JSON.parse(raw);
+    const loginTime = Number(sesion && sesion.loginTime);
+    const ahora = Date.now();
+    if(!sesion || !sesion.correo || !Number.isFinite(loginTime) ||
+       loginTime > ahora || ahora >= loginTime + SESSION_TTL_MS){
+      localStorage.removeItem("lp_user");
+      return null;
+    }
+    sesion.loginTime = loginTime;
+    return sesion;
+  }catch(e){
+    localStorage.removeItem("lp_user");
+    return null;
+  }
+}
 
 let heartbeatPlaneacionesTimer = null;
 
@@ -29,15 +50,8 @@ function iniciarHeartbeatPlaneaciones(){
   if(heartbeatPlaneacionesTimer) clearInterval(heartbeatPlaneacionesTimer);
 
   const enviar = () => {
-    let sesion = {};
-
-try{
-  sesion = JSON.parse(localStorage.getItem("lp_user") || "{}");
-}catch(e){
-  sesion = {};
-}
-
-if(!sesion || !sesion.correo) return;
+    const sesion = leerSesionVigentePlaneaciones();
+    if(!sesion) return;
 
     fetch("/api/proxy", {
   method: "POST",
@@ -71,12 +85,7 @@ function setMateriaText(texto){
 }
   
 (function(){
-  try{
-    const s = localStorage.getItem("lp_user");
-    if(!s){ window.location.replace("/"); return; }
-    const json = JSON.parse(s);
-    if(!json || !json.correo){ window.location.replace("/"); }
-  }catch(e){ window.location.replace("/"); }
+  if(!leerSesionVigentePlaneaciones()) window.location.replace("/");
 })();
 
 function mostrarExito() {
@@ -1259,9 +1268,7 @@ async function importarPlaneacion(){
 }
 
 function obtenerSesion(){
-  const data = localStorage.getItem("lp_user");
-  if(!data) return null;
-  try{ return JSON.parse(data); }catch{ return null; }
+  return leerSesionVigentePlaneaciones();
 }
 
 function obtenerCorreo(){
