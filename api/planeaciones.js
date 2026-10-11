@@ -11,7 +11,9 @@
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqfbF0kAUBl2t_ot7sHfJgBN9-4Ana6OHqrqb4_tYJd5xZHtw1AohGEz3sZ-OU4AfcbQ/exec";
 const PRODUCTION_ORIGINS = new Set([
   "https://sipresc.co",
-  "https://www.sipresc.co"
+  "https://www.sipresc.co",
+  // TEMPORAL: URL de preview, quitar antes de merge a main
+  "https://sipresc-6k19tny2b-secifuentes-7177s-projects.vercel.app"
 ]);
 
 function isLocalOrigin(origin) {

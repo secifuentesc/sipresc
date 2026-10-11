@@ -1,6 +1,8 @@
 const PRODUCTION_ORIGINS = new Set([
   'https://sipresc.co',
-  'https://www.sipresc.co'
+  'https://www.sipresc.co',
+  // TEMPORAL: URL de preview, quitar antes de merge a main
+  'https://sipresc-6k19tny2b-secifuentes-7177s-projects.vercel.app'
 ]);
 
 function isLocalOrigin(origin) {
