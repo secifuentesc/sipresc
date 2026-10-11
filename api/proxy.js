@@ -1,9 +1,18 @@
 const PRODUCTION_ORIGINS = new Set([
   'https://sipresc.co',
-  'https://www.sipresc.co',
-  // TEMPORAL: URL de preview, quitar antes de merge a main
-  'https://sipresc-6k19tny2b-secifuentes-7177s-projects.vercel.app'
+  'https://www.sipresc.co'
 ]);
+
+// TEMPORAL: acepta previews de Vercel durante pruebas, quitar antes de merge a main
+function isVercelPreviewOrigin(origin) {
+  try {
+    const url = new URL(origin);
+    return url.protocol === 'https:' && url.port === '' &&
+      /^sipresc-[a-z0-9-]+-secifuentes-7177s-projects\.vercel\.app$/.test(url.hostname);
+  } catch {
+    return false;
+  }
+}
 
 function isLocalOrigin(origin) {
   if (process.env.VERCEL_ENV === 'production') return false;
@@ -23,7 +32,9 @@ function applyCors(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (!origin) return true;
-  if (!PRODUCTION_ORIGINS.has(origin) && !isLocalOrigin(origin)) return false;
+  if (!PRODUCTION_ORIGINS.has(origin) &&
+      !isVercelPreviewOrigin(origin) &&
+      !isLocalOrigin(origin)) return false;
 
   res.setHeader('Access-Control-Allow-Origin', origin);
   return true;
