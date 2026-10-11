@@ -551,12 +551,12 @@ function normalizarPeriodo(valor) {
 // SEMANA ACTUAL (cálculo por fecha)
 // ==================================================
 function calcularSemanaActual(fecha = new Date()) {
-  // Excepción temporal por vacaciones: desde el 10 de octubre
-  // la secuencia institucional retoma la semana 5 y avanza cada sábado.
+  // Durante el ajuste de vacaciones, esta vista muestra la semana
+  // anterior a la semana activa del formulario de planeaciones.
   const inicioAjusteVacaciones = new Date('2026-10-10T00:00:00-05:00');
   if (fecha >= inicioAjusteVacaciones) {
     const unaSemana = 7 * 24 * 60 * 60 * 1000;
-    return Math.min(10, 5 + Math.floor(
+    return Math.min(9, 4 + Math.floor(
       (fecha.getTime() - inicioAjusteVacaciones.getTime()) / unaSemana
     ));
   }
