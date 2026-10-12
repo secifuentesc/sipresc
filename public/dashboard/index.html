@@ -661,8 +661,18 @@ function api(action, payload = {}) {
 // INIT — leer sesión y cargar datos
 // ════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  const stored = JSON.parse(localStorage.getItem('lp_user') || '{}');
-  if (!stored.correo) {
+  let stored;
+  try {
+    stored = JSON.parse(localStorage.getItem('lp_user') || '{}');
+  } catch {
+    stored = {};
+  }
+  const loginTime = Number(stored && stored.loginTime);
+  const ahora = Date.now();
+  const ttl = 14 * 24 * 60 * 60 * 1000;
+  if (!stored.correo || !Number.isFinite(loginTime) ||
+      loginTime > ahora || ahora >= loginTime + ttl) {
+    localStorage.removeItem('lp_user');
     window.location.href = '/';
     return;
   }

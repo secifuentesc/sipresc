@@ -248,8 +248,21 @@ if (/recib/.test(s) || /revis/.test(s) || /pend/.test(s)) return "por_revisar";
     try {
       const raw = localStorage.getItem("lp_user");
       if (!raw) return null;
-      return JSON.parse(raw);
-    } catch (_) { return null; }
+      const session = JSON.parse(raw);
+      const loginTime = Number(session && session.loginTime);
+      const ahora = Date.now();
+      const ttl = 14 * 24 * 60 * 60 * 1000;
+      if (!session || !session.correo || !Number.isFinite(loginTime) ||
+          loginTime > ahora || ahora >= loginTime + ttl) {
+        localStorage.removeItem("lp_user");
+        return null;
+      }
+      session.loginTime = loginTime;
+      return session;
+    } catch (_) {
+      localStorage.removeItem("lp_user");
+      return null;
+    }
   }
 
 function iniciarPresenciaCoordinacion() {
