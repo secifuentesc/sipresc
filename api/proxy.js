@@ -1,40 +1,28 @@
-const PRODUCTION_ORIGINS = new Set([
-  'https://sipresc.co',
-  'https://www.sipresc.co'
+import {
+  applyCors,
+  handleVerifyCode,
+  parseRequestBody,
+  postToAdmin,
+  readSessionToken,
+  serviceUnavailable
+} from '../lib/server/sipresc-session.js';
+
+const PUBLIC_ACTIONS = new Set([
+  'enviarCodigo',
+  'verificarCodigo',
+  'disponibilidadCompleta',
+  'grados',
+  'estadoAgenda',
+  'reservarCita',
+  'horariosPublicos',
+  'citasPublicas',
+  'crearReserva',
+  'cancelarToken'
 ]);
 
-function isLocalOrigin(origin) {
-  if (process.env.VERCEL_ENV === 'production') return false;
-  try {
-    const url = new URL(origin);
-    return url.protocol === 'http:' &&
-      (url.hostname === 'localhost' || url.hostname === '127.0.0.1');
-  } catch {
-    return false;
-  }
-}
-
-function applyCors(req, res) {
-  const origin = req.headers.origin;
-  res.setHeader('Vary', 'Origin');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (!origin) return true;
-  if (!PRODUCTION_ORIGINS.has(origin) && !isLocalOrigin(origin)) return false;
-
-  res.setHeader('Access-Control-Allow-Origin', origin);
-  return true;
-}
-
-function serviceUnavailable(res) {
-  return res.status(502).json({
-    ok: false,
-    mensaje: 'Servicio temporalmente no disponible'
-  });
-}
-
 export default async function handler(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
+
   if (!applyCors(req, res)) {
     return res.status(403).json({ ok: false, mensaje: 'Origen no autorizado' });
   }
@@ -50,40 +38,37 @@ export default async function handler(req, res) {
     });
   }
 
+  const body = parseRequestBody(req);
+  const action = typeof body.action === 'string' ? body.action.trim() : '';
+
+  if (action === 'verificarCodigo') {
+    return handleVerifyCode(req, res, body);
+  }
+
+  // Estas acciones solo se atienden mediante /api/auth/sesion y /api/auth/logout.
+  if (action === 'validarSesion' || action === 'revocarSesion') {
+    return res.status(400).json({ ok: false, error: 'ACCION_NO_DISPONIBLE' });
+  }
+
+  const payload = { ...body, action };
+
+  if (!PUBLIC_ACTIONS.has(action)) {
+    const token = readSessionToken(req);
+    if (!token) {
+      return res.status(401).json({ ok: false, error: 'SESION_INVALIDA' });
+    }
+
+    delete payload.correo;
+    delete payload.rol;
+    delete payload.nombre;
+    delete payload.token;
+    payload.token = token;
+  }
+
   try {
-
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbw1JSmbnW4ELgSngqxL59_9hlGJ4e0MP_Ogl945w2aFFlmglgMJtvXcdrT5f_Wi3aL-/exec";
-
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify(req.body),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    const text = await response.text();
-
-    if (!response.ok) {
-      console.warn('PROXY_UPSTREAM_HTTP_ERROR', { status: response.status });
-      return serviceUnavailable(res);
-    }
-
-    let data;
-
-    try {
-      data = JSON.parse(text);
-    } catch {
-      console.warn('PROXY_UPSTREAM_INVALID_JSON', { status: response.status });
-      return serviceUnavailable(res);
-    }
-
+    const data = await postToAdmin(payload);
     return res.status(200).json(data);
-
-  } catch (error) {
-    console.error('PROXY_REQUEST_FAILED', {
-      name: error && error.name ? error.name : 'Error'
-    });
+  } catch {
     return serviceUnavailable(res);
   }
 }
